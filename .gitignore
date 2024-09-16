@@ -1,0 +1,12 @@
+# Unwanted editor cache
+.vscode/**
+
+# No modules allowed
+node_modules/**
+
+# No unwanted environements
+.env/**
+env/**
+lenv/**
+menv/**
+wenv/**
