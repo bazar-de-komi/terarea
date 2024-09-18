@@ -7,11 +7,11 @@
 
 SUDO=
 
-all:
+up:
 	$(SUDO) docker compose up
 
 sudo:
-	SUDO=sudo
+	$(eval SUDO=sudo)
 
 down:
 	$(SUDO) docker compose down
