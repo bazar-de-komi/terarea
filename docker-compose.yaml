@@ -22,8 +22,8 @@ services:
     build:
       context: ./app/back/db
       dockerfile: Dockerfile
-    image: survivor-mariadb
-    container_name: s-mariadb
+    image: terarea-mariadb
+    container_name: t-mariadb
     restart: always
     env_file:
       - ./app/back/db/.env

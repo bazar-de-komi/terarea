@@ -78,14 +78,14 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
 
 # Database management
 DB_HOST = _get_environement_variable(ENV, "DB_HOST")
-DB_PORT = _get_environement_variable(ENV, "DB_PORT")
+DB_PORT = int(_get_environement_variable(ENV, "DB_PORT"))
 DB_USER = _get_environement_variable(ENV, "DB_USER")
 DB_PASSWORD = _get_environement_variable(ENV, "DB_PASSWORD")
 DB_DATABASE = _get_environement_variable(ENV, "DB_DATABASE")
 
 # Minio management
 MINIO_HOST = _get_environement_variable(ENV, "MINIO_HOST")
-MINIO_PORT = _get_environement_variable(ENV, "MINIO_PORT")
+MINIO_PORT = int(_get_environement_variable(ENV, "MINIO_PORT"))
 MINIO_ROOT_USER = _get_environement_variable(ENV, "MINIO_ROOT_USER")
 MINIO_ROOT_PASSWORD = _get_environement_variable(ENV, "MINIO_ROOT_PASSWORD")
 

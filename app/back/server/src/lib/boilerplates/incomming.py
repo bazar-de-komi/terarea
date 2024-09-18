@@ -119,11 +119,9 @@ class BoilerplateIncoming:
         bearer: Union[str, None] = request.headers.get(
             CONST.REQUEST_BEARER_KEY
         )
-        self.disp.log_debug(
-            f"mtoken = {mtoken}, mbearer = {
-                mbearer}, token = {token}, bearer = {bearer}",
-            "get_token_if_present"
-        )
+        msg = f"mtoken = {mtoken}, mbearer = {mbearer}"
+        msg += f", token = {token}, bearer = {bearer}"
+        self.disp.log_debug(msg, "get_token_if_present")
         if token is None and bearer is None and token is None and bearer is None:
             return None
         if mbearer is not None and mbearer.startswith('Bearer '):

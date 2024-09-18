@@ -62,8 +62,8 @@ class Endpoints:
         )
         self.disp.log_debug(f"sent body : {body}", "get_welcome")
         self.disp.log_debug(
-            f"header = {
-                self.runtime_data_initialised.json_header}", "get_welcome"
+            f"header = {self.runtime_data_initialised.json_header}",
+            "get_welcome"
         )
         outgoing = HCI.success(
             content=body,

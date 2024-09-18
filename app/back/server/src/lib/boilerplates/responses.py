@@ -52,10 +52,10 @@ class BoilerplateResponses:
             json_body[CONST.JSON_RESP] = resp
         else:
             json_body[CONST.JSON_ERROR] = resp
-        msg = f"token = {token}, self.user_data = {
-            self.runtime_data_initialised.user_data}"
-        msg += f", token in self.user_data = {
-            token in self.runtime_data_initialised.user_data}"
+        msg = f"token = {token}, "
+        msg += f"self.user_data = {self.runtime_data_initialised.user_data}"
+        msg += ", token in self.user_data = "
+        msg += f"{token in self.runtime_data_initialised.user_data}"
         self.disp.log_debug(msg, "build_response_body")
         if token is not None and token in self.runtime_data_initialised.user_data:
             json_body[CONST.JSON_LOGGED_IN] = True
