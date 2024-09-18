@@ -1,5 +1,5 @@
 """_summary_
-    File containing boilerplate functions that could be used by the server in it's endpoints for checking incoming data.
+    File containing boilerplate functions that could be used by the server in it's endpoints_initialised for checking incoming data.
 """
 
 from typing import Union, Dict, Any
@@ -18,7 +18,7 @@ class BoilerplateIncoming:
         self.debug: bool = debug
         self.success: int = success
         self.error: int = error
-        self.rdi: RuntimeData = runtime_data
+        self.runtime_data_initialised: RuntimeData = runtime_data
         # ------------------------ The logging function ------------------------
         self.disp: Disp = Disp(
             TOML_CONF,
@@ -47,7 +47,7 @@ class BoilerplateIncoming:
         )
         if token is None:
             return False
-        if token not in self.rdi.user_data:
+        if token not in self.runtime_data_initialised.user_data:
             return False
         return True
 
@@ -71,7 +71,7 @@ class BoilerplateIncoming:
             return False
         if self.token_correct(request) is False:
             return False
-        if token in self.rdi.user_data:
+        if token in self.runtime_data_initialised.user_data:
             return True
         return False
 
@@ -88,10 +88,10 @@ class BoilerplateIncoming:
             {'status':Union[success, error], 'token':Union['some_token', '']}
         """
         data = {'status': self.error, 'token': ''}
-        token = self.rdi.bnhttpi.generate_token()
-        self.rdi.user_data[token] = {
+        token = self.runtime_data_initialised.boilerplate_non_http_initialised.generate_token()
+        self.runtime_data_initialised.user_data[token] = {
             CONST.UA_EMAIL_KEY: "Some email",
-            CONST.UA_LIFESPAN_KEY: self.rdi.bnhttpi.set_lifespan(
+            CONST.UA_LIFESPAN_KEY: self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
                 CONST.UA_TOKEN_LIFESPAN
             )
         }
@@ -150,8 +150,8 @@ class BoilerplateIncoming:
             data["msg"] = "No token provided !"
             return data
 
-        if token in self.rdi.user_data:
-            self.rdi.user_data.pop(token)
+        if token in self.runtime_data_initialised.user_data:
+            self.runtime_data_initialised.user_data.pop(token)
             data["status"] = self.success
             data["msg"] = "You have successfully logged out."
         return data

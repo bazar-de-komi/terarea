@@ -15,13 +15,13 @@ class BoilerplateNonHTTP:
     """_summary_
     """
 
-    def __init__(self, rdi: RuntimeData, success: int = 0, error: int = 84, debug: bool = False) -> None:
+    def __init__(self, runtime_data_initialised: RuntimeData, success: int = 0, error: int = 84, debug: bool = False) -> None:
         """_summary_
         """
         self.debug: bool = debug
         self.error: int = error
         self.success: int = success
-        self.rdi: RuntimeData = rdi
+        self.runtime_data_initialised: RuntimeData = runtime_data_initialised
         # ------------------------ The logging function ------------------------
         self.disp: Disp = Disp(
             TOML_CONF,
@@ -64,7 +64,7 @@ class BoilerplateNonHTTP:
             str: _description_: The token generated
         """
         token = str(uuid.uuid4())
-        while token in self.rdi.user_data:
+        while token in self.runtime_data_initialised.user_data:
             token = str(uuid.uuid4())
         return token
 
@@ -111,9 +111,9 @@ class BoilerplateNonHTTP:
         """_summary_
             This function will reconnect to the database in case it has been disconnected.
         """
-        if self.rdi.database_link is None:
+        if self.runtime_data_initialised.database_link is None:
             try:
-                self.rdi.database_link = SQL(
+                self.runtime_data_initialised.database_link = SQL(
                     url=CONST.DB_HOST,
                     port=CONST.DB_PORT,
                     username=CONST.DB_USER,
@@ -127,10 +127,10 @@ class BoilerplateNonHTTP:
                 msg = "Could not connect to the database."
                 raise RuntimeError(msg) from e
 
-        if self.rdi.database_link.is_connected() is False:
-            if self.rdi.database_link.connect_to_db() is False:
+        if self.runtime_data_initialised.database_link.is_connected() is False:
+            if self.runtime_data_initialised.database_link.connect_to_db() is False:
                 try:
-                    self.rdi.database_link = SQL(
+                    self.runtime_data_initialised.database_link = SQL(
                         url=CONST.DB_HOST,
                         port=CONST.DB_PORT,
                         username=CONST.DB_USER,

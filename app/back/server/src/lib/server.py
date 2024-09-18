@@ -45,41 +45,41 @@ class Server:
             logger=self.__class__.__name__
         )
         # ------------------------ Shared Runtime data  ------------------------
-        self.rdi: RuntimeData = RuntimeData(
+        self.runtime_data_initialised: RuntimeData = RuntimeData(
             host=self.host,
             port=self.port,
             app_name=app_name
         )
         # ----- The classes that need to be tracked for the server to run  -----
-        self.rdi.smi = ServerManagement(
-            self.rdi,
+        self.runtime_data_initialised.server_management_initialised = ServerManagement(
+            self.runtime_data_initialised,
             error=self.error,
             success=self.success,
             debug=self.debug
         )
-        self.rdi.bri = BoilerplateResponses(
-            self.rdi,
+        self.runtime_data_initialised.boilerplate_responses_initialised = BoilerplateResponses(
+            self.runtime_data_initialised,
             debug=self.debug
         )
-        self.rdi.bii = BoilerplateIncoming(
-            self.rdi,
+        self.runtime_data_initialised.boilerplate_incoming_initialised = BoilerplateIncoming(
+            self.runtime_data_initialised,
             error=self.error,
             success=self.success,
             debug=self.debug
         )
-        self.rdi.bnhttpi = BoilerplateNonHTTP(
-            self.rdi,
+        self.runtime_data_initialised.boilerplate_non_http_initialised = BoilerplateNonHTTP(
+            self.runtime_data_initialised,
             error=self.error,
             success=self.success,
             debug=self.debug
         )
-        self.rdi.paths = ServerPaths(
-            self.rdi,
+        self.runtime_data_initialised.paths_initialised = ServerPaths(
+            self.runtime_data_initialised,
             error=self.error,
             success=self.success,
             debug=self.debug
         )
-        self.rdi.database_link = SQL(
+        self.runtime_data_initialised.database_link = SQL(
             url=CONST.DB_HOST,
             port=CONST.DB_PORT,
             username=CONST.DB_USER,
@@ -87,12 +87,12 @@ class Server:
             db_name=CONST.DB_DATABASE,
             debug=self.debug
         )
-        self.rdi.bucket_link = Bucket(
+        self.runtime_data_initialised.bucket_link = Bucket(
             error=self.error,
             success=self.success
         )
-        self.rdi.endpoints = Endpoints(
-            self.rdi,
+        self.runtime_data_initialised.endpoints_initialised = Endpoints(
+            self.runtime_data_initialised,
             error=self.error,
             success=self.success,
             debug=self.debug
@@ -106,11 +106,11 @@ class Server:
         Returns:
             int: _description_
         """
-        self.rdi.smi.initialise_classes()
-        self.rdi.paths.load_default_paths()
-        self.rdi.paths.inject_routes()
+        self.runtime_data_initialised.server_management_initialised.initialise_classes()
+        self.runtime_data_initialised.paths_initialised.load_default_paths_initialised()
+        self.runtime_data_initialised.paths_initialised.inject_routes()
         try:
-            self.rdi.server.run()
+            self.runtime_data_initialised.server.run()
         except Exception as e:
             self.disp.log_error(f"Error: {e}", "main")
             return self.error
@@ -123,4 +123,4 @@ class Server:
         Returns:
             bool: _description_: Returns True if the server is running.
         """
-        return self.rdi.smi.is_server_running()
+        return self.runtime_data_initialised.server_management_initialised.is_server_running()

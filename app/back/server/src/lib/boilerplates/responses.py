@@ -1,5 +1,5 @@
 """_summary_
-    File containing boilerplate responses that could be used by the server in it's endpoints.
+    File containing boilerplate responses that could be used by the server in it's endpoints_initialised.
 """
 from typing import Union, Dict, Any
 from fastapi import Response
@@ -18,7 +18,7 @@ class BoilerplateResponses:
             debug (bool, optional): _description_. Defaults to False.
         """
         self.debug: bool = debug
-        self.rdi: RuntimeData = runtime_data
+        self.runtime_data_initialised: RuntimeData = runtime_data
         self.disp: Disp = Disp(
             TOML_CONF,
             SAVE_TO_FILE,
@@ -52,10 +52,12 @@ class BoilerplateResponses:
             json_body[CONST.JSON_RESP] = resp
         else:
             json_body[CONST.JSON_ERROR] = resp
-        msg = f"token = {token}, self.user_data = {self.rdi.user_data}"
-        msg += f", token in self.user_data = {token in self.rdi.user_data}"
+        msg = f"token = {token}, self.user_data = {
+            self.runtime_data_initialised.user_data}"
+        msg += f", token in self.user_data = {
+            token in self.runtime_data_initialised.user_data}"
         self.disp.log_debug(msg, "build_response_body")
-        if token is not None and token in self.rdi.user_data:
+        if token is not None and token in self.runtime_data_initialised.user_data:
             json_body[CONST.JSON_LOGGED_IN] = True
         else:
             json_body[CONST.JSON_LOGGED_IN] = False
@@ -78,7 +80,7 @@ class BoilerplateResponses:
             token="",
             error=True
         )
-        return HCI.invalid_token(content=body, content_type=CONST.CONTENT_TYPE, headers=self.rdi.json_header)
+        return HCI.invalid_token(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     def not_logged_in(self, title: str) -> Response:
         """_summary_
@@ -97,7 +99,7 @@ class BoilerplateResponses:
             token="",
             error=True
         )
-        return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.rdi.json_header)
+        return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     def login_failed(self, title: str) -> Response:
         """_summary_
@@ -116,7 +118,7 @@ class BoilerplateResponses:
             token="",
             error=True
         )
-        return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.rdi.json_header)
+        return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     def insuffisant_rights(self, title: str, token: str) -> Response:
         """_summary_
@@ -136,4 +138,4 @@ class BoilerplateResponses:
             token=token,
             error=True
         )
-        return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.rdi.json_header)
+        return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)

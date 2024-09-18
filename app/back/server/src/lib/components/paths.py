@@ -1,5 +1,5 @@
 """_summary_
-    File in charge of referencing all the paths supported by the server.
+    File in charge of referencing all the paths_initialised supported by the server.
 """
 from typing import Union, List, Dict, Any
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
@@ -18,7 +18,7 @@ class ServerPaths:
             success (int, optional): _description_. Defaults to 0.
             error (int, optional): _description_. Defaults to 84.
         """
-        self.rdi: RuntimeData = runtime_data
+        self.runtime_data_initialised: RuntimeData = runtime_data
         self.success = success
         self.error = error
         self.routes: List[Dict[str, Any]] = []
@@ -35,7 +35,7 @@ class ServerPaths:
 
     def add_path(self, path: str, endpoint: object, method: Union[str, List[str]]) -> int:
         """_summary_
-            This function is in charge of adding a path to the list of paths.
+            This function is in charge of adding a path to the list of paths_initialised.
 
         Args:
             path (str): _description_: The path to call for the endpoint to be triggered
@@ -69,14 +69,18 @@ class ServerPaths:
         )
         return self.success
 
-    def load_default_paths(self) -> None:
+    def load_default_paths_initialised(self) -> None:
         """_summary_
-            This function is in charge of adding the default paths to the list of paths.
+            This function is in charge of adding the default paths_initialised to the list of paths_initialised.
         """
-        self.disp.log_debug("Loading default paths", "load_default_paths")
-        self.add_path("/", self.rdi.endpoints.get_welcome, "GET")
-        self.add_path("/stop", self.rdi.endpoints.post_stop_server, "POST")
-        self.add_path("/test", self.rdi.endpoints.my_test_component, "GET")
+        self.disp.log_debug("Loading default paths_initialised",
+                            "load_default_paths_initialised")
+        self.add_path(
+            "/", self.runtime_data_initialised.endpoints_initialised.get_welcome, "GET")
+        self.add_path(
+            "/stop", self.runtime_data_initialised.endpoints_initialised.post_stop_server, "POST")
+        self.add_path(
+            "/test", self.runtime_data_initialised.endpoints_initialised.my_test_component, "GET")
 
     def inject_routes(self) -> None:
         """_summary_
@@ -87,7 +91,7 @@ class ServerPaths:
         self.disp.log_info("injecting routes", "inject_routes")
         for route in self.routes:
             self.disp.log_debug(f"route = {route}", "inject_routes")
-            self.rdi.app.add_api_route(
+            self.runtime_data_initialised.app.add_api_route(
                 route[PATH_KEY],
                 route[ENDPOINT_KEY],
                 methods=route[METHOD_KEY]
