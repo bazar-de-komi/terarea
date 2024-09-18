@@ -1,0 +1,104 @@
+services:
+  minio:
+    build:
+      context: ./app/back/s3
+      dockerfile: Dockerfile
+    tty: true
+    image: tearea-minio
+    container_name: t-minio
+    restart: always
+    env_file:
+      - ./app/back/s3/.env
+    ports:
+      - "9000:9000"
+      -  "9001:9001"
+    volumes:
+      - ./app/back/s3/cache:/data
+    command: server /data --console-address ":9001"
+    networks:
+      - t-network
+
+  maria-db:
+    build:
+      context: ./app/back/db
+      dockerfile: Dockerfile
+    image: survivor-mariadb
+    container_name: s-mariadb
+    restart: always
+    env_file:
+      - ./app/back/db/.env
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./app/back/db/cache:/var/lib/mysql
+    depends_on:
+      - minio
+    networks:
+      - t-network
+
+  server:
+    build:
+      context: ./app/back/server
+      dockerfile: Dockerfile
+    image: terarea-server
+    container_name: t-server
+    restart: always
+    tty: true
+    env_file:
+      - ./app/back/server/.env
+    ports:
+      - "8081:8081"
+    command: /bin/bash
+    volumes:
+      - ./app/back/server/:/srv/
+    depends_on:
+      - maria-db
+    networks:
+      - t-network
+
+  client_web:
+    build:
+      context: ./app/front/web
+      dockerfile: Dockerfile
+    image: t-web
+    container_name: t-web
+    restart: always
+    tty: true
+    environment:
+      LAUNCH_COMMAND: /bin/bash
+    ports:
+      - "3000:8081"
+    command: /bin/bash
+    depends_on:
+      - server
+    networks:
+      - t-network
+    volumes:
+      - t-volume:/web
+
+  client_mobile:
+    build:
+      context: ./app/front/mobile
+      dockerfile: Dockerfile
+    image: terarea-mobile
+    container_name: t-mobile
+    restart: always
+    tty: true
+    environment:
+      LAUNCH_COMMAND: /bin/bash
+    command: /bin/bash
+    depends_on:
+      - client_web
+    networks:
+      - t-network
+    volumes:
+      - t-volume:/mobile
+  
+
+networks:
+  t-network:
+    driver: bridge
+
+volumes:
+  t-volume:
+    driver: local
