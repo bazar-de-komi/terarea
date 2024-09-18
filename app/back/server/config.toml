@@ -1,0 +1,84 @@
+title = "Server file configuration"
+
+[Cache_updater]
+# The delay (in seconds) before the cache loop starts any actions
+# The default value is 20
+startup_delay = 20
+
+# Disable the process in charge of updating the database
+# The default value is false
+skip_cache_updating = false
+
+# Skip the online data gathering (will fallback to the file contained in QUERY_DATA_FILE)
+# This setting is considered False if restore_from_file is True
+# The default value is false
+skip_online_gathering = false
+
+# Create a restore point (The name will be specified in QUERY_DATA_FILE)
+# If this setting is True skip_online_gathering will have no effect.
+# The default value is false
+restore_from_file = false
+
+# This is the variable containing the data to be written to the database.
+# This data should be a file that would of been created by the cache_creator.py program (or at least the same data structure)
+# The default value is "./endpoint_data.json"
+query_data_file = "./endpoint_data.json"
+
+# The configurations regarding the times when gathering information from the reference backend
+[Cache_updater.querying]
+
+# Timeout for Any queries made (in seconds)
+# The default value is 10
+query_timeout = 10
+
+# Query management (avoiding getting banned)
+# number of queries that can be done before taking a break
+# The default value is 100
+endpoint_pause = 100
+
+# Delay in seconds that is waited between each batch
+# The default value is 2
+endpoint_pause_length = 2
+
+# The base url of the endpoint to gather data from
+# The default value is "https://soul-connection.fr/"
+base_url = "https://soul-connection.fr/"
+
+# The status codes used by the program:
+[Status_codes]
+
+# The code when everything goes according to plan
+# The default code is 0
+success = 0
+
+# The code when there is an error
+# The default code is 84
+error = 1
+
+# Debug mode, the mode that shows everything (almost) that is going on in the server
+# Be cautious, you may get a mind overflow with all the information.
+[Debug_mode]
+# This is a variable that will act on the general server on if to activate or not the debug mode
+# The default value is false
+debug = false
+
+# This is a shackle to limmit the amount of information displayed during the gathering process of the reference backend
+# The default value is true
+silent_cache_gathering = true
+
+# Arg, here comes the test territory
+[Test]
+
+[Test.port]
+# This is the port that will be used by the server and the client during the automated testing
+# The default port is 6000
+port = 6000
+
+[Test.hosts]
+# This is the host on which the server will be listening when it will be waiting for queries
+# The default value is "0.0.0.0"
+server = "0.0.0.0"
+
+# This is the host on which the client will make it's requests.
+# The default value is "http://127.0.0.1"
+client = "http://127.0.0.1"
