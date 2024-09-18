@@ -8,8 +8,8 @@ from . import constants as CONST
 from ..sql.sql_manager import SQL
 from ..bucket import Bucket
 if TYPE_CHECKING:
-    from .paths_initialised import ServerPaths
-    from .endpoints_initialised import Endpoints
+    from .paths import ServerPaths
+    from .endpoints import Endpoints
     from .server_management import ServerManagement
     from ..boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
