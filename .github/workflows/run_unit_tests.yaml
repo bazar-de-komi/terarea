@@ -40,11 +40,11 @@ jobs:
       - name: Create environement files
         run: |
           cd app/back/db
-          cat ${{secrets.database_environement}} > .env
+          cat ${{secrets.DATABASE_ENVIRONEMENT}} > .env
           cd ../s3
-          cat ${{secrets.bucket_environement}} > .env
+          cat ${{secrets.BUCKET_ENVIRONEMENT}} > .env
           cd ../back
-          cat ${{secrets.back_environement}} > .env
+          cat ${{secrets.BACK_ENVIRONEMENT}} > .env
 
       - name: Create docker network
         run: |

@@ -3,11 +3,11 @@ name: frontend_mirrorer
 # version: 1.0.0
 
 on:
-    push:
-        branches:
-            - 'main'
-        paths:
-            - 'app/front/web/**'
+  push:
+      branches:
+          - 'main'
+      paths:
+          - 'app/front/web/**'
 
 env:
     SOURCE: bazar-de-komi/terarea
