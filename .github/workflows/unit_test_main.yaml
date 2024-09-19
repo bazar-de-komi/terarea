@@ -1,0 +1,179 @@
+name: run_unit_tests_on_branch_main
+
+# version: 1.0.3.commando
+# Version log:
+  # 1.0.0: Initial version
+  # 1.0.1: Add the xvfb library to the actions for any graphical environements
+  # 1.0.2: Put the test in a docker container
+  # 1.0.3.commando: This is a standalone version of the workflow that has been edited specifically for this project
+
+on:
+    push:
+        branches:
+        - main
+    workflow_dispatch:
+
+env:
+  BUCKET_IMAGE_NAME: terarea-minio
+  BUCKET_CONTAINER_NAME: t-minio
+  DATABASE_IMAGE_NAME: terarea-mariadb
+  DATABASE_CONTAINER_NAME: t-mariadb
+  SERVER_IMAGE_NAME: terarea-server
+  SERVER_CONTAINER_NAME: t-server
+  CLIENT_WEB_IMAGE_NAME: terarea-web
+  CLIENT_WEB_CONTAINER_NAME: t-web
+  CLIENT_MOBILE_IMAGE_NAME: terarea-mobile
+  CLIENT_MOBILE_CONTAINER_NAME: t-mobile
+  DOCKER_NETWORK: t-network
+  DOCKER_VOLUME: t-volume
+
+jobs:
+
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create environement files
+        run: |
+          cd app/back/db
+          cat ${{secrets.database_environement}} > .env
+          cd ../s3
+          cat ${{secrets.bucket_environement}} > .env
+          cd ../back
+          cat ${{secrets.back_environement}} > .env
+
+      - name: Create docker network
+        run: |
+          docker network create ${{env.DOCKER_NETWORK}}
+
+      - name: Create docker volume
+        run: |
+          docker volume create ${{env.DOCKER_VOLUME}}
+
+      - name: Build s3 bucket
+        run: |
+          cd app/back/s3
+          docker build -t ${{env.BUCKET_IMAGE_NAME}} .
+
+      - name: Build database
+        run: |
+          cd app/back/db
+          docker build -t ${{env.DATABASE_IMAGE_NAME}} .
+
+      - name: Build server
+        run: |
+          cd app/back/server
+          docker build -t ${{env.SERVER_IMAGE_NAME}} .
+
+      - name: Build front web
+        run: |
+          cd app/front/web
+          docker build -t ${{env.CLIENT_WEB_IMAGE_NAME}} .
+
+      - name: Build front mobile
+        run: |
+          cd app/front/mobile
+          docker build -t ${{env.CLIENT_MOBILE_IMAGE_NAME}} .
+
+      - name: Start s3 bucket
+        run: |
+          cd app/back/s3
+          docker run -d \
+            --name ${{env.BUCKET_CONTAINER_NAME}} \
+            --network ${{env.DOCKER_NETWORK}} \
+            --env-file .env \
+            -p 9000:9000 \
+            -p 9001:9001 \
+            -v $(pwd)/cache:/data \
+            ${{env.BUCKET_IMAGE_NAME}} \
+            server /data --console-address ":9001"
+
+      - name: Start database
+        run: |
+          cd app/back/db
+          docker run -d \
+            --name ${{env.DATABASE_CONTAINER_NAME}} \
+            --network ${{env.DOCKER_NETWORK}} \
+            --env-file .env \
+            -p 3307:3306 \
+            -v $(pwd)/cache:/var/lib/mysql \
+            --restart always \
+            ${{env.DATABASE_IMAGE_NAME}}
+
+      - name: Start server
+        run: |
+          cd app/back/server
+          docker run -d \
+            --name ${{env.SERVER_CONTAINER_NAME}} \
+            --network ${{env.DOCKER_NETWORK}} \
+            --env-file .env \
+            -p 8081:8081 \
+            -v $(pwd)/server:/srv/ \
+            --restart always \
+            -t \
+            ${{env.SERVER_IMAGE_NAME}}
+
+      - name: Run server tests
+        run: |
+          docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "pytest -s"
+      
+      - name: Start client mobile
+        run: |
+          cd app/front/mobile
+          docker run -d \
+            --name ${{env.CLIENT_MOBILE_CONTAINER_NAME}} \
+            --network ${{env.DOCKER_NETWORK}} \
+            -v ${{env.DOCKER_VOLUME}}:/mobile \
+            --restart always \
+            -t \
+            ${{env.CLIENT_MOBILE_IMAGE_NAME}}
+          
+      - name: Run tests client mobile
+        run: |
+          TEST_RUN_COMMAND="echo 'hi'"
+          docker exec -t ${{env.CLIENT_MOBILE_CONTAINER_NAME}} /bin/bash -c $TEST_RUN_COMMAND
+          
+      - name: Start client web
+        run: |
+          cd app/front/web
+          docker run -d \
+            --name ${{env.CLIENT_WEB_CONTAINER_NAME}} \
+            --network ${{env.DOCKER_NETWORK}} \
+            -p 3000:8081 \
+            -v ${{env.DOCKER_VOLUME}}:/web \
+            --restart always \
+            -it \
+            ${{env.CLIENT_WEB_IMAGE_NAME}}
+
+      - name: Run tests client web
+        run: |
+          TEST_RUN_COMMAND="echo 'hi'"
+          docker exec -t ${{env.CLIENT_WEB_CONTAINER_NAME}} /bin/bash -c $TEST_RUN_COMMAND
+      
+      - name: Stop client web
+        run: |
+          docker stop ${{env.CLIENT_WEB_CONTAINER_NAME}}
+      
+      - name: Stop client mobile
+        run: |
+          docker stop ${{env.CLIENT_MOBILE_CONTAINER_NAME}}
+      
+      - name: Stop server
+        run: |
+          docker stop ${{env.SERVER_CONTAINER_NAME}}
+      
+      - name: Stop database
+        run: |
+          docker stop ${{env.DATABASE_CONTAINER_NAME}}
+      
+      - name: Stop s3
+        run: |
+          docker stop ${{env.BUCKET_CONTAINER_NAME}}
+
+      - name: Clean ressources
+        run: |
+          docker system prune -f
+      

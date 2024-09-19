@@ -60,7 +60,7 @@ services:
     build:
       context: ./app/front/web
       dockerfile: Dockerfile
-    image: t-web
+    image: terarea-web
     container_name: t-web
     restart: always
     tty: true
