@@ -90,6 +90,9 @@ class ServerPaths:
         self.add_path(
             "/test", self.runtime_data_initialised.endpoints_initialised.my_test_component, "GET"
         )
+        self.add_path(
+            "/bucket_names", self.runtime_data_initialised.endpoints_initialised.get_s3_bucket_names, "GET"
+        )
 
     def inject_routes(self) -> None:
         """_summary_

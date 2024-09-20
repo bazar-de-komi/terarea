@@ -129,6 +129,17 @@ class Endpoints:
             error=False
         )
         return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+    
+    def get_s3_bucket_names(self, request: Request) -> Response:
+        """
+            The endpoint to get every bucket data
+        """
+        title = "get_s3_bucket"
+        bucket_names = self.runtime_data_initialised.bucket_link.get_bucket_names()
+        self.disp.log_debug(f"Bucket names: {bucket_names}", title)
+        if isinstance(bucket_names, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.success({"msg": bucket_names})
 
     async def post_stop_server(self, request: Request) -> Response:
         """_summary_
