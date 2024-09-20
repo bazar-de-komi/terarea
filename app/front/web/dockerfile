@@ -16,7 +16,7 @@ RUN apt install -y \
 
 
 # Installing latest version of npm
-RUN npm install -g npm@latest
+# RUN npm install -g npm@latest
 
 # Installing npm requirements
 RUN npm install -g \
