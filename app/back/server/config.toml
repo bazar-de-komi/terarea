@@ -40,10 +40,6 @@ endpoint_pause = 100
 # The default value is 2
 endpoint_pause_length = 2
 
-# The base url of the endpoint to gather data from
-# The default value is "https://soul-connection.fr/"
-base_url = "https://soul-connection.fr/"
-
 # The status codes used by the program:
 [Status_codes]
 

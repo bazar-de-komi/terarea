@@ -76,11 +76,20 @@ class ServerPaths:
         self.disp.log_debug("Loading default paths_initialised",
                             "load_default_paths_initialised")
         self.add_path(
-            "/", self.runtime_data_initialised.endpoints_initialised.get_welcome, "GET")
+            "/", self.runtime_data_initialised.endpoints_initialised.get_welcome, "GET"
+        )
         self.add_path(
-            "/stop", self.runtime_data_initialised.endpoints_initialised.post_stop_server, "POST")
+            "/login", self.runtime_data_initialised.endpoints_initialised.post_login, "POST"
+        )
         self.add_path(
-            "/test", self.runtime_data_initialised.endpoints_initialised.my_test_component, "GET")
+            "/register", self.runtime_data_initialised.endpoints_initialised.put_register, "PUT"
+        )
+        self.add_path(
+            "/stop", self.runtime_data_initialised.endpoints_initialised.post_stop_server, "POST"
+        )
+        self.add_path(
+            "/test", self.runtime_data_initialised.endpoints_initialised.my_test_component, "GET"
+        )
 
     def inject_routes(self) -> None:
         """_summary_

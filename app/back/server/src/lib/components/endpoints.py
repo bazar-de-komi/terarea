@@ -80,7 +80,7 @@ class Endpoints:
         Returns:
             Response: _description_: The data to send back to the user as a response.
         """
-        title = "Stop server"
+        title = "Login"
         self.disp.log_critical("Implement proper login.", "post_login")
         username = "some_username_body"
         data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
@@ -101,6 +101,31 @@ class Endpoints:
             message=f"Welcome {username}",
             resp="success",
             token=data["token"],
+            error=False
+        )
+        body["token"] = data["token"]
+        return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    async def put_register(self, request: Request) -> Response:
+        """_summary_
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+        title = "Register"
+        self.disp.log_critical(
+            "Implement proper registration.",
+            "post_register"
+        )
+        username = "some_username_body"
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=f"Welcome {username}",
+            resp="success",
+            token="",
             error=False
         )
         return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)

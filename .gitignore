@@ -4,6 +4,9 @@
 # No temporary files
 *tmp*
 
+# No docker cache
+*.bash_history
+
 # No environements allowed
 .env
 
