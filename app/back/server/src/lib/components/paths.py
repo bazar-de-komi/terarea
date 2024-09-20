@@ -93,6 +93,9 @@ class ServerPaths:
         self.add_path(
             "/bucket_names", self.runtime_data_initialised.endpoints_initialised.get_s3_bucket_names, "GET"
         )
+        self.add_path(
+            "/get_table", self.runtime_data_initialised.endpoints_initialised.get_table, "GET"
+        )
 
     def inject_routes(self) -> None:
         """_summary_

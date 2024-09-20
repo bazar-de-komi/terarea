@@ -141,6 +141,12 @@ class Endpoints:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": bucket_names})
 
+    def get_table(self, request: Request) -> Response:
+        title = "get_table"
+        table = self.runtime_data_initialised.database_link.get_table_names()
+        self.disp.log_debug(f"received in {title}", table)
+        return HCI.success({"msg": table})
+
     async def post_stop_server(self, request: Request) -> Response:
         """_summary_
             The endpoint allowing a user to stop the server.

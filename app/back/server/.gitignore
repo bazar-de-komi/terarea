@@ -1,3 +1,6 @@
 # Python cache
 *.py[ocd]
 __pycache__/**
+
+# Docker cache
+.bash_history
