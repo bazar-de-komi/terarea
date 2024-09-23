@@ -1,29 +1,29 @@
-DROP DATABASE temp_name;
-CREATE DATABASE IF NOT EXISTS temp_name;
-USE temp_name;
+DROP DATABASE IF EXISTS terarea ;
+CREATE DATABASE IF NOT EXISTS terarea;
+USE terarea;
 
 CREATE TABLE Users (
-    UserID INT PRIMARY KEY,
+    UserID BIGINT PRIMARY KEY,
     UserName VARCHAR(255) NOT NULL,
     UserEmail VARCHAR(255) NOT NULL,
     UserPassword VARCHAR(255)
 );
 
 CREATE TABLE UserServices (
-    USId INT PRIMARY KEY,
-    USUserId INT PRIMARY KEY,
-    USServiceId INT PRIMARY KEY,
-    USAreaId INT PRIMARY KEY
+    USId BIGINT PRIMARY KEY,
+    USUserId BIGINT KEY,
+    USServiceId BIGINT KEY,
+    USAreaId BIGINT KEY
 );
 
 CREATE TABLE Services (
-    ServiceId INT PRIMARY KEY,
+    ServiceId BIGINT PRIMARY KEY,
     ServiceName VARCHAR(255)
 ),
 
 CREATE TABLE Area (
-    AreaId INT PRIMARY KEY,
-    AreaServiceId INT PRIMARY KEY,
+    AreaId BIGINT PRIMARY KEY,
+    AreaServiceId BIGINT KEY,
     AreaAPI VARCHAR(255) NOT NULL,
     AreaToken VARCHAR(255)
 ),
