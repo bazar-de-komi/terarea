@@ -4,6 +4,7 @@ __pycache__/**
 
 # Docker cache
 .bash_history
+.mysql_history
 
 # Ignore all the sql files in the server
 *.sql
