@@ -12,6 +12,7 @@ on:
         branches:
         - main
         - dev
+        - dev-workflows-unit-tests
     workflow_dispatch:
 
 env:
