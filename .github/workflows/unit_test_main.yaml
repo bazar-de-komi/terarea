@@ -11,6 +11,7 @@ on:
     push:
         branches:
         - main
+        - dev-workflows-unit-tests
     workflow_dispatch:
 
 env:
