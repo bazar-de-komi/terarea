@@ -1,7 +1,7 @@
 <template>
-  <button class="auth-button" @click="onClick">
-    <img v-if="icon" :src="`/src/assets/${icon}.svg`" alt="icon" class="auth-icon" />
-    {{ text }}
+  <button class="auth-button">
+    <img v-if="icon" :src="icon" alt="icon" class="auth-icon" />
+    <span>{{ text }}</span>
   </button>
 </template>
 
@@ -27,18 +27,30 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   width: 100%;
-  padding: 15px;
-  margin-top: 10px;
-  background-color: black;
+  padding: 22.5px;
+  margin-top: 15px;
+  background-color: #666;
   color: white;
   border: none;
-  border-radius: 25px;
-  font-size: 16px;
+  border-radius: 75px;
+  font-size: 27px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s ease-in-out;
+}
+
+.auth-button:hover {
+  background-color: #999;
+}
+
+.auth-button:active {
+  background-color: #bbb;
+  transform: scale(0.98);
 }
 
 .auth-icon {
-  margin-right: 10px;
-  height: 20px;
-  width: 20px;
+  margin-right: 15px;
+  height: 50px;
+  width: 50px;
 }
 </style>

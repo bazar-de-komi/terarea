@@ -2,7 +2,7 @@
   <div class="auth-layout">
     <h1>{{ title }}</h1>
     <slot></slot>
-    <router-link :to="linkPath">{{ linkText }}</router-link>
+    <router-link :to="linkPath" class="link">{{ linkText }}</router-link>
   </div>
 </template>
 
@@ -20,45 +20,29 @@ export default defineComponent({
 
 <style scoped>
 .auth-layout {
-  max-width: 400px;
-  margin: 0 auto;
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 45px;
   text-align: center;
+  background-color: #e0d8d7;
+  border-radius: 30px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-input {
+h1 {
+  margin-bottom: 30px;
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.link {
   display: block;
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  margin-top: 22.5px;
+  color: black;
+  text-decoration: none;
 }
 
-.auth-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  padding: 15px;
-  margin-top: 10px;
-  background-color: black;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 16px;
-}
-
-.auth-button img {
-  margin-right: 10px;
-}
-
-a {
-  color: #000;
-  display: block;
-  margin-top: 15px;
-}
-
-.social-login {
-  margin: 20px 0;
+.link:hover {
+  text-decoration: underline;
 }
 </style>
