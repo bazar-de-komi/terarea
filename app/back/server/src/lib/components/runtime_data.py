@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from .paths import ServerPaths
     from .endpoints import Endpoints
     from .server_management import ServerManagement
+    from .password_handling import PasswordHandling
     from ..boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
 
@@ -65,3 +66,4 @@ class RuntimeData:
         self.boilerplate_non_http_initialised: 'BoilerplateNonHTTP' = None
         self.paths_initialised: 'ServerPaths' = None
         self.endpoints_initialised: 'Endpoints' = None
+        self.password_handling_initialised: 'PasswordHandling' = None

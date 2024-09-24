@@ -35,7 +35,7 @@ class Endpoints:
             logger=self.__class__.__name__
         )
 
-    async def my_test_component(self) -> Response:
+    def my_test_component(self) -> Response:
         """_summary_
         This is a test component that will return a response with the message "Hello World".
         Returns:
@@ -43,7 +43,7 @@ class Endpoints:
         """
         return HCI.success({"msg": "Hello World"})
 
-    async def get_welcome(self, request: Request) -> Response:
+    def get_welcome(self, request: Request) -> Response:
         """_summary_
             The endpoint corresponding to '/'.
 
@@ -81,12 +81,18 @@ class Endpoints:
             Response: _description_: The data to send back to the user as a response.
         """
         title = "Login"
-        self.disp.log_critical("Implement proper login.", "post_login")
-        username = "some_username_body"
-        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
-            username,
-            "some_password_body"
-        )
+        # self.disp.log_critical("Implement proper login.", "post_login")
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        email = request_body["email"]
+        password = request_body["password"]
+        table = "Users"
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}'")
+        self.disp.log_debug(f"Retrived data: {user_info}", title)
+        if isinstance(user_info, int):
+            return HCI.not_found({"error": "Email not found."})
+        if self.runtime_data_initialised.password_handling_initialised.check_password(password, user_info[0]["password"])
+        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
         if data["status"] == self.error:
             body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 title=title,
@@ -96,9 +102,10 @@ class Endpoints:
                 error=True
             )
             return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+        name = user_info[0]["name"]
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
-            message=f"Welcome {username}",
+            message=f"Welcome {name}",
             resp="success",
             token=data["token"],
             error=False
