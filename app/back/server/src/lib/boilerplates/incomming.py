@@ -3,8 +3,8 @@
 """
 
 from typing import Union, Dict, Any
-from time import sleep
-from fastapi import Request
+# from time import sleep
+from fastapi import Request, UploadFile
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
 from ..components import RuntimeData, CONST
@@ -75,7 +75,7 @@ class BoilerplateIncoming:
             return True
         return False
 
-    def log_user_in(self, username: str = '', password: str = '') -> Dict[str, Any]:
+    def log_user_in(self, email: str = '') -> Dict[str, Any]:
         """_summary_
             Attempt to log the user in based on the provided credentials and the database.
 
@@ -90,15 +90,11 @@ class BoilerplateIncoming:
         data = {'status': self.error, 'token': ''}
         token = self.runtime_data_initialised.boilerplate_non_http_initialised.generate_token()
         self.runtime_data_initialised.user_data[token] = {
-            CONST.UA_EMAIL_KEY: "Some email",
+            CONST.UA_EMAIL_KEY: email,
             CONST.UA_LIFESPAN_KEY: self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
                 CONST.UA_TOKEN_LIFESPAN
             )
         }
-        self.disp.log_critical(
-            "Please review this login function for the server",
-            "log_user_in"
-        )
         data['status'] = self.success
         data['token'] = token
         return data
@@ -131,6 +127,39 @@ class BoilerplateIncoming:
         if token is not None:
             return token
         return mtoken
+    
+    async def get_body(self, request: Request) -> Dict[str, Any]:
+        """
+            Get the body of a request, whether it's JSON or form data.
+        Args:
+            request (Request): The incoming request object.
+
+        Returns:
+            Dict[str, Any]: Parsed request body in dictionary format.
+        """
+        body: Dict[str, Any] = {}
+
+        try:
+            body = await request.json()
+        except Exception:
+            try:
+                form = await request.form()
+                body = dict(form)
+
+                files = await request.form()
+                body["_files"] = {}
+
+                for file_key, file_value in files.items():
+                    if isinstance(file_value, UploadFile):
+                        body["_files"][file_key] = {
+                            "filename": file_value.filename,
+                            "content_type": file_value.content_type,
+                            "content": await file_value.read()
+                        }
+            except Exception as form_error:
+                msg = f"Failed to parse request body: {str(form_error)}"
+                body = {"error": msg}
+        return body
 
     def log_user_out(self, token: str = "") -> Dict[str, Any]:
         """_summary_

@@ -8,6 +8,7 @@ from .http_codes import HCI, HttpCodes
 from .paths import ServerPaths
 from .runtime_data import RuntimeData
 from .server_management import ServerManagement
+from .password_handling import PasswordHandling
 
 __all__ = [
     "CONST",
@@ -16,5 +17,6 @@ __all__ = [
     "HttpCodes",
     "ServerPaths",
     "RuntimeData",
-    "ServerManagement"
+    "ServerManagement",
+    "PasswordHandling"
 ]
