@@ -4,17 +4,14 @@
 import bcrypt
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
-from .runtime_data import RuntimeData
-
 class PasswordHandling:
     """__summary__
     """
 
-    def __init__(self, runtime_data: RuntimeData, error: int = 84, success: int = 0, debug: bool = False) -> None:
+    def __init__(self, error: int = 84, success: int = 0, debug: bool = False) -> None:
         self.debug: bool = debug
         self.success: int = success
         self.error: int = error
-        self.runtime_data_initialised: RuntimeData = runtime_data
         self.salt_rounds = 10
         # ------------------------ The logging function ------------------------
         self.disp: Disp = Disp(

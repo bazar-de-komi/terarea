@@ -7,6 +7,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from . import constants as CONST
 from .runtime_data import RuntimeData
 from .http_codes import HCI
+from .password_handling import PasswordHandling
 
 
 class Endpoints:
@@ -26,6 +27,11 @@ class Endpoints:
         self.success: int = success
         self.error: int = error
         self.runtime_data_initialised: RuntimeData = runtime_data
+        self.password_handling_initialised: PasswordHandling = PasswordHandling(
+            self.error,
+            self.success,
+            self.debug
+        )
         self.disp: Disp = Disp(
             TOML_CONF,
             SAVE_TO_FILE,
@@ -81,7 +87,6 @@ class Endpoints:
             Response: _description_: The data to send back to the user as a response.
         """
         title = "Login"
-        # self.disp.log_critical("Implement proper login.", "post_login")
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
         email = request_body["email"]
@@ -90,8 +95,9 @@ class Endpoints:
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}'")
         self.disp.log_debug(f"Retrived data: {user_info}", title)
         if isinstance(user_info, int):
-            return HCI.not_found({"error": "Email not found."})
-        if self.runtime_data_initialised.password_handling_initialised.check_password(password, user_info[0]["password"])
+            return HCI.unauthorized({"error": "Access denied."})
+        if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
+            return HCI.unauthorized({"error": "Access denied."})
         data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
         if data["status"] == self.error:
             body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
@@ -122,21 +128,42 @@ class Endpoints:
         Returns:
             Response: _description_
         """
+        # self.disp.log_critical(
+        #     "Implement proper registration.",
+        #     "post_register"
+        # )
+        # body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+        #     title=title,
+        #     message=f"Welcome {username}",
+        #     resp="success",
+        #     token="",
+        #     error=False
+        # )
         title = "Register"
-        self.disp.log_critical(
-            "Implement proper registration.",
-            "post_register"
-        )
-        username = "some_username_body"
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title=title,
-            message=f"Welcome {username}",
-            resp="success",
-            token="",
-            error=False
-        )
-        return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
-    
+        body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        self.disp.log_debug(f"Register body: {body}", title)
+        email: str = body["email"]
+        password = body["password"]
+        table = "Users"
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}")
+        if isinstance(user_info, int) is False:
+            return HCI.conflict({"error": "Email already exist."})
+        hashed_password = self.password_handling_initialised.hash_password(password)
+        username = email.split('@')[0]
+        self.disp.log_debug(f"Username = {username}", title)
+        data = list(username, email, hashed_password)
+        self.disp.log_debug(f"Data list = {data}", title)
+        column = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        self.disp.log_debug(f"Column = {column}", title)
+        if isinstance(column, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        column.pop(0)
+        self.disp.log_debug(f"Column after id pop = {column}", title)
+        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, column) == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.success({"msg": "Account created successfully."})
+        # return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
     def get_s3_bucket_names(self, request: Request) -> Response:
         """
             The endpoint to get every bucket data
@@ -149,6 +176,9 @@ class Endpoints:
         return HCI.success({"msg": bucket_names})
 
     def get_table(self, request: Request) -> Response:
+        """
+            table
+        """
         title = "get_table"
         table = self.runtime_data_initialised.database_link.get_table_names()
         self.disp.log_debug(f"received in {title}", table)

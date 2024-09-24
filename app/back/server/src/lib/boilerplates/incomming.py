@@ -95,10 +95,6 @@ class BoilerplateIncoming:
                 CONST.UA_TOKEN_LIFESPAN
             )
         }
-        # self.disp.log_critical(
-        #     "Please review this login function for the server",
-        #     "log_user_in"
-        # )
         data['status'] = self.success
         data['token'] = token
         return data
