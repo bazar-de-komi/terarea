@@ -1,9 +1,11 @@
 # Python cache
 *.py[ocd]
 __pycache__/**
+.pytest_cache/**
 
 # Docker cache
 .bash_history
+.python_history
 .mysql_history
 
 # Ignore all the sql files in the server
