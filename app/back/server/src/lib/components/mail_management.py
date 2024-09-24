@@ -4,7 +4,7 @@
 
 import ssl
 import smtplib
-from typing import Union, List
+from typing import List
 from email import encoders
 from email.message import EmailMessage
 from email.utils import make_msgid
