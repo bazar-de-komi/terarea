@@ -126,8 +126,7 @@ DROP TABLE IF EXISTS `Users`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(200) DEFAULT NULL,
-  `surname` varchar(100) DEFAULT NULL,
+  `username` varchar(200) NOT NULL,
   `email` varchar(320) NOT NULL,
   `password` varchar(1000) NOT NULL,
   `method` varchar(200) DEFAULT NULL,
@@ -154,4 +153,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-24 16:33:10
+-- Dump completed on 2024-09-24 16:45:36
