@@ -108,7 +108,7 @@ class Endpoints:
                 error=True
             )
             return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
-        name = user_info[0]["name"]
+        name = user_info[0]["username"]
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message=f"Welcome {name}",
@@ -145,13 +145,13 @@ class Endpoints:
         email: str = body["email"]
         password = body["password"]
         table = "Users"
-        user_info = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}")
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
             return HCI.conflict({"error": "Email already exist."})
         hashed_password = self.password_handling_initialised.hash_password(password)
         username = email.split('@')[0]
         self.disp.log_debug(f"Username = {username}", title)
-        data = list(username, email, hashed_password)
+        data = [username, email, hashed_password, "local"]
         self.disp.log_debug(f"Data list = {data}", title)
         column = self.runtime_data_initialised.database_link.get_table_column_names(table)
         self.disp.log_debug(f"Column = {column}", title)
