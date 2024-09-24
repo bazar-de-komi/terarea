@@ -37,6 +37,7 @@ CREATE TABLE `Actions` (
   `trigger` mediumtext NOT NULL DEFAULT 'Elle est où la pierre ?',
   `consequences` mediumtext NOT NULL DEFAULT 'DANS LA POCHE !!!',
   `author` bigint(20) unsigned NOT NULL,
+  `tags` longtext DEFAULT NULL COMMENT '''The tags used to find the the actions the user created.''',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Actions_UNIQUE` (`name`),
   KEY `Actions_Users_FK` (`author`),
@@ -67,6 +68,8 @@ CREATE TABLE `Services` (
   `key` varchar(1024) NOT NULL COMMENT 'api token',
   `Categorie` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api',
   `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '''The amount of tymes the service is used''',
+  `type` varchar(200) NOT NULL DEFAULT 'service' COMMENT 'The type of the api.',
+  `tags` longtext DEFAULT NULL COMMENT 'The keywords to search for the api',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`),
   UNIQUE KEY `Services_UNIQUE_1` (`name`),
@@ -151,4 +154,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-24 15:25:59
+-- Dump completed on 2024-09-24 16:33:10
