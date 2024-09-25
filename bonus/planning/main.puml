@@ -1,3 +1,8 @@
-@startuml
+@startuml main
+
+namespace docker {
+    !include "./sub_sections/back.puml"
+    !include "./sub_sections/front.puml"
+}
 
 @enduml

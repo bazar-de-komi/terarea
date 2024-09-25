@@ -1,0 +1,7 @@
+@startuml web
+
+namespace web {
+    node "Web Server" as web_server
+}
+
+@enduml

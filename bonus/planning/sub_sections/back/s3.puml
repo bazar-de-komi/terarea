@@ -1,0 +1,7 @@
+@startuml s3
+
+namespace s3 {
+    
+}
+
+@enduml

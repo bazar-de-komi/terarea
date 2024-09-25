@@ -1,0 +1,7 @@
+@startuml db
+
+namespace db {
+    
+}
+
+@enduml
