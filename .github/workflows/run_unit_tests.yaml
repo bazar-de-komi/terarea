@@ -129,7 +129,7 @@ jobs:
       - name: Run server tests
         run: |
           TEST_RUN_COMMAND="pwd && ls && pytest -s"
-          docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c $TEST_RUN_COMMAND
+          docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
       
       - name: Start client mobile
         run: |
@@ -145,7 +145,7 @@ jobs:
       - name: Run tests client mobile
         run: |
           TEST_RUN_COMMAND="echo 'hi'"
-          docker exec -t ${{env.CLIENT_MOBILE_CONTAINER_NAME}} /bin/bash -c $TEST_RUN_COMMAND
+          docker exec -t ${{env.CLIENT_MOBILE_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
           
       - name: Start client web
         run: |
@@ -162,7 +162,7 @@ jobs:
       - name: Run tests client web
         run: |
           TEST_RUN_COMMAND="echo 'hi'"
-          docker exec -t ${{env.CLIENT_WEB_CONTAINER_NAME}} /bin/bash -c $TEST_RUN_COMMAND
+          docker exec -t ${{env.CLIENT_WEB_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
       
       - name: Stop client web
         run: |
