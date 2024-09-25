@@ -1028,6 +1028,8 @@ EXCLUDE                = *.o \
                          app/back/server/.pytest_cache/** \
                          app/back/server/db/cache/** \
                          app/back/server/s3/cache/** \
+                         app/front/mobile/node_modules/** \
+                         app/front/web/node_modules/** \
                          .env \
                          .bash_history \
                          .mysql_history \

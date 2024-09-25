@@ -19,10 +19,10 @@ PROJECT_NAME="terarea"
 PROJECT_VERSION="1.0"
 
 # Files to include in scan
-FILES_TO_INCLUDE_IN_SCAN="*.cpp *.h *.hpp *.h++"
+FILES_TO_INCLUDE_IN_SCAN="*.cpp *.h *.hpp *.h++ *.py *.js"
 
 # Folders to exclude
-FOLDERS_TO_EXCLUDE="src/vendor src/parsing/libconfig src/parsing/simdjson include/libconfig include/simdjson"
+FOLDERS_TO_EXCLUDE="app/back/server/server_env app/back/db/cache app/back/s3/cache app/front/mobile/node_modules app/front/web/node_modules"
 
 # headerfiles include
 INCLUDE_PATH="./include"
@@ -242,7 +242,7 @@ HIDE_UNDOC_CLASSES     = $HIDE_UNDOC_CLASSES
 DEBUG=$TRUE
 
 # Publish container (for updating purposes)
-PUBLISH=$FALSE
+PUBLISH=$TRUE
 
 function run_command_in_container() {
     time $SUDO docker exec -it $CONTAINER_NAME /bin/bash -c "$1"
