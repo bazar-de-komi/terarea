@@ -111,6 +111,8 @@ jobs:
       - name: Start server
         run: |
           cd app/back/server
+          echo "ls -a = $(ls -a)"
+          echo "pwd = $(pwd)"
           docker run -d \
             --name ${{env.SERVER_CONTAINER_NAME}} \
             --network ${{env.DOCKER_NETWORK}} \
@@ -128,7 +130,7 @@ jobs:
 
       - name: Run server tests
         run: |
-          TEST_RUN_COMMAND="pwd && ls && pytest -s"
+          TEST_RUN_COMMAND="pwd && ls -Ra && pytest -s"
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
       
       - name: Start client mobile
