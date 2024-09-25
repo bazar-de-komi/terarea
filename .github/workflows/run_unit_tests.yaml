@@ -89,7 +89,7 @@ jobs:
       - name: Check for database connection
         run: |
           CONTAINER_NAME="db_connection_tester"
-          RUN_COMMAND="apt install -y mariadb-client && echo 'exit' | mariadb -u root -proot -h ${{env.DATABASE_CONTAINER_NAME}}"
+          RUN_COMMAND="apt install -y mariadb-client && echo 'exit' | mariadb -u root -proot -h maria-db"
           MAX_RETRIES=10  # Set your maximum retry count here
           RETRY_COUNT=0
           until docker run --rm \
