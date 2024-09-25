@@ -1,9 +1,9 @@
 @startuml back
 
 namespace back {
-    !include "./back/s3.puml"
-    !include "./back/db.puml"
-    !include "./back/server.puml"
+    !include "back/s3.puml"
+    !include "back/db.puml"
+    !include "back/server.puml"
 }
 
 @enduml
