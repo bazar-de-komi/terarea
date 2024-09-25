@@ -75,27 +75,7 @@ class ServerPaths:
         """
         self.disp.log_debug("Loading default paths_initialised",
                             "load_default_paths_initialised")
-        self.add_path(
-            "/", self.runtime_data_initialised.endpoints_initialised.get_welcome, "GET"
-        )
-        self.add_path(
-            "/login", self.runtime_data_initialised.endpoints_initialised.post_login, "POST"
-        )
-        self.add_path(
-            "/register", self.runtime_data_initialised.endpoints_initialised.put_register, "PUT"
-        )
-        self.add_path(
-            "/stop", self.runtime_data_initialised.endpoints_initialised.post_stop_server, "POST"
-        )
-        self.add_path(
-            "/test", self.runtime_data_initialised.endpoints_initialised.my_test_component, "GET"
-        )
-        self.add_path(
-            "/bucket_names", self.runtime_data_initialised.endpoints_initialised.get_s3_bucket_names, "GET"
-        )
-        self.add_path(
-            "/get_table", self.runtime_data_initialised.endpoints_initialised.get_table, "GET"
-        )
+        self.runtime_data_initialised.endpoints_initialised.inject_routes()
 
     def inject_routes(self) -> None:
         """_summary_

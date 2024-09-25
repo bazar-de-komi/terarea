@@ -3,7 +3,7 @@
 """
 
 from . import constants as CONST
-from .endpoints import Endpoints
+from .endpoints_routes import Endpoints
 from .http_codes import HCI, HttpCodes
 from .paths import ServerPaths
 from .runtime_data import RuntimeData
