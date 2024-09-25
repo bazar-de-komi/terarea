@@ -10,3 +10,6 @@ __pycache__/**
 
 # Ignore all the sql files in the server
 *.sql
+
+# Ignore google cloud authorisations
+client_secret*.json

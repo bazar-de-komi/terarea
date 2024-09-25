@@ -76,6 +76,12 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
         return default
 
 
+# Mail management
+SENDER_ADDRESS = _get_environement_variable(ENV, "SENDER_ADDRESS")
+SENDER_KEY = _get_environement_variable(ENV, "SENDER_KEY")
+SENDER_HOST = _get_environement_variable(ENV, "SENDER_HOST")
+SENDER_PORT = int(_get_environement_variable(ENV, "SENDER_PORT"))
+
 # Database management
 DB_HOST = _get_environement_variable(ENV, "DB_HOST")
 DB_PORT = int(_get_environement_variable(ENV, "DB_PORT"))
