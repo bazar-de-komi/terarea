@@ -90,7 +90,7 @@ jobs:
       - name: Install mariadb into t-server
         run: |
           RUN_COMMAND="apt update && apt install -y mariadb-client"
-          docker exec -it ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$RUN_COMMAND"
+          docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$RUN_COMMAND"
 
       - name: Check for database connection
         run: |
@@ -98,7 +98,7 @@ jobs:
           RUN_COMMAND="echo 'exit' | mariadb -u root -proot -h maria-db"
           MAX_RETRIES=10  # Set your maximum retry count here
           RETRY_COUNT=0
-          until docker exec -it ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$RUN_COMMAND"; do
+          until docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$RUN_COMMAND"; do
               RETRY_COUNT=$((RETRY_COUNT+1))
               if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
                 echo "Max retries reached, could not connect to the database."
