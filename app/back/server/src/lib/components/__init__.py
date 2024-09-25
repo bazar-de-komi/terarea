@@ -9,6 +9,7 @@ from .paths import ServerPaths
 from .runtime_data import RuntimeData
 from .server_management import ServerManagement
 from .password_handling import PasswordHandling
+from .mail_management import MailManagement
 
 __all__ = [
     "CONST",
@@ -18,5 +19,6 @@ __all__ = [
     "ServerPaths",
     "RuntimeData",
     "ServerManagement",
-    "PasswordHandling"
+    "PasswordHandling",
+    "MailManagement"
 ]
