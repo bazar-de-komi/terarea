@@ -2,6 +2,8 @@
 *.py[ocd]
 __pycache__/**
 .pytest_cache/**
+.coverage
+coverage_data/**
 
 # Docker cache
 .bash_history

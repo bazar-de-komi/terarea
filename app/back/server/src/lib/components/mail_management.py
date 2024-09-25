@@ -59,7 +59,6 @@ class MailManagement:
         context = ssl.create_default_context()
 
         try:
-            # Connect to the SMTP server and send the email
             with smtplib.SMTP_SSL(self.host, self.port, context=context) as smtp:
                 smtp.login(self.sender, self.api_key)
                 smtp.send_message(em)
@@ -90,7 +89,7 @@ class MailManagement:
         if body_type.lower() == "html":
             em.add_alternative(body, subtype='html')
         else:
-            em.set_content(body)  # Plain text body
+            em.set_content(body)
 
         return self._send(em)
 
@@ -113,20 +112,17 @@ class MailManagement:
         em['To'] = receiver
         em['Subject'] = subject
 
-        # Add the main email content
         if body_type == "html":
             em.add_alternative(body, subtype='html')
         else:
             em.set_content(body)
 
-        # Add each attachment
         for file in attachments:
             try:
                 with open(file, 'rb') as f:
                     file_data = f.read()
                     file_name = file.split('/')[-1]
 
-                    # Create the attachment
                     part = MIMEBase('application', 'octet-stream')
                     part.set_payload(file_data)
                     encoders.encode_base64(part)
@@ -168,7 +164,6 @@ class MailManagement:
         em['To'] = ', '.join(receivers)
         em['Subject'] = subject
 
-        # Add the main email content
         if body_type == "html":
             em.add_alternative(body, subtype='html')
         else:
@@ -200,11 +195,9 @@ class MailManagement:
         else:
             em.set_content(body)
 
-        # Embed the image
         try:
             with open(image_path, 'rb') as img:
                 img_data = img.read()
-                # Generate unique ID for inline image
                 img_cid = make_msgid()[1:-1]
                 em.add_related(
                     img_data,
@@ -212,7 +205,6 @@ class MailManagement:
                     subtype='jpeg',
                     cid=img_cid
                 )
-                # Insert the image CID into the body
                 em.set_content(body.format(img_cid=img_cid))
         except Exception as e:
             self.disp.log_critical(
