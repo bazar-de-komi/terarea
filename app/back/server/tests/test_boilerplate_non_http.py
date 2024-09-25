@@ -11,9 +11,9 @@ from fastapi import FastAPI
 sys.path.append(os.getcwd())
 
 try:
-    from src.lib.boilerplates.non_web import BoilerplateNonHTTP
-    from src.lib.components.endpoints_routes import Endpoints
     from src.lib.components.runtime_data import RuntimeData
+    from src.lib.components.endpoints_routes import Endpoints
+    from src.lib.boilerplates.non_web import BoilerplateNonHTTP
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 

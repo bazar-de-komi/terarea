@@ -8,8 +8,8 @@ from fastapi import Request, Response, FastAPI
 sys.path.append(os.getcwd())
 try:
     from src.lib.components.paths import ServerPaths
-    from src.lib.components.endpoints_routes import Endpoints
     from src.lib.components.runtime_data import RuntimeData
+    from src.lib.components.endpoints_routes import Endpoints
     from src.lib.components.constants import PATH_KEY, ENDPOINT_KEY,  METHOD_KEY, ALLOWED_METHODS
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
@@ -38,6 +38,7 @@ SPI = ServerPaths(
     error=ERROR,
     debug=False
 )
+RDI.paths_initialised = SPI
 
 
 def test_path_adding() -> None:
