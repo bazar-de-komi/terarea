@@ -193,14 +193,14 @@ coverage:
 	$(SILENT) mkdir -p $(COVERAGE_DIR)
 	$(SILENT) . ./$(ENV_NAME)/bin/activate && \
 	\
-	pytest --cov=$(TEST_DIR) --cov-report=term --cov-report=html:$(COVERAGE_DIR)/html_report --cov-report=xml:$(COVERAGE_DIR)/coverage.xml && \
+	COVERAGE_FILE=$(COVERAGE_DIR)/.coverage pytest --cov --cov-report=term --cov-report=html:$(COVERAGE_DIR)/html_report --cov-report=xml:$(COVERAGE_DIR)/coverage.xml && \
 	\
-	pytest --cov=$(TEST_DIR) --cov-branch --cov-report=term --cov-report=html:$(COVERAGE_DIR)/branch_html_report --cov-report=xml:$(COVERAGE_DIR)/branch_coverage.xml && \
-	\
-	coverage report --data-file=$(COVERAGE_DIR)/coverage.xml > $(COVERAGE_DIR)/report.txt && \
-	coverage report --data-file=$(COVERAGE_DIR)/branch_coverage.xml > $(COVERAGE_DIR)/branch_report.txt && \
-	\
+	coverage report --data-file=$(COVERAGE_DIR)/.coverage > $(COVERAGE_DIR)/report.txt && \
 	cat $(COVERAGE_DIR)/report.txt && \
+	\
+	COVERAGE_FILE=$(COVERAGE_DIR)/.coverage_branch pytest --cov --cov-branch --cov-report=term --cov-report=html:$(COVERAGE_DIR)/branch_html_report --cov-report=xml:$(COVERAGE_DIR)/branch_coverage.xml && \
+	\
+	coverage report --data-file=$(COVERAGE_DIR)/.coverage_branch > $(COVERAGE_DIR)/branch_report.txt && \
 	cat $(COVERAGE_DIR)/branch_report.txt
 	@echo -e "$(C_CYAN)Coverage report $(C_GREEN)generated$(C_RESET)"
 
