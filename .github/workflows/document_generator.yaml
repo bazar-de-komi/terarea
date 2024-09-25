@@ -1,6 +1,6 @@
 name: doxygen_generator
 
-# version: 1.0.0
+# version: 1.0.0.commando
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
           - "v*.*.*"
       branches:
           - main
-          - doxygen_generation
+          - dev-workflow-doxygen
   workflow_dispatch:
 
 
@@ -22,12 +22,6 @@ permissions:
 env:
   # Variables for managing required containers
   DOCKER_NAME: hanralatalliard/doxygen
-  CODING_STYLE_CONTAINER: ghcr.io/epitech/coding-style-checker:latest
-  # Variables for managin the tags
-  SETUP_FILE: setup.py
-  TAG_FILE: version.txt
-  IS_RELEASE: is_release.txt
-  LATEST_TAG: ""
   # variables managing name publishing
   COMMIT_TITLE: "There is no title"
   COMMIT_MESSAGE: "There is no message"
@@ -80,11 +74,6 @@ jobs:
       - name: Create required folders
         run: |
           mkdir -p ${{env.OUTPUT_GENERATION}} ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}
-      - name: Clean repository
-        run: |
-          make fclean
-          cd ./src/ai/
-          make fclean_env
       - name: Create dummy page for html renders
         run: |
           HTML_CONTENT='<!DOCTYPE html><html lang="en"><head>'
