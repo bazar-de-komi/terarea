@@ -42,7 +42,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "Zappy - Year end project"
+PROJECT_NAME           = "Terarea - The automation project"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -54,20 +54,20 @@ PROJECT_NUMBER         = 2
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "This is a project that Epitech asked us to create in order to allow us to reveiw the notions of the current year."
+PROJECT_BRIEF          = "This is a project that Epitech asked us to create in order to allow us to understand how to set up a website managing different triggers. This is a technical level in which we are asked to create a website and a mobile app that can both connect to the backend of the project."
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = bonus/doxygen_docker/favicon/favicon-32x32.png
+PROJECT_LOGO           = bonus/doxygen_generation/favicon/favicon-32x32.png
 
 # With the PROJECT_ICON tag one can specify an icon that is included in the tabs
 # when the HTML document is shown. Doxygen will copy the logo to the output
 # directory.
 
-PROJECT_ICON           = /app/bonus/doxygen_docker/html/files/icon/favicon.ico
+PROJECT_ICON           = /app/bonus/doxygen_generation/html/files/icon/favicon.ico
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -949,7 +949,7 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = src \
+INPUT                  = app \
                          Makefile
 
 # This tag can be used to specify the character encoding of the source files
@@ -1002,6 +1002,8 @@ FILE_PATTERNS          = *.c \
                          *.h++ \
                          *.py \
                          *.pyw \
+                         *.js \
+                         *.ts \
                          Makefile
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
@@ -1020,11 +1022,17 @@ RECURSIVE              = YES
 EXCLUDE                = *.o \
                          *.a \
                          *.pyc \
-                         zappy_ai \
-                         zappy_gui \
-                         zappy_server \
                          bonus/** \
-                         src/ai/ai_env/**
+                         app/back/server/server_env/** \
+                         app/back/server/coverage_data/** \
+                         app/back/server/.pytest_cache/** \
+                         app/back/server/db/cache/** \
+                         app/back/server/s3/cache/** \
+                         .env \
+                         .bash_history \
+                         .mysql_history \
+                         .python_history \
+                         .coverage
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -1295,7 +1303,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = bonus/doxygen_docker/html/header.html
+HTML_HEADER            = bonus/doxygen_generation/html/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1305,7 +1313,7 @@ HTML_HEADER            = bonus/doxygen_docker/html/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = bonus/doxygen_docker/html/footer.html
+HTML_FOOTER            = bonus/doxygen_generation/html/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1317,7 +1325,7 @@ HTML_FOOTER            = bonus/doxygen_docker/html/footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = bonus/doxygen_docker/html/files/css/colour_constants.css
+HTML_STYLESHEET        = bonus/doxygen_generation/html/files/css/colour_constants.css
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1335,8 +1343,8 @@ HTML_STYLESHEET        = bonus/doxygen_docker/html/files/css/colour_constants.cs
 # documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = bonus/doxygen_docker/html/files/css/doxysheet.css \
-                         bonus/doxygen_docker/html/files/css/stylesheet.css
+HTML_EXTRA_STYLESHEET  = bonus/doxygen_generation/html/files/css/doxysheet.css \
+                         bonus/doxygen_generation/html/files/css/stylesheet.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1346,9 +1354,9 @@ HTML_EXTRA_STYLESHEET  = bonus/doxygen_docker/html/files/css/doxysheet.css \
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = bonus/doxygen_docker/html/files/icon/favicon.ico \
-                         bonus/doxygen_docker/html/files/icon/browserconfig.xml \
-                         bonus/doxygen_docker/html/files/icon/site.webmanifest
+HTML_EXTRA_FILES       = bonus/doxygen_generation/html/files/icon/favicon.ico \
+                         bonus/doxygen_generation/html/files/icon/browserconfig.xml \
+                         bonus/doxygen_generation/html/files/icon/site.webmanifest
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
 # should be rendered with a dark or light theme.
@@ -2015,7 +2023,7 @@ EXTRA_PACKAGES         =
 # description of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_HEADER           = bonus/doxygen_docker/latex/latex_header.tex
+LATEX_HEADER           = bonus/doxygen_generation/latex/latex_header.tex
 
 # The LATEX_FOOTER tag can be used to specify a user-defined LaTeX footer for
 # the generated LaTeX document. The footer should contain everything after the
@@ -2027,7 +2035,7 @@ LATEX_HEADER           = bonus/doxygen_docker/latex/latex_header.tex
 # doing!
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_FOOTER           = bonus/doxygen_docker/latex/latex_footer.tex
+LATEX_FOOTER           = bonus/doxygen_generation/latex/latex_footer.tex
 
 # The LATEX_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # LaTeX style sheets that are included after the standard style sheets created
@@ -2038,7 +2046,7 @@ LATEX_FOOTER           = bonus/doxygen_docker/latex/latex_footer.tex
 # list).
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_EXTRA_STYLESHEET = bonus/doxygen_docker/latex/stylesheet/stylesheet.tex
+LATEX_EXTRA_STYLESHEET = bonus/doxygen_generation/latex/stylesheet/stylesheet.tex
 
 # The LATEX_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the LATEX_OUTPUT output
@@ -2152,7 +2160,7 @@ RTF_HYPERLINKS         = YES
 # default style sheet that doxygen normally uses.
 # This tag requires that the tag GENERATE_RTF is set to YES.
 
-RTF_STYLESHEET_FILE    = bonus/doxygen_docker/rtf/stylesheet/stylesheet.rtf
+RTF_STYLESHEET_FILE    = bonus/doxygen_generation/rtf/stylesheet/stylesheet.rtf
 
 # Set optional variables used in the generation of an RTF document. Syntax is
 # similar to doxygen's configuration file. A template extensions file can be
@@ -2373,8 +2381,7 @@ SEARCH_INCLUDES        = YES
 # RECURSIVE has no effect here.
 # This tag requires that the tag SEARCH_INCLUDES is set to YES.
 
-INCLUDE_PATH           = src/server/include \
-                         src/gui_client/include
+INCLUDE_PATH           = 
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard
 # patterns (like *.h and *.hpp) to filter out the header-files in the
