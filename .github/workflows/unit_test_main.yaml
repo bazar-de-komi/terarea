@@ -1,5 +1,4 @@
 name: run_unit_tests_on_branch_main
-
 # version: 1.0.3.commando
 # Version log:
   # 1.0.0: Initial version
@@ -40,12 +39,15 @@ jobs:
 
       - name: Create environement files
         run: |
+          echo "pwd = $(pwd)"
+          echo "Github content:"
+          ls -a -R
           cd app/back/db
-          cat ${{secrets.DATABASE_ENVIRONEMENT}} > .env
+          echo "${{secrets.DATABASE_ENVIRONEMENT}}" > .env
           cd ../s3
-          cat ${{secrets.BUCKET_ENVIRONEMENT}} > .env
-          cd ../back
-          cat ${{secrets.BACK_ENVIRONEMENT}} > .env
+          echo "${{secrets.BUCKET_ENVIRONEMENT}}" > .env
+          cd ../server
+          echo "${{secrets.BACK_ENVIRONEMENT}}" > .env
 
       - name: Create docker network
         run: |
@@ -117,6 +119,11 @@ jobs:
             --restart always \
             -t \
             ${{env.SERVER_IMAGE_NAME}}
+
+      - name: Show running containers
+        run: |
+          echo "Listing running containers"
+          docker ps -a
 
       - name: Run server tests
         run: |
