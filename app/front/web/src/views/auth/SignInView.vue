@@ -51,7 +51,7 @@ export default defineComponent({
   },
   methods: {
     submitSignIn() {
-      console.log('Sign in with', this.email, this.password);
+      console.log('Sign in with : ', this.email, this.password);
     },
     togglePassword() {
       this.showPassword = !this.showPassword;
