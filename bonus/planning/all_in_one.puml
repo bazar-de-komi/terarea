@@ -1,0 +1,83 @@
+@startuml main
+
+allow_mixing
+skinparam linetype ortho
+
+namespace docker {
+    
+    node "minio (S3 Bucket)" as minio {
+        entity "S3 Bucket: image-storage" {
+            entity "Image files"
+            entity "Metadata"
+        }
+    }
+    
+    node "maria-db (Database)" as mariadb {
+        entity "Actions" as actions {
+            +id : bigint [PK]
+            --
+            name : varchar(400) [UNIQUE]
+            trigger : mediumtext
+            consequences : mediumtext
+            author : bigint [FK -> Users.id]
+            tags : longtext
+        }
+
+        entity "Services" as services {
+            +id : bigint [PK]
+            --
+            name : varchar(200) [UNIQUE]
+            url : varchar(2048) [UNIQUE, HASH]
+            key : varchar(1024)
+            Categorie : varchar(200)
+            frequency : bigint
+            type : varchar(200)
+            tags : longtext
+            created_at : datetime
+        }
+
+        entity "UserServices" as userservices {
+            +id : bigint [PK]
+            --
+            user_id : bigint [FK -> Users.id]
+            service_id : bigint [FK -> Services.id]
+            area_id : bigint [FK -> Actions.id]
+        }
+
+        entity "Users" as users {
+            +id : bigint [PK]
+            --
+            username : varchar(200)
+            email : varchar(320) [UNIQUE]
+            password : varchar(1000)
+            method : varchar(200)
+        }
+
+        ' Relationships
+        actions ||--o{ userservices : "Referenced by"
+        services ||--o{ userservices : "Referenced by"
+        users ||--o{ userservices : "Referenced by"
+        users ||--o{ actions : "Author"
+    }
+
+    node "server (Backend Server)" as server {
+        entity "Server Application"
+    }
+
+    node "client_web (Web Frontend)" as web {
+        entity "Web Application"
+    }
+
+    node "client_mobile (Mobile Frontend)" as mobile {
+        entity "Mobile Application"
+    }
+
+    ' Relationships to show dependencies between the containers
+    server --> mariadb : Uses database
+    web --> server : Connects to backend
+    mobile --> web : Depends on Web
+    server --> minio : Connects to S3 for image storage
+
+}
+
+@enduml
