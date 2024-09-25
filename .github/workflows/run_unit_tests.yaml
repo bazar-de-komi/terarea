@@ -90,7 +90,7 @@ jobs:
       - name: Check for database connection
         run: |
           CONTAINER_NAME="db_connection_tester"
-          RUN_COMMAND="apt update && apt install -y mariadb-client && echo 'exit' | mariadb -u root -proot -h ${{env.DATABASE_CONTAINER_NAME}}"
+          RUN_COMMAND="apt install -y mariadb-client && echo 'exit' | mariadb -u root -proot -h ${{env.DATABASE_CONTAINER_NAME}}"
           until docker run --rm \
             --name $CONTAINER_NAME \
             --network ${{env.DOCKER_NETWORK}} \
