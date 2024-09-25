@@ -83,115 +83,47 @@ jobs:
           cd app/front/mobile
           docker build -t ${{env.CLIENT_MOBILE_IMAGE_NAME}} .
 
-      - name: Start s3 bucket
+      - name: Start the docker compose
         run: |
-          cd app/back/s3
-          docker run -d \
-            --name ${{env.BUCKET_CONTAINER_NAME}} \
-            --network ${{env.DOCKER_NETWORK}} \
-            --env-file .env \
-            -p 9000:9000 \
-            -p 9001:9001 \
-            -v $(pwd)/cache:/data \
-            ${{env.BUCKET_IMAGE_NAME}} \
-            server /data --console-address ":9001"
+          docker compose up -d
 
-      - name: Start database
+      - name: Check for database connection
         run: |
-          cd app/back/db
-          docker run -d \
-            --name ${{env.DATABASE_CONTAINER_NAME}} \
+          CONTAINER_NAME="db_connection_tester"
+          RUN_COMMAND="apt update && apt install -y mariadb-client && echo 'exit' | mariadb -u root -proot -h ${{env.DATABASE_CONTAINER_NAME}}"
+          until docker run --rm \
+            --name $CONTAINER_NAME \
             --network ${{env.DOCKER_NETWORK}} \
-            --env-file .env \
-            -p 3307:3306 \
-            -v $(pwd)/cache:/var/lib/mysql \
-            --restart always \
-            ${{env.DATABASE_IMAGE_NAME}}
-
-      - name: Wait for database to be running
-        run: |
-          until [ "$(docker inspect -f '{{.State.Health.Status}}' ${{env.DATABASE_CONTAINER_NAME}})" = "healthy" ]; do
-            echo "Waiting for the database container...";
-            sleep 5;
+            -t ${{env.SERVER_IMAGE_NAME}} \
+            /bin/bash -c "$RUN_COMMAND"; do
+              echo "Waiting for the database to be ready..."
+              sleep 5
           done
-
-      - name: Start server
-        run: |
-          cd app/back/server
-          echo "ls -a = $(ls -a)"
-          echo "pwd = $(pwd)"
-          docker run -d \
-            --name ${{env.SERVER_CONTAINER_NAME}} \
-            --network ${{env.DOCKER_NETWORK}} \
-            --env-file .env \
-            -p 8081:8081 \
-            -v $(pwd):/srv/ \
-            --restart always \
-            -t \
-            ${{env.SERVER_IMAGE_NAME}}
+          echo "Database connection established."
 
       - name: Show running containers
         run: |
           echo "Listing running containers"
-          docker ps -a
+          docker ps
 
       - name: Run server tests
         run: |
           TEST_RUN_COMMAND="pwd && ls -Ra && pytest -s"
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
-      
-      - name: Start client mobile
-        run: |
-          cd app/front/mobile
-          docker run -d \
-            --name ${{env.CLIENT_MOBILE_CONTAINER_NAME}} \
-            --network ${{env.DOCKER_NETWORK}} \
-            -v ${{env.DOCKER_VOLUME}}:/mobile \
-            --restart always \
-            -t \
-            ${{env.CLIENT_MOBILE_IMAGE_NAME}}
           
       - name: Run tests client mobile
         run: |
           TEST_RUN_COMMAND="echo 'hi'"
           docker exec -t ${{env.CLIENT_MOBILE_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
-          
-      - name: Start client web
-        run: |
-          cd app/front/web
-          docker run -d \
-            --name ${{env.CLIENT_WEB_CONTAINER_NAME}} \
-            --network ${{env.DOCKER_NETWORK}} \
-            -p 3000:8081 \
-            -v ${{env.DOCKER_VOLUME}}:/web \
-            --restart always \
-            -it \
-            ${{env.CLIENT_WEB_IMAGE_NAME}}
 
       - name: Run tests client web
         run: |
           TEST_RUN_COMMAND="echo 'hi'"
           docker exec -t ${{env.CLIENT_WEB_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
       
-      - name: Stop client web
+      - name: Stop the docker compose
         run: |
-          docker stop ${{env.CLIENT_WEB_CONTAINER_NAME}}
-      
-      - name: Stop client mobile
-        run: |
-          docker stop ${{env.CLIENT_MOBILE_CONTAINER_NAME}}
-      
-      - name: Stop server
-        run: |
-          docker stop ${{env.SERVER_CONTAINER_NAME}}
-      
-      - name: Stop database
-        run: |
-          docker stop ${{env.DATABASE_CONTAINER_NAME}}
-      
-      - name: Stop s3
-        run: |
-          docker stop ${{env.BUCKET_CONTAINER_NAME}}
+          docker compose down
 
       - name: Clean ressources
         run: |
