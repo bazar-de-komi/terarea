@@ -121,6 +121,11 @@ jobs:
             -t \
             ${{env.SERVER_IMAGE_NAME}}
 
+      - name: Show running containers
+        run: |
+          echo "Listing running containers"
+          docker ps -a
+
       - name: Run server tests
         run: |
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "pytest -s"
