@@ -9,7 +9,7 @@ from ..sql.sql_manager import SQL
 from ..bucket import Bucket
 if TYPE_CHECKING:
     from .paths import ServerPaths
-    from .endpoints import Endpoints
+    from .endpoints_routes import Endpoints
     from .server_management import ServerManagement
     from ..boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
