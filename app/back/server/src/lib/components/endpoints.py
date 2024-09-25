@@ -128,17 +128,6 @@ class Endpoints:
         Returns:
             Response: _description_
         """
-        # self.disp.log_critical(
-        #     "Implement proper registration.",
-        #     "post_register"
-        # )
-        # body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-        #     title=title,
-        #     message=f"Welcome {username}",
-        #     resp="success",
-        #     token="",
-        #     error=False
-        # )
         title = "Register"
         body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Register body: {body}", title)
@@ -162,13 +151,16 @@ class Endpoints:
         if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, column) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "Account created successfully."})
-        # return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     def get_s3_bucket_names(self, request: Request) -> Response:
         """
             The endpoint to get every bucket data
         """
         title = "get_s3_bucket"
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(request)
+        self.disp.log_debug(f"Token = {token}", title)
+        if token is None:
+            return HCI.unauthorized({"error": "Authorisation required."})
         bucket_names = self.runtime_data_initialised.bucket_link.get_bucket_names()
         self.disp.log_debug(f"Bucket names: {bucket_names}", title)
         if isinstance(bucket_names, int):
@@ -180,6 +172,10 @@ class Endpoints:
             table
         """
         title = "get_table"
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(request)
+        self.disp.log_debug(f"Token = {token}", title)
+        if token is None:
+            return HCI.unauthorized({"error": "Authorisation required."})
         table = self.runtime_data_initialised.database_link.get_table_names()
         self.disp.log_debug(f"received in {title}", table)
         return HCI.success({"msg": table})

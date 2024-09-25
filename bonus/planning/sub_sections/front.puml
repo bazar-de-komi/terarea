@@ -1,0 +1,8 @@
+@startuml front
+
+namespace front {
+    !include "front/mobile.puml"
+    !include "front/web.puml"
+}
+
+@enduml
