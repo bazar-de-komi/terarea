@@ -1,0 +1,592 @@
+@startuml server
+
+node "server (Backend Server)" as server {
+            !define ENV <.env>
+        !define TOML <config.toml>
+
+        ' Main class to bootstrap the server in standalone mode
+        class Main {
+            +int argc
+            +str host = "0.0.0.0"
+            +int port = 5000
+            +int success = 0
+            +int error = 84
+            +str app_name = "Area"
+            +bool debug = False
+
+            -__init__(success: int, error: int)
+            +process_args(): void
+            +main(): void
+        }
+
+        ' Server class used to initialize and run the server
+        class Server {
+            - host: String
+            - port: int
+            - success: int
+            - error: int
+            - debug: bool
+            - continue_running: bool
+            - disp: Disp
+            - runtime_data_initialised: RuntimeData
+            -__init__(host: str, port: int, success: int, error: int, app_name: str, debug: bool)
+            +main(): int
+            +is_running(): bool
+        }
+
+        ' The Http Codes class
+        class HttpCodes {
+            +authorised_statuses : List[int]
+            +data_types : Dict[str, str]
+
+            -__init__() : None
+            -_check_data_type(data_type: Union[str, None]) : str
+            -_check_header(header: Union[Mapping[str, str], None]) : Any
+            -_process_data_content(data: Any, data_type: str) : Any
+            +send_message_on_status(status: int, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +send_continue(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +switching_protocols(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +processing(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +early_hints(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +response_is_stale(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +success(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +created(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +accepted(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +non_authoritative_information(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +no_content(content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +reset_content(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +partial_content(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +multi_status(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +already_reported(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +im_used(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +multiple_choices(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +moved_permanently(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +found(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +see_other(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +not_modified(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +use_proxy(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +switch_proxy(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +temporary_redirect(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +permanent_redirect(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +bad_request(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +unauthorized(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +payment_required(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +forbidden(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +not_found(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +method_not_allowed(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +not_acceptable(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +proxy_authentication_required(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +request_timeout(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +conflict(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +gone(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +length_required(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +precondition_failed(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +payload_too_large(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +uri_too_long(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +unsupported_media_type(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +range_not_satisfiable(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +expectation_failed(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +im_a_teapot(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +page_expired(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +enhance_your_calm(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +misdirected_request(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +unprocessable_entity(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +locked(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +failed_dependency(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +too_early(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +upgrade_required(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +precondition_required(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +too_mAny_requests(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +request_header_fields_too_large(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +unavailable_for_legal_reasons(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +invalid_token(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +internal_server_error(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +not_implemented(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +bad_gateway(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +service_unavailable(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +gateway_timeout(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +http_version_not_supported(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +variant_also_negotiates(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +insufficient_storage(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +loop_detected(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +bandwidth_limit_exceeded(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +not_extended(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+            +network_authentication_required(self, content: Any, content_type: str, headers: Mapping[str, str]) : Response
+        }
+
+        class PasswordHandling {
+            -debug : bool
+            -success : int
+            -error : int
+            -salt_rounds : int
+            -disp : Disp
+
+            -__init__(error: int, success: int, debug: bool) : None
+            +hash_password(password: str) : str
+            +check_password(password: str, password_hash: bytes) : bool
+        }
+
+        ' Define the ServerPaths class and its attributes/methods
+        class ServerPaths {
+            -runtime_data_initialised: RuntimeData
+            -success: int
+            -error: int
+            -routes: List[Dict[str, Any]]
+            -debug: bool
+            -disp: Disp
+
+            -__init__(runtime_data: RuntimeData, success: int, error: int, debug: bool) : None
+            +add_path(path: str, endpoint: object, method: Union[str, List[str]]) : int
+            +load_default_paths_initialised() : None
+            +inject_routes() : None
+        }
+
+        ' Define the ServerManagement class
+        class ServerManagement {
+            -runtime_data_initialised: RuntimeData
+            -error: int
+            -success: int
+            -debug: bool
+            -disp: Disp
+
+            -__init__(runtime_data: RuntimeData, error: int, success: int, debug: bool) : None
+            -__del__() : None
+            +is_server_alive() : bool
+            +is_server_running() : bool
+            +shutdown() : Response
+            +initialise_classes() : None
+        }
+
+        class Endpoints {
+            -__init__(runtime_data: RuntimeData, success: int, error: int, debug: bool)
+            +my_test_component() : Response
+            +get_welcome(request: Request) : Response
+            +post_login(request: Request) : Response
+            +put_register(request: Request) : Response
+            +get_s3_bucket_names(request: Request) : Response
+            +get_table(request: Request) : Response
+            +post_stop_server(request: Request) : Response
+        }
+
+        class RuntimeData {
+            +const: CONST
+            +host: str
+            +port: int
+            +error: int
+            +success: int
+            +app_name: str
+            +user_data: Dict[Dict[str, Any]]
+            +app: FastAPI
+            +database_link: SQL
+            +bucket_link: Bucket
+            +json_header: Dict[str, Any]
+            +config: uvicorn.Config
+            +server: uvicorn.Server
+            +server_running: bool
+            +continue_running: bool
+            +thread_cache_continue: bool
+            +server_management_initialised: ServerManagement
+            +boilerplate_responses_initialised: BoilerplateResponses
+            +boilerplate_incoming_initialised: BoilerplateIncoming
+            +boilerplate_non_http_initialised: BoilerplateNonHTTP
+            +paths_initialised: ServerPaths
+            +endpoints_initialised: Endpoints
+        }
+
+        class Constants {
+            -_get_environement_variable(environement: dotenv, variable_name: str) : str
+            -_get_toml_variable(toml_conf: dict, section: str, key: str, default: Union[str, None]) : str
+            +SENDER_ADDRESS: str
+            +SENDER_KEY: str
+            +SENDER_HOST: str
+            +SENDER_PORT: int
+            +DB_HOST: str
+            +DB_PORT: int
+            +DB_USER: str
+            +DB_PASSWORD: str
+            +DB_DATABASE: str
+            +MINIO_HOST: str
+            +MINIO_PORT: int
+            +MINIO_ROOT_USER: str
+            +MINIO_ROOT_PASSWORD: str
+            +STARTUP_DELAY: int
+            +SUCCESS: int
+            +ERROR: int
+            +DEBUG: bool
+            +HELP_COMMANDS: Dict[str, str]
+            +JSON_TITLE: str
+            +JSON_MESSAGE: str
+            +JSON_ERROR: str
+            +JSON_RESP: str
+            +JSON_LOGGED_IN: str
+            +JSON_UID: str
+            +JSON_HEADER_APP_NAME: str
+            +JSON_HEADER_HOST: str
+            +JSON_HEADER_PORT: str
+            +JSON_HEADER_CHARACTER_NAME: str
+            +CONTENT_TYPE: str
+            +CHAR_NODE_KEY: str
+            +CHAR_ACTIVE_KEY: str
+            +CHAR_NAME_KEY: str
+            +CHAR_UID_KEY: str
+            +USERNAME_INDEX_DB: int
+            +PASSWORD_INDEX_DB: int
+            +FIRSTNAME_INDEX_DB: int
+            +LASTNAME_INDEX_DB: int
+            +BIRTHDAY_INDEX_DB: int
+            +GENDER_INDEX_DB: int
+            +ROLE_INDEX_DB: int
+            +UD_USERNAME_KEY: str
+            +UD_FIRSTNAME_KEY: str
+            +UD_LASTNAME_KEY: str
+            +UD_BIRTHDAY_KEY: str
+            +UD_GENDER_KEY: str
+            +UD_ROLE_KEY: str
+            +UD_ADMIN_KEY: str
+            +UD_LOGIN_TIME_KEY: str
+            +UD_LOGGED_IN_KEY: str
+            +PATH_KEY: str
+            +ENDPOINT_KEY: str
+            +METHOD_KEY: str
+            +ALLOWED_METHODS: List[str]
+            +REQUEST_TOKEN_KEY: str
+            +REQUEST_BEARER_KEY: str
+            +THREAD_CACHE_REFRESH_DELAY: int
+            +UA_TOKEN_LIFESPAN: int
+            +UA_EMAIL_KEY: str
+            +UA_LIFESPAN_KEY: str
+        }
+
+        class RuntimeData {
+            - host: String
+            - port: int
+            - app_name: String
+            - server_management_initialised: ServerManagement
+            - boilerplate_responses_initialised: BoilerplateResponses
+            - boilerplate_incoming_initialised: BoilerplateIncoming
+            - boilerplate_non_http_initialised: BoilerplateNonHTTP
+            - paths_initialised: ServerPaths
+            - database_link: SQL
+            - bucket_link: Bucket
+            - endpoints_initialised: Endpoints
+        }
+
+        class ServerManagement {
+            + initialise_classes()
+            + is_server_running(): bool
+        }
+
+        class RuntimeData {
+            +app: FastAPI
+            +host: str
+            +port: int
+            +config: Config
+            +server: Server
+            +continue_running: bool
+            +database_link: DatabaseLink
+            +bucket_link: BucketLink
+            +boilerplate_responses_initialised: BoilerplateResponses
+            +json_header: dict
+        }
+
+        class MailManagement {
+            -success: int
+            -error: int
+            -debug: bool
+            -sender: str
+            -host: str
+            -api_key: str
+            -port: int
+            -disp: Disp
+
+            -__init__(error: int, success: int, debug: bool) : None
+            -_send(em: EmailMessage) : int
+            +send_email(receiver: str, subject: str, body: str, body_type: str) : int
+            +send_email_with_attachment(receiver: str, subject: str, body: str, attachments: List[str], body_type: str) : int
+            +send_email_to_multiple(receivers: List[str], subject: str, body: str, body_type: str) : int
+            +send_email_with_inline_image(receiver: str, subject: str, body: str, image_path: str, body_type: str) : int
+        }
+
+        class BoilerplateNonHTTP {
+            -__init__(self, runtime_data_initialised: RuntimeData, success: int, error: int, debug: bool) : None
+            +pause(self) : str
+            +set_lifespan(self, seconds:int) : datetime
+            +generate_token(self) : str
+            +server_show_item_content(self, function_name: str, item_name: str, item: object, show: bool) : None
+            +check_date(self, date: str) : bool
+            +check_database_health(self) : None
+        }
+
+        class BoilerplateResponses {
+            -__init__(self, runtime_data: RuntimeData, debug: bool = False) : None
+            +build_response_body(self, title: str, message: str, resp: Any, token: Union[str, None], error: bool) : Dict[str, Any]
+            +invalid_token(self, title: str) : Response
+            +not_logged_in(self, title: str) : Response
+            +login_failed(self, title: str) : Response
+            +insuffisant_rights(self, title: str, token: str) : Response
+        }
+
+        class BoilerplateIncoming {
+            -__init__(self, runtime_data: RuntimeData, error: int, success: int, debug: bool) -> None
+            +token_correct(self, request: Request) : bool
+            +logged_in(self, request: Request) : bool
+            +log_user_in(self, email: str) : Dict[str, Any]
+            +get_token_if_present(self, request: Request) : Union[str, None]
+            +async get_body(self, request: Request) : Dict[str, Any]
+            +log_user_out(self, token: str) : Dict[str, Any]
+        }
+
+        class Injection {
+            -__init__(self, error: int , success: int, debug: bool) : None
+            -_perror(self, string: str) : None
+            -_is_base64(self, string: str) : bool
+            +check_if_symbol_sql_injection(self, string: Union[str, List[str]]) : bool
+            +check_if_command_sql_injection(self, string: Union[str, List[str]]) : bool
+            +check_if_logic_gate_sql_injection(self, string: Union[str, List[str]]) : bool
+            +check_if_symbol_and_command_injection(self, string: Union[str, List[str]]) : bool
+            +check_if_symbol_and_logic_gate_injection(self, string: Union[str, List[str]]) : bool
+            +check_if_command_and_logic_gate_injection(self, string: Union[str, List[str]]) : bool
+            +check_if_sql_injection(self, string: Union[str, List[str]]) : bool
+            +check_if_injections_in_strings(self, array_of_strings: Union[str, List[str], List[List[str]]]) : bool
+            +run_test(self, title: str, array: List[str], function: object, expected_response: bool, global_status: int) : int
+            +test_injection_class(self) -> int
+        }
+
+        class SQL {
+            -__init__(self, url: str, port: int, username: str, password: str, db_name: str, success: int, error: int, debug: bool) : None
+            -_save(self) : int
+            -__del__(self) : None
+            -_reconnect(self) : None
+            -_get_correct_now_value(self) : str
+            -_check_sql_cell(self, cell: str) : str
+            -_protect_sql_cell(self, cell: str) : str
+            -_get_correct_current_date_value(self) : str
+            -_compile_update_line(self, line: List, column: List, column_length) : str
+            -_run_editing_command(self, sql_query: str, table: str, action_type: str = "update") : int
+            -_process_sql_line(self, line: List[str], column: List[str], column_length: int = (-1)) : str
+            -_beautify_table(self, column_names: List[str], table_content: List[List[Any]]) : Union[List[Dict[str, Any]], int]
+            +is_connected(self) : bool
+            +get_table_names(self) : List[str]
+            +describe_table(self, table: str) : List[Any]
+            +get_table_column_names(self, table_name: str) : Union[List[str], int]
+            +connect_to_db(self, username: str, password: str, db_name: str) : None
+            +insert_data_into_table(self, table: str, data: Union[List[List[str]], List[str]], column: Union[List[str], None]) : int
+            +get_data_from_table(self, table: str, column: Union[str, List[str]], where: Union[str, List[str]], beautify: bool) : Union[int, List[Dict[str, Any]]]
+            +get_table_size(self, table: str, column: Union[str, List[str]], where: Union[str, List[str]]) : Union[int]
+            +update_data_in_table(self, table: str, data: List[str], column: List, where: Union[str, List[str]]) : int
+            +insert_or_update_data_into_table(self, table: str, data: Union[List[List[str]], List[str]], column: Union[List[str], None]) : int
+            +remove_data_from_table(self, table: str, where: Union[str, List[str]]) : int
+            +disconnect_db(self) : int
+        }
+
+        class Bucket {
+            -__init__(self, error: int, success: int, debug: bool) : None
+            +connect(self) : int
+            +is_connected(self) : bool
+            +disconnect(self) : int
+            +get_bucket_names(self) : Union[List[str], int]
+            +create_bucket(self, bucket_name: str) : int
+            +upload_file(self, bucket_name: str, file_path: str, key_name: Optional[str]) : int
+            +download_file(self, bucket_name: str, key_name: str, destination_path: str) : int
+            +delete_file(self, bucket_name: str, key_name: str) : int
+            +delete_bucket(self, bucket_name: str) : int
+            +get_bucket_files(self, bucket_name: str) : Union[List[str], int]
+            +get_bucket_file(self, bucket_name: str, key_name: str) : Union[Dict[str, Any], int]
+        }
+
+        ' Define the components module
+        package "components" {
+            class re <<imported>>
+            class HCI <<imported>>
+            class uuid <<imported>>
+            class boto3 <<imported>>
+            class CONST <<imported>>
+            class IDISP <<imported>>
+            class base64 <<imported>>
+            class mariadb <<imported>>
+            class datetime <<imported>>
+            class timedelta <<imported>>
+            class TOMLConfig <<imported>>
+            package botocore {
+                class client <<imported>>
+                class exceptions <<imported>>
+            }
+            class Environment {
+                +dotenv
+                +ENV: Dict[str, str]
+            }
+            package "ssl" {
+                class SSLContext {
+                    +create_default_context() : SSLContext
+                }
+            }
+            package "smtplib" {
+                class SMTP_SSL {
+                    +login(username: str, password: str) : None
+                    +send_message(em: EmailMessage) : None
+                }
+            }
+            package "email" {
+                class EmailMessage {
+                    +add_alternative(body: str, subtype: str) : None
+                    +set_content(body: str) : None
+                    +add_related(data: bytes, maintype: str, subtype: str, cid: str) : None
+                    +add_attachment(data: bytes, maintype: str, subtype: str, filename: str) : None
+                }
+                
+                class encoders {
+                    +encode_base64(part: MIMEBase) : None
+                }
+                
+                class MIMEBase {
+                    +set_payload(data: bytes) : None
+                    +add_header(key: str, value: str) : None
+                }
+                
+                class make_msgid
+            }
+            package "display_tty" {
+                class Disp {
+                    +log_debug(msg: str, title:str) : None
+                    +log_info(msg: str, title:str) : None
+                    +log_warning(msg: str, title:str): None
+                    +log_error(msg: str, title:str) : None
+                    +log_critical(msg: str, title:str) : None
+                }
+                TOML_CONF : const
+                FILE_DESCRIPTOR : const
+                SAVE_TO_FILE : const
+                FILE_NAME : const
+                TOML_CONF --> Disp : uses
+                FILE_DESCRIPTOR --> Disp: uses
+                SAVE_TO_FILE --> Disp: uses
+                FILE_NAME --> Disp: uses
+            }
+            ' Define external components/modules
+            package "fastapi" {
+                class FastAPI {
+                    +add_middleware() : None
+                }
+                
+                class Response
+            }
+
+            package "uvicorn" {
+                class Config {
+                    +__init__(app: FastAPI, host: str, port: int) : None
+                }
+                
+                class Server {
+                    +handle_exit(sig: signal, frame: None) : None
+                }
+            }
+
+            package "signal" {
+                class signal {
+                    +SIGTERM
+                }
+            }
+
+            package "bcrypt" {
+                class bcrypt <<imported>> {
+                    +gensalt(rounds: int) : bytes
+                    +hashpw(password: bytes, salt: bytes) : bytes
+                    +checkpw(password: bytes, password_hash: bytes) : bool
+                }
+            }
+
+        }
+
+        ' Relationships between components
+        ServerPaths --> RuntimeData : uses
+        ServerPaths --> components.display_tty.Disp : logs information
+        ServerPaths --> "0..*" Endpoints : adds paths for endpoints
+        ServerPaths --> ALLOWED_METHODS : checks allowed methods
+        PasswordHandling --> components.display_tty.Disp : uses
+        PasswordHandling --> components.bcrypt.bcrypt : hashes and checks passwords
+        MailManagement --> EmailMessage : uses for email handling
+        MailManagement --> SMTP_SSL : uses for email sending
+        MailManagement --> SSLContext : uses for secure connections
+        MailManagement --> components.display_tty.Disp : uses for logging
+        MailManagement --> Constants : uses for email configuration
+        MailManagement --> encoders : uses for encoding attachments
+        MailManagement --> components.MIMEBase : handles email attachments
+        MailManagement --> make_msgid : generates inline image CID
+        ServerManagement --> RuntimeData : uses for runtime data management
+        ServerManagement --> components.display_tty.Disp : uses for logging
+        ServerManagement --> components.fastapi.FastAPI : initialises FastAPI app
+        ServerManagement --> components.uvicorn.CORSMiddleware : sets up CORS policies
+        ServerManagement --> components.uvicorn.Config : creates Uvicorn config
+        ServerManagement --> components.uvicorn.Server : manages Uvicorn server operations
+        ServerManagement --> components.signal.signal : uses signal handling for server shutdown
+        ServerManagement --> DatabaseLink : disconnects database during shutdown
+        ServerManagement --> BucketLink : disconnects bucket during shutdown
+        ServerManagement --> BoilerplateResponses : builds shutdown response body
+        ServerManagement --> HCI : sends success response for shutdown
+        PasswordHandling --> Endpoints
+        components.display_tty.Disp --> Endpoints
+        Endpoints --> RuntimeData
+        Endpoints --> HCI
+        Endpoints --> CONST
+        Endpoints --> components.display_tty.Disp
+        SQL --> Endpoints
+        Bucket --> Endpoints
+        Server --> Endpoints
+        Incoming --> Endpoints
+        Responses --> Endpoints
+        RuntimeData --> components.CONST
+        RuntimeData --> SQL
+        RuntimeData --> Bucket
+        RuntimeData --> components.fastapi.FastAPI
+        RuntimeData --> UvicornConfig
+        RuntimeData --> UvicornServer
+        RuntimeData --> ServerManagement
+        RuntimeData --> BoilerplateIncoming
+        RuntimeData --> BoilerplateNonHTTP
+        RuntimeData --> BoilerplateResponses
+        RuntimeData --> ServerPaths
+        RuntimeData --> Endpoints
+        Constants --> Environment : Uses ENV variables
+        Constants --> TOMLConfig : Loads config.toml data
+        Constants --> IDISP : Logs warnings
+        Environment --> components.dotenv : Loads .env
+        TOMLConfig --> components.toml : Loads toml file
+        components.IDISP --> components.Logger : Logs application-level messages
+        Constants --> components.CONST: Initialised version
+        BoilerplateNonHTTP --> components.re: uses
+        BoilerplateNonHTTP --> components.uuid: uses
+        BoilerplateNonHTTP --> components.datetime: uses
+        BoilerplateNonHTTP --> components.timedelta: uses
+        BoilerplateNonHTTP --> RuntimeData: uses
+        BoilerplateNonHTTP --> components.display_tty.Disp: uses for logging
+        BoilerplateResponses --> HCI: uses
+        BoilerplateResponses --> RuntimeData: uses
+        BoilerplateResponses --> components.display_tty.Disp: uses for logging
+        BoilerplateIncoming --> RuntimeData: uses
+        BoilerplateIncoming --> components.display_tty.Disp: uses for logging
+        Injection --> base64: uses
+        Injection --> components.Disp: uses
+        SQL --> Injection: uses
+        SQL --> components.mariadb: uses
+        SQL --> components.display_tty.Disp: uses for logging
+        Bucket --> components.boto3: users
+        Bucket --> components.botocore.client: uses
+        Bucket --> components.botocore.exceptions: uses
+        Bucket --> components.display_tty.Disp: uses for logging
+        Bucket --> components.CONST: uses
+
+
+        ' Relationships between components
+        HttpCodes -- Response : uses
+        HttpCodes <-- HCI : instantiates
+        HttpCodes --> Server : part of server structure
+
+        ' Relationships between the classes and files
+        Main --> Server : uses
+        Main --> CONST : uses
+
+        ' External interactions (argument processing)
+        Main --> "sys" : argv, exit
+}
+
+@enduml
