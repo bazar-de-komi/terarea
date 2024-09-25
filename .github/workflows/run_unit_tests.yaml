@@ -118,7 +118,7 @@ jobs:
             --network ${{env.DOCKER_NETWORK}} \
             --env-file .env \
             -p 8081:8081 \
-            -v $(pwd)/server:/srv/ \
+            -v $(pwd):/srv/ \
             --restart always \
             -t \
             ${{env.SERVER_IMAGE_NAME}}
