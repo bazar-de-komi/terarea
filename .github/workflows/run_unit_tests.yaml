@@ -108,6 +108,13 @@ jobs:
             --restart always \
             ${{env.DATABASE_IMAGE_NAME}}
 
+      - name: Wait for database to be running
+        run: |
+          until [ "$(docker inspect -f '{{.State.Health.Status}}' ${{env.DATABASE_CONTAINER_NAME}})" = "healthy" ]; do
+            echo "Waiting for the database container...";
+            sleep 5;
+          done
+
       - name: Start server
         run: |
           cd app/back/server
