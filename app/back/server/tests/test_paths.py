@@ -1,5 +1,5 @@
 """_summary_
-    File in charge of testing the http response codes.
+    File in charge of testing the paths class.
 """
 import os
 import sys
