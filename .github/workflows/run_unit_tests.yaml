@@ -40,14 +40,15 @@ jobs:
 
       - name: Create environement files
         run: |
-          pwd
+          echo "pwd = $(pwd)"
+          echo "Github content:"
           ls -a -R
           cd app/back/db
-          cat ${{secrets.DATABASE_ENVIRONEMENT}} > .env
+          echo "${{secrets.DATABASE_ENVIRONEMENT}}" > .env
           cd ../s3
-          cat ${{secrets.BUCKET_ENVIRONEMENT}} > .env
+          echo "${{secrets.BUCKET_ENVIRONEMENT}}" > .env
           cd ../server
-          cat ${{secrets.BACK_ENVIRONEMENT}} > .env
+          echo "${{secrets.BACK_ENVIRONEMENT}}" > .env
 
       - name: Create docker network
         run: |
