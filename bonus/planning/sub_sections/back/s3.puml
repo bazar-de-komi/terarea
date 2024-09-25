@@ -1,7 +1,13 @@
 @startuml s3
 
-namespace s3 {
-    
+allow_mixing
+skinparam linetype ortho
+
+node "minio (S3 Bucket)" as minio {
+    entity "S3 Bucket: image-storage" {
+        entity "Image files"
+        entity "Metadata"
+    }
 }
 
 @enduml
