@@ -38,12 +38,12 @@ SORT_BRIEF_DOCS=$YES
 
 # Output generations
 GENERATE_HTML=$YES
-GENERATE_LATEX=$NO
-GENERATE_RTF=$NO
-GENERATE_XML=$NO
-GENERATE_MAN=$NO
-GENERATE_DOCBOOK=$NO
-GENERATE_MD=$NO
+GENERATE_LATEX=$YES
+GENERATE_RTF=$YES
+GENERATE_XML=$YES
+GENERATE_MAN=$YES
+GENERATE_DOCBOOK=$YES
+GENERATE_MD=$YES
 
 ## HTML dependencies
 HTML_DIR="html"
@@ -239,7 +239,7 @@ HIDE_UNDOC_CLASSES     = $HIDE_UNDOC_CLASSES
 "
 
 # Debug mode (for development purposes)
-DEBUG=$TRUE
+DEBUG=$FALSE
 
 # Publish container (for updating purposes)
 PUBLISH=$TRUE
@@ -252,6 +252,20 @@ function run_command_in_container() {
         exit $ERROR
     fi
 }
+
+# Remove python environement if present
+LOCAL_CWD=$(pwd)
+cd ./app/back/server/
+if [ -d "server_env" ]; then
+    $SUDO rm -rvf server_env
+fi
+if [ -d ".pytest_cache" ]; then
+    $SUDO rm -rvf .pytest_cache
+fi
+if [ -f "Makefile" ]; then
+    make ffclean
+fi
+cd $LOCAL_CWD
 
 if [ -d "$DOCUMENTATION_FOLDER" ]; then
     rm -rf $DOCUMENTATION_FOLDER
@@ -305,3 +319,11 @@ else
     run_command_in_container "dnf install -y nano emacs vim"
     time $SUDO docker exec -it $CONTAINER_NAME /bin/bash
 fi
+
+LOCAL_CWD=$(pwd)
+cd ./app/back/server/
+if [ -f "Makefile" ]; then
+    make create_environement install_dependencies
+fi
+cd $LOCAL_CWD
+$SUDO chmod a+rw -R $DOCUMENTATION_FOLDER
