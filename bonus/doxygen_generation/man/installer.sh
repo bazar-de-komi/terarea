@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## EPITECH PROJECT, 2024
-## my_zappy
+## my_area
 ## File description:
 ## installer.sh
 ##
@@ -20,14 +20,18 @@ EMAIL='<henrysoftwarehouse@protonmail\&.com>'
 # SPECIAL_CHARACTERS
 SC_BACKSLASH='\'
 SC_QUOTE='"'
+SC_TAB="${SC_BACKSLASH}t"
+SC_SPACE="${SC_BACKSLASH} "
 SC_DASH="${SC_BACKSLASH}-"
 
 # Man pages known commands
 M_COMMENT=".${SC_BACKSLASH}${SC_QUOTE}"
 
 # Man Styles Inline
-MSI_BOLD="${SC_BACKSLASH}fB"
-MSI_RESET="${SC_BACKSLASH}fR"
+MSI_BULLET="${SC_BACKSLASH}[bu]"
+MSI_BOLD="${SC_BACKSLASH}${SC_BACKSLASH}fB"
+MSI_RESET="${SC_BACKSLASH}${SC_BACKSLASH}fR"
+MSI_ITALIC="${SC_BACKSLASH}${SC_BACKSLASH}fI"
 MSI_COMMA="${SC_BACKSLASH},"
 
 # Man file manager
@@ -111,422 +115,82 @@ function create_homepage_man {
     decho "MAN_FOLDER='$4'" >&2
     local FILE_COUNT=$(count_files_in_man_folder "$4")
     local MAN_FILES=$(get_files_in_man_folder "$4")
-    local HOMEPAGE="${M_COMMENT} Manpage for zappy project\n
-${M_COMMENT} Contact: Henry Letellier ${EMAIL}.\n
-.TH ZAPPY ${SC_QUOTE}EPITECH${SC_QUOTE} 6 ${SC_QUOTE}May 2024${SC_QUOTE} ${SC_QUOTE}Version 1.0${SC_QUOTE} ${SC_QUOTE}Zappy Manual${SC_QUOTE}\n
-\n
-.SH NAME\n
-Zappy \\- Welcome to Zappy!\n
-\n
-.SH SYNOPSIS\n
-.nf\n
-.BI \\fB\\,zappy_ai\\ \\ \\t\\fR\\fI\\,\\-help\\fR\\ |\\ \\fR\\fI\\,\\-p\\ \\fRport\\fR\\ \\fR\\fI\\,\\-n\\ \\fRname\\fR\\ \\fR\\fI\\,\\-h\\ \\fRmachine\n
-.BI \\fB\\,zappy_gui\\  \\t\\fR\\fI\\,\\-help\\fR\\ |\\ \\fR\\fI\\,\\-p\\ \\fRport\\ \\fI\\,\\-h\\ \\fRmachine\n
-.BI \\fB\\,zappy_server\\t\\fR\\fI\\,\\-help\\fR\\ |\\ \\fR\\fI\\,\\-p\\ \\fRport\\ \\fR\\fI\\,\\fR\\fI\\,\\-x\\ \\fRwidth\\ \\fI\\,\\-y\\ \\fRheight\\ \\fI\\,\\-n\\ \\fRname1\\ name2\\ ...\\ \\fI\\,\\-c\\ \\fRclientsNb\\ \\fI\\,\\-f\\ \\fRfrequency\n
-.fi\n
-.SH DESCRIPTION\n
-.nf\n
-.BI \\fRThe\\ Zappy\\ project\\ is\\ a\\ multiplayer\\ simulation\\ game\\ where\\ players\\ inhabit\\ a\\ virtual\\ world\\ and\\ interact\\ with\\ each\\ other\\ and\\ their\\ environment.\n
-.BI \\fRThe\\ game\\ environment\\ is\\ generated\\ by\\ a\\ server,\\ and\\ players\\ can\\ join\\ teams\\ to\\ compete\\ or\\ cooperate\\ in\\ various\\ challenges.\n
-.BI \\fR\n
-.BI \\fRThe\\ project\\ consists\\ of\\ three\\ main\\ components:\n
-.IP \\[bu]\n
-Server (zappy_server):\n
-.BI \\fR\\tThis\\ component\\ generates\\ the\\ virtual\\ world\\ where\\ players\\ reside.\\\n
-.BI \\fR\\tIt\\ manages\\ the\\ game\\ state,\\ including\\ the\\ terrain,\\ resources,\\ and\\ entities.\n
-.BI \\fR\\tThe\\ server\\ listens\\ for\\ connections\\ from\\ clients\\ and\\ handles\\ their\\ interactions\\ within\\ the\\ world.\n
-.IP \\[bu]\n
-Graphical Client (zappy_gui):\n
-.BI \\fR\\tRThe\\ graphical\\ client\\ provides\\ a\\ visual\\ representation\\ of\\ the\\ game\\ world.\n
-.BI \\fR\\tRPlayers\\ can\\ observe\\ the\\ state\\ of\\ the\\ environment,\\ including\\ the\\ movements\\ of\\ entities\\ and\\ the\\ distribution\\ of\\ resources.\n
-.BI \\fR\\tRIt\\ enhances\\ the\\ gaming\\ experience\\ by\\ offering\\ real-time\\ updates\\ and\\ immersive\\ graphics.\n
-.IP \\[bu]\n
-AI Client (zappy_ai):\n
-.BI \\fR\\tThe\\ AI\\ client\\ allows\\ players\\ to\\ control\\ virtual\\ inhabitants\\ within\\ the\\ game\\ world.\n
-.BI \\fR\\tPlayers\\ can\\ develop\\ strategies\\ and\\ algorithms\\ to\\ navigate\\ the\\ environment,\\ gather\\ resources,\\ and\\ interact\\ with\\ other\\ players.\n
-.BI \\fR\\tPThe\\ AI\\ client\\ communicates\\ with\\ the\\ server\\ to\\ execute\\ commands\\ and\\ receive\\ updates\\ on\\ the\\ game\\ state.\n
-.PP\n
-.BI \\fRThe\\ Zappy\\ project\\ offers\\ an\\ engaging\\ and\\ collaborative\\ gaming\\ experience,\\ where\\ players\\ can\\ explore,\\ strategize,\\ and\\ compete\\ in\\ a\\ dynamic\\ virtual\\ world.\n
-.fi\n
-.PP\n
-.SH OPTIONS\n
-.nf\n
-.PP\n
-.BI\\,zappy_ai:\\fR\n
-.BI\\t\\t\\fR\\fI\\,\\-help\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ will\\ display\\ the\\ help\\ for\\ this\\ binary\\ and\\ then\\ exit.\n
-.BI\\t\\t\\fR\\fI\\,\\-p\\ \\fRport\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ port\\ on\\ which\\ the\\ binary\\ will\\ communicate\\ with\\ the\\ two\\ other\\ binaries.\n
-.BI\\t\\t\\fR\\fI\\,\\-n\\ \\fRname\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ name\\ that\\ will\\ be\\ given\\ the\\ AI\\ process.\n
-.BI\\t\\t\\fR\\fI\\,\\-h\\ \\fRmachine\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ ip\\ on\\ which\\ the\\ \\fBAI\\fR\\ is\\ to\\ talk.\\ (default:\\ localhost\\ [i.e:\\ 127.0.0.1])\n
-.PP\n
-.BI\\,zappy_gui:\\fR\n
-.BI\\t\\t\\fR\\fI\\,\\-help\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ will\\ display\\ the\\ help\\ for\\ this\\ binary\\ and\\ then\\ exit.\n
-.BI\\t\\t\\fR\\fI\\,\\-p\\ \\fRport\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ port\\ on\\ which\\ the\\ binary\\ will\\ communicate\\ with\\ the\\ two\\ other\\ binaries.\n
-.BI\\t\\t\\fR\\fI\\,\\-h\\ \\fRmachine\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ ip\\ on\\ which\\ the\\ \\fBGUI\\fR\\ is\\ to\\ talk.\\ (default:\\ localhost\\ [i.e:\\ 127.0.0.1])\n
-.PP\n
-.BI\\,zappy_server:\\fR\n
-.BI\\t\\t\\fR\\fI\\,\\-help\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ will\\ display\\ the\\ help\\ for\\ this\\ binary\\ and\\ then\\ exit.\n
-.BI\\t\\t\\fR\\fI\\,\\-p\\ \\fRport\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ port\\ on\\ which\\ the\\ binary\\ will\\ communicate\\ with\\ the\\ two\\ other\\ binaries.\n
-.BI\\t\\t\\fR\\fI\\,\\-x\\ \\fRwidth\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ \\fBwidth\\fR\\ of\\ the\\ world.\n
-.BI\\t\\t\\fR\\fI\\,\\-y\\ \\fRheight\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ \\fBheight\\fR\\ of\\ the\\ world.\n
-.BI\\t\\t\\fR\\fI\\,\\-n\\ \\fRname1\\ name2\\ ...\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ name(s)\\ of\\ the\\ team(s)\\ that\\ will\\ play.\n
-.BI\\t\\t\\t\\fRMultiple\\ team\\ names\\ should\\ be\\ separated\\ by\\ spaces.\n
-.BI\\t\\t\\fR\\fI\\,\\-c\\ \\fRclientsNb\n
-.BI\\t\\t\\t\\fRThis\\ flag\\ specifies\\ the\\ maximum\\ number\\ of\\ clients\\ that\\ are\\ allowed\\ to\\ play.\n
-.BI\\t\\t\\fR\\fI\\,\\-f\\ \\fRfrequency\n
-.BI\\t\\t\\t\\fRSpecifies\\ the\\ number\\ of\\ actions\\ per\\ time\\ unit.\n
-.BI\\t\\t\\t\\fRA\\ higher\\ frequency\\ means\\ actions\\ happen\\ faster.\n
-.fi\n
-.PP\n
-.SH USAGE\n
-.nf\n
-.BI \\fRExample\\ usage:\n
-.BI \\fRIn\\ this\\ example\\ the\\ 4\\ lines\\ need\\ to\\ be\\ run\\ one\\ after\\ the\\ other\\ (we\\ are\\ in\\ a\\ linux/mac\\ environment).\n
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4242\\ \\-n\\ team1\\ \\-h\\ localhost\\ &\n
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4243\\ \\-n\\ team2\\ \\-h\\ localhost\\ &\n
-.BI \\fR\\t./zappy_server\\ \\-p\\ 4244\\ \\-x\\ 100\\ \\-y\\ 100\\ \\-n\\ team1\\ team2\\ \\-c\\ 10\\ \\-f\\ 100\\ &\n
-.BI \\fR\\t./zappy_gui\\ \\-p\\ 4245\\ \\-h\\ localhost\\ &\n
-.PP\n
-.fi\n
-.SH SEE ALSO\n
-.nf\n
-.BI zappy_ai(1),\\ zappy_gui(1),\\ zappy_server(1)\n
-.fi\n
-.SH AUTHOR\n
-Written by (c) Henry Letellier.\n
-.PP\n
-.SH DEVELOPERS\n
-.nf\n
-.B (c)\\ Harleen\\ Singh-Kaur\n
-.B (c)\\ Eric\\ Xu\n
-.B (c)\\ Victor\\ Yvon\n
-.B (c)\\ Thomas\\ Lebouc\n
-.B (c)\\ Henry\\ Letellier\n
-.fi\n
-.PP\n
-.SH COPYRIGHT\n
-.nf\n
-.BI \\fRThis\\ is\\ a\\ project\\ that\\ was\\ created\\ during\\ our\\ second\\ year\\ at\\ Epitech.\n
-.BI \\fRThus,\\ feel\\ free\\ to\\ use\\ this\\ project,\\ but\\ you\\ cannot\\ edit,\\ sel\\ or\\ re-sel\\ it.\n
-.fi\n
-.PP\n
-.SH BUGS\n
-.nf\n
-.BI \\fRPlease\\ report\\ any\\ bugs\\ to\\ ${EMAIL}.\n
-.BI \\fRAlthough,\\ there\\ is\\ absolutely\\ no\\ guaranty\\ that\\ it\\ will\\ be\\ fixed.\n
-.BI \\fRAnother\\ way\\ would\\ be\\ to\\ open\\ an\\ issue\\ on\\ the\\ github\\ project,\\ see\\ \"PROJECT\\ RESSOURCES\"\\ for\\ more\\ details.\n
-.fi\n
-.PP\n
-.SH NOTES\n
-.nf\n
-.BI \\fIThis\\ man\\ page\\ is\\ for\\ informational\\ purposes\\ only.\n
-.BI \\fRFor\\ detailed\\ usage\\ instructions,\\ please\\ refer\\ to\\ the\\ specific\\ manual\\ pages\\ listed\\ under\\ \"SEE\\ ALSO\".\n
-.BI \\fRYou\\ can\\ also\\ find\\ links\\ concerning\\ the\\ project\\ in\\ \"PROJECT\\ RESSOURCES\"\n
-.fi\n
-.PP\n
-.SH PROJECT RESSOURCES\n
-.nf\n
-${M_COMMENT} .BI\\fRWebsite:\\ https://zappy\\&.pingpal\\&.news/\n
-.BI \\fRSource\\ code\\ (Github):\\ https://github\\&.com/Hanra-s-work/my_zappy/\n
-.BI \\fRDocumentation:\\ https://zappy\\&.pingpal\\&.news/\n
-.fi\n
-.PP\n
-.SH DISCLAIMER\n
-.PP\n
-This software is provided \"as is\" without warranty of any kind. Use at your own risk.\n
-.PP\n
-.SH VERSION\n
-1.0\n
-.PP\n
-.SH DATE\n
-May 2024\n
-.PP\n
-.SH SUB-PAGE DOXY DUMP [${FILE_COUNT} file(s)] (very crude for now)\n
-$MAN_FILES
-"
-    decho "Homepage generated" >&2
-    mkdir -p "$1"
-    if [ $DEBUG -eq $TRUE ]; then
-        echo -e "$HOMEPAGE"
-    fi
-    echo -e "$HOMEPAGE" | $PYTHON_ENCODER "$1/$2.$3"
-}
-
-function create_zappy_ai_man {
-    decho "In create_zappy_ai_man" >&2
-    decho "MAN_FOLDER='$4'" >&2
-    local FILE_COUNT=$(count_files_in_man_folder "$4")
-    local MAN_FILES=$(get_files_in_man_folder "$4")
-    local HOMEPAGE="${M_COMMENT} Manpage for zappy project\n
-${M_COMMENT} Contact: Henry Letellier ${EMAIL}.\n
-.TH ZAPPY \"ZAPPY_AI EPITECH\" 1 \"May 2024\" \"Version 1.0\" \"Zappy Manual \\- ZAPPY_AI\"\n
-.SH NAME\n
-.BI \\fBzappy_ai\\ \\-\\ binary\\ in\\ charge\\ of\\ driving\\ the\\ inhabitants\\ through\\ orders\\ sent\\ to\\ the\\ server\\ binary.\n
-.PP\n
-.SH SYNOPSIS\n
-.nf\n
-.BI \\fB\,zappy_ai\\ \\ \\t\\fR\\fI\,\\-help\\fR\\ |\\ \\fR\\fI\,\-p\\ \\fRport\\fR\\ \\fR\\fI\,\\-n\\ \\fRname\\fR\\ \\fR\\fI\,\\-h\\ \\fRmachine\n
-.fi\n
-.PP\n
-.SH DESCRIPTION\n
-.nf\n
-.BI \\fRzappy_ai\\ is\\ a\\ binary\\ used\\ to\\ control\\ an\\ inhabitant\\ in\\ the\\ world\\ generated\\ by\\ the\\ zappy_server.\n
-.BI \\fRIt\\ sends\\ orders\\ to\\ the\\ server\\ to\\ interact\\ with\\ the\\ world.\n
-.fi\n
-.PP\n
-.SH OPTIONS\n
-.nf\n
-.BI \\fR\\-p\\ PORT\n
-.BI \\fR\\tSpecifies\\ the\\ port\\ number\\ to\\ connect\\ to.\n
-.PP\n
-.BI \\fR\\-n\\ TEAM_NAME\n
-.BI \\fR\\tSpecifies\\ the\\ name\\ of\\ the\\ team.\n
-.PP\n
-.BI \\fR\\-h\\ HOST\n
-.BI \\fR\\tSpecifies\\ the\\ hostname\\ of\\ the\\ machine\\ to\\ connect\\ to.\n
-.BI \\fR\\tDefaults\\ to\\ localhost\\ if\\ not\\ specified.\n
-.fi\n
-.PP\n
-.SH USAGE\n
-.nf\n
-.BI \\fRExample\\ usage:\n
-.BI \\fRIn\\ this\\ example\\ the\\ 4\\ lines\\ need\\ to\\ be\\ run\\ one\\ after\\ the\\ other\\ (we\\ are\\ in\\ a\\ linux/mac\\ environment).\n
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4242\\ \\-n\\ team1\\ \\-h\\ localhost\\ &\n
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4243\\ \\-n\\ team2\\ \\-h\\ localhost\\ &\n
-.BI \\fR\\t./zappy_server\\ \\-p\\ 4244\\ \\-x\\ 100\\ \\-y\\ 100\\ \\-n\\ team1\\ team2\\ \\-c\\ 10\\ \\-f\\ 100\\ &\n
-.BI \\fR\\t./zappy_gui\\ \\-p\\ 4245\\ \\-h\\ localhost\\ &\n
-.fi\n
-.PP\n
-.SH REPORTING BUGS\n
-.BI \\fRReport\\ bugs\\ to\\ ${EMAIL}.\n
-.PP\n
-.SH COPYRIGHT\n
-.nf\n
-.BI \\fRThis\\ is\\ a\\ project\\ that\\ was\\ created\\ during\\ our\\ second\\ year\\ at\\ Epitech.\n
-.BI \\fRThus,\\ feel\\ free\\ to\\ use\\ this\\ project,\\ but\\ you\\ cannot\\ edit,\\ sel\\ or\\ re-sel\\ it.\n
-.fi\n
-.PP\n
-.SH PROJECT RESSOURCES\n
-.nf\n
-${M_COMMENT} .BI\\fRWebsite:\\ https://zappy\\&.pingpal\\&.news/\n
-.BI \\fRSource\\ code\\ (Github):\\ https://github\\&.com/Hanra-s-work/my_zappy/\n
-.BI \\fRDocumentation:\\ https://zappy\\&.pingpal\\&.news/\n
-.fi\n
-.PP\n
-.SH VERSION\n
-1.0\n
-.PP\n
-.SH DATE\n
-May 2024\n
-.SH AUTHOR\n
-Written by (c) Henry Letellier.\n
-.PP\n
-.SH DEVELOPERS\n
-.nf\n
-.B (c)\\ Harleen\\ Singh-Kaur\n
-.B (c)\\ Eric\\ Xu\n
-.B (c)\\ Victor\\ Yvon\n
-.B (c)\\ Thomas\\ Lebouc\n
-.B (c)\\ Henry\\ Letellier\n
-.fi\n
-.PP\n
-.SH SEE ALSO\n
-.nf\n
-.BI zappy(6),\\ zappy_gui(1),\\ zappy_server(1)\n
-.fi\n
-.SH SUB-PAGE DOXY DUMP [${FILE_COUNT} file(s)] (very crude for now)\n
-$MAN_FILES
-"
-    decho "Homepage generated" >&2
-    mkdir -p "$1"
-    if [ $DEBUG -eq $TRUE ]; then
-        echo -e "$HOMEPAGE"
-    fi
-    echo -e "$HOMEPAGE" | $PYTHON_ENCODER "$1/$2.$3"
-
-}
-
-function create_zappy_gui_man {
-    decho "In create_zappy_gui_man" >&2
-    decho "MAN_FOLDER='$4'" >&2
-    local FILE_COUNT=$(count_files_in_man_folder "$4")
-    local MAN_FILES=$(get_files_in_man_folder "$4")
-    local HOMEPAGE="${M_COMMENT} Manpage for zappy project\n
-${M_COMMENT} Contact: Henry Letellier <henrysoftwarehouse@protonmail.com>.\n
-.TH ZAPPY \"ZAPPY_GUI EPITECH\" 1 \"May 2024\" \"Version 1.0\" \"Zappy Manual \\- ZAPPY_GUI\"\n
-.SH NAME\n
-.PP\n
-.NAME\n
-.BI \\fBzappy_gui\\ \\-\\ graphical\\ client\\ to\\ watch\\ the\\ inhabitants'\\ world\n
-.PP\n
-.SH SYNOPSIS\n
-.nf\n
-.BI \\fB\\,zappy_gui\\  \\t\\fR\\fI\\,\\-help\\fR\\ |\\ \\fR\\fI\\,\\-p\\ \\fRport\\ \\fI\\,\\-h\\ \\fRmachine\n
-.fi\n
-.PP\n
-.SH DESCRIPTION\n
-.nf\n
-.BI \\fRzappy_gui\\ is\\ a\\ graphical\\ client\\ used\\ to\\ visualize\\ the\\ state\\ of\\ the\\ inhabitants'\\ world\\ and\\ the\\ actions\\ occurring\\ within\\ it.\n
-.PP\n
-.fi\n
-.SH OPTIONS\n
-.nf\n
-.BI \\fR\\-p\\ PORT\n
-.BI \\fR\\tSpecifies\\ the\\ port\\ number\\ to\\ connect\\ to.\n
-.PP\n
-.BI \\fR\\-h\\ HOST\n
-.BI \\fR\\tSpecifies\\ the\\ hostname\\ of\\ the\\ machine\\ to\\ connect\\ to.\n
-.fi\n
-.PP\n
-.SH USAGE\n
-.nf\n
-.BI \\fRExample\\ usage:\n
-.BI \\fRIn\\ this\\ example\\ the\\ 4\\ lines\\ need\\ to\\ be\\ run\\ one\\ after\\ the\\ other\\ (we\\ are\\ in\\ a\\ linux/mac\\ environment).\n
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4242\\ \\-n\\ team1\\ \\-h\\ localhost\\ &\n
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4243\\ \\-n\\ team2\\ \\-h\\ localhost\\ &\n
-.BI \\fR\\t./zappy_server\\ \\-p\\ 4244\\ \\-x\\ 100\\ \\-y\\ 100\\ \\-n\\ team1\\ team2\\ \\-c\\ 10\\ \\-f\\ 100\\ &\n
-.BI \\fR\\t./zappy_gui\\ \\-p\\ 4245\\ \\-h\\ localhost\\ &\n
-.fi\n
-.PP\n
-.SH REPORTING BUGS\n
-.BI \\fRReport\\ bugs\\ to\\ <henrysoftwarehouse@protonmail\\&.com>.\n
-.PP\n
-.SH COPYRIGHT\n
-.nf\n
-.BI \\fRThis\\ is\\ a\\ project\\ that\\ was\\ created\\ during\\ our\\ second\\ year\\ at\\ Epitech.\n
-.BI \\fRThus,\\ feel\\ free\\ to\\ use\\ this\\ project,\\ but\\ you\\ cannot\\ edit,\\ sel\\ or\\ re-sel\\ it.\n
-.fi\n
-.PP\n
-.SH PROJECT RESSOURCES\n
-.nf\n
-${M_COMMENT} .BI\\fRWebsite:\\ https://zappy\\&.pingpal\\&.news/\n
-.BI \\fRSource\\ code\\ (Github):\\ https://github\\&.com/Hanra-s-work/my_zappy/\n
-.BI \\fRDocumentation:\\ https://zappy\\&.pingpal\\&.news/\n
-.fi\n
-.PP\n
-.SH DISCLAIMER\n
-.PP\n
-This software is provided \"as is\" without warranty of any kind. Use at your own risk.\n
-.PP\n
-.SH VERSION\n
-1.0\n
-.PP\n
-.SH DATE\n
-May 2024\n
-.SH AUTHOR\n
-Written by (c) Henry Letellier.\n
-.PP\n
-.SH DEVELOPERS\n
-.nf\n
-.B (c)\\ Harleen\\ Singh-Kaur\n
-.B (c)\\ Eric\\ Xu\n
-.B (c)\\ Victor\\ Yvon\n
-.B (c)\\ Thomas\\ Lebouc\n
-.B (c)\\ Henry\\ Letellier\n
-.fi\n
-.PP\n
-.SH SEE ALSO\n
-.nf\n
-.BI zappy(6),\\ zappy_server(1),\\ zappy_ai(1)\n
-.fi\n
-.PP\n
-.SH SUB-PAGE DOXY DUMP [${FILE_COUNT} file(s)] (very crude for now)\n
-$MAN_FILES
-"
-    decho "Homepage generated" >&2
-    mkdir -p "$1"
-    if [ $DEBUG -eq $TRUE ]; then
-        echo -e "$HOMEPAGE"
-    fi
-    echo -e "$HOMEPAGE" | $PYTHON_ENCODER "$1/$2.$3"
-
-}
-
-function create_zappy_server_man {
-    decho "In create_zappy_server_man" >&2
-    decho "MAN_FOLDER='$4'" >&2
-    FILE_COUNT=$(count_files_in_man_folder "$4")
-    MAN_FILES=$(get_files_in_man_folder "$4")
-    HOMEPAGE="${M_COMMENT} Manpage for zappy project\n
-${M_COMMENT} Contact: Henry Letellier <henrysoftwarehouse@protonmail.com>.\n
-.TH ZAPPY ${SC_QUOTE}ZAPPY_SERVER EPITECH${SC_QUOTE} 1 ${SC_QUOTE}May 2024${SC_QUOTE} ${SC_QUOTE}Version 1.0${SC_QUOTE} ${SC_QUOTE}Zappy Manual \\- ZAPPY_GUI${SC_QUOTE}
+    local HOMEPAGE="${M_COMMENT} Manpage for Area project
+${M_COMMENT} Contact: Henry Letellier ${EMAIL}.
+.TH AREA ${SC_QUOTE}EPITECH${SC_QUOTE} 6 ${SC_QUOTE}September 2024${SC_QUOTE} ${SC_QUOTE}Version 1.0${SC_QUOTE} ${SC_QUOTE}Area Manual${SC_QUOTE}
+.PP
 .SH NAME
-.BI\\ \\fBzappy_server\\ \\-\\ generate\\ the\\ inhabitants’\\ world
+AREA ${SC_BACKSLASH}-${SC_SPACE}Welcome${SC_SPACE}to${SC_SPACE}Area!
 .PP
 .SH SYNOPSIS
-.BI \\fB\,zappy_server\\t\\fR\\fI\,\\-help\\fR\\ |\\ \\fR\\fI\,\\-p\\ \\fRport\\ \\fR\\fI\,\\fR\\fI\,\\-x\\ \\fRwidth\\ \\fI\,\\-y\\ \\fRheight\\ \\fI\,\\-n\\ \\fRname1\\ name2\\ ...\\ \\fI\,\\-c\\ \\fRclientsNb\\ \\fI\,\\-f\\ \\fRfrequency
-.PP
-.SH DESCRIPTION
-.BI \\fRzappy_server\\ generates\\ a\\ world\\ for\\ inhabitants\\ to\\ live\\ in\\ and\\ interact.
-.PP
-.SH OPTIONS
-.BI \\fR\\-p\\ PORT
-.BI \\fR\tSpecifies\\ the\\ port\\ number\\ on\\ which\\ the\\ server\\ listens.
-.PP
-.BI \\fR\\-x\\ WIDTH
-.BI \\fR\tSpecifies\\ the\\ width\\ of\\ the\\ world.
-.PP
-.BI \\fR\\-y\\ HEIGHT
-.BI \\fR\tSpecifies\\ the\\ height\\ of\\ the\\ world.
-.PP
-.BI \\fR\\-n\\ TEAM_NAMES
-.BI \\fR\tSpecifies\\ the\\ names\\ of\\ the\\ teams.\\ Multiple\\ team\\ names\\ should\\ be\\ separated\\ by\\ spaces.
-.PP
-.BI \\fR\\-c\\ CLIENTS_NUMBER
-.BI \\fR\tSpecifies\\ the\\ number\\ of\\ authorized\\ clients\\ per\\ team.
-.PP
-.BI \\fR\\-f\\ FREQUENCY
-.BI \\fR\tSpecifies\\ the\\ reciprocal\\ of\\ the\\ time\\ unit\\ for\\ the\\ execution\\ of\\ actions.
-.PP
-.SH USAGE
 .nf
-.BI \\fRExample\\ usage:
-.BI \\fRIn\\ this\\ example\\ the\\ 4\\ lines\\ need\\ to\\ be\\ run\\ one\\ after\\ the\\ other\\ (we\\ are\\ in\\ a\\ linux/mac\\ environment).
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4242\\ \\-n\\ team1\\ \\-h\\ localhost\\ &
-.BI \\fR\\t./zappy_ai\\ \\-p\\ 4243\\ \\-n\\ team2\\ \\-h\\ localhost\\ &
-.BI \\fR\\t./zappy_server\\ \\-p\\ 4244\\ \\-x\\ 100\\ \\-y\\ 100\\ \\-n\\ team1\\ team2\\ \\-c\\ 10\\ \\-f\\ 100\\ &
-.BI \\fR\\t./zappy_gui\\ \\-p\\ 4245\\ \\-h\\ localhost\\ &
+.BI Area${SC_SPACE}${SC_TAB}${SC_TAB}${SC_SPACE}${SC_SPACE}${SC_SPACE}${SC_SPACE}-${SC_SPACE}${MSI_RESET} https://pingpal\&.news/
+.BI Area${SC_SPACE}documentation${SC_SPACE}-${SC_SPACE}${MSI_RESET} https://ifttt-area\&.pingpal\&.news/
+.fi
+.SH DESCRIPTION
+.nf
+.BI ${MSI_RESET}The${SC_SPACE}Area${SC_SPACE}project${SC_SPACE}is${SC_SPACE}directly${SC_SPACE}inspired${SC_SPACE}by${SC_SPACE}the${SC_SPACE}ifttt${SC_SPACE}(https://ifttt\&.com)${SC_SPACE}project.
+.BI ${SC_SPACE}${MSI_RESET}This${SC_SPACE}project${SC_SPACE}aims${SC_SPACE}to${SC_SPACE}automate${SC_SPACE}everyday${SC_SPACE}actions${SC_SPACE}through${SC_SPACE}various${SC_SPACE}APIs${SC_SPACE}and${SC_SPACE}sequences${SC_SPACE}of${SC_SPACE}events${SC_SPACE}that${SC_SPACE}are${SC_SPACE}defined${SC_SPACE}by${SC_SPACE}the${SC_SPACE}user.
+.BI ${MSI_RESET}
+.BI ${MSI_RESET}The${SC_SPACE}project${SC_SPACE}consists${SC_SPACE}of${SC_SPACE}five${SC_SPACE}major${SC_SPACE}services:
+.IP ${MSI_BULLET}
+Website (https://pingpal\&.news/):
+.BI ${MSI_RESET}${SC_TAB}This${SC_SPACE}service${SC_SPACE}is${SC_SPACE}the${SC_SPACE}one${SC_SPACE}in${SC_SPACE}charge${SC_SPACE}of${SC_SPACE}providing${SC_SPACE}the${SC_SPACE}user${SC_SPACE}with${SC_SPACE}an${SC_SPACE}intuitive${SC_SPACE}interface${SC_SPACE}regardless${SC_SPACE}of${SC_SPACE}the${SC_SPACE}device${SC_SPACE}it${SC_SPACE}is${SC_SPACE}being${SC_SPACE}accessed${SC_SPACE}on.
+.BI ${MSI_RESET}${SC_TAB}This${SC_SPACE}service${SC_SPACE}is${SC_SPACE}also${SC_SPACE}the${SC_SPACE}one${SC_SPACE}that${SC_SPACE}will${SC_SPACE}allow${SC_SPACE}the${SC_SPACE}user${SC_SPACE}to${SC_SPACE}download${SC_SPACE}it's${SC_SPACE}mobile${SC_SPACE}equivalent.
+.IP ${MSI_BULLET}
+Mobile application (Available at https://pingpal\&.news/):
+.BI ${MSI_RESET}${SC_TAB}The${SC_SPACE}mobile${SC_SPACE}application${SC_SPACE}aims${SC_SPACE}to${SC_SPACE}provide${SC_SPACE}a${SC_SPACE}way${SC_SPACE}to${SC_SPACE}remain${SC_SPACE}intergrated${SC_SPACE}in${SC_SPACE}the${SC_SPACE}user's${SC_SPACE}life${SC_SPACE}in${SC_SPACE}a${SC_SPACE}more${SC_SPACE}stable${SC_SPACE}way${SC_SPACE}so${SC_SPACE}that${SC_SPACE}the${SC_SPACE}user${SC_SPACE}doesn't${SC_SPACE}have${SC_SPACE}to${SC_SPACE}fear${SC_SPACE}about${SC_SPACE}missing${SC_SPACE}out${SC_SPACE}on${SC_SPACE}their${SC_SPACE}flows.
+.IP ${MSI_BULLET}
+Server (https://ifttt-back\&.pingpal\&.news/):
+.BI ${MSI_RESET}${SC_TAB}This${SC_SPACE}service${SC_SPACE}is${SC_SPACE}the${SC_SPACE}backbone${SC_SPACE}of${SC_SPACE}the${SC_SPACE}project.
+.BI ${MSI_RESET}${SC_TAB}It${SC_SPACE}is${SC_SPACE}the${SC_SPACE}one${SC_SPACE}that${SC_SPACE}will${SC_SPACE}handle${SC_SPACE}all${SC_SPACE}the${SC_SPACE}traffic,${SC_SPACE}the${SC_SPACE}accounts${SC_SPACE}and${SC_SPACE}the${SC_SPACE}flows.
+.IP ${MSI_BULLET}
+Database (Mariadb [this is internal to the Server]):
+.BI ${MSI_RESET}${SC_TAB}The${SC_SPACE}database${SC_SPACE}is${SC_SPACE}a${SC_SPACE}core${SC_SPACE}part${SC_SPACE}of${SC_SPACE}the${SC_SPACE}server.
+.BI ${MSI_RESET}${SC_TAB}It${SC_SPACE}is${SC_SPACE}the${SC_SPACE}one${SC_SPACE}that${SC_SPACE}will${SC_SPACE}store${SC_SPACE}all${SC_SPACE}the${SC_SPACE}informations${SC_SPACE}that${SC_SPACE}the${SC_SPACE}users${SC_SPACE}provide${SC_SPACE}as${SC_SPACE}well${SC_SPACE}as${SC_SPACE}accounts,${SC_SPACE}api's${SC_SPACE}and${SC_SPACE}flows.
+.IP ${MSI_BULLET}
+S3 bucket (Minion [this is internal to the Server]):
+.BI ${MSI_RESET}${SC_TAB}The${SC_SPACE}S3${SC_SPACE}bucket${SC_SPACE}is${SC_SPACE}a${SC_SPACE}locally${SC_SPACE}deployed${SC_SPACE}service${SC_SPACE}that${SC_SPACE}aims${SC_SPACE}to${SC_SPACE}store${SC_SPACE}the${SC_SPACE}data${SC_SPACE}that${SC_SPACE}the${SC_SPACE}database${SC_SPACE}could${SC_SPACE}not.
+.BI ${MSI_RESET}${SC_TAB}The${SC_SPACE}S3${SC_SPACE}bucket${SC_SPACE}will${SC_SPACE}store${SC_SPACE}files${SC_SPACE}that${SC_SPACE}are${SC_SPACE}required${SC_SPACE}to${SC_SPACE}be${SC_SPACE}accessed${SC_SPACE}by${SC_SPACE}the${SC_SPACE}website${SC_SPACE}and${SC_SPACE}app.
 .PP
+.BI ${MSI_RESET}The${SC_SPACE}Area${SC_SPACE}project${SC_SPACE}offers${SC_SPACE}an${SC_SPACE}interesting${SC_SPACE}yet${SC_SPACE}challenging${SC_SPACE}project${SC_SPACE}that${SC_SPACE}can${SC_SPACE}be${SC_SPACE}used${SC_SPACE}in${SC_SPACE}our${SC_SPACE}everyday${SC_SPACE}life.
 .fi
 .SH AUTHOR
 Written by (c) Henry Letellier.
 .PP
+.SH DEVELOPERS
+.nf
+.B (c)${SC_SPACE}Harleen${SC_SPACE}Singh-Kaur
+.B (c)${SC_SPACE}Eric${SC_SPACE}Xu
+.B (c)${SC_SPACE}Flavien${SC_SPACE}Maillard
+.B (c)${SC_SPACE}Thomas${SC_SPACE}Lebouc
+.B (c)${SC_SPACE}Henry${SC_SPACE}Letellier
+.fi
+.PP
 .SH COPYRIGHT
 .nf
-.BI \\fRThis\\ is\\ a\\ project\\ that\\ was\\ created\\ during\\ our\\ second\\ year\\ at\\ Epitech.
-.BI \\fRThus,\\ feel\\ free\\ to\\ use\\ this\\ project,\\ but\\ you\\ cannot\\ edit,\\ sel\\ or\\ re-sel\\ it.
+.BI ${MSI_RESET}This${SC_SPACE}is${SC_SPACE}a${SC_SPACE}project${SC_SPACE}that${SC_SPACE}was${SC_SPACE}created${SC_SPACE}during${SC_SPACE}our${SC_SPACE}third${SC_SPACE}year${SC_SPACE}at${SC_SPACE}Epitech.
+.BI ${MSI_RESET}Thus,${SC_SPACE}feel${SC_SPACE}free${SC_SPACE}to${SC_SPACE}use${SC_SPACE}this${SC_SPACE}project,${SC_SPACE}but${SC_SPACE}you${SC_SPACE}cannot${SC_SPACE}edit,${SC_SPACE}sel${SC_SPACE}or${SC_SPACE}re-sel${SC_SPACE}it.
 .fi
 .PP
 .SH BUGS
 .nf
-.BI \\fRPlease\\ report\\ any\\ bugs\\ to\\ <henrysoftwarehouse@protonmail\&.com>.
-.BI \\fRAlthough,\\ there\\ is\\ absolutely\\ no\\ guaranty\\ that\\ it\\ will\\ be\\ fixed.
-.BI \\fRAnother\\ way\\ would\\ be\\ to\\ open\\ an\\ issue\\ on\\ the\\ github\\ project,\\ see\\ \"PROJECT\\ RESSOURCES\"\\ for\\ more\\ details.
+.BI ${MSI_RESET}Please${SC_SPACE}report${SC_SPACE}any${SC_SPACE}bugs${SC_SPACE}to${SC_SPACE}${EMAIL}.
+.BI ${MSI_RESET}Although,${SC_SPACE}there${SC_SPACE}is${SC_SPACE}absolutely${SC_SPACE}no${SC_SPACE}guaranty${SC_SPACE}that${SC_SPACE}it${SC_SPACE}will${SC_SPACE}be${SC_SPACE}fixed.
+.BI ${MSI_RESET}Another${SC_SPACE}way${SC_SPACE}would${SC_SPACE}be${SC_SPACE}to${SC_SPACE}open${SC_SPACE}an${SC_SPACE}issue${SC_SPACE}on${SC_SPACE}the${SC_SPACE}github${SC_SPACE}project,${SC_SPACE}see${SC_SPACE}${SC_QUOTE}PROJECT${SC_SPACE}RESSOURCES${SC_QUOTE}${SC_SPACE}for${SC_SPACE}more${SC_SPACE}details.
 .fi
 .PP
 .SH NOTES
 .nf
-.BI \\fIThis\\ man\\ page\\ is\\ for\\ informational\\ purposes\\ only.
-.BI \\fRFor\\ detailed\\ usage\\ instructions,\\ please\\ refer\\ to\\ the\\ specific\\ manual\\ pages\\ listed\\ under\\ \"SEE\\ ALSO\".
-.BI \\fRYou\\ can\\ also\\ find\\ links\\ concerning\\ the\\ project\\ in\\ \"PROJECT\\ RESSOURCES\"
+.BI ${MSI_ITALIC}This${SC_SPACE}man${SC_SPACE}page${SC_SPACE}is${SC_SPACE}for${SC_SPACE}informational${SC_SPACE}purposes${SC_SPACE}only.
+.BI ${MSI_RESET}You${SC_SPACE}can${SC_SPACE}also${SC_SPACE}find${SC_SPACE}links${SC_SPACE}concerning${SC_SPACE}the${SC_SPACE}project${SC_SPACE}in${SC_SPACE}${SC_QUOTE}PROJECT${SC_SPACE}RESSOURCES${SC_QUOTE}
 .fi
 .PP
 .SH PROJECT RESSOURCES
 .nf
-${M_COMMENT} .BI\\fRWebsite:\\ https://zappy\\&.pingpal\\&.news/
-.BI \\fRSource\\ code\\ (Github):\\ https://github\\&.com/Hanra-s-work/my_zappy/
-.BI \\fRDocumentation:\\ https://zappy\\&.pingpal\\&.news/
+.BI ${MSI_RESET}Website:${SC_SPACE}https://pingpal\\&.news/
+.BI ${MSI_RESET}Source${SC_SPACE}code${SC_SPACE}(Github):${SC_SPACE}https://github\\&.com/bazar-de-komi/terarea
+.BI ${MSI_RESET}Documentation:${SC_SPACE}https://iftt-area\\&.pingpal\\&.news/
 .fi
 .PP
 .SH DISCLAIMER
@@ -537,22 +201,9 @@ This software is provided ${SC_QUOTE}as is${SC_QUOTE} without warranty of any ki
 1.0
 .PP
 .SH DATE
-May 2024
+September 2024
 .PP
-.SH DEVELOPERS
-.nf
-.B (c)\\ Harleen\\ Singh-Kaur
-.B (c)\\ Eric\\ Xu
-.B (c)\\ Victor\\ Yvon
-.B (c)\\ Thomas\\ Lebouc
-.B (c)\\ Henry\\ Letellier
-.fi
-.PP
-.SH SEE ALSO
-.nf
-.BI zappy(6),\\ zappy_ai(1),\\ zappy_gui(1)
-.fi
-.SH SUB-PAGE DOXY DUMP [${FILE_COUNT} file(s)] (very crude for now)\n
+.SH SUB-PAGE DOXY DUMP [${FILE_COUNT} file(s)]
 $MAN_FILES
 "
     decho "Homepage generated" >&2
@@ -561,13 +212,12 @@ $MAN_FILES
         echo -e "$HOMEPAGE"
     fi
     echo -e "$HOMEPAGE" | $PYTHON_ENCODER "$1/$2.$3"
-
 }
 
 function update_man_paths {
     MAN_DEST="$1"
-    # Update the shell man paths to include the zappy folder
-    echo "Updating the shell man paths to include the zappy folder"
+    # Update the shell man paths to include the area folder
+    echo "Updating the shell man paths to include the area folder"
     export MANPATH="/usr/local/man:/usr/local/share/man:/usr/share/man:$MAN_DEST:$MANPATH"
     SHELL_PATHS=("/etc/bash.bashrc" "/etc/bashrc" "/etc/profile" "/etc/zsh/zshenv" "/etc/zshrc" "/etc/fish/config.fish")
 
@@ -581,7 +231,7 @@ function update_man_paths {
             decho "MANPATH is already present in '$i' not adding"
         fi
     done
-    echo "Updated the shell man paths to include the zappy folder"
+    echo "Updated the shell man paths to include the area folder"
 }
 
 function add_required_mans {
@@ -616,7 +266,7 @@ function update_man_db {
         return
     fi
     if grep -qF "$MY_MAN_PATH" "$DESTINATION"; then
-        echo "The man paths for zappy are correct"
+        echo "The man paths for area are correct"
         return
     fi
     echo "#" >>"$DESTINATION"
@@ -676,7 +326,7 @@ fi
 # Define the installation directory for man pages
 UPDATE_DB_FILE=$TRUE
 MAN_DIR="/usr/share/man/"
-MAN_PROG_DIR="zappy"
+MAN_PROG_DIR="area"
 MAN_DEST="${MAN_DIR}${MAN_PROG_DIR}"
 MAN_LEVEL=6
 MAN_SHORTCUT_HOME="${MAN_DIR}man${MAN_LEVEL}"
@@ -712,7 +362,7 @@ if [ $STATUS -ne 0 ]; then
     echo "This operation failed, please re-run this program with -d or do the operation manually"
     exit $STATUS
 fi
-decho "Removed '$MAN_DEST' and '$MAN_DIR/zappy.3' is they existed"
+decho "Removed '$MAN_DEST' and '$MAN_DIR/area.3' if they existed"
 echo "Previous entries, if present, have been removed"
 
 # Create the directory structure for your project's man pages
@@ -755,34 +405,9 @@ if [ $STATUS -ne 0 ]; then
     exit $STATUS
 fi
 echo "Homepage has been generated"
-echo "Generating page zappy_ai"
-create_zappy_ai_man "$MAN_DEST" "zappy_ai" "1" "$MAN_SOURCE"
-STATUS=$?
-if [ $STATUS -ne 0 ]; then
-    echo "This operation failed, please re-run this program with -d or do the operation manually"
-    exit $STATUS
-fi
-echo "zappy_ai page has been generated"
-echo "Generating page zappy_gui"
-create_zappy_gui_man "$MAN_DEST" "zappy_gui" "1" "$MAN_SOURCE"
-STATUS=$?
-if [ $STATUS -ne 0 ]; then
-    echo "This operation failed, please re-run this program with -d or do the operation manually"
-    exit $STATUS
-fi
-echo "zappy_gui page has been generated"
-echo "Generating page zappy_server"
-create_zappy_server_man "$MAN_DEST" "zappy_server" "1" "$MAN_SOURCE"
-STATUS=$?
-if [ $STATUS -ne 0 ]; then
-    echo "This operation failed, please re-run this program with -d or do the operation manually"
-    exit $STATUS
-fi
-echo "zappy_server page has been generated"
 
 echo "Adding required man links"
-add_required_mans "$MAN_SHORTCUT_HOME" "$MAN_DEST" "zappy.6"
-add_required_mans "$MAN_SHORTCUT_BINS" "$MAN_DEST" "zappy_ai.1" "zappy_gui.1" "zappy_server.1"
+add_required_mans "$MAN_SHORTCUT_HOME" "$MAN_DEST" "area.6"
 echo "Added required man links"
 
 if [ "$UPDATE_DB_FILE" = "$TRUE" ]; then
@@ -795,7 +420,7 @@ fi
 
 update_database
 
-echo "Installation complete. You can now use 'man zappy' to access the manual page."
+echo "Installation complete. You can now use 'man area' to access the manual page."
 echo "Please relaunch any terminal instances you have for the full effect of the new man pages to be applied"
 
 echo "(C) Created by Henry Letellier"
