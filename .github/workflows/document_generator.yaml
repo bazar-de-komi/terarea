@@ -33,6 +33,11 @@ env:
   HTML_GENERATION: html
   TEMPORARY_FOLDER: tmp_documentation
   OUTPUT_GENERATION: documentation
+  # Variables for managin the tags
+  SETUP_FILE: setup.py
+  TAG_FILE: version.txt
+  IS_RELEASE: is_release.txt
+  LATEST_TAG: ""
   # Variable containing the reference key for the cache of each main section
   CACHE_KEY: doxygen-cache-key
   CACHE_KEY_CLEANED: doxygen-cache-key-cleaned
@@ -84,7 +89,7 @@ jobs:
           echo -e "$HTML_CONTENT" > ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}/index.html
       - name: Run doxygen docker
         run: |
-          RUN_COMMAND="cd /app && cp ${{env.DOXYFILE}} ./Doxyfile && doxygen ; exit $?"
+          RUN_COMMAND="cd /app && cp -v ${{env.DOXYFILE}} ./Doxyfile && doxygen ; exit $?"
           docker run -t -v "$(pwd)":"/app" -v "$(pwd)/${{env.OUTPUT_GENERATION}}":"/${{env.OUTPUT_GENERATION}}" ${{env.DOCKER_NAME}} /bin/bash -c "$RUN_COMMAND"
           if [ $? -ne 0 ]
           then
@@ -140,7 +145,7 @@ jobs:
           ls -a ./
           echo "Copying content of ${{ env.OUTPUT_GENERATION }} to ${{env.TEMPORARY_FOLDER}}"
           mkdir -p ${{ env.TEMPORARY_FOLDER}}
-          cp -rf ${{ env.OUTPUT_GENERATION }} ${{env.TEMPORARY_FOLDER}}
+          cp -rvf ${{ env.OUTPUT_GENERATION }} ${{env.TEMPORARY_FOLDER}}
           echo "Content of: ${{ env.TEMPORARY_FOLDER }}/"
           ls -a ${{ env.TEMPORARY_FOLDER }}/
           echo "Content of: ${{ env.OUTPUT_GENERATION }}/"
@@ -167,7 +172,7 @@ jobs:
             FINAL_PATH="$i/files/icon"
             echo "Final path = $FINAL_PATH"
             mkdir -p "$FINAL_PATH"
-            cp -r ${{env.ICON_PATH}}/* "$FINAL_PATH"
+            cp -rv ${{env.ICON_PATH}}/* "$FINAL_PATH"
             ls -a -ls --color=auto "$FINAL_PATH"
           done
       - name: Generate latex if present
@@ -194,7 +199,7 @@ jobs:
             CWD=$(pwd)
             FILE_NAME="install_man.sh"
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/man"
-            cp $CWD/${{env.MAN_INSTALL_PATH}} ./$FILE_NAME
+            cp -v $CWD/${{env.MAN_INSTALL_PATH}} ./$FILE_NAME
             chmod a+x $FILE_NAME
             cd $CWD
           else
@@ -206,7 +211,7 @@ jobs:
             CWD=$(pwd)
             FILE_NAME="launch_server.sh"
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html"
-            cp $CWD/${{env.HTML_SERVER_SPAWNER_PATH}} ./$FILE_NAME
+            cp -v $CWD/${{env.HTML_SERVER_SPAWNER_PATH}} ./$FILE_NAME
             chmod a+x $FILE_NAME
             cd $CWD
           else
@@ -309,7 +314,7 @@ jobs:
           echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
           echo -e "\n\n\n\n\n\n\n\n\n"
           echo "new_tag = $latest_tag"
-          echo "env.new_tag = ${{env.tag_file}}"
+          echo "env.new_tag = ${{env.TAG_FILE}}"
           echo "cat env.new_tag = $(cat ${{env.TAG_FILE}})"
           echo "env.LATEST_TAG = ${{env.LATEST_TAG}}"
           echo -e "\n\n\n\n\n\n\n\n\n"
@@ -366,7 +371,6 @@ jobs:
           fi
           echo -e "\n\n\n\n\n\n\n\n\n"
           echo "new_tag = $new_tag"
-          echo "env.NEW_TAG = ${{env.NEW_TAG}}"
           echo "env.is_release = $(cat ${{env.IS_RELEASE}})"
           echo "cat env.new_tag = $(cat ${{env.TAG_FILE}})"
           echo "cat env.is_release = $(cat ${{env.IS_RELEASE}})"
@@ -433,12 +437,6 @@ jobs:
           ls -a ${{env.TEMPORARY_FOLDER}}
           echo "content of ${{env.OUTPUT_GENERATION}}"
           ls -a ${{env.OUTPUT_GENERATION}}
-          echo "content of ${{env.LINUX_BINARY_FOLDER}}"
-          ls -a ${{env.LINUX_BINARY_FOLDER}}
-          echo "content of ${{env.MAC_INTEL_BINARY_FOLDER}}"
-          ls -a ${{env.MAC_INTEL_BINARY_FOLDER}}
-          echo "content of ${{env.MAC_MONE_BINARY_FOLDER}}"
-          ls -a ${{env.MAC_MONE_BINARY_FOLDER}}
       
       - name: Create archives
         run: |
