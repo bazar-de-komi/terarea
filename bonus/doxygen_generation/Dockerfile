@@ -6,14 +6,14 @@
 ##
 
 # Use a base image with necessary dependencies
-FROM fedora:34
+FROM fedora:42
 
 # The environment setup
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     PATH="/usr/local/texlive/2024/bin/x86_64-linux:$PATH" \
     ghost_version=10.03.0 \
-    doxygen_version=1.10.0 \
+    doxygen_version=1.12.0 \
     c_green="\033[0;32m" \
     c_red="\033[0;31m" \
     c_yellow="\033[0;33m" \

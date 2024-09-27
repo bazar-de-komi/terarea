@@ -242,7 +242,7 @@ HIDE_UNDOC_CLASSES     = $HIDE_UNDOC_CLASSES
 DEBUG=$FALSE
 
 # Publish container (for updating purposes)
-PUBLISH=$TRUE
+PUBLISH=$FALSE
 
 function run_command_in_container() {
     time $SUDO docker exec -it $CONTAINER_NAME /bin/bash -c "$1"
