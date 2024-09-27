@@ -1,0 +1,126 @@
+<!--
+-- EPITECH PROJECT, 2023
+-- my_zappy [fed34_prox_vm]
+-- File description:
+-- header.html
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--BEGIN PROJECT_NAME-->
+    <title>$projectname - $title - Doxygen - 2024</title>
+    <!--END PROJECT_NAME-->
+    <!-- Bgein project icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,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"><!--./files/icon/apple-touch-icon.png-->
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABgUExURfb29v////////////////////////z8/Expcf///////////////+vr67Kyst/f37u7u6ysrBUVFe/v7yoqKoaGhqamppCQkFdXV6GhoXJycsjIyGRkZDw8PNTU1JmZmWqAQ8kAAAAMdFJOU/6EJJw8BFn+ANipblP/i2QAAAGJSURBVDjLfZPZYuMgDEWVNAnQAmK38fr/fzli8YxbN3NfZMOxtQPn/H4TTF7ExO1Ol8D5Q8g3Eq8nAQ/B4K1eHO6C5Wyrhm7T0KzNXjzgJmFYDCNJg6xK2WaZVfIDBAEhREUuDTbXSkvlJcWtlRTACuDcaNgZsMswV0CCbIBb8QTg6AJ+B8bt7GKbXNBn4BIDRlQnoATwHWBQHg4gZmO0MSYmU2Vjs2boQEbEaUbMVjft2JQ7YBkFtWhp0hqKku690H8BRWnNFMNA+boJr4CM46gI8EspiLoCDAGhZLGtLslfgPZe0kwT/B8AL69AUk12bnY7DtJRyZ5/3JtNU+oHVxcKEKWPy8x+xMB6s/S4zgSEUKp8BuYRK5CoTooA6j/95B/gR7eUOsCwrtpXwC2qAawAOx3sNc0ty+LChemYBxpaO5cvwlwAGu4CrDVwAqCMfZpqE5fUB8bHaTsK9UmLA3vsyr0OsddhL4vDX+CVr1I/5dkX7ebz9X55v8ry0np/wG/X8Pl4cv4Hpyo2NhewEjAAAABXelRYdFJhdyBwcm9maWxlIHR5cGUgaXB0YwAAeJzj8gwIcVYoKMpPy8xJ5VIAAyMLLmMLEyMTS5MUAxMgRIA0w2QDI7NUIMvY1MjEzMQcxAfLgEigSi4A6hcRdPJCNZUAAAAASUVORK5CYII="><!-- ./files/icon/favicon-32x32.png -->
+    <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAABXUExURf///////9jY2NHR0f///////////////+Hh4f///+vr6+Hh4fb29szMzNXV1eXl5cLCwvHx8aOjo7e3t+/v793d3ZGRkWlpaTg4OIKCgiMjI15eXnR0dAqM+LoAAAAKdFJOU97///8HBQpk8HEJcntIAAAArUlEQVQY01WPWW7DMAwFKTKNHVILo1127n/OMA5aoO9zgAHewM8G7m+w3WDbqSFFxEiIuD8AdKhH8V6IK0cAp8dUYecqje7RgStz8ResfAHNmDSIkDbBYCDGlUMfowdmIQOYzi5lHqU5dyn4rF44d/4FUWqlxtyo1vRRKErTYOsqMVyKsqTXSOcsl9LCXC3lzOexqgGgccycvE+v/Kx2fduLzcJILdDibv/yH/c3Z4MKveix0I8AAABXelRYdFJhdyBwcm9maWxlIHR5cGUgaXB0YwAAeJzj8gwIcVYoKMpPy8xJ5VIAAyMLLmMLEyMTS5MUAxMgRIA0w2QDI7NUIMvY1MjEzMQcxAfLgEigSi4A6hcRdPJCNZUAAAAASUVORK5CYII="><!-- ./files/icon/favicon-16x16.png -->
+    <link rel="manifest" href="$relpath^/site.webmanifest">
+    <link rel="mask-icon" href=" data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/Pgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDIwMDEwOTA0Ly9FTiIKICJodHRwOi8vd3d3LnczLm9yZy9UUi8yMDAxL1JFQy1TVkctMjAwMTA5MDQvRFREL3N2ZzEwLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiB3aWR0aD0iMjU2LjAwMDAwMHB0IiBoZWlnaHQ9IjI1Ni4wMDAwMDBwdCIgdmlld0JveD0iMCAwIDI1Ni4wMDAwMDAgMjU2LjAwMDAwMCIKIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIG1lZXQiPgo8bWV0YWRhdGE+CkNyZWF0ZWQgYnkgcG90cmFjZSAxLjE0LCB3cml0dGVuIGJ5IFBldGVyIFNlbGluZ2VyIDIwMDEtMjAxNwo8L21ldGFkYXRhPgo8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLjAwMDAwMCwyNTYuMDAwMDAwKSBzY2FsZSgwLjEwMDAwMCwtMC4xMDAwMDApIgpmaWxsPSIjMDAwMDAwIiBzdHJva2U9Im5vbmUiPgo8cGF0aCBkPSJNMCAxMjgwIGwwIC0xMjgwIDEyODAgMCAxMjgwIDAgMCAxMjgwIDAgMTI4MCAtMTI4MCAwIC0xMjgwIDAgMAotMTI4MHogbTg0MCA4NDAgbDAgLTQwMCAtNDAwIDAgLTQwMCAwIDAgNDAwIDAgNDAwIDQwMCAwIDQwMCAwIDAgLTQwMHogbTg0MAowIGwwIC00MDAgLTQwMCAwIC00MDAgMCAwIDQwMCAwIDQwMCA0MDAgMCA0MDAgMCAwIC00MDB6IG04NDAgMCBsMCAtNDAwIC00MDAKMCAtNDAwIDAgMCA0MDAgMCA0MDAgNDAwIDAgNDAwIDAgMCAtNDAweiBtLTIwOTQgLTQ1MiBjLTEgLTcgLTcgLTIzIC0xNCAtMzQKLTYgLTEyIC04IC0yNCAtNSAtMjggMyAtMyAxIC02IC02IC02IC03IDAgLTEwIC00IC02IC05IDMgLTUgMSAtMTIgLTUgLTE2IC02Ci00IC04IC0xMCAtNSAtMTUgOSAtMTUgLTE2IC0yMyAtODQgLTI3IC0zNiAtMiAtNzMgLTQgLTgwIC01IC0xNSAtMSA4NiAtOTgKMTAyIC05OCA5IDAgNyAtNTggLTIgLTc1IC0zIC01IC02IC0xNCAtNyAtMjAgLTkgLTQ5IC0xNCAtNjYgLTIwIC03NiAtOCAtMTMKMjAgMSA5NCA0OCBsNTMgMzMgNTUgLTM1IGMzMCAtMTkgNTkgLTM1IDY0IC0zNSA2IDAgMTAgLTUgMTAgLTExIDAgLTUgNSAtNwoxMCAtNCA4IDUgOCAxMSAxIDE5IC02IDcgLTggMTYgLTUgMTkgMyAzIDIgMTIgLTIgMTkgLTUgNyAtOSAxOCAtMTEgMjMgLTEwCjQ2IC0xMyA1NiAtMTggNjUgLTMgNSA5IDIyIDI3IDM3IDg2IDc0IDEwMCA5MCA4NyA5MSAtOCAxIC00NSAzIC04MiA1IC02NiA0Ci04MSA5IC04MyAyOCAtMSA1IC0zIDExIC00IDE0IC0xIDMgLTMgOCAtNSAxMyAtMSA0IC01IDE0IC04IDIyIC00IDggLTExIDI3Ci0xNiA0MyBsLTExIDI3IDE5NSAwIDE5NSAwIDAgLTQwMCAwIC00MDAgLTQwMCAwIC00MDAgMCAwIDQwMCAwIDQwMCAxOTQgMApjMTUwIDAgMTk0IC0zIDE5MiAtMTJ6IG0xMjU0IC0zODggbDAgLTQwMCAtNDAwIDAgLTQwMCAwIDAgNDAwIDAgNDAwIDQwMCAwCjQwMCAwIDAgLTQwMHogbTg0MCAwIGwwIC00MDAgLTQwMCAwIC00MDAgMCAwIDQwMCAwIDQwMCA0MDAgMCA0MDAgMCAwIC00MDB6Cm0tMTY4MCAtODQwIGwwIC00MDAgLTQwMCAwIC00MDAgMCAwIDQwMCAwIDQwMCA0MDAgMCA0MDAgMCAwIC00MDB6IG04NDAgMCBsMAotNDAwIC00MDAgMCAtNDAwIDAgMCA0MDAgMCA0MDAgNDAwIDAgNDAwIDAgMCAtNDAweiBtODQwIDAgbDAgLTQwMCAtNDAwIDAKLTQwMCAwIDAgNDAwIDAgNDAwIDQwMCAwIDQwMCAwIDAgLTQwMHoiLz4KPHBhdGggZD0iTTgwIDIxMzAgYzAgLTM1MCAxIC0zNzAgMTggLTM2MSAxNCA4IDIzMCAxNjIgMjg0IDIwMyA5IDcgNjYgNDkgMTI3CjkyIGwxMTAgODAgLTI3IDE5IGMtMTUgMTAgLTEwNiA3MCAtMjAyIDEzMyAtOTYgNjMgLTIwNSAxMzUgLTI0MiAxNjAgbC02OCA0NAowIC0zNzB6Ii8+CjxwYXRoIGQ9Ik0xOTM1IDIzMTAgYy00IC03IC00IC0xNSAxIC0xOSA4IC01IDEwIC03OCA1IC0xMjkgMCAtNyAtMzAgLTI2IC02NgotNDQgLTM2IC0xNyAtNjggLTM0IC03MCAtMzggLTQgLTYgODEgLTM4IDExNyAtNDQgMjcgLTQgNDMgLTIyIDQ2IC01MSA1IC01OQo4IC03NCAxNCAtODAgNCAtNCA0IC0xMyAyIC0yMCAtMyAtNyAtMSAtMTYgNSAtMjAgNiAtMyAxMSAxIDExIDkgMCA5IDQgMTYgOAoxNiA0IDAgMjEgMjMgMzcgNTAgMTYgMjggMzIgNTAgMzUgNTEgMjggNSA2MiA1IDY1IC0xIDIgLTQgMTkgLTYgMzcgLTUgMTggMgozOSAtMiA0NiAtOCAzNyAtMzAgMTAgMzIgLTM2IDgyIC00NCA0NiAtNDQgNTMgLTcgMTI3IDM3IDc0IDQzIDkzIDIyIDc1IC04Ci02IC0xNyAtOCAtMjAgLTQgLTQgMyAtNyAxIC03IC02IDAgLTcgLTQgLTEwIC05IC02IC01IDMgLTEyIDEgLTE2IC01IC00IC02Ci0xMCAtOCAtMTUgLTUgLTUgMyAtMTEgMSAtMTUgLTUgLTQgLTYgLTEwIC04IC0xNSAtNSAtNSAzIC0xMSAxIC0xNSAtNSAtMTEKLTE4IC0zNyAtMTEgLTY1IDE4IC02OCA2OCAtODggODQgLTk1IDcyeiIvPgo8cGF0aCBkPSJNMTAzNyAxNjAzIGMtNCAtMyAtMzMgLTUgLTY3IC00IC02NCAxIC03MiAtNSAtNDAgLTM0IDExIC0xMCAyMCAtMjQKMjAgLTMxIDAgLTcgMyAtMTQgOCAtMTYgOCAtMyA3NCAtOTMgMjE3IC0yOTMgNDMgLTYwIDg4IC0xMjIgMTAwIC0xMzYgbDIxCi0yNiA0MSA2MSBjMTU3IDIzNiAyMjMgMzQwIDIyMyAzNDYgMCA1IDMgMTAgOCAxMiA4IDMgNzIgMTAxIDcyIDExMCAwIDQgLTMyCjYgLTcxIDcgLTM4IDAgLTc0IDMgLTc5IDYgLTUgMyAtMTEgMSAtMTUgLTUgLTQgLTYgLTEwIC04IC0xNCAtNSAtOCA0IC04NSA1Ci0zMDkgNCAtNTAgMCAtOTYgMiAtMTAxIDUgLTQgMyAtMTEgMyAtMTQgLTF6Ii8+CjxwYXRoIGQ9Ik0zNDAgNTA5IGMtMzYgLTU1IC02OSAtMTA4IC03NSAtMTE2IC0yNyAtNDQgLTE1NiAtMjM5IC0xNjUgLTI1MCAtNQotNyAtMTAgLTE1IC0xMCAtMTkgMCAtNCAtNyAtMTYgLTE3IC0yNiAtMTYgLTE3IC00IC0xOCAzNDkgLTE4IDIwMCAwIDM2NyAzCjM3MSA2IDMgNCAtMTkgNDEgLTUwIDgzIC0zMSA0MiAtNzUgMTAyIC05NiAxMzQgLTIyIDMxIC00NCA1NyAtNDggNTcgLTUgMCAtOQo3IC05IDE1IDAgOCAtMTEgMjYgLTI1IDQwIC0xNCAxNCAtMjMgMjUgLTIxIDI1IDYgMCAtMTYgMjggLTQxIDU1IC03IDggLTEzCjE3IC0xMyAyMiAwIDUgLTEzIDIzIC0zMCA0MSAtMTYgMTggLTMwIDM3IC0zMCA0MyAwIDMwIC0zMyAtNCAtOTAgLTkyeiIvPgo8cGF0aCBkPSJNMTM5NCA3NDMgYzQgLTcgMyAtMTMgLTIgLTEzIC01IDAgLTM0IC0yMCAtNjQgLTQ1IC01NCAtNDQgLTc4IC01NQotNzggLTM1IDAgNiAtNyAxMCAtMTYgMTAgLTggMCAtMzUgMTEgLTYwIDI1IC00MSAyMyAtODQgMzUgLTU5IDE3IDkgLTYgMTMKLTE3IDE5IC00NyAxIC01IDggLTIwIDE0IC0zMiA3IC0xMyA5IC0yMyA1IC0yMyAtNCAwIC0yIC01IDUgLTEyIDIwIC0yMCAxNAotMzUgLTQyIC05NSAtNTEgLTUzIC02MyAtNzggLTMzIC02OCA3IDMgMzggNyA3MCA5IDQ5IDQgNjEgMSA3NyAtMTcgMTEgLTExCjIwIC0yNyAyMCAtMzQgMCAtNyA1IC0xMyAxMSAtMTMgNSAwIDggLTQgNCAtOSAtMyAtNSAwIC0xMyA1IC0xNiA2IC00IDE2IC0xOAoyMSAtMzIgOSAtMjUgMjAgLTI1IDI1IDAgOCA0MCAxNCA1OCAyMiA3NCA1IDEwIDggMjMgNSAyOSAtOCAyNCAzNCA0MiAxMTAgNDcKMTUgMSAyNyA1IDI3IDkgMCA0IDkgNSAyMCAzIDExIC0yIDIwIDAgMjAgNiAwIDUgLTYgOSAtMTQgOSAtOCAwIC0xNiAzIC0xOCA4Ci0xIDQgLTI2IDIyIC01NCA0MSAtNTAgMzMgLTUxIDM1IC00NyA3NSAyIDIzIDUgNTIgNiA2NiAyIDE0IDYgMzEgMTEgMzggNSA4CjMgMTggLTQgMjUgLTEwIDkgLTExIDkgLTYgMHoiLz4KPHBhdGggZD0iTTE3NjAgNDQwIGMwIC0yMDQgMiAtMzcwIDUgLTM3MCAzIDAgNTEgMzQgMTA4IDc1IDU2IDQxIDE3NSAxMjcgMjY1CjE5MiA4OSA2NCAxNjEgMTE3IDE2MCAxMTggLTE4IDE2IC0yMDIgMTM1IC0yMDkgMTM1IC01IDAgLTkgNSAtOSAxMCAwIDYgLTUKMTAgLTExIDEwIC02IDAgLTM5IDE5IC03MyA0MyAtMzMgMjMgLTEwMCA2OCAtMTQ4IDEwMCBsLTg4IDU3IDAgLTM3MHoiLz4KPC9nPgo8L3N2Zz4K" color="#5bbad5"><!-- ./files/icon/safari-pinned-tab.svg -->
+    <link rel="shortcut icon" href="$relpath^/favicon.ico"><!--  -->
+    <!-- End Project icon -->
+    <meta charset="utf-8">
+    <meta http-equiv="pragma" content="cache">
+    <meta http-equiv="Cache-control" content="public">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-config" content="$relpath^/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="publisher" content="Henry Letellier" />
+    <meta name="google-site-verification" content="" />
+    <meta name="copyright" content="&copy Harleen Singh-Kaur" />
+    <meta name="copyright" content="&copy Eric Xu" />
+    <meta name="copyright" content="&copy Flavien Maillard" />
+    <meta name="copyright" content="&copy Thomas Lebouc" />
+    <meta name="copyright" content="&copy Henry Letellier" />
+    <meta name="googlebot" content="translate,sitelinkssearchbox" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="index, follow, max-image-preveiw:standard" />
+    <meta name="Index" content="This is the documentation about the Area project" />
+    <meta name="author" content="Harleen Singh-Kaur, Thomas Lebouc, Eric Xu, Flavien Maillard, Henry Letellier" />
+    <!-- Doxygen section -->
+    <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <meta name="generator" content="Doxygen $doxygenversion" />
+    <link href="$relpath^tabs.css" rel="stylesheet" type="text/css" />
+    <!--BEGIN DISABLE_INDEX-->
+    <!--BEGIN FULL_SIDEBAR-->
+    <script type="text/javascript">var page_layout = 1;</script>
+    <!--END FULL_SIDEBAR-->
+    <!--END DISABLE_INDEX-->
+    <script type="text/javascript" src="$relpath^jquery.js"></script>
+    <script type="text/javascript" src="$relpath^dynsections.js"></script>
+    <!--BEGIN COPY_CLIPBOARD-->
+    <script type="text/javascript" src="$relpath^clipboard.js"></script>
+    <!--END COPY_CLIPBOARD-->
+    <!-- Begin treeview code -->
+    $treeview
+    <!-- End treeview code -->
+    <!-- Begin searchbox -->
+    $search
+    <!-- End searchbox -->
+    <!-- Begin mathjax -->
+    $mathjax
+    <!-- End mathjax -->
+    <!-- Begin dark mode -->
+    $darkmode
+    <!-- End dark mode -->
+    <!-- Begin link stylesheets -->
+    $extrastylesheet
+    <link href="$relpath^tabs.css" rel="stylesheet" type="text/css" />
+    <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
+    <!-- End link stylesheets -->
+</head>
+
+<body>
+    <!--BEGIN DISABLE_INDEX-->
+    <!--BEGIN FULL_SIDEBAR-->
+    <div id="side-nav" class="ui-resizable side-nav-resizable"><!-- do not remove this div, it is closed by doxygen! -->
+        <!--END FULL_SIDEBAR-->
+        <!--END DISABLE_INDEX-->
+
+        <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+
+            <!--BEGIN TITLEAREA-->
+            <div id="titlearea">
+                <table cellspacing="0" cellpadding="0">
+                    <tbody>
+                        <tr id="projectrow">
+                            <!--BEGIN PROJECT_LOGO-->
+                            <td id="projectlogo"><img alt="Logo" src="$relpath^$projectlogo" $logosize /></td>
+                            <!--END PROJECT_LOGO-->
+                            <!--BEGIN PROJECT_NAME-->
+                            <td id="projectalign">
+                                <div id="projectname">$projectname<!--BEGIN PROJECT_NUMBER--><span id="projectnumber">&#160;$projectnumber</span><!--END PROJECT_NUMBER-->
+                                </div>
+                                <!--BEGIN PROJECT_BRIEF-->
+                                <div id="projectbrief">$projectbrief</div><!--END PROJECT_BRIEF-->
+                            </td>
+                            <!--END PROJECT_NAME-->
+                            <!--BEGIN !PROJECT_NAME-->
+                            <!--BEGIN PROJECT_BRIEF-->
+                            <td>
+                                <div id="projectbrief">$projectbrief</div>
+                            </td>
+                            <!--END PROJECT_BRIEF-->
+                            <!--END !PROJECT_NAME-->
+                            <!--BEGIN DISABLE_INDEX-->
+                            <!--BEGIN SEARCHENGINE-->
+                            <!--BEGIN !FULL_SIDEBAR-->
+                            <td>$searchbox</td>
+                            <!--END !FULL_SIDEBAR-->
+                            <!--END SEARCHENGINE-->
+                            <!--END DISABLE_INDEX-->
+                        </tr>
+                        <!--BEGIN SEARCHENGINE-->
+                        <!--BEGIN FULL_SIDEBAR-->
+                        <tr>
+                            <td colspan="2">$searchbox</td>
+                        </tr>
+                        <!--END FULL_SIDEBAR-->
+                        <!--END SEARCHENGINE-->
+                    </tbody>
+                </table>
+            </div>
+            <!--END TITLEAREA-->
+            <!-- end header part -->
