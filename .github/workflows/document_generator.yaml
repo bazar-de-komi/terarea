@@ -26,9 +26,9 @@ env:
   COMMIT_TITLE: "There is no title"
   COMMIT_MESSAGE: "There is no message"
   #Variables for the extras scripts
-  DOXYFILE: bonus/doxygen_generation/Doxyfile
-  MAN_INSTALL_PATH: bonus/doxygen_generation/man/installer.sh
-  HTML_SERVER_SPAWNER_PATH: bonus/doxygen_generation/html/launch_server.sh
+  DOXYFILE: doxygen_generation/Doxyfile
+  MAN_INSTALL_PATH: doxygen_generation/man/installer.sh
+  HTML_SERVER_SPAWNER_PATH: doxygen_generation/html/launch_server.sh
   # Variables for specifying build locations
   HTML_GENERATION: html
   TEMPORARY_FOLDER: tmp_documentation
@@ -121,7 +121,7 @@ jobs:
     needs: build_doxygen
     if: success()
     env:
-      ICON_PATH: bonus/doxygen_generation/favicon/
+      ICON_PATH: doxygen_generation/favicon/
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
