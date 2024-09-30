@@ -168,6 +168,14 @@ clean_coverage:
 	$(SILENT) rm -rf .coverage
 	@echo -e "$(C_GREEN)Coverage cleaned$(C_RESET)"
 
+# Remove docker cache
+clean_docker:
+	@echo -e "$(C_YELLOW)Cleaning docker cache$(C_RESET)"
+	$(SILENT) rm -rf .bash_history 
+	$(SILENT) rm -rf .mysql_history
+	$(SILENT) rm -rf .python_history
+	@echo -e "$(C_GREEN)Docker cache cleaned$(C_RESET)"
+
 # Proceed to a full environement wipe (
 #	ex: usefull when changing python version
 # )
@@ -176,7 +184,7 @@ fclean: clean clean_coverage
 	$(SILENT) rm -vf $(BINARY_DESTINATION_TWO)$(NAME)
 
 # Function in charge of doing a full clean
-ffclean: fclean clean_env
+ffclean: fclean clean_env clean_docker
 
 # Run the tests for the programs
 tests_run:
@@ -245,7 +253,7 @@ serve: run
 	all omega create_environement install_dependencies activate_environement \
 	activate \
 	build build_binary update_binary_location \
-	clean clean_env clean_coverage \
+	clean clean_env clean_coverage clean_docker \
 	fclean ffclean \
 	tests_run coverage \
 	debug re \
