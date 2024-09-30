@@ -61,13 +61,13 @@ PROJECT_BRIEF          = "This is a project that Epitech asked us to create in o
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = bonus/doxygen_generation/favicon/favicon-32x32.png
+PROJECT_LOGO           = doxygen_generation/favicon/favicon-32x32.png
 
 # With the PROJECT_ICON tag one can specify an icon that is included in the tabs
 # when the HTML document is shown. Doxygen will copy the logo to the output
 # directory.
 
-PROJECT_ICON           = /app/bonus/doxygen_generation/html/files/icon/favicon.ico
+PROJECT_ICON           = doxygen_generation/html/files/icon/favicon.ico
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -1022,7 +1022,7 @@ RECURSIVE              = YES
 EXCLUDE                = *.o \
                          *.a \
                          *.pyc \
-                         bonus/** \
+                         ** \
                          app/back/server/server_env/** \
                          app/back/server/coverage_data/** \
                          app/back/server/.pytest_cache/** \
@@ -1305,7 +1305,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = bonus/doxygen_generation/html/header.html
+HTML_HEADER            = doxygen_generation/html/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1315,7 +1315,7 @@ HTML_HEADER            = bonus/doxygen_generation/html/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = bonus/doxygen_generation/html/footer.html
+HTML_FOOTER            = doxygen_generation/html/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1327,7 +1327,7 @@ HTML_FOOTER            = bonus/doxygen_generation/html/footer.html
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = bonus/doxygen_generation/html/files/css/colour_constants.css
+HTML_STYLESHEET        = 
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -1345,8 +1345,11 @@ HTML_STYLESHEET        = bonus/doxygen_generation/html/files/css/colour_constant
 # documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = bonus/doxygen_generation/html/files/css/doxysheet.css \
-                         bonus/doxygen_generation/html/files/css/stylesheet.css
+HTML_EXTRA_STYLESHEET  = doxygen_generation/html/files/css/custom.css \
+                         doxygen_generation/html/files/css/doxygen-awesome.css \
+                         doxygen_generation/html/files/css/custom-alternative.css \
+                         doxygen_generation/html/files/css/doxygen-awesome-sidebar-only.css \
+                         doxygen_generation/html/files/css/doxygen-awesome-sidebar-only-darkmode-toggle.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1356,9 +1359,15 @@ HTML_EXTRA_STYLESHEET  = bonus/doxygen_generation/html/files/css/doxysheet.css \
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = bonus/doxygen_generation/html/files/icon/favicon.ico \
-                         bonus/doxygen_generation/html/files/icon/browserconfig.xml \
-                         bonus/doxygen_generation/html/files/icon/site.webmanifest
+HTML_EXTRA_FILES       = doxygen_generation/html/files/icon/favicon.ico \
+                         doxygen_generation/html/files/icon/browserconfig.xml \
+                         doxygen_generation/html/files/icon/site.webmanifest \
+                         doxygen_generation/html/files/js/doxygen-awesome-tabs.js \
+                         doxygen_generation/html/files/js/toggle-alternative-theme.js \
+                         doxygen_generation/html/files/js/doxygen-awesome-paragraph-link.js \
+                         doxygen_generation/html/files/js/doxygen-awesome-darkmode-toggle.js \
+                         doxygen_generation/html/files/js/doxygen-awesome-interactive-toc.js \
+                         doxygen_generation/html/files/js/doxygen-awesome-fragment-copy-button.js
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
 # should be rendered with a dark or light theme.
@@ -2025,7 +2034,7 @@ EXTRA_PACKAGES         =
 # description of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_HEADER           = bonus/doxygen_generation/latex/latex_header.tex
+LATEX_HEADER           = doxygen_generation/latex/latex_header.tex
 
 # The LATEX_FOOTER tag can be used to specify a user-defined LaTeX footer for
 # the generated LaTeX document. The footer should contain everything after the
@@ -2037,7 +2046,7 @@ LATEX_HEADER           = bonus/doxygen_generation/latex/latex_header.tex
 # doing!
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_FOOTER           = bonus/doxygen_generation/latex/latex_footer.tex
+LATEX_FOOTER           = doxygen_generation/latex/latex_footer.tex
 
 # The LATEX_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # LaTeX style sheets that are included after the standard style sheets created
@@ -2048,7 +2057,7 @@ LATEX_FOOTER           = bonus/doxygen_generation/latex/latex_footer.tex
 # list).
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_EXTRA_STYLESHEET = bonus/doxygen_generation/latex/stylesheet/stylesheet.tex
+LATEX_EXTRA_STYLESHEET = doxygen_generation/latex/stylesheet/stylesheet.tex
 
 # The LATEX_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the LATEX_OUTPUT output
@@ -2056,7 +2065,7 @@ LATEX_EXTRA_STYLESHEET = bonus/doxygen_generation/latex/stylesheet/stylesheet.te
 # markers available.
 # This tag requires that the tag GENERATE_LATEX is set to YES.
 
-LATEX_EXTRA_FILES      = favicon/favicon.png
+LATEX_EXTRA_FILES      = doxygen_generation/files/icon/favicon.png
 
 # If the PDF_HYPERLINKS tag is set to YES, the LaTeX that is generated is
 # prepared for conversion to PDF (using ps2pdf or pdflatex). The PDF file will
@@ -2162,7 +2171,7 @@ RTF_HYPERLINKS         = YES
 # default style sheet that doxygen normally uses.
 # This tag requires that the tag GENERATE_RTF is set to YES.
 
-RTF_STYLESHEET_FILE    = bonus/doxygen_generation/rtf/stylesheet/stylesheet.rtf
+RTF_STYLESHEET_FILE    = doxygen_generation/rtf/stylesheet/stylesheet.rtf
 
 # Set optional variables used in the generation of an RTF document. Syntax is
 # similar to doxygen's configuration file. A template extensions file can be
