@@ -245,7 +245,7 @@ jobs:
             ls -lsa
             echo "Returning to '$CWD'"
             cd $CWD
-          else:
+          else
             echo "There was no html generated"
           fi
 
