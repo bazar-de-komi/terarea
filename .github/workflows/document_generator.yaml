@@ -212,31 +212,31 @@ jobs:
           if [ -e "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION}}/html" ]; then
             CWD=$(pwd)
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html"
-            if [ -e "$CWD/files" ]; then
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files" ]; then
               echo "Folder 'files' found, copying"
               cp -rv $CWD/${{env.HTML_SRC_PATH}}/files .
             fi
-            if [ -e "$CWD/css" ]; then
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/css" ]; then
               echo "Folder 'css' found, copying"
               cp -rv $CWD/${{env.HTML_SRC_PATH}}/css .
             fi
-            if [ -e "$CWD/js" ]; then
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/js" ]; then
               echo "Folder 'js' found, copying"
               cp -rv $CWD/${{env.HTML_SRC_PATH}}/js .
             fi
-            if [ -e "$CWD/icon" ]; then
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/icon" ]; then
               echo "Folder 'icon' found, copying"
               cp -rv $CWD/${{env.HTML_SRC_PATH}}/icon .
             fi
-            if [ -e "$CWD/icons" ]; then
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/icons" ]; then
               echo "Folder 'icons' found, copying"
               cp -rv $CWD/${{env.HTML_SRC_PATH}}/icons .
             fi
-            if [ -e "$CWD/img" ]; then
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/img" ]; then
               echo "Folder 'img' found, copying"
               cp -rv $CWD/${{env.HTML_SRC_PATH}}/img .
             fi
-            if [ -e "$CWD/${{env.HTML_SERVER_SPAWNER_NAME}}" ]; then
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/${{env.HTML_SERVER_SPAWNER_NAME}}" ]; then
               echo "File ${{env.HTML_SERVER_SPAWNER_NAME}} found, copying"
               cp -v $CWD/${{env.HTML_SRC_PATH}}/${{env.HTML_SERVER_SPAWNER_NAME}} ./${{env.HTML_SERVER_SPAWNER_NAME}}
               chmod a+x ${{env.HTML_SERVER_SPAWNER_NAME}}
