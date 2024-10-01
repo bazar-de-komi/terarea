@@ -1,5 +1,5 @@
 <template>
-  <h1 class="ifttt-title">IFTTT</h1>
+  <img src="@/assets/logo.png" class="ifttt-logo" />
   <AuthLayout title="Sign Up" linkText="Already have an account? Sign in here" linkPath="/sign-in">
     <form @submit.prevent="submitSignUp" class="sign-up-form">
       <input v-model="email" type="email" placeholder="Email" required />
@@ -23,8 +23,8 @@
 
     <div class="separator">Or</div>
     <div class="social-login">
-      <AuthButton text="Continue with Google" :icon="GoogleIcon" />
-      <AuthButton text="Continue with GitHub" :icon="GithubIcon" />
+      <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon" />
+      <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" />
     </div>
   </AuthLayout>
 </template>
@@ -76,12 +76,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.ifttt-title {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 50px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: bold;
+.ifttt-logo {
+  display: block;
+  margin: 0 auto 20px;
 }
 
 .sign-up-form input {
