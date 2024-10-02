@@ -28,7 +28,8 @@ env:
   #Variables for the extras scripts
   DOXYFILE: doxygen_generation/Doxyfile
   MAN_INSTALL_PATH: doxygen_generation/man/installer.sh
-  HTML_SERVER_SPAWNER_PATH: doxygen_generation/html/launch_server.sh
+  HTML_SRC_PATH: doxygen_generation/html
+  HTML_SERVER_SPAWNER_NAME: launch_server.sh
   # Variables for specifying build locations
   HTML_GENERATION: html
   TEMPORARY_FOLDER: tmp_documentation
@@ -205,18 +206,49 @@ jobs:
           else
             echo "There was no man generated"
           fi
-      - name: Inject server spawner file if html is present
+
+      - name: Inject external html ressources if html is present
         run: |
-          if [ -e "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html" ]; then
+          if [ -e "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION}}/html" ]; then
             CWD=$(pwd)
-            FILE_NAME="launch_server.sh"
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html"
-            cp -v $CWD/${{env.HTML_SERVER_SPAWNER_PATH}} ./$FILE_NAME
-            chmod a+x $FILE_NAME
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files" ]; then
+              echo "Folder 'files' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/files .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/css" ]; then
+              echo "Folder 'css' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/css .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/js" ]; then
+              echo "Folder 'js' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/js .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/icon" ]; then
+              echo "Folder 'icon' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/icon .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/icons" ]; then
+              echo "Folder 'icons' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/icons .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/img" ]; then
+              echo "Folder 'img' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/img .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/${{env.HTML_SERVER_SPAWNER_NAME}}" ]; then
+              echo "File ${{env.HTML_SERVER_SPAWNER_NAME}} found, copying"
+              cp -v $CWD/${{env.HTML_SRC_PATH}}/${{env.HTML_SERVER_SPAWNER_NAME}} ./${{env.HTML_SERVER_SPAWNER_NAME}}
+              chmod a+x ${{env.HTML_SERVER_SPAWNER_NAME}}
+            fi
+            echo "Content of '$(pwd)':"
+            ls -lsa
+            echo "Returning to '$CWD'"
             cd $CWD
           else
             echo "There was no html generated"
           fi
+
       - name: Save cache
         id: cache-save
         uses: actions/cache@v4
@@ -266,6 +298,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
   export_other_formats_when_present:
     runs-on: ubuntu-latest
     needs: [clean_up_generation]
