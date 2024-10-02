@@ -108,8 +108,8 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#F5F5F5',
     },
+    //box:
     SignInContainer: {
-        // top: 50,
         width: '100%',
         maxWidth: 400,
         backgroundColor: '#e0d8d7',
