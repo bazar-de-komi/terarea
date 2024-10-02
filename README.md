@@ -1,3 +1,5 @@
+![The teraria icon](https://ifttt-area.pingpal.news/android-chrome-384x384.png)
+
 # Terarea (Project: Area)
 
 ## Table of Contents
