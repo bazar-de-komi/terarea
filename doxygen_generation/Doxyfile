@@ -42,7 +42,7 @@ DOXYFILE_ENCODING      = UTF-8
 # title of most generated pages and in a few other places.
 # The default value is: My Project.
 
-PROJECT_NAME           = "Terarea - The automation project"
+PROJECT_NAME           = "Terarea"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. This
 # could be handy for archiving the generated documentation or if some version
@@ -54,7 +54,7 @@ PROJECT_NUMBER         = 2
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = "This is a project that Epitech asked us to create in order to allow us to understand how to set up a website managing different triggers. This is a technical level in which we are asked to create a website and a mobile app that can both connect to the backend of the project."
+PROJECT_BRIEF          = "The automation project"
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
@@ -1316,7 +1316,7 @@ HTML_HEADER            = doxygen_generation/html/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = doxygen_generation/html/footer.html
+HTML_FOOTER            = # doxygen_generation/html/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
