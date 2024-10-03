@@ -13,5 +13,13 @@ coverage_data/**
 # Ignore all the sql files in the server
 *.sql
 
+# Ignore created cache for binaries
+*.spec
+build/**
+dist/**
+
+# Ignore the compiled binaries
+binarea_server
+
 # Ignore google cloud authorisations
 client_secret*.json
