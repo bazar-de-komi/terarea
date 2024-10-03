@@ -1,6 +1,7 @@
-![The teraria icon](https://ifttt-area.pingpal.news/android-chrome-384x384.png)
 
 # Terarea (Project: Area)
+
+![The teraria icon](favicon_markdown.png)
 
 ## Table of Contents
 
@@ -138,6 +139,26 @@ If this is the case (i.e. non-root linux user), you can add the `sudo` in front 
   MINIO_PORT=9000
   MINIO_ROOT_USER=root
   MINIO_ROOT_PASSWORD=my_root_password
+  ```
+
+- `app/front/mobile`:
+
+  ```bash
+    # [something] is to be considered as a placeholder for actual sensitive data.
+
+    # Docker volume related information
+
+    docker_volume_path="/shared_folder"
+  ```
+
+- `app/front/web`:
+
+  ```bash
+    # [something] is to be considered as a placeholder for actual sensitive data.
+
+    # Docker volume related information
+
+    docker_volume_path="/shared_folder"
   ```
 
 3. To deploy the full stack locally, run the following command at the root of the repository:
