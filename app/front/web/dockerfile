@@ -3,7 +3,7 @@ FROM node:latest
 ENV LOCATION=docker-web
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/web
-ENV LAUNCH_COMMAND="serve -s build"
+ENV LAUNCH_COMMAND="serve -s dist -l 3000"
 
 # Update the system
 RUN apt update -y && apt upgrade -y
@@ -36,8 +36,8 @@ WORKDIR ${HOME}
 COPY . ${HOME}
 
 # Run the setup code
-# RUN npm install
-# RUN npm run build
+RUN npm install
+RUN npm run build
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000

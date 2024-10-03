@@ -47,8 +47,7 @@ services:
     env_file:
       - ./app/back/server/.env
     ports:
-      - "8081:8081"
-    command: /bin/bash
+      - "8081:5000"
     volumes:
       - ./app/back/server/:/srv/
     depends_on:
@@ -65,16 +64,15 @@ services:
     restart: always
     tty: true
     environment:
-      LAUNCH_COMMAND: /bin/bash
+      LAUNCH_COMMAND: "serve -s dist -l 3000"
     ports:
-      - "3000:8081"
-    command: /bin/bash
+      - "8080:3000"
     depends_on:
       - server
     networks:
       - t-network
     volumes:
-      - t-volume:/web
+      - t-volume:/shared_folder
 
   client_mobile:
     build:
@@ -92,7 +90,7 @@ services:
     networks:
       - t-network
     volumes:
-      - t-volume:/mobile
+      - t-volume:/shared_folder
   
 
 networks:
