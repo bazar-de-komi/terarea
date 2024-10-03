@@ -304,6 +304,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Show restored content
+        run: |
+          echo "Displaying content of ${{env.OUTPUT_GENERATION}}:"
+          ls -aR ${{env.OUTPUT_GENERATION}}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
