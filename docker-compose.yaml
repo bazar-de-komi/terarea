@@ -72,7 +72,7 @@ services:
     networks:
       - t-network
     volumes:
-      - t-volume:/shared
+      - t-volume:/shared_folder
 
   client_mobile:
     build:
@@ -90,7 +90,7 @@ services:
     networks:
       - t-network
     volumes:
-      - t-volume:/shared
+      - t-volume:/shared_folder
   
 
 networks:
