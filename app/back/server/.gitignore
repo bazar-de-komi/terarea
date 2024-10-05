@@ -15,8 +15,8 @@ coverage_data/**
 
 # Ignore created cache for binaries
 *.spec
-build/**
-dist/**
+**/build/**
+**/dist/**
 
 # Ignore the compiled binaries
 binarea_server
