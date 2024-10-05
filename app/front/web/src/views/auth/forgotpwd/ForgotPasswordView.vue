@@ -1,5 +1,5 @@
 <template>
-  <h1 class="ifttt-title">IFTTT</h1>
+  <img src="@/assets/logo.png" class="ifttt-logo" />
   <AuthLayout title="Forgot Password" linkText="Remember your password? Sign in here" linkPath="/sign-in">
     <form @submit.prevent="submitForgotPassword" class="forgot-password-form">
       <input v-model="email" type="email" placeholder="Email" required />
@@ -10,8 +10,9 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import AuthButton from '../../components/AuthButton.vue';
-import AuthLayout from '../../components/AuthLayout.vue';
+import AuthButton from '../../../components/AuthButton.vue';
+import AuthLayout from '../../../components/AuthLayout.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   components: {
@@ -23,21 +24,31 @@ export default defineComponent({
       email: '',
     };
   },
+  setup() {
+    const router = useRouter();
+
+    return {
+      router,
+    };
+  },
   methods: {
     submitForgotPassword() {
-      console.log('Reset password for', this.email);
+      if (this.email) {
+        console.log('Reset password for', this.email);
+        this.router.push({
+          name: 'ResetPassword',
+          query: { email: this.email }
+        });
+      }
     },
   },
 });
 </script>
 
 <style scoped>
-.ifttt-title {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 50px;
-  margin-bottom: 20px;
-  text-align: center;
-  font-weight: bold;
+.ifttt-logo {
+  display: block;
+  margin: 0 auto 20px;
 }
 
 .forgot-password-form input {

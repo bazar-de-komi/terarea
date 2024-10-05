@@ -2,6 +2,8 @@
 *.py[ocd]
 __pycache__/**
 .pytest_cache/**
+.coverage
+coverage_data/**
 
 # Docker cache
 .bash_history
@@ -10,6 +12,14 @@ __pycache__/**
 
 # Ignore all the sql files in the server
 *.sql
+
+# Ignore created cache for binaries
+*.spec
+**/build/**
+**/dist/**
+
+# Ignore the compiled binaries
+binarea_server
 
 # Ignore google cloud authorisations
 client_secret*.json

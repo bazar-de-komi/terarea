@@ -1,5 +1,5 @@
 <template>
-  <button class="auth-button">
+  <button class="auth-button" :style="{ backgroundColor: buttonColor, color: textColor }" @click="onClick" >
     <img v-if="icon" :src="icon" alt="icon" class="auth-icon" />
     <span>{{ text }}</span>
   </button>
@@ -12,6 +12,8 @@ export default defineComponent({
   props: {
     text: { type: String, required: true },
     icon: { type: String, required: false },
+    buttonColor: { type: String, required: false, default: '#666' },
+    textColor: { type: String, required: false, default: '#fff' },
   },
   methods: {
     onClick() {
@@ -29,8 +31,6 @@ export default defineComponent({
   width: 100%;
   padding: 22.5px;
   margin-top: 15px;
-  background-color: #666;
-  color: white;
   border: none;
   border-radius: 75px;
   font-size: 27px;
