@@ -8,6 +8,7 @@ from .. import constants as CONST
 from ..runtime_data import RuntimeData
 from ..http_codes import HCI
 
+
 class Bonus:
     """_summary_
     """
@@ -43,41 +44,42 @@ class Bonus:
         return HCI.success({"msg": "Hello World"})
 
     def get_welcome(self, request: Request) -> Response:
-            """_summary_
-                The endpoint corresponding to '/'.
+        """_summary_
+            The endpoint corresponding to '/'.
 
-            Returns:
-                Response: _description_: The data to send back to the user as a response.
-            """
-            token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-                request)
-            self.disp.log_debug(f'(get_welcome) token = {token}')
-            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title="Home",
-                message="Welcome to the control server.",
-                resp="",
-                token=token,
-                error=False
-            )
-            self.disp.log_debug(f"sent body : {body}", "get_welcome")
-            self.disp.log_debug(
-                f"header = {self.runtime_data_initialised.json_header}",
-                "get_welcome"
-            )
-            outgoing = HCI.success(
-                content=body,
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
-            )
-            self.disp.log_debug(f"ready_to_go: {outgoing}", "get_welcome")
-            return outgoing
+        Returns:
+            Response: _description_: The data to send back to the user as a response.
+        """
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request)
+        self.disp.log_debug(f'(get_welcome) token = {token}')
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title="Home",
+            message="Welcome to the control server.",
+            resp="",
+            token=token,
+            error=False
+        )
+        self.disp.log_debug(f"sent body : {body}", "get_welcome")
+        self.disp.log_debug(
+            f"header = {self.runtime_data_initialised.json_header}",
+            "get_welcome"
+        )
+        outgoing = HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+        self.disp.log_debug(f"ready_to_go: {outgoing}", "get_welcome")
+        return outgoing
 
     def get_s3_bucket_names(self, request: Request) -> Response:
         """
             The endpoint to get every bucket data
         """
         title = "get_s3_bucket"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(request)
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request)
         self.disp.log_debug(f"Token = {token}", title)
         if token is None:
             return HCI.unauthorized({"error": "Authorisation required."})
@@ -92,7 +94,8 @@ class Bonus:
             table
         """
         title = "get_table"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(request)
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request)
         self.disp.log_debug(f"Token = {token}", title)
         if token is None:
             return HCI.unauthorized({"error": "Authorisation required."})
@@ -109,7 +112,8 @@ class Bonus:
         """
         title = "Stop server"
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-            request)
+            request
+        )
         self.disp.log_critical(
             "Please add admin verification in order to stop the server.",
             "post_stop_server"
@@ -125,4 +129,20 @@ class Bonus:
         self.runtime_data_initialised.server_running = False
         self.runtime_data_initialised.continue_running = False
         self.runtime_data_initialised.server.handle_exit(signal.SIGTERM, None)
+        status = self.runtime_data_initialised.background_tasks_initialised.safe_stop()
+        if status != self.success:
+            msg = "The server is stopping with errors, cron exited "
+            msg += f"with {status}."
+            self.disp.log_error(
+                msg,
+                "post_stop_server"
+            )
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message=msg,
+                resp="error",
+                token=token,
+                error=True
+            )
+            return HCI.internal_server_error(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)

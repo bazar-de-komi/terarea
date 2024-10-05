@@ -7,7 +7,7 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .sql import SQL
 from .bucket import Bucket
-from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST
+from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST, BackgroundTasks
 from .boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
 
@@ -51,6 +51,11 @@ class Server:
             app_name=app_name
         )
         # ----- The classes that need to be tracked for the server to run  -----
+        self.runtime_data_initialised.background_tasks_initialised = BackgroundTasks(
+            error=self.error,
+            success=self.success,
+            debug=self.debug
+        )
         self.runtime_data_initialised.server_management_initialised = ServerManagement(
             self.runtime_data_initialised,
             error=self.error,
@@ -109,6 +114,13 @@ class Server:
         self.runtime_data_initialised.server_management_initialised.initialise_classes()
         self.runtime_data_initialised.paths_initialised.load_default_paths_initialised()
         self.runtime_data_initialised.paths_initialised.inject_routes()
+        status = self.runtime_data_initialised.background_tasks_initialised.safe_start()
+        if status != self.success:
+            self.disp.log_error(
+                "Error: background tasks failed to start.",
+                "main"
+            )
+            return status
         try:
             self.runtime_data_initialised.server.run()
         except Exception as e:

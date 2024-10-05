@@ -1,6 +1,6 @@
 ##
 # EPITECH PROJECT, 2024
-# Desktop_pet
+# Terarea
 # File description:
 # crons.py
 ##

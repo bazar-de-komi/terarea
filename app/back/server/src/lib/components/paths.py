@@ -73,8 +73,10 @@ class ServerPaths:
         """_summary_
             This function is in charge of adding the default paths_initialised to the list of paths_initialised.
         """
-        self.disp.log_debug("Loading default paths_initialised",
-                            "load_default_paths_initialised")
+        self.disp.log_debug(
+            "Loading default paths_initialised",
+            "load_default_paths_initialised"
+        )
         self.runtime_data_initialised.endpoints_initialised.inject_routes()
 
     def inject_routes(self) -> None:
