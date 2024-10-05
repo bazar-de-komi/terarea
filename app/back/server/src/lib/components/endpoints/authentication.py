@@ -1,12 +1,14 @@
 """_summary_
 """
 
+import random
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .. import constants as CONST
 from ..runtime_data import RuntimeData
 from ..http_codes import HCI
 from ..password_handling import PasswordHandling
+from ..mail_management import MailManagement
 
 class Authentication:
     """_summary_
@@ -30,6 +32,11 @@ class Authentication:
             self.success,
             self.debug
         )
+        self.mail_management_initialised: MailManagement = MailManagement(
+            self.error,
+            self.success,
+            self.debug
+        )
         self.disp: Disp = Disp(
             TOML_CONF,
             SAVE_TO_FILE,
@@ -38,6 +45,7 @@ class Authentication:
             debug=self.debug,
             logger=self.__class__.__name__
         )
+        self.code_for_forgot_password: list[dict] = []
 
     async def post_login(self, request: Request) -> Response:
         """_summary_
@@ -49,7 +57,7 @@ class Authentication:
         title = "Login"
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
-        if not request_body or ("email", "password") not in request_body:
+        if not request_body or not all(key in request_body for key in ("email", "password")):
             return HCI.bad_request({"error": "Bad request."})
         email = request_body["email"]
         password = request_body["password"]
@@ -92,8 +100,8 @@ class Authentication:
         """
         title = "Register"
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
-        self.disp.log_debug(f"Register body: {request_body}", title)
-        if not request_body or ("email", "password") not in request_body:
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if not request_body or not all(key in request_body for key in ("email", "password")):
             return HCI.bad_request({"error": "Bad request."})
         email: str = request_body["email"]
         password = request_body["password"]
@@ -115,3 +123,62 @@ class Authentication:
         if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, column) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "Account created successfully."})
+
+    async def post_email_reset_password(self, request: Request) -> Response:
+        """_summary_
+        """
+        title = "Email reset password"
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if not request_body or ("email") not in request_body:
+            return HCI.bad_request({"error": "Bad request."})
+        email: str = request_body["email"]
+        table = "Users"
+        data = self.runtime_data_initialised.database_link.get_data_from_table(table, "email", f"email='{email}'")
+        if data == self.error:
+            return HCI.bad_request({"error": "Bad request."})
+        email_subject = "[AREA] Verification code"
+        code = random.randint(100000, 999999)
+        code_str = str(code)
+        new_node = {}
+        new_node['email'] = email
+        new_node['code'] = code_str
+        self.code_for_forgot_password.append(new_node)
+        body = "The code is "
+        body += code_str
+        status = self.mail_management_initialised.send_email(email, email_subject, body)
+        if status == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.success({"msg": "Email send successfully."})
+
+    async def put_reset_password(self, request: Request) -> Response:
+        """_summary_
+        """
+        title = "Reset password"
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if not request_body or not all(key in request_body for key in ("email", "code", "password")):
+            return HCI.bad_request({"error": "Bad request."})
+        body_email: str = request_body["email"]
+        body_code: str = request_body["code"]
+        body_password: str = request_body["password"]
+        verified_user: dict = {}
+        for user in self.code_for_forgot_password:
+            if user.get("email") ==  body_email and user.get("code") == body_code:
+                verified_user = user
+        if not verified_user:
+            return HCI.bad_request({"error": "Invalid verification code."})
+        table = "Users"
+        data: list = []
+        column: list = []
+        hashed_password = self.password_handling_initialised.hash_password(body_password)
+        data.append(hashed_password)
+        column.append("password")
+        status = self.runtime_data_initialised.database_link.update_data_in_table(table, data, column, f"email='{body_email}'")
+        if status == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        for user in self.code_for_forgot_password:
+            if user.get("email") == body_email and user.get("code") == body_code:
+                self.code_for_forgot_password.remove(user)
+                break
+        return HCI.success({"msg": "Password changed successfully."})
