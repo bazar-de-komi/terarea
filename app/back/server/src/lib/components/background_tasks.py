@@ -322,6 +322,22 @@ class BackgroundTasks:
 if __name__ == "__main__":
     import sys
     from time import sleep
+    from datetime import datetime
+
+    def test_current_date(*args: Any) -> None:
+        """_summary_
+            This is a test function that will print the current date.
+        Args:
+            date (datetime): _description_
+        """
+        if len(args) >= 1:
+            date = args[0]
+        else:
+            date = datetime.now()
+        if callable(date) is True:
+            print(f"(test_current_date) (Called) Current date: {date()}")
+        else:
+            print(f"(test_current_date) (Not called) Current date: {date}",)
 
     def hello_world() -> None:
         """_summary_
@@ -342,6 +358,7 @@ if __name__ == "__main__":
         print("Goodbye, World!")
 
     print("Testing declared functions.")
+    test_current_date()
     hello_world()
     pending_world()
     goodbye_world()
@@ -353,8 +370,8 @@ if __name__ == "__main__":
     KIND_KILL = True
     NB_REPEATS = 2
     TRIGGER = "interval"
-    SECONDS = 5
-    NB_FUNCTIONS = 3
+    SECONDS = 2
+    NB_FUNCTIONS = 5
     MAIN_THREAD_DELAY = int((SECONDS*NB_FUNCTIONS)*NB_REPEATS)
 
     print(
@@ -376,24 +393,43 @@ if __name__ == "__main__":
 
     print("Adding tasks to the scheduler.")
     status = BTI.safe_add_task(
+        func=test_current_date,
+        args=(datetime.now,),
+        kwargs=None,
+        trigger=TRIGGER,
+        seconds=SECONDS
+    )
+    print(f"status {status}")
+    status = BTI.add_task(
         hello_world,
-        None,
-        TRIGGER,
-        SECONDS
+        args=None,
+        kwargs=None,
+        trigger=TRIGGER,
+        seconds=SECONDS
     )
     print(f"status {status}")
     status = BTI.safe_add_task(
         pending_world,
-        None,
-        TRIGGER,
-        SECONDS*2
+        args=None,
+        kwargs=None,
+        trigger=TRIGGER,
+        seconds=SECONDS
     )
     print(f"status {status}")
     status = BTI.add_task(
         goodbye_world,
-        None,
-        TRIGGER,
-        SECONDS*3
+        args=None,
+        kwargs=None,
+        trigger=TRIGGER,
+        seconds=SECONDS
+    )
+    print(f"status {status}")
+    status = BTI.add_task(
+        func=test_current_date,
+        args=datetime.now,
+        kwargs=None,
+        trigger=TRIGGER,
+        seconds=SECONDS
     )
     print(f"status {status}")
     print("Added tasks to the scheduler.")
