@@ -13,6 +13,12 @@ ENV LAUNCH_SERVER_ON_BOOT=True
 # Update de docker system
 RUN apt update -y && apt upgrade -y
 
+# Install tzdata and set the timezone to Europe/Paris
+RUN apt-get update && \
+    apt-get install -y tzdata && \
+    ln -fs /usr/share/zoneinfo/Europe/Paris /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
+
 # Install mariadb dependencies
 RUN apt-get install -y \
     libmariadb-dev
