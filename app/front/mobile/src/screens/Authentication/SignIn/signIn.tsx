@@ -36,7 +36,7 @@ const SignIn = () => {
                     resizeMode="contain"
                 />
                 <View style={styles.SignInContainer}>
-                    <Text style={styles.headerText}>Log In</Text>
+                    <Text style={styles.headerText}>Sign In</Text>
                     <CustomerInput
                         placeholder="Email"
                         value={email}

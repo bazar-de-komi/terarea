@@ -1,11 +1,13 @@
 import React from "react";
 import {View, Image, StyleSheet, Text} from 'react-native';
+
 import CustomerButton from "../CustomerButton";
+import OrLine from "./OrLine";
 
 import GoogleLogo from '../../../assets/authenticationLogo/google.png';
 import githubLogo from '../../../assets/authenticationLogo/githubLogo.png';
 
-const SocialSingInButton = () => {
+const SocialAuthButton = () => {
     const SignInGoogle = () => {
         console.warn("Sign In Google");
     }
@@ -16,6 +18,7 @@ const SocialSingInButton = () => {
 
     return (
         <View style={styles.container}>
+            <OrLine/>
             <CustomerButton
                 text="Sign in with Google"
                 onPress={SignInGoogle}
@@ -48,4 +51,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default SocialSingInButton;
+export default SocialAuthButton;
