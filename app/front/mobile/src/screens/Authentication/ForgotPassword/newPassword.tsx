@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from "../../../components/CustomerButton";
 
-import IfttLogo from '../../../../assets/authenticationLogo/font-style.png';
+import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 const NewPassword = () => {
     const [code, setCode] = useState('');
@@ -25,8 +25,8 @@ const NewPassword = () => {
     <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.bgNewForgotPass}>
         <Image
-                    source={IfttLogo}
-                    style={[styles.IftttLogo, { height: height * 0.1 }]}
+                    source={AreaLogo}
+                    style={[styles.areaLogo, { height: height * 0.1 }]}
                     resizeMode="contain"
             />
                 <View style={styles.NewPasswordContainer}>
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 5,
     },
-    IftttLogo: {
+    areaLogo: {
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,

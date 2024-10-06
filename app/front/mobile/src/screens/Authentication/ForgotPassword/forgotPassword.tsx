@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from "../../../components/CustomerButton";
 
-import IftttLogo from '../../../../assets/authenticationLogo/font-style.png'
+import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -26,8 +26,8 @@ const ForgotPassword = () => {
     <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.bgForgotPass}>
             <Image
-                    source={IftttLogo}
-                    style={[styles.IftttLogo, { height: height * 0.1 }]}
+                    source={AreaLogo}
+                    style={[styles.areaLogo, { height: height * 0.1 }]}
                     resizeMode="contain"
             />
                 <View style={styles.ForgotPasswordContainer}>
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 5,
     },
-    IftttLogo: {
+    areaLogo: {
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
-import IftttLogo from '../../../../assets/authenticationLogo/font-style.png';
-import { useNavigation } from "@react-navigation/native";
 import SocialLogo from '../../../components/SocialAuthButton/socialAuthButton';
+
+import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
@@ -29,8 +31,8 @@ const SignIn = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backgroundContainer}>
                 <Image
-                    source={IftttLogo}
-                    style={[styles.IftttLogo, { height: height * 0.1 }]}
+                    source={AreaLogo}
+                    style={[styles.areaLogo, { height: height * 0.1 }]}
                     resizeMode="contain"
                 />
                 <View style={styles.SignInContainer}>
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 5,
     },
-    IftttLogo: {
+    areaLogo: {
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,

@@ -6,7 +6,7 @@ import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from '../../../components/CustomerButton/CustomerButton';
 import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
 
-import IftttLogo from '../../../../assets/authenticationLogo/font-style.png';
+import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
@@ -19,13 +19,10 @@ const SignUp = () => {
     const navigation = useNavigation();
 
     const SignInPressed = () => {
-        // console.warn("Sign Up");
-
         navigation.navigate('Home');
     }
 
     const loginPressed = () => {
-        // console.warn("Log in");
         navigation.navigate("Sign In");
     }
 
@@ -33,8 +30,8 @@ const SignUp = () => {
     <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.bgSignUpContainer}>
             <Image 
-                source={IftttLogo}
-                style={[styles.IftttLogo, { height: height * 0.1}]}
+                source={AreaLogo}
+                style={[styles.areaLogo, { height: height * 0.1}]}
                 resizeMode="contain"
             />
                 <View style={styles.SignUpContainer}>
@@ -100,7 +97,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 5,
     },
-    IftttLogo: {
+    areaLogo: {
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,
