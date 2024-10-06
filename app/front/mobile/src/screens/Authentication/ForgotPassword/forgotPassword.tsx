@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from "../../../components/CustomerButton";
-import { useNavigation } from "@react-navigation/native";
 
 import IftttLogo from '../../../../assets/authenticationLogo/font-style.png'
 
@@ -79,26 +80,9 @@ const styles = StyleSheet.create({
         maxHeight: 100,
         marginBottom: 60,
     },
-    // logoButtonContainer: {
-    //     flexDirection: 'row',
-    //     alignItems: 'center',
-    //     width: '80%',
-    //     // backgroundColor: '#FAE9EA',
-    //     borderRadius: 5,
-    //     padding: 10,
-    //     marginVertical: 5,
-    // },
-    logo: {
-        // right: 80,
-        // top: 40,
-        width: 24,
-        height: 24,
-        marginRight: 10,
-    },
     ForgotPasswordTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        // color: '#051C60',
         margin: 10,
     },
 })
