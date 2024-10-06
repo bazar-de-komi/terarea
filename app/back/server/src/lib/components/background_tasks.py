@@ -9,7 +9,7 @@
     File in charge of setting up the cron jobs for the server.
 """
 
-from typing import Union, Any
+from typing import Union, Any, Dict, Tuple
 from apscheduler.job import Job
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.schedulers import SchedulerAlreadyRunningError, SchedulerNotRunningError
@@ -38,13 +38,25 @@ class BackgroundTasks:
             logger=self.__class__.__name__
         )
 
-    def safe_add_task(self, func: callable, args: Union[Any, None] = None, trigger: Union[str, Any] = "interval", seconds: int = 5) -> Union[int, Job]:
+    def __del__(self) -> None:
+        """_summary_
+            The destructor of the class
+        """
+        exit_code = self.safe_stop()
+        msg = f"The cron exited with status {exit_code}."
+        if exit_code != self.success:
+            self.disp.log_error(msg, "__del__")
+        else:
+            self.disp.log_debug(msg, "__del__")
+
+    def safe_add_task(self, func: callable, args: Union[Tuple, None] = None, kwargs: Union[Dict, None] = None, trigger: Union[str, Any] = "interval", seconds: int = 5) -> Union[int, Job]:
         """_summary_
             A non-crashing implementation of the add_task function.
 
         Args:
             func (callable): _description_: The function to be called when it is time to run the job
-            args (Union[Any, None], optional): _description_. Defaults to None.: Arguments you wish to pass to the function when executed.
+            args (Union[Tuple, None], optional): _description_. Defaults to None.: Arguments you wish to pass to the function when executed.
+            kwargs (Union[Dict, None], optional): _description_. Defaults to None.: Arguments you wish to pass to the function when executed.
             trigger (Union[str, Any], optional): _description_. Defaults to "interval".
             seconds (int, optional): _description_. Defaults to 5. The amount of seconds to wait before executing the task again (I don't think it is effective for the cron option)
 
@@ -55,6 +67,7 @@ class BackgroundTasks:
             return self.add_task(
                 func=func,
                 args=args,
+                kwargs=kwargs,
                 trigger=trigger,
                 seconds=seconds
             )
@@ -135,14 +148,35 @@ class BackgroundTasks:
             )
             return self.error
 
-    def add_task(self, func: callable, args: Union[Any, None] = None, trigger: Union[str, Any] = "interval",  seconds: int = 5) -> Union[Job, None]:
+    def _to_dict(self, data: Union[Any, None] = None) -> dict:
+        """_summary_
+            Convert any data input into a dictionnary.
+        Args:
+            data (Union[Any, None], optional): _description_. Defaults to None. This is the data you are providing.
+
+        Returns:
+            dict: _description_: A dictionnary crea ted with what could be extracted from the data.
+        """
+        if data is None:
+            return {"none": None}
+        if isinstance(data, dict) is True:
+            return data
+        if isinstance(data, (list, tuple)) is True:
+            res = {}
+            for i in list(data):
+                res[i] = None
+            return res
+        return {"data": data}
+
+    def add_task(self, func: callable, args: Union[Tuple, None] = None, kwargs: Union[Dict, None] = None, trigger: Union[str, Any] = "interval",  seconds: int = 5) -> Union[Job, None]:
         """_summary_
             Function in charge of adding an automated call to functions that are meant to run in the background.
             They are meant to run on interval.
 
         Args:
             func (callable): _description_: The function to be called when it is time to run the job
-            args (Union[Any, None], optional): _description_. Defaults to None.: Arguments you wish to pass to the function when executed.
+            args (Union[Tuple, None], optional): _description_. Defaults to None.: Arguments you wish to pass to the function when executed.
+            kwargs (Union[Dict, None], optional): _description_. Defaults to None.: Arguments you wish to pass to the function when executed.
             trigger (Union[str, Any], optional): _description_. Defaults to "interval".
             seconds (int, optional): _description_. Defaults to 5. The amount of seconds to wait before executing the task again (I don't think it is effective for the cron option)
 
@@ -155,17 +189,36 @@ class BackgroundTasks:
                 "add_task"
             )
             raise ValueError("The function must be callable.")
+        if args is not None and isinstance(args, tuple) is False:
+            msg = f"The provided args for {func.__name__} are not tuples.\n"
+            msg += f"Converting args: '{args}'  to tuples."
+            self.disp.log_warning(msg, "add_task")
+            args = tuple((args,))
+        if kwargs is not None and isinstance(kwargs, dict) is False:
+            msg = f"The provided kwargs for {func.__name__}"
+            msg += "are not dictionaries.\n"
+            msg += f"Converting kwargs: '{kwargs}' to dictionaries."
+            self.disp.log_warning(msg, "add_task")
+            kwargs = self._to_dict(kwargs)
+            self.disp.log_warning(f"Converted data = {kwargs}.", "add_task")
         if trigger is not None and isinstance(trigger, str) is False:
             self.disp.log_error(
                 f"The provided trigger is not a string: {trigger}.",
                 "add_task"
             )
             raise ValueError("The trigger must be a string.")
+        if isinstance(seconds, int) is False:
+            self.disp.log_error(
+                f"The provided seconds is not an integer: {seconds}.",
+                "add_task"
+            )
+            raise ValueError("The seconds must be an integer.")
         return self.scheduler.add_job(
             func=func,
             trigger=trigger,
             seconds=seconds,
-            args=args
+            args=args,
+            kwargs=kwargs
         )
 
     def start(self) -> Union[int, None]:
@@ -190,16 +243,16 @@ class BackgroundTasks:
                 f"An error occurred while starting the scheduler: {e}",
                 "start"
             )
-            raise RuntimeError(
-                f"Error({self.__class__.__name__}): Failed to call the scheduler's start wrapper function."
-            ) from e
+            msg = f"Error({self.__class__.__name__}): "
+            msg += "Failed to call the scheduler's start wrapper function."
+            raise RuntimeError(msg) from e
         except Exception as e:
             self.disp.log_error(
                 f"An error occurred while starting the scheduler: {e}", "start"
             )
-            raise RuntimeError(
-                f"Error({self.__class__.__name__}): Failed to call the scheduler's start wrapper function."
-            ) from e
+            msg = f"Error({self.__class__.__name__}): "
+            msg += "Failed to call the scheduler's start wrapper function."
+            raise RuntimeError(msg) from e
 
     def pause(self, pause: bool = True) -> Union[int, None]:
         """_summary_
@@ -224,9 +277,9 @@ class BackgroundTasks:
                 f"An error occurred while pausing the scheduler: {e}",
                 "pause"
             )
-            raise RuntimeError(
-                f"Error({self.__class__.__name__}): Failed to call the chron pause wrapper function."
-            ) from e
+            msg = f"Error({self.__class__.__name__}): "
+            msg += "Failed to call the chron pause wrapper function."
+            raise RuntimeError(msg) from e
 
     def resume(self) -> Union[int]:
         """_summary_
@@ -261,9 +314,9 @@ class BackgroundTasks:
             self.disp.log_error(
                 f"An error occurred while stopping the scheduler: {e}", "stop"
             )
-            raise RuntimeError(
-                f"Error({self.__class__.__name__}): Failed to call the chron stop wrapper function."
-            ) from e
+            msg = f"Error({self.__class__.__name__}): "
+            msg += "Failed to call the chron stop wrapper function."
+            raise RuntimeError(msg) from e
 
 
 if __name__ == "__main__":
@@ -271,12 +324,21 @@ if __name__ == "__main__":
     from time import sleep
 
     def hello_world() -> None:
+        """_summary_
+            This is a test function that will print "Hello, World!"
+        """
         print("Hello, World!")
 
     def pending_world() -> None:
+        """_summary_
+            This is a test function that will print "Pending, World!"
+        """
         print("Pending, World!")
 
     def goodbye_world() -> None:
+        """_summary_
+            This is a test function that will print "Goodbye, World!"
+        """
         print("Goodbye, World!")
 
     print("Testing declared functions.")
@@ -295,14 +357,14 @@ if __name__ == "__main__":
     NB_FUNCTIONS = 3
     MAIN_THREAD_DELAY = int((SECONDS*NB_FUNCTIONS)*NB_REPEATS)
 
-    print(f"Statuses:\nSUCCESS = {SUCCES}, ERROR = {ERROR}")
     print(
-        f"DEBUG = {DEBUG}, KIND_KILL = {KIND_KILL}, NB_REPEATS = {NB_REPEATS}"
+        f"Statuses:\nSUCCESS = {SUCCES}, ERROR = {ERROR}\n"
+        f"DEBUG = {DEBUG}, KIND_KILL = {KIND_KILL}, "
+        f"NB_REPEATS = {NB_REPEATS}, "
+        f"TRIGGER = {TRIGGER}, SECONDS = {SECONDS}, "
+        f"NB_FUNCTIONS = {NB_FUNCTIONS}, "
+        f"MAIN_THREAD_DELAY = {MAIN_THREAD_DELAY}"
     )
-    print(
-        f"TRIGGER = {TRIGGER}, SECONDS = {SECONDS}, NB_FUNCTIONS = {NB_FUNCTIONS}"
-    )
-    print(f"MAIN_THREAD_DELAY = {MAIN_THREAD_DELAY}")
 
     print("Initialising class BackgroundTasks.")
     BTI = BackgroundTasks(

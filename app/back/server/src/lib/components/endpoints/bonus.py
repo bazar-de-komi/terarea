@@ -144,5 +144,7 @@ class Bonus:
                 token=token,
                 error=True
             )
+            del self.runtime_data_initialised.background_tasks_initialised
+            self.runtime_data_initialised.background_tasks_initialised = None
             return HCI.internal_server_error(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)

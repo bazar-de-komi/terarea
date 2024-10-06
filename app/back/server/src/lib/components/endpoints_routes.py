@@ -4,7 +4,7 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
-from .endpoints import Bonus, Authentication, Github_check#, IFTTT_Manager
+from .endpoints import Bonus, Authentication  # , Github_check#, IFTTT_Manager
 
 
 class Endpoints:
@@ -37,7 +37,7 @@ class Endpoints:
             debug=self.debug,
             logger=self.__class__.__name__
         )
-        #------------------- Initialize endpoints sub-classes ------------------
+        # ------------------- Initialize endpoints sub-classes ------------------
         self.bonus: Bonus = Bonus(
             runtime_data=runtime_data,
             success=success,
@@ -84,6 +84,6 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/reset_password", self.authentication.put_reset_password, "PUT"
         )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/github_check", self.authentication.check_github, "GET"
-        )
+        # self.runtime_data_initialised.paths_initialised.add_path(
+        #     "/github_check", self.authentication.check_github, "GET"
+        # )
