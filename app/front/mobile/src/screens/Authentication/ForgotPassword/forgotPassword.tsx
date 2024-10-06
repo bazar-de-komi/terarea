@@ -14,6 +14,7 @@ const ForgotPassword = () => {
 
     const SignSendPressed = () => {
         console.warn("send");
+        navigation.navigate("New password");
     }
 
     const loginPressed = () => {
