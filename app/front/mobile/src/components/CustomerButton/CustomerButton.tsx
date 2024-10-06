@@ -27,8 +27,8 @@ const CustomerButton = ({ onPress, text, type = "PRIMARY", bgColor, fgColor, ico
     )
 }
 
-//Primary for "Get started" button
-//Tertiary for change page for sign in or sign up
+//Primary for "Get started" button + text in the button
+//Tertiary for change page for sign in or sign up (text)
 const styles = StyleSheet.create({
     buttonContainer: {
         width: '60%',
@@ -44,8 +44,6 @@ const styles = StyleSheet.create({
     },
     iconContainer: {
         marginRight: 2,
-        left: -10,
-        bottom: 1,
     },
     buttonContainer_PRIMARY: {
         backgroundColor: 'black',

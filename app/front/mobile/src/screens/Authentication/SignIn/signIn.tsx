@@ -3,15 +3,14 @@ import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView } from "
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
 import IftttLogo from '../../../../assets/authenticationLogo/font-style.png';
-import GoogleLogo from '../../../../assets/authenticationLogo/google.png';
-import githubLogo from '../../../../assets/authenticationLogo/githubLogo.png';
 import { useNavigation } from "@react-navigation/native";
+import SocialLogo from '../../../components/SocialAuthButton/socialAuthButton';
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const { height } = useWindowDimensions();
+    const { height } = useWindowDimensions() ;
     const navigation = useNavigation();
 
     const SignInPressed = () => {
@@ -20,14 +19,6 @@ const SignIn = () => {
 
     const forgotPasswordPressed = () => {
         navigation.navigate("Forgot password");
-    }
-
-    const SignInGoogle = () => {
-        console.warn("Sign In Google");
-    }
-
-    const SignInGithub = () => {
-        console.warn("Sign In Github");
     }
 
     const loginPressed = () => {
@@ -57,13 +48,6 @@ const SignIn = () => {
                         secureTextEntry={true}
                     />
                     <CustomerButton
-                    text="Get started"
-                    onPress={SignInPressed}
-                    bgColor={"black"}
-                    fgColor={"white"}
-                    icon=""
-                    />
-                    <CustomerButton
                         text="Forgot your password ?"
                         onPress={forgotPasswordPressed}
                         type="TERTIARY"
@@ -72,19 +56,13 @@ const SignIn = () => {
                         icon=""
                     />
                     <CustomerButton
-                        text="Sign in with Google"
-                        onPress={SignInGoogle}
-                        bgColor="white"
-                        fgColor="black"
-                        icon={<Image source={GoogleLogo} style={styles.logo} />}
+                    text="Get started"
+                    onPress={SignInPressed}
+                    bgColor={"black"}
+                    fgColor={"white"}
+                    icon=""
                     />
-                    <CustomerButton
-                        text="Sign in with GitHub"
-                        onPress={SignInGithub}
-                        bgColor="#303030"
-                        fgColor="white"
-                        icon={<Image source={githubLogo} style={styles.logo} />}
-                    />
+                    <SocialLogo/>
                     <CustomerButton
                         text="New to IFTTT ? Sign up here"
                         onPress={loginPressed}
@@ -108,7 +86,6 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#F5F5F5',
     },
-    //box:
     SignInContainer: {
         width: '100%',
         maxWidth: 400,
@@ -127,11 +104,6 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
-    },
-    logo: {
-        width: 24,
-        height: 24,
-        marginRight: 10,
     },
 });
 

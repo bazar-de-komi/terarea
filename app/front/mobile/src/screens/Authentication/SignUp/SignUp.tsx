@@ -1,12 +1,12 @@
 import React, {useState} from "react";
 import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from '../../../components/CustomerButton/CustomerButton';
-import GoogleLogo from '../../../../assets/authenticationLogo/google.png';
-import IftttLogo from '../../../../assets/authenticationLogo/font-style.png';
-import GithubLogo from '../../../../assets/authenticationLogo/githubLogo.png';
+import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
 
-import { useNavigation } from "@react-navigation/native";
+import IftttLogo from '../../../../assets/authenticationLogo/font-style.png';
 
 const SignUp = () => {
     const [email, setEmail] = useState('');
@@ -24,14 +24,6 @@ const SignUp = () => {
         navigation.navigate('Home');
     }
 
-    const SignInGoogle = () => {
-        console.warn("Sing In Google");
-    }
-
-    const SignInGithub = () => {
-        console.warn("Sing In Github");
-    }
-
     const loginPressed = () => {
         // console.warn("Log in");
         navigation.navigate("Sign In");
@@ -40,7 +32,11 @@ const SignUp = () => {
     return (
     <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.bgSignUpContainer}>
-            <Image source={IftttLogo} style={[styles.IftttLogo, { height: height * 0.1}]} resizeMode="contain" />
+            <Image 
+                source={IftttLogo}
+                style={[styles.IftttLogo, { height: height * 0.1}]}
+                resizeMode="contain"
+            />
                 <View style={styles.SignUpContainer}>
                     <Text style={styles.SignUpTitle}>Sign Up</Text>
                     <CustomerInput
@@ -62,42 +58,24 @@ const SignUp = () => {
                     secureTextEntry={true}
                     />
                     <CustomerInput
-                    placeholder="Repeat Password"
+                    placeholder="Confirmation Password"
                     value={repeatPassword}
                     setValue={setRepeatPassword}
                     secureTextEntry={true}
                     />
-                    <CustomerButton text="Get started" onPress={SignInPressed} bgColor={""} fgColor={""}/>
-                    {/* <View style={styles.logoButtonContainer}> */}
-                        {/* <Image source={GoogleLogo} style={styles.logo} />
-                        <CustomerButton
-                        text="Sign in with Google"
-                        onPress={SignInGoogle}
-                        bgColor="#FAE9EA"
-                        fgColor="#DD4D44"
-                        /> */}
-                    {/* </View> */}
-                    {/* <CustomerButton text="Sign in with GitHub" onPress={SignInGithub} bgColor="#e3e3e3" fgColor="#363636"/> */}
                     <CustomerButton
-                        text="Sign in with Google"
-                        onPress={SignInGoogle}
-                        bgColor="white"
-                        fgColor="black"
-                        icon={<Image source={GoogleLogo} style={styles.logo} />}
+                        text="Get started"
+                        onPress={SignInPressed}
+                        bgColor={""}
+                        fgColor={""}
                     />
+                    <SocialButton/>
                     <CustomerButton
-                        text="Sign in with GitHub"
-                        onPress={SignInGithub}
-                        bgColor="#303030"
-                        fgColor="white"
-                        icon={<Image source={GithubLogo} style={styles.logo} />}
-                    />
-                    <CustomerButton
-                    text="Already on IFTTT ? Sign in here"
-                    onPress={loginPressed}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
+                        text="Already on IFTTT ? Sign in here"
+                        onPress={loginPressed}
+                        type="TERTIARY"
+                        bgColor={""}
+                        fgColor={""}
                     />
                 </View>
         </View>
@@ -127,11 +105,6 @@ const styles = StyleSheet.create({
         maxWidth: 300,
         maxHeight: 100,
         marginBottom: 60,
-    },
-    logo: {
-        width: 24,
-        height: 24,
-        marginRight: 10,
     },
     SignUpTitle: {
         fontSize: 24,
