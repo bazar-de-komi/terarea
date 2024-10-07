@@ -31,23 +31,24 @@ const ForgotPassword = () => {
                     resizeMode="contain"
             />
                 <View style={styles.ForgotPasswordContainer}>
-                    <Text style={styles.ForgotPasswordTitle}>Reset your password</Text>
+                    <Text style={styles.ForgotPasswordTitle}>Forgot your password ?</Text>
                     <CustomerInput
-                    placeholder="email"
+                    placeholder="Your email adress"
                     value={email}
                     setValue={setEmail}
                     secureTextEntry={false}
                     />
-                    <CustomerButton
-                    text="Send"
-                    onPress={SignSendPressed}
-                    bgColor={""}
-                    fgColor={""}
-                    />
-                    <CustomerButton
-                    text="Back to Sign in"
+                    <Text>We will send you a link to reset your password</Text>
+                    {/* <CustomerButton
+                    text="We will send you a link to reset your password"
                     onPress={loginPressed}
                     type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
+                    /> */}
+                    <CustomerButton
+                    text="Reset password"
+                    onPress={SignSendPressed}
                     bgColor={""}
                     fgColor={""}
                     />
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#e0d8d7',
         borderRadius: 15,
         alignItems: 'center',
-        padding: 5,
+        padding: 20,
     },
     areaLogo: {
         width: '40%',
