@@ -44,7 +44,11 @@ class ServerManagement:
             self.runtime_data_initialised.continue_running = False
             if self.runtime_data_initialised.server is not None:
                 self.runtime_data_initialised.server.handle_exit(
-                    signal.SIGTERM, None)
+                    signal.SIGTERM, None
+                )
+        if self.runtime_data_initialised.background_tasks_initialised is not None:
+            del self.runtime_data_initialised.background_tasks_initialised
+            self.runtime_data_initialised.background_tasks_initialised = None
 
     def is_server_alive(self) -> bool:
         """

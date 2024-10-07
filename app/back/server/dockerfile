@@ -7,9 +7,17 @@ ENV ENV_NAME=server_env
 ENV LAUNCH_FILE=./src
 ENV HOST="0.0.0.0"
 ENV PORT=5000
+ENV DEBUG=False
+ENV LAUNCH_SERVER_ON_BOOT=True
 
 # Update de docker system
 RUN apt update -y && apt upgrade -y
+
+# Install tzdata and set the timezone to Europe/Paris
+RUN apt-get update && \
+    apt-get install -y tzdata && \
+    ln -fs /usr/share/zoneinfo/Europe/Paris /etc/localtime && \
+    dpkg-reconfigure --frontend noninteractive tzdata
 
 # Install mariadb dependencies
 RUN apt-get install -y \
@@ -44,4 +52,4 @@ EXPOSE 1024-9000
 
 
 # Entry point
-CMD ["/bin/bash", "-c", "sleep 5s && cd $HOME && python3 $LAUNCH_FILE --port=$PORT --host=$HOST $DEBUG"]
+CMD ["/bin/bash", "-c", "sleep 5s && cd $HOME && if [ \"${LAUNCH_SERVER_ON_BOOT,,}\" == 'true' ]; then if [ \"${DEBUG,,}\" == 'false' ];then python3 $LAUNCH_FILE --port=$PORT --host=$HOST;else python3 $LAUNCH_FILE --port=$PORT --host=$HOST --debug; fi; else /bin/bash; fi"]

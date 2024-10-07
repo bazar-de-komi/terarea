@@ -8,7 +8,7 @@
 # The variables in charge of tracking the files for the program
 SRC_DIR	=	./src
 
-SRC	=	$(SRC_DIR)/main.py
+SRC	=	$(SRC_DIR)/server_main.py
 
 # Coverage report location
 
@@ -39,7 +39,7 @@ BINARY_LOCATION	=	./dist/
 
 BINARY_DESTINATION_ONE	=	./
 
-BINARY_DESTINATION_TWO	=	../
+BINARY_DESTINATION_TWO	=	../../../
 
 # The python binary that is available on the system
 

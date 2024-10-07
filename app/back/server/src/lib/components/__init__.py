@@ -10,6 +10,7 @@ from .runtime_data import RuntimeData
 from .server_management import ServerManagement
 from .password_handling import PasswordHandling
 from .mail_management import MailManagement
+from .background_tasks import BackgroundTasks
 
 __all__ = [
     "CONST",
@@ -20,5 +21,6 @@ __all__ = [
     "RuntimeData",
     "ServerManagement",
     "PasswordHandling",
-    "MailManagement"
+    "MailManagement",
+    "BackgroundTasks"
 ]
