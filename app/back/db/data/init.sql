@@ -39,6 +39,9 @@ CREATE TABLE `Actions` (
   `author` bigint(20) unsigned NOT NULL,
   `tags` longtext DEFAULT NULL COMMENT '''The tags used to find the the actions the user created.''',
   `running` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'L''information sur si le l''action est en fonctionnement',
+  `description` varchar(2000) NOT NULL DEFAULT 'Some description' COMMENT 'The description of the workflow.',
+  `colour` varchar(100) NOT NULL DEFAULT '#f1f1f1' COMMENT 'The colour of the workflow.',
+  `favicon` varchar(900) DEFAULT NULL COMMENT 'The link to the icon of the workflow.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Actions_UNIQUE` (`name`),
   KEY `Actions_Users_FK` (`author`),
@@ -172,6 +175,32 @@ LOCK TABLES `Users` WRITE;
 /*!40000 ALTER TABLE `Users` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `Verification`
+--
+
+DROP TABLE IF EXISTS `Verification`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Verification` (
+  `id` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `key` mediumtext DEFAULT NULL COMMENT 'This is the identification for the code reference.',
+  `code` mediumtext NOT NULL,
+  `expiration` datetime DEFAULT NULL COMMENT 'The time meft before the code expires.',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `Verification_UNIQUE` (`code`) USING HASH
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='This is the table in charge of storing the verification codes for user side events.';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `Verification`
+--
+
+LOCK TABLES `Verification` WRITE;
+/*!40000 ALTER TABLE `Verification` DISABLE KEYS */;
+/*!40000 ALTER TABLE `Verification` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -182,4 +211,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-07 15:53:49
+-- Dump completed on 2024-10-07 16:36:14
