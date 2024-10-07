@@ -65,9 +65,11 @@ DROP TABLE IF EXISTS `Connections`;
 CREATE TABLE `Connections` (
   `id` bigint(20) unsigned NOT NULL DEFAULT 0,
   `token` varchar(900) DEFAULT NULL COMMENT 'The token of the user.',
-  `email` varchar(320) DEFAULT NULL COMMENT 'The e-mail of the user.',
+  `usr_id` bigint(20) unsigned DEFAULT NULL COMMENT 'The e-mail of the user.',
   `expiration_date` datetime DEFAULT NULL COMMENT 'The date at which the token is invalidated.',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `Connections_Users_FK` (`usr_id`),
+  CONSTRAINT `Connections_Users_FK` FOREIGN KEY (`usr_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -180,4 +182,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-07 11:15:24
+-- Dump completed on 2024-10-07 15:53:49
