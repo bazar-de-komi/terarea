@@ -79,7 +79,7 @@ class Endpoints:
             "/register", self.authentication.put_register, "PUT"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/ask_email_forgot_password", self.authentication.post_email_reset_password, "POST"
+            "/send_email_verification", self.authentication.post_email_reset_password, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/reset_password", self.authentication.put_reset_password, "PUT"
