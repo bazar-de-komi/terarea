@@ -1,46 +1,56 @@
 // An item represented by ({item}) needs to be passed in the body
 // Apart from login, register, reset, send_email_verification all endpoints are protected by a token
+// Base extention: https://marketplace.visualstudio.com/items?itemName=blunt1337.todo-language
+// x   <=> done
+// o   <=> ongoing
+// !   <=> blocked
+// ' ' <=> not started
+// -   <=> Canceled
+// ?   <=> question to ask
 
-[ ] POST /stop //Stop the server
+Swagger | Implementation | Description
+
+// (Admin)
+[ ][ ] POST /stop //Stop the server
 
 // User
-[ ] PUT /register //Register a user
-[ ] POST /login //Log the user
-[ ] POST /send_email_verification //Get the email of the user to reset the password
-[ ] POST /reset_password //Reset the password
-[ ] POST /update_user/({profile_data}) // Update the user profile
-[ ] POST /update_user_favicon/{name}/{type}/({data}) // Update user profile photo
-[ ] DELETE /delete_user_favicon/{name} // Remove user favicon
-[ ] POST /logout // Sign out an user
-[ ] DELETE /delete_user // Delete an user
+[ ][x] PUT /register //Register a user
+[ ][x] POST /login //Log the user
+[ ][x] POST /send_email_verification //Get the email of the user to reset the password
+[ ][x] POST /reset_password //Reset the password
+[ ][ ] POST /update_user/({profile_data}) // Update the user profile
+[ ][ ] POST /update_user_favicon/{name}/{type}/({data}) // Update user profile photo
+[ ][ ] DELETE /delete_user_favicon/{name} // Remove user favicon
+[ ][ ] POST /logout // Sign out an user
+[ ][ ] DELETE /delete_user // Delete an user
 (Google and github Oauth)
 
 // Applets
-[ ] PUT /add_applet/{name}/({trigger})  //Add a trigger to an applet
-[ ] PUT /add_node/{name}/({action}) // Add an action to the applet
-[ ] POST /update_applet/{name}/{new_name}/({new_trigger}) // Update the trigger
-[ ] POST /update_node/{name}/({new_action}) // Update an action to the applet
-[ ] DELETE /delete_applet/{name} // Delete the applet
-[ ] DELETE /delete_node/{name}/({new_action}) // Delete an action from the applet
-[ ] GET /get_applets // Get all the existing applets
-[ ] GET /get_applets/{user_id} // Get all the applets belonging to a user
-[ ] GET /get_applet/{name} // Get the detail of an applet
-[ ] GET /get_applets_by_tag/{tag} // Get all applets corresponding to a given tag
-[ ] GET /get_recent_applets // Get all the recent applets
-[ ] POST /connect_applet/{applet_name} // Connect a user to an applet
-[ ] POST /disconnect_applet/{applet_name} // Disconnect a user from an applet
-[ ] POST /update_applet_favicon/{name}/{type}/({data}) // Update applet favicon
-[ ] DELETE /delete_applet_favicon/{name} // Remove applet favicon
+[ ][ ] PUT /add_applet/{name}/({trigger})  //Add a trigger to an applet
+[ ][ ] PUT /add_node/{name}/({action}) // Add an action to the applet
+[ ][ ] POST /update_applet/{name}/{new_name}/({new_trigger}) // Update the trigger
+[ ][ ] POST /update_node/{name}/({new_action}) // Update an action to the applet
+[ ][ ] DELETE /delete_applet/{name} // Delete the applet
+[ ][ ] DELETE /delete_node/{name}/({new_action}) // Delete an action from the applet
+[ ][ ] GET /get_applets // Get all the existing applets
+[ ][ ] GET /get_applets/{user_id} // Get all the applets belonging to a user
+[ ][ ] GET /get_applet/{name} // Get the detail of an applet
+[ ][ ] GET /get_applets_by_tag/{tag} // Get all applets corresponding to a given tag
+[ ][ ] GET /get_recent_applets // Get all the recent applets
+[ ][ ] POST /connect_applet/{applet_name} // Connect a user to an applet
+[ ][ ] POST /disconnect_applet/{applet_name} // Disconnect a user from an applet
+[ ][ ] POST /update_applet_favicon/{name}/{type}/({data}) // Update applet favicon
+[ ][ ] DELETE /delete_applet_favicon/{name} // Remove applet favicon
 
 // Services
-[ ] GET /get_services // Get all services
-[ ] GET /get_service/{name} // Get the details of a service
-[ ] GET /get_services_by_tag/{tag} // Get all services corresponding to a given tag
-[ ] GET /get_recent_services // Get all the recent services
+[ ][ ] GET /get_services // Get all services
+[ ][ ] GET /get_service/{name} // Get the details of a service
+[ ][ ] GET /get_services_by_tag/{tag} // Get all services corresponding to a given tag
+[ ][ ] GET /get_recent_services // Get all the recent services
 
 // Services management (admin)
-[ ] PUT /add_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Add a service
-[ ] POST /update_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Update a service
-[ ] DELETE /delete_service/{name} // Delete a service and all it's applets
-[ ] POST /update_service_favicon/{name}/{type}/({data}) // Update service favicon
-[ ] DELETE /delete_service_favicon/{name} // Remove service favicon
+[ ][ ] PUT /add_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Add a service
+[ ][ ] POST /update_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Update a service
+[ ][ ] DELETE /delete_service/{name} // Delete a service and all it's applets
+[ ][ ] POST /update_service_favicon/{name}/{type}/({data}) // Update service favicon
+[ ][ ] DELETE /delete_service_favicon/{name} // Remove service favicon
