@@ -19,8 +19,8 @@ Swagger | Implementation | Description
 [ ][x] POST /send_email_verification //Get the email of the user to reset the password
 [ ][x] POST /reset_password //Reset the password
 [ ][ ] POST /update_user/({profile_data}) // Update the user profile
-[ ][ ] POST /update_user_favicon/{name}/{type}/({data}) // Update user profile photo
-[ ][ ] DELETE /delete_user_favicon/{name} // Remove user favicon
+[ ][ ] POST /update_user_favicon/{type}/({data}) // Update user profile photo
+[ ][ ] DELETE /delete_user_favicon // Remove user favicon
 [ ][ ] POST /logout // Sign out an user
 [ ][ ] DELETE /delete_user // Delete an user
 (Google and github Oauth)
@@ -49,8 +49,9 @@ Swagger | Implementation | Description
 [ ][ ] GET /get_recent_services // Get all the recent services
 
 // Services management (admin)
-[ ][ ] PUT /add_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Add a service
-[ ][ ] POST /update_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Update a service
+[ ][ ] PUT /add_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Add a service -> id of the service
+[ ][ ] POST /update_service/{sevice_id}/({name}, {url}, {token}, {category}, {type}, {tag}) // Update a service
+[ ][ ] GET /get_service_id/{name/url} // Get the id of an existing service wether it is by it's name or url
 [ ][ ] DELETE /delete_service/{name} // Delete a service and all it's applets
 [ ][ ] POST /update_service_favicon/{name}/{type}/({data}) // Update service favicon
 [ ][ ] DELETE /delete_service_favicon/{name} // Remove service favicon
