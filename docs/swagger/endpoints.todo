@@ -52,6 +52,6 @@ Swagger | Implementation | postman present | Functional tests | Description
 [ ][ ][x][ ] PUT /add_service/({name}, {url}, {token}, {category}, {type}, {tag}) // Add a service -> id of the service
 [ ][ ][x][ ] POST /update_service/{service_id}/({name}, {url}, {token}, {category}, {type}, {tag}) // Update a service
 [ ][ ][x][ ] GET /get_service_id/{name/url} // Get the id of an existing service wether it is by it's name or url
-[ ][ ][ ][ ] DELETE /delete_service/{name} // Delete a service and all it's applets
-[ ][ ][ ][ ] POST /update_service_favicon/{name}/{type}/({data}) // Update service favicon
-[ ][ ][ ][ ] DELETE /delete_service_favicon/{name} // Remove service favicon
+[ ][ ][x][ ] DELETE /delete_service/{id} // Delete a service and all it's applets
+[ ][ ][x][ ] POST /update_service_favicon/{id}/{type}/({data}) // Update service favicon
+[ ][ ][x][ ] DELETE /delete_service_favicon/{id} // Remove service favicon
