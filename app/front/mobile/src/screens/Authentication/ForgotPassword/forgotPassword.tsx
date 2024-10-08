@@ -13,12 +13,10 @@ const ForgotPassword = () => {
     const navigation = useNavigation();
 
     const SignSendPressed = () => {
-        console.warn("send");
         navigation.navigate("New password");
     }
 
     const loginPressed = () => {
-        console.warn("Log in");
         navigation.navigate("Sign In");
     }
 
@@ -33,26 +31,26 @@ const ForgotPassword = () => {
                 <View style={styles.ForgotPasswordContainer}>
                     <Text style={styles.ForgotPasswordTitle}>Forgot your password ?</Text>
                     <CustomerInput
-                    placeholder="Your email adress"
+                    placeholder="Email"
                     value={email}
                     setValue={setEmail}
                     secureTextEntry={false}
                     />
                     <Text>We will send you a link to reset your password</Text>
-                    {/* <CustomerButton
-                    text="We will send you a link to reset your password"
-                    onPress={loginPressed}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                    /> */}
                     <CustomerButton
                     text="Reset password"
                     onPress={SignSendPressed}
                     bgColor={""}
                     fgColor={""}
                     />
-
+                     <CustomerButton
+                        text="Remember your password ? Sign in here"
+                        onPress={loginPressed}
+                        type="TERTIARY"
+                        bgColor=""
+                        fgColor="black"
+                        icon=""
+                    />
                 </View>
         </View>
     </ScrollView>

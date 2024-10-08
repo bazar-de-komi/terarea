@@ -17,43 +17,60 @@ const NewPassword = () => {
         Navigation.navigate("Sign In");
     }
 
-    const loginPressed = () => {
-        Navigation.navigate("Sign In");
+    const SendEmail = () => {
+        console.warn("send email");
     }
 
     return (
     <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.bgNewForgotPass}>
-        <Image
+            <Image
                     source={AreaLogo}
                     style={[styles.areaLogo, { height: height * 0.1 }]}
                     resizeMode="contain"
             />
                 <View style={styles.NewPasswordContainer}>
-                    <Text style={styles.NewPasswordTitle}>Add New password</Text>
+                    <Text style={styles.NewPasswordTitle}>Reset your password</Text>
                     <CustomerInput
-                    placeholder="Enter you verification code"
+                    placeholder="Verification code"
                     value={code}
                     setValue={setCode}
                     secureTextEntry={false}
                     />
                     <CustomerInput
-                    placeholder="Enter your new password"
+                    placeholder="New password"
                     value={newPassword}
                     setValue={setNewPassword}
                     secureTextEntry={false}
                     />
-                    <CustomerButton text="Submit" onPress={SignSubmitPressed} bgColor={""} fgColor={""}/>
-
+                     <CustomerInput
+                    placeholder="Confirmation password"
+                    value={newPassword}
+                    setValue={setNewPassword}
+                    secureTextEntry={false}
+                    />
                     <CustomerButton
+                    text="Set password"
+                    onPress={SignSubmitPressed}
+                    bgColor={""}
+                    fgColor={""}
+                    />
+                    <CustomerButton
+                    text="Resend verification email"
+                    onPress={SendEmail}
+                    bgColor={'#6c63ff'}
+                    fgColor={""}
+                    />
+
+                    {/* <CustomerButton
                     text="Back to Sign in"
                     onPress={loginPressed}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
-                    />
-        </View>
+                    /> */}
                 </View>
+        </View>
     </ScrollView>
     );
 };

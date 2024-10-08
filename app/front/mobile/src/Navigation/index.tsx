@@ -8,7 +8,7 @@ import SignUp from '../screens/Authentication/SignUp';
 import ConfirmEmail from '../screens/Authentication/ConfirmEmail/ConfirmEmail';
 import ForgotPassword from '../screens/Authentication/ForgotPassword';
 import NewPassword from '../screens/Authentication/ForgotPassword/newPassword';
-import Home from '../screens/Home';
+import Home from '../screens/Home/home';
 
 const Stack = createStackNavigator();
 
