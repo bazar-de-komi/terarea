@@ -1,7 +1,7 @@
 
 # Terarea (Project: Area)
 
-![The teraria icon](favicon_markdown.png)
+![The teraria icon](https://raw.githubusercontent.com/bazar-de-komi/terarea/refs/heads/main/docs/markdown/favicon_markdown.png)
 
 ## Table of Contents
 
