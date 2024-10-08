@@ -10,6 +10,7 @@ from ..http_codes import HCI
 from ..password_handling import PasswordHandling
 from ..mail_management import MailManagement
 
+
 class Authentication:
     """_summary_
     """
@@ -62,13 +63,16 @@ class Authentication:
         email = request_body["email"]
         password = request_body["password"]
         table = "Users"
-        user_info = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}'")
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(
+            table, "*", f"email='{email}'")
         self.disp.log_debug(f"Retrived data: {user_info}", title)
         if isinstance(user_info, int):
             return HCI.unauthorized({"error": "Access denied."})
         if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
             return HCI.unauthorized({"error": "Access denied."})
-        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
+        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
+            email
+        )
         if data["status"] == self.error:
             body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 title=title,
@@ -106,15 +110,21 @@ class Authentication:
         email: str = request_body["email"]
         password = request_body["password"]
         table = "Users"
-        user_info = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}'")
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(
+            table, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
             return HCI.conflict({"error": "Email already exist."})
-        hashed_password = self.password_handling_initialised.hash_password(password)
+        hashed_password = self.password_handling_initialised.hash_password(
+            password)
         username = email.split('@')[0]
         self.disp.log_debug(f"Username = {username}", title)
-        data = [username, email, hashed_password, "local"]
+        admin = str(int(False))
+        favicon = "NULL"
+        data = [username, email, hashed_password, "local", favicon, admin]
         self.disp.log_debug(f"Data list = {data}", title)
-        column = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        column = self.runtime_data_initialised.database_link.get_table_column_names(
+            table
+        )
         self.disp.log_debug(f"Column = {column}", title)
         if isinstance(column, int):
             return HCI.internal_server_error({"error": "Internal server error."})
@@ -134,7 +144,8 @@ class Authentication:
             return HCI.bad_request({"error": "Bad request."})
         email: str = request_body["email"]
         table = "Users"
-        data = self.runtime_data_initialised.database_link.get_data_from_table(table, "email", f"email='{email}'")
+        data = self.runtime_data_initialised.database_link.get_data_from_table(
+            table, "email", f"email='{email}'")
         if data == self.error:
             return HCI.bad_request({"error": "Bad request."})
         email_subject = "[AREA] Verification code"
@@ -146,7 +157,8 @@ class Authentication:
         self.code_for_forgot_password.append(new_node)
         body = "The code is "
         body += code_str
-        status = self.mail_management_initialised.send_email(email, email_subject, body)
+        status = self.mail_management_initialised.send_email(
+            email, email_subject, body)
         if status == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "Email send successfully."})
@@ -164,17 +176,19 @@ class Authentication:
         body_password: str = request_body["password"]
         verified_user: dict = {}
         for user in self.code_for_forgot_password:
-            if user.get("email") ==  body_email and user.get("code") == body_code:
+            if user.get("email") == body_email and user.get("code") == body_code:
                 verified_user = user
         if not verified_user:
             return HCI.bad_request({"error": "Invalid verification code."})
         table = "Users"
         data: list = []
         column: list = []
-        hashed_password = self.password_handling_initialised.hash_password(body_password)
+        hashed_password = self.password_handling_initialised.hash_password(
+            body_password)
         data.append(hashed_password)
         column.append("password")
-        status = self.runtime_data_initialised.database_link.update_data_in_table(table, data, column, f"email='{body_email}'")
+        status = self.runtime_data_initialised.database_link.update_data_in_table(
+            table, data, column, f"email='{body_email}'")
         if status == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         for user in self.code_for_forgot_password:

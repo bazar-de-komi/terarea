@@ -90,6 +90,31 @@ class SQL:
                 result += char
         return result
 
+    def datetime_to_string(self, datetime_instance: datetime, date_only: bool = False) -> str:
+        """_summary_
+            Convert a datetime instance to a string.
+
+        Args:
+            datetime_instance (datetime): _description_: TJe datetime item
+            date_only (bool, optional): _description_. Defaults to False.: if True will only return the date section, otherwise will return the date and time section.
+
+        Raises:
+            ValueError: _description_: If the datetime instance is not a datetime, a valueerror is raised.
+
+        Returns:
+            str: _description_: A string instance of the datetime.
+        """
+
+        if isinstance(datetime_instance, datetime) is False:
+            self.disp.log_error(
+                "The input is not a datetime instance.",
+                "datetime_to_string"
+            )
+            raise ValueError("Error: Expected a datetime instance.")
+        if date_only is True:
+            return datetime_instance.strftime('%Y-%m-%d')
+        return datetime_instance.strftime('%Y-%m-%d %H:%M:%S')
+
     def _get_correct_now_value(self) -> str:
         """_summary_
             Get the current date and time in the correct format for the database.

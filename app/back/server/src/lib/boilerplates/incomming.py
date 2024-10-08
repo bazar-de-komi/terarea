@@ -75,27 +75,92 @@ class BoilerplateIncoming:
             return True
         return False
 
+    def _insert_login_into_database(self, user_data: dict[str, any]) -> int:
+        """_summary_
+            Insert the user data into the database.
+        Args:
+            user_data (dict[str, any]): _description_: The user data to insert into the database
+
+        Returns:
+            int: _description_: The status of the operation
+        """
+        if len(user_data) != 3:
+            self.disp.log_error(
+                "The user data is not in the correct format !", "_insert_login_into_database"
+            )
+            return self.error
+        self.disp.log_debug(
+            f"user_data = {user_data}",
+            "_insert_login_into_database"
+        )
+        user_data[-1] = self.runtime_data_initialised.database_link.datetime_to_string(
+            user_data[-1]
+        )
+        self.disp.log_debug(
+            f"stringed_datetime = {user_data}",
+            "_insert_login_into_database"
+        )
+        table_columns = self.runtime_data_initialised.database_link.get_table_column_names(
+            "Connections"
+        )
+        table_columns.pop(0)
+        self.disp.log_debug(
+            f"table_columns = {table_columns}",
+            "_insert_login_into_database"
+        )
+        status = self.runtime_data_initialised.database_link.insert_or_update_data_into_table(
+            table="Connections",
+            data=user_data,
+            column=table_columns
+        )
+        if status != self.success:
+            self.disp.log_error(
+                "Data not inserted successfully !",
+                "_insert_login_into_database"
+            )
+            return self.error
+        self.disp.log_debug(
+            "Data inserted successfully.",
+            "_insert_login_into_database"
+        )
+        return self.success
+
     def log_user_in(self, email: str = '') -> Dict[str, Any]:
         """_summary_
             Attempt to log the user in based on the provided credentials and the database.
 
         Args:
-            username (str): _description_: The username of the account
-            password (str): _description_: The password for the account
+            email (str): _description_: The email of the account
 
         Returns:
             Dict[str, Any]: _description_: The response status
             {'status':Union[success, error], 'token':Union['some_token', '']}
         """
-        data = {'status': self.error, 'token': ''}
+        data = {'status': self.success, 'token': ''}
+        self.disp.log_debug(f"e-mail = {email}", "log_user_in")
         token = self.runtime_data_initialised.boilerplate_non_http_initialised.generate_token()
-        self.runtime_data_initialised.user_data[token] = {
-            CONST.UA_EMAIL_KEY: email,
-            CONST.UA_LIFESPAN_KEY: self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
-                CONST.UA_TOKEN_LIFESPAN
-            )
-        }
-        data['status'] = self.success
+        usr_id = self.runtime_data_initialised.database_link.get_data_from_table(
+            "Users",
+            "id",
+            f"email='{email}'",
+            beautify=False
+        )
+        if isinstance(usr_id, int):
+            data['status'] = self.error
+            return data
+        self.disp.log_debug(f"usr_id = {usr_id}", "log_user_in")
+        lifespan = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
+            CONST.UA_TOKEN_LIFESPAN
+        )
+        try:
+            uid = str(int(usr_id[0][0]))
+            self.disp.log_debug(f"uid = {uid}", "log_user_in")
+        except ValueError:
+            data['status'] = self.error
+            return data
+        usr_data = [token, uid, lifespan]
+        self.disp.log_debug(f"usr_data = {usr_data}", "log_user_in")
+        data['status'] = self._insert_login_into_database(usr_data)
         data['token'] = token
         return data
 
@@ -127,7 +192,7 @@ class BoilerplateIncoming:
         if token is not None:
             return token
         return mtoken
-    
+
     async def get_body(self, request: Request) -> Dict[str, Any]:
         """
             Get the body of a request, whether it's JSON or form data.
