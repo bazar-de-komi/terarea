@@ -3,9 +3,7 @@
     This file contains functions for the github checker endpoint
 """
 
-import requests
-from fastapi import FastAPI, Response, Request
-import json
+from fastapi import FastAPI, Request
 import hmac
 import hashlib
 
@@ -17,36 +15,20 @@ class Github_check:
         self.events_last_ids = [0] * len(repo)
         self.token = token
 
-    def check_signature(self, body, signature):
+    async def check_signature(self, request):
         if self.token is None:
-            return True
-        secret = bytes(self.token, 'utf-8')
-        expected_signature = 'sha256=' + hmac.new(secret, body, hashlib.sha256).hexdigest()
-        return hmac.compare_digest(expected_signature, signature)
+            return "No signature", 400
+        signature = request.headers.get('X-Hub-Signature-256')
+        sha, signature = signature.split('=')
+        if sha != "sha256":
+            return "Bad signature", 400
+        payload = request.get_data()
+        hmac_ = hmac.new(self.token.encode(), payload, hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(hmac_.hexdigest(), signature):
+            return "Invalide signature", 403
+        return hmac_
 
-    def check_if_event(url, last_id):
-        try:
-            response = requests.get(url)
-            if response.status_code == 200:
-                try:
-                    events = response.json()
-                except ValueError:
-                    print("Error: Response content is not valid JSON.")
-                    return
-                i = len(events) - 1
-                id = events[i]['id']
-                if last_id != 0 and last_id != id: # if last id != current id, then there was a new event
-                    type = events[i]['type'].replace('Event', '')
-                    actor = events[i]['actor']['login']
-                    repo_name = events[i]['repo']['name']
-                    print(f"There was a {type} by {actor} in {repo_name}")
-                return id
-            else:
-                print(f"Failed to fetch events at {url} :\n{response.status_code} - {response.text}")
-        except requests.exceptions.RequestException as e:
-            print(f"An error occurred: {e}")
-
-    @app.get("/github_check")
+    @app.post("/github_check")
     async def check_github(self, request: Request):
         """_summary_
             The endpoint allowing a user to check if there was a push in the selected repositorie.
@@ -55,33 +37,15 @@ class Github_check:
         """
         # get repo list from user, user must be able to stock repo list in db
         self.repo = ["https://api.github.com/repos/bazar-de-komi/terarea/events"]
-        # token = [""] * len(repo)
-        signature = request.headers.get('X-Hub-Signature-256')
-        body = await request.body()
-        if not self.check_signature(body, signature):
+        signature = self.get_signature(request)
+        if not signature:
             return {"error": "Invalid signature"}
-        while 1:
-            payload = await request.json()
-            repository_name = payload.get("repository", {}).get("name")
-            if repository_name in self.repo:
-                payload.get("ref")
-        self.events_last_ids[0] = 1234
 
-        try:
-            while (1):
-                for i in range(0, len(self.repo)):
-                    self.events_last_ids[i] = self.check_if_event(self.repo[i], self.events_last_ids[i])
-        except Exception:
-            return("error in github loop")
-
-if __name__ == '__main__':
-    test = Github_check
-    test.check_github([])
-
-"""
-keep number of events in inf loop, when there is a new event,
-send the notif of what it is, even other than PushEvent
-send type (without event), actor.login, and repo.name
-example :
-    there was a Push by HenraL in bazar-de-komi/terarea
-"""
+        event = request.headers.get('X-GitHub-Event', 'ping')
+        if event == "push":
+            data = await request.json()
+            print(f"Received push event on repo: {data['repository']['full_name']}")
+            return {"message": "Push event received", "repository": data['repository']['full_name']}
+        elif event == "ping":
+            return {"message": "Ping received!"}
+        return {"message": "Event not supported"}
