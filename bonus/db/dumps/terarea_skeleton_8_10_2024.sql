@@ -162,9 +162,10 @@ CREATE TABLE `Users` (
   `password` varchar(1000) NOT NULL,
   `method` varchar(200) DEFAULT NULL,
   `favicon` varchar(900) DEFAULT NULL COMMENT 'The link to the icon of the user account.',
+  `admin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Informs the server if the user is an administrator or not.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Users_UNIQUE` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211,4 +212,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-08 11:51:59
+-- Dump completed on 2024-10-08 17:17:37
