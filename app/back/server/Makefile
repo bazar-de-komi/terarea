@@ -8,7 +8,7 @@
 # The variables in charge of tracking the files for the program
 SRC_DIR	=	./src
 
-SRC	=	$(SRC_DIR)/main.py
+SRC	=	$(SRC_DIR)/server_main.py
 
 # Coverage report location
 
@@ -39,7 +39,7 @@ BINARY_LOCATION	=	./dist/
 
 BINARY_DESTINATION_ONE	=	./
 
-BINARY_DESTINATION_TWO	=	../
+BINARY_DESTINATION_TWO	=	../../../
 
 # The python binary that is available on the system
 
@@ -168,6 +168,14 @@ clean_coverage:
 	$(SILENT) rm -rf .coverage
 	@echo -e "$(C_GREEN)Coverage cleaned$(C_RESET)"
 
+# Remove docker cache
+clean_docker:
+	@echo -e "$(C_YELLOW)Cleaning docker cache$(C_RESET)"
+	$(SILENT) rm -rf .bash_history 
+	$(SILENT) rm -rf .mysql_history
+	$(SILENT) rm -rf .python_history
+	@echo -e "$(C_GREEN)Docker cache cleaned$(C_RESET)"
+
 # Proceed to a full environement wipe (
 #	ex: usefull when changing python version
 # )
@@ -176,7 +184,7 @@ fclean: clean clean_coverage
 	$(SILENT) rm -vf $(BINARY_DESTINATION_TWO)$(NAME)
 
 # Function in charge of doing a full clean
-ffclean: fclean clean_env
+ffclean: fclean clean_env clean_docker
 
 # Run the tests for the programs
 tests_run:
@@ -193,14 +201,14 @@ coverage:
 	$(SILENT) mkdir -p $(COVERAGE_DIR)
 	$(SILENT) . ./$(ENV_NAME)/bin/activate && \
 	\
-	pytest --cov=$(TEST_DIR) --cov-report=term --cov-report=html:$(COVERAGE_DIR)/html_report --cov-report=xml:$(COVERAGE_DIR)/coverage.xml && \
+	COVERAGE_FILE=$(COVERAGE_DIR)/.coverage pytest --cov --cov-report=term --cov-report=html:$(COVERAGE_DIR)/html_report --cov-report=xml:$(COVERAGE_DIR)/coverage.xml && \
 	\
-	pytest --cov=$(TEST_DIR) --cov-branch --cov-report=term --cov-report=html:$(COVERAGE_DIR)/branch_html_report --cov-report=xml:$(COVERAGE_DIR)/branch_coverage.xml && \
-	\
-	coverage report --data-file=$(COVERAGE_DIR)/coverage.xml > $(COVERAGE_DIR)/report.txt && \
-	coverage report --data-file=$(COVERAGE_DIR)/branch_coverage.xml > $(COVERAGE_DIR)/branch_report.txt && \
-	\
+	coverage report --data-file=$(COVERAGE_DIR)/.coverage > $(COVERAGE_DIR)/report.txt && \
 	cat $(COVERAGE_DIR)/report.txt && \
+	\
+	COVERAGE_FILE=$(COVERAGE_DIR)/.coverage_branch pytest --cov --cov-branch --cov-report=term --cov-report=html:$(COVERAGE_DIR)/branch_html_report --cov-report=xml:$(COVERAGE_DIR)/branch_coverage.xml && \
+	\
+	coverage report --data-file=$(COVERAGE_DIR)/.coverage_branch > $(COVERAGE_DIR)/branch_report.txt && \
 	cat $(COVERAGE_DIR)/branch_report.txt
 	@echo -e "$(C_CYAN)Coverage report $(C_GREEN)generated$(C_RESET)"
 
@@ -245,7 +253,7 @@ serve: run
 	all omega create_environement install_dependencies activate_environement \
 	activate \
 	build build_binary update_binary_location \
-	clean clean_env clean_coverage \
+	clean clean_env clean_coverage clean_docker \
 	fclean ffclean \
 	tests_run coverage \
 	debug re \

@@ -1,0 +1,800 @@
+openapi: 3.0.0
+servers:
+# Added by API Auto Mocking Plugin
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/LETELLIERHENRY/pet_api/1.0.0
+info:
+  description: |
+    The HTTP Protocol to interract with the Character (pet).
+    This is a local protocol meant to interface with the other sections of the Desktop Pet app
+  version: "1.0.0"
+  title: Desktop Pets - Character API
+  contact:
+    email: henrysoftwarehouse@protonmail.com
+    name: HenraL
+    url: https://github.com/Hanra-s-work/Desktop_pet
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+- name: incognito
+  description: Operations available for people that are not logged in.
+- name: user
+  description: Operations available for users that are logged in.
+- name: admins
+  description: Secured Admin-only calls.
+paths:
+  # Here go the methods (That will be created)
+  /:
+    get:
+      tags:
+      - incognito
+      - user
+      - admins
+      summary: Home Page
+      responses:
+        '200':
+          description: Welcome to the user to the control server of the {character_name}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: Home
+                  msg:
+                    type: string
+                    example: Welcome to the control server.
+                  resp:
+                    $ref: '#/components/schemas/EmptyResp'
+                  logged_in:
+                    $ref: '#/components/schemas/LoggedInPropertyFalse'
+
+  /login:
+    post:
+      tags:
+      - incognito
+      - user
+      - admins
+      parameters:
+      - in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        description: "The username of the account"
+      - in: path
+        name: password
+        required: true
+        schema:
+          type: string
+        description: "The password of the account"
+      summary: Login page - Log into the server
+      responses:
+        '200':
+          description: The user is logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: Login
+                  msg:
+                    type: string
+                    example: Login success, you are logged in as {username}.
+                  resp:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb2huX0RvZSIsImlhdCI6MTY5MjUwNjQ3NSwiZXhwIjoxNjkyNTEwMDc1fQ.GmOSF2o1e8y9xwC_7AMTCdU4_C5TigDwccnqjD6O-WI"
+                    description: |
+                      This is an example of the token that will be returned to you if you managed to successfully login.
+                      Keep it safe until you log out (or the server is restarted), you will need it in the headers you send (especially for endpoints that require you to be logged in)
+                  token:
+                    type: string
+                    example: "your token"
+                  logged_in:
+                    $ref: '#/components/schemas/LoggedInPropertyTrue'
+        '401':
+          $ref: '#/components/responses/LoginFailed'
+
+  /register:
+    post:
+      tags:
+      - incognito
+      - user
+      - admins
+      parameters:
+      - in: path
+        name: username
+        required: true
+        schema:
+          type: string
+        description: "The username of the account"
+      - in: path
+        name: password
+        required: true
+        schema:
+          type: string
+        description: "The password of the account"
+      summary: Login page - Log into the server
+      responses:
+        '200':
+          description: The user is logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: Login
+                  msg:
+                    type: string
+                    example: Login success, you are logged in as {username}.
+                  resp:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb2huX0RvZSIsImlhdCI6MTY5MjUwNjQ3NSwiZXhwIjoxNjkyNTEwMDc1fQ.GmOSF2o1e8y9xwC_7AMTCdU4_C5TigDwccnqjD6O-WI"
+                    description: |
+                      This is an example of the token that will be returned to you if you managed to successfully login.
+                      Keep it safe until you log out (or the server is restarted), you will need it in the headers you send (especially for endpoints that require you to be logged in)
+                  token:
+                    type: string
+                    example: "your token"
+                  logged_in:
+                    $ref: '#/components/schemas/LoggedInPropertyTrue'
+        '401':
+          $ref: '#/components/responses/LoginFailed'
+
+  /logout:
+    post:
+      tags:
+      - user
+      - admins
+      parameters:
+      - $ref: '#/components/parameters/AuthorisationToken'
+      summary: Log out of your account
+      responses:
+        '200':
+          description: The user is logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: Logout
+                  msg:
+                    type: string
+                    example: You have successfully been logged out...
+                  resp:
+                    $ref: '#/components/schemas/EmptyResp'
+                  logged_in:
+                    $ref: '#/components/schemas/LoggedInPropertyFalse'
+        '401':
+          $ref: '#/components/responses/NotLoggedIn'
+        '498':
+          $ref: '#/components/responses/InvalidToken'
+
+  /stop_server:
+    post:
+      tags:
+      - admins
+      parameters:
+      - $ref: '#/components/parameters/AuthorisationToken'
+      summary: Stop server
+      responses:
+        '200':
+          description: Stop server
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  title:
+                    type: string
+                    example: Stop server
+                  msg:
+                    type: string
+                    example: The control server is stopping...
+                  resp:
+                    $ref: '#/components/schemas/EmptyResp'
+                  logged_in:
+                    $ref: '#/components/schemas/LoggedInPropertyTrue'
+        '401':
+          $ref: '#/components/responses/NotLoggedIn'
+        '498':
+          $ref: '#/components/responses/InvalidToken'
+        '403':
+          $ref: '#/components/responses/InsuffisantRights'
+
+components:
+  parameters:
+    AuthorisationToken:
+      in: header
+      name: Token
+      required: true
+      schema:
+        type: string
+      description: "Bearer token for authorization"
+    CharacterRID:
+      in: path
+      name: character_rid
+      required: true
+      schema:
+        type: string
+      description: "The id of the character thread you whish to interract with."
+    Message:
+      in: path
+      name: message
+      required: true
+      schema:
+        type: string
+      description: The message you wish to provide to the character
+    Question:
+      in: path
+      name: question
+      required: true
+      schema:
+        type: string
+      description: The question you wish to ask the user
+  schemas:
+    LoggedInPropertyFalse:
+      type: boolean
+      example: false
+      description: Indicates if the user is logged in.
+    LoggedInPropertyTrue:
+      type: boolean
+      example: true
+      description: Indicates if the user is logged in.
+    EmptyResp:
+      type: string
+      example: ''
+      description: This section will contain any data the user would have queried using an endpoint.$
+    SuccessResp:
+      type: string
+      example: "success"
+      description: The success response for the programs that would only analyse returned strings instead of statuses.
+    InvalidMessageResp:
+      type: string
+      example: Invalid message
+      description: The success response for the programs that would only analyse returned strings instead of statuses.
+    InvalidMessage:
+      type: string
+      example: "The provided message {message} for the character {character_name} is incorrect."
+      description: |
+        Dynamic message that includes the `message`, `character_name` parameter values.
+    CharacterRID:
+      type: string
+      example: "{character_name}{id}"
+      description: |
+        This is an identifier to allow you to interract with the character you just started. This is a character runtime id or (crid).
+    About:
+      type: object
+      properties:
+        server_response:
+          $ref: '#/components/schemas/AboutServer'
+        character:
+          $ref: '#/components/schemas/AboutCharacter'
+
+    AboutServer:
+      type: object
+      properties:
+        author:
+          $ref: '#/components/schemas/AboutServerAuthors'
+        version:
+          $ref: '#/components/schemas/AboutServerVersion'
+        process:
+          $ref: '#/components/schemas/AboutServerProcess'
+        connections:
+          $ref: '#/components/schemas/AboutServerConnections'
+        license:
+          $ref: '#/components/schemas/AboutServerLicense'
+        logs:
+          $ref: '#/components/schemas/AboutServerLogs'
+        status:
+          $ref: '#/components/schemas/AboutServerStatus'
+        running_characters:
+          $ref: '#/components/schemas/AboutServerRunningCharacters'
+        uptime:
+          $ref: '#/components/schemas/AboutServerUptime'
+        started_by:
+          $ref: '#/components/schemas/AboutServerStartedBy'
+        url:
+          $ref: '#/components/schemas/AboutServerUrl'
+    AboutServerAuthors:
+      type: string
+      example: (c) Henry Letellier
+    AboutServerVersion:
+      type: string
+      example: v1.0.0
+    AboutServerProcess:
+      type: string
+      example: process_id
+    AboutServerConnections:
+      type: array
+      items:
+        type: string
+      example:
+      - "connection info 1"
+      - "connection info 2"
+      - "etc"
+    AboutServerLicense:
+      type: string
+      example: "Here would be the content of the license"
+    AboutServerLogs:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/AboutServerLogsError'
+        access:
+          $ref: '#/components/schemas/AboutServerLogsAccess'
+    AboutServerLogsAccess:
+      type: string
+      example: Some access log
+    AboutServerLogsError:
+      type: string
+      example: Some error log
+    AboutServerStatus:
+      type: string
+      example: "Server health: Sain"
+    AboutServerRunningCharacters:
+      type: array
+      items:
+        type: string
+      example:
+      - "character1"
+      - "character2"
+      - "etc"
+    AboutServerUptime:
+      type: string
+      example: The time since the server was running.
+    AboutServerStartedBy:
+      type: string
+      example: The account that started the server
+    AboutServerUrl:
+      type: object
+      properties:
+        host:
+          $ref: '#/components/schemas/AboutServerUrlHost'
+        port:
+          $ref: '#/components/schemas/AboutServerUrlPort'
+        default:
+          $ref: '#/components/schemas/AboutServerUrlDefault'
+    AboutServerUrlHost:
+      type: string
+      example: 127.0.0.1
+    AboutServerUrlPort:
+      type: string
+      example: 8080
+    AboutServerUrlDefault:
+      type: string
+      example: http://127.0.0.1:8080
+      description: This is the value returned when the sub objects are not called.
+    AboutCharacter:
+      type: array
+      items:
+        type: object
+      example:
+      - Character1:
+          $ref: '#/components/schemas/AboutCharacterInfo'
+      - character2:
+          $ref: '#/components/schemas/AboutCharacterInfo'
+      - etc:
+        type: string
+        example: The rest of the active characters
+
+    AboutCharacterInfo:
+      type: object
+      properties:
+        ip:
+          $ref: '#/components/schemas/AboutCharacterInfoIP'
+        license:
+          $ref: '#/components/schemas/AboutCharacterInfoLicense'
+        age_restricted:
+          $ref: '#/components/schemas/AboutCharacterInfoAgeRestricted'
+        uploader:
+          $ref: '#/components/schemas/AboutCharacterInfoUploader'
+        filename:
+          $ref: '#/components/schemas/AboutCharacterInfoFilename'
+        credits:
+          $ref: '#/components/schemas/AboutCharacterInfoCredits'
+        link:
+          $ref: '#/components/schemas/AboutCharacterInfoLink'
+        id:
+          $ref: '#/components/schemas/AboutCharacterInfoId'
+        uploader_link:
+          $ref: '#/components/schemas/AboutCharacterInfoUploaderLink'
+        started_by:
+          $ref: '#/components/schemas/AboutCharacterInfoStartedBy'
+        bio:
+          $ref: '#/components/schemas/AboutCharacterInfoBio'
+        profile:
+          $ref: '#/components/schemas/AboutCharacterInfoProfile'
+        uid:
+          $ref: '#/components/schemas/AboutCharacterInfoUID'
+        tags:
+          $ref: '#/components/schemas/AboutCharacterInfoTags'
+        voice:
+          $ref: '#/components/schemas/AboutCharacterInfoVoice'
+
+    AboutCharacterInfoIP:
+      type: string
+      example: '{company_ip}'
+      description: Dynamic message that includes the `company_ip` parameter value.
+
+    AboutCharacterInfoLicense:
+      type: string
+      example: '{character_license}'
+      description: |
+        Dynamic message that includes the `character_license` parameter value.
+
+    AboutCharacterInfoAgeRestricted:
+      type: boolean
+      example: false
+      description: |
+        Dynamic message that depends on the credits of the character.
+
+    AboutCharacterInfoUploader:
+      type: string
+      example: '{uploader_tag}:{uploader_link}'
+      description: |
+        Dynamic message that includes the `uploader_tag`, `uploader_link` parameter values.
+
+    AboutCharacterInfoFilename:
+      type: string
+      example: '{the_name_of_the_file_used_for_generating_the_character}'
+      description: |
+        Dynamic message that includes the `the_name_of_the_file_used_for_the_generation_of_the_character` parameter value.
+
+    AboutCharacterInfoCredits:
+      type: string
+      example: '{credits_of_the_character_file}'
+      description: |
+        Dynamic message that includes the `credits_of_the_character_file` parameter value.
+
+    AboutCharacterInfoLink:
+      type: string
+      example: '{link_of_the_character_file}'
+      description: |
+        Dynamic message that includes the `link_of_the_character_file` parameter value.
+
+    AboutCharacterInfoId:
+      type: integer
+      example: 1
+
+    AboutCharacterInfoUploaderLink:
+      type: string
+      example: 'https://some_social_media_site/some_user_handle'
+
+    AboutCharacterInfoStartedBy:
+      type: string
+      example: 'Character {character_name} has been started by {user_account}'
+      description: |
+        Dynamic message that includes the `character_name`, `user_account` parameter values.
+
+    AboutCharacterInfoBio:
+      type: object
+      properties:
+        user_firstname:
+          type: string
+          example: John
+        user_lastname:
+          type: string
+          example: Doe
+        user_nickname:
+          type: string
+          example: Joe
+        biography_field:
+          type: string
+          example: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, libero eu
+        author:
+          type: string
+          example: JustACompany
+        link:
+          type: string
+          example: https://google.com
+        display_link:
+          type: string
+          example: "John doe - Background story"
+
+    AboutCharacterInfoProfile:
+      type: string
+      example: https://example.com/profile
+
+    AboutCharacterInfoUID:
+      type: string
+      example: '{uid}'
+      description: |
+        Dynamic message that includes the `uid` parameter value.
+
+    AboutCharacterInfoTags:
+      type: array
+      items:
+        type: string
+      example:
+      - tag1
+      - tag2
+      - etc
+
+    AboutCharacterInfoVoice:
+      type: array
+      items:
+        type: string
+      example:
+      - 'en'
+      - 'fr'
+      - 'etc'
+
+    AboutCharacterInfoVoiceCurrent:
+      type: string
+      example: 'en'
+  responses:
+    # 401
+    NotLoggedIn:
+      description: Message sent when the user is not logged into any account but is trying to run a command that requires the user to be logged in
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: You need to be logged in to be able to run this endpoint
+              err:
+                type: string
+                example: User not logged in
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyFalse'
+
+    LoginFailed:
+      description: The message displayed when the user failed to log in
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Login
+              msg:
+                type: string
+                example: Login failed, invalid credentials or username.
+              err:
+                type: string
+                example: "Invalid credentials or username."
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyFalse'
+    # 403
+    InsuffisantRights:
+      description: Message sent when the user does not have enough permissions to execute this endpoint
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "You do not have enough permissions to execute this endpoint."
+              err:
+                type: string
+                example: "Insufficient rights for given account."
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+    CharacterNotRunning:
+      description: Message sent when the character is not running
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "The character runtime id you provided is not running."
+              err:
+                type: string
+                example: "Character not running."
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+    # 404
+    CharacterNotFound:
+      description: Message sent when the character runtime id is not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "The character id {character_rid} is not running."
+                description: |
+                  Dynamic message that includes the `character_rid` parameter value.
+              err:
+                type: string
+                example: Runtime id not present.
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+    AnimationNotFound:
+      description: Message sent when the animation is not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "The animation {animation_name} does not exist for {character_name}."
+                description: |
+                  Dynamic message that includes the `animation_name`,`character_name` parameter values.
+              err:
+                type: string
+                example: Animation is not present.
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+    NotAsked:
+      description: Message sent when the question was not asked by the character
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "The question provided is has not been asked by this character {character_name}"
+                description: |
+                  Dynamic message that includes the `character_name` parameter values.
+              err:
+                type: string
+                example: "Not asked"
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+    # 406
+    NotAnswered:
+      description: The answer has not been provided for the current question
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "The response for the question '{question}' has not yet been provided for character '{character_name}'"
+                description: |
+                  Dynamic message that includes the `question`, `character_name` parameter values.
+              err:
+                type: object
+                example: Null
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+
+    # 498
+    InvalidToken:
+      description: Invalid token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: The token you entered is invalid.
+              err:
+                type: string
+                example: Invalid token
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyFalse'
+
+    # 200
+    StartCharacter:
+      description: Start a character that will be managed by the server and it's endpoints
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "The character {character_name} has started successfully."
+                description: |
+                  Dynamic message that includes the `character_name` parameter value.
+              resp:
+                $ref: '#/components/schemas/SuccessResp'
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+    CharacterLoaded:
+      description: The character is loaded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Load
+              msg:
+                type: string
+                example: "The character {character_name} is loaded into the control server."
+                description: |
+                  Dynamic message that includes the `character_name` parameter value.
+              resp:
+                $ref: '#/components/schemas/SuccessResp'
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'
+
+    # 204
+    AnimationIsNotComplex:
+      description: Message sent when an animation is not of type complex
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: "{Endpoint name}"
+                description: |
+                  This component represents the name of the endpoint that was called.
+              msg:
+                type: string
+                example: "The animation {animation_name} you tried to play is not of type complex for character {character_name}."
+                description: |
+                  Dynamic message that includes the `animation_name`, `character_name` parameter values.
+              err:
+                type: string
+                example: Animation is not complex.
+              logged_in:
+                $ref: '#/components/schemas/LoggedInPropertyTrue'

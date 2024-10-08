@@ -9,7 +9,8 @@ from ..sql.sql_manager import SQL
 from ..bucket import Bucket
 if TYPE_CHECKING:
     from .paths import ServerPaths
-    from .endpoints import Endpoints
+    from .endpoints_routes import Endpoints
+    from .background_tasks import BackgroundTasks
     from .server_management import ServerManagement
     from ..boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
@@ -56,12 +57,11 @@ class RuntimeData:
         self.server: uvicorn.Server = None
         self.server_running: bool = True
         self.continue_running: bool = True
-        # -------------------------- The cache thread --------------------------
-        self.thread_cache_continue: bool = True
         # ------------------------- Classes reference  -------------------------
+        self.paths_initialised: 'ServerPaths' = None
+        self.endpoints_initialised: 'Endpoints' = None
+        self.background_tasks_initialised: 'BackgroundTasks' = None
         self.server_management_initialised: 'ServerManagement' = None
         self.boilerplate_responses_initialised: 'BoilerplateResponses' = None
         self.boilerplate_incoming_initialised: 'BoilerplateIncoming' = None
         self.boilerplate_non_http_initialised: 'BoilerplateNonHTTP' = None
-        self.paths_initialised: 'ServerPaths' = None
-        self.endpoints_initialised: 'Endpoints' = None

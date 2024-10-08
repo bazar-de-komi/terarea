@@ -99,9 +99,18 @@ class Main:
                 app_name=self.app_name,
                 debug=self.debug
             )
-            status = SI.main()
+            try:
+                status = SI.main()
+            except KeyboardInterrupt:
+                print("\nCtrl+C caught! Exiting the program gracefully.")
+                del SI
+                status = self.success
+            except Exception as e:
+                print(f"An error occurred: {e}")
+                status = self.error
             print(f"The server is exiting with a status of: {status}")
             sys.exit(status)
+
         else:
             print("Usage: python3 ./server --help")
             sys.exit(self.success)

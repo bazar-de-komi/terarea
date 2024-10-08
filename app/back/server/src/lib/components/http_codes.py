@@ -397,8 +397,8 @@ class HttpCodes:
         """ precondition_required: 428 """
         return self.send_message_on_status(status=428, content=content, content_type=content_type, headers=headers)
 
-    def too_mAny_requests(self, content: Any = {'msg': 'message'}, content_type: str = "JSON", headers: Mapping[str, str] = None) -> Response:
-        """ too_mAny_requests: 429 """
+    def too_many_requests(self, content: Any = {'msg': 'message'}, content_type: str = "JSON", headers: Mapping[str, str] = None) -> Response:
+        """ too_many_requests: 429 """
         return self.send_message_on_status(status=429, content=content, content_type=content_type, headers=headers)
 
     def request_header_fields_too_large(self, content: Any = {'msg': 'message'}, content_type: str = "JSON", headers: Mapping[str, str] = None) -> Response:

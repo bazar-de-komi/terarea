@@ -1,6 +1,6 @@
 name: doxygen_generator
 
-# version: 1.0.0
+# version: 1.0.0.commando
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
           - "v*.*.*"
       branches:
           - main
-          - doxygen_generation
+          - dev-workflow-doxygen
   workflow_dispatch:
 
 
@@ -22,41 +22,26 @@ permissions:
 env:
   # Variables for managing required containers
   DOCKER_NAME: hanralatalliard/doxygen
-  CODING_STYLE_CONTAINER: ghcr.io/epitech/coding-style-checker:latest
+  # variables managing name publishing
+  COMMIT_TITLE: "There is no title"
+  COMMIT_MESSAGE: "There is no message"
+  #Variables for the extras scripts
+  DOXYFILE: doxygen_generation/Doxyfile
+  MAN_INSTALL_PATH: doxygen_generation/man/installer.sh
+  HTML_SRC_PATH: doxygen_generation/html
+  HTML_SERVER_SPAWNER_NAME: launch_server.sh
+  # Variables for specifying build locations
+  HTML_GENERATION: html
+  TEMPORARY_FOLDER: tmp_documentation
+  OUTPUT_GENERATION: documentation
   # Variables for managin the tags
   SETUP_FILE: setup.py
   TAG_FILE: version.txt
   IS_RELEASE: is_release.txt
   LATEST_TAG: ""
-  # variables managing name publishing
-  COMMIT_TITLE: "There is no title"
-  COMMIT_MESSAGE: "There is no message"
-  #Variables for the extras scripts
-  DOXYFILE: bonus/doxygen_docker/Doxyfile
-  MAN_INSTALL_PATH: bonus/doxygen_docker/man/installer.sh
-  HTML_SERVER_SPAWNER_PATH: bonus/doxygen_docker/html/launch_server.sh
-  # Variables for managing ntfy notification system
-  NOTIFY_CHANNEL: ntfy.sh/is_up #${{ secrets.NOTIFY_ZAPPY }}
-  NOTIFY_LOCATION: ${GITHUB_REPOSITORY}:${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
-  # Variables for specifying build locations
-  HTML_GENERATION: html
-  TEMPORARY_FOLDER: tmp_documentation
-  OUTPUT_GENERATION: documentation
-  # Variables for specifying the outputs to be cached/published
-  LINUX_BINARY_FOLDER: "./linux_binaries"
-  MAC_MONE_BINARY_FOLDER: "./mac_mone_binaries"
-  MAC_INTEL_BINARY_FOLDER: "./mac_intel_binaries"
   # Variable containing the reference key for the cache of each main section
   CACHE_KEY: doxygen-cache-key
   CACHE_KEY_CLEANED: doxygen-cache-key-cleaned
-  LINUX_CACHE_KEY_BUILD: linux-cache-key
-  MAC_MONE_CACHE_KEY_BUILD: mac-mone-cache-key
-  MAC_INTEL_CACHE_KEY_BUILD: mac-intel-cache-key
-  # Variables containing a more friendly name concerning their role and the destination architectures
-  EXECUTABLES: "./zappy_ai ./zappy_gui ./zappy_server"
-  EXECUTABLES_LINUX: "./zappy_linux_ai ./zappy_linux_gui ./zappy_linux_server"
-  EXECUTABLES_MAC_INTEL: "./zappy_mac_intel_ai ./zappy_mac_intel_gui ./zappy_mac_intel_server"
-  EXECUTABLES_MAC_MONE: "./zappy_mac_apple_chip_ai ./zappy_mac_apple_chip_gui ./zappy_mac_apple_chip_server"
 
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
@@ -74,17 +59,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Build doxygen docker
+      - name: Fetch doxygen docker
         run: |
           docker pull ${{env.DOCKER_NAME}}
       - name: Create required folders
         run: |
           mkdir -p ${{env.OUTPUT_GENERATION}} ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}
-      - name: Clean repository
-        run: |
-          make fclean
-          cd ./src/ai/
-          make fclean_env
       - name: Create dummy page for html renders
         run: |
           HTML_CONTENT='<!DOCTYPE html><html lang="en"><head>'
@@ -110,11 +90,10 @@ jobs:
           echo -e "$HTML_CONTENT" > ${{env.OUTPUT_GENERATION}}/${{env.HTML_GENERATION}}/index.html
       - name: Run doxygen docker
         run: |
-          RUN_COMMAND="cd /app && cp ${{env.DOXYFILE}} ./Doxyfile && doxygen ; exit $?"
-          docker run -i -v "$(pwd)":"/app" -v "$(pwd)/${{env.OUTPUT_GENERATION}}":"/${{env.OUTPUT_GENERATION}}" ${{env.DOCKER_NAME}} /bin/bash -c "$RUN_COMMAND"
+          RUN_COMMAND="cd /app && cp -v ${{env.DOXYFILE}} ./Doxyfile && doxygen ; exit $?"
+          docker run -t -v "$(pwd)":"/app" -v "$(pwd)/${{env.OUTPUT_GENERATION}}":"/${{env.OUTPUT_GENERATION}}" ${{env.DOCKER_NAME}} /bin/bash -c "$RUN_COMMAND"
           if [ $? -ne 0 ]
           then
-            curl -H "Title: Build failed" -H "Priority: default" -H 'Tags: warning' -d "The documentation generation failed for ${{env.NOTIFY_LOCATION}}" ${{env.NOTIFY_CHANNEL}}
             exit 1
           fi
       - name: Reclaim ownership
@@ -143,7 +122,7 @@ jobs:
     needs: build_doxygen
     if: success()
     env:
-      ICON_PATH: bonus/doxygen_docker/favicon/
+      ICON_PATH: doxygen_generation/favicon/
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -167,7 +146,7 @@ jobs:
           ls -a ./
           echo "Copying content of ${{ env.OUTPUT_GENERATION }} to ${{env.TEMPORARY_FOLDER}}"
           mkdir -p ${{ env.TEMPORARY_FOLDER}}
-          cp -rf ${{ env.OUTPUT_GENERATION }} ${{env.TEMPORARY_FOLDER}}
+          cp -rvf ${{ env.OUTPUT_GENERATION }} ${{env.TEMPORARY_FOLDER}}
           echo "Content of: ${{ env.TEMPORARY_FOLDER }}/"
           ls -a ${{ env.TEMPORARY_FOLDER }}/
           echo "Content of: ${{ env.OUTPUT_GENERATION }}/"
@@ -194,7 +173,7 @@ jobs:
             FINAL_PATH="$i/files/icon"
             echo "Final path = $FINAL_PATH"
             mkdir -p "$FINAL_PATH"
-            cp -r ${{env.ICON_PATH}}/* "$FINAL_PATH"
+            cp -rv ${{env.ICON_PATH}}/* "$FINAL_PATH"
             ls -a -ls --color=auto "$FINAL_PATH"
           done
       - name: Generate latex if present
@@ -221,24 +200,70 @@ jobs:
             CWD=$(pwd)
             FILE_NAME="install_man.sh"
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/man"
-            cp $CWD/${{env.MAN_INSTALL_PATH}} ./$FILE_NAME
+            cp -v $CWD/${{env.MAN_INSTALL_PATH}} ./$FILE_NAME
             chmod a+x $FILE_NAME
             cd $CWD
           else
             echo "There was no man generated"
           fi
-      - name: Inject server spawner file if html is present
+
+      - name: Inject external html ressources if html is present
         run: |
-          if [ -e "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html" ]; then
+          if [ -e "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION}}/html" ]; then
             CWD=$(pwd)
-            FILE_NAME="launch_server.sh"
             cd "${{env.TEMPORARY_FOLDER}}/${{ env.OUTPUT_GENERATION }}/html"
-            cp $CWD/${{env.HTML_SERVER_SPAWNER_PATH}} ./$FILE_NAME
-            chmod a+x $FILE_NAME
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files" ]; then
+              echo "Folder 'files' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/files .
+              if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files/icon" ]; then
+                echo "Folder 'files/icon' found, copying"
+                cp -rv $CWD/${{env.HTML_SRC_PATH}}/files/icon/* .
+              fi
+              if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files/icons" ]; then
+                echo "Folder 'files/icons' found, copying"
+                cp -rv $CWD/${{env.HTML_SRC_PATH}}/files/icons/* .
+              fi
+              if [ -e "$CWD/${{env.HTML_SRC_PATH}}/files/img" ]; then
+                echo "Folder 'img' found, copying"
+                cp -rv $CWD/${{env.HTML_SRC_PATH}}/files/img/* .
+              fi
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/css" ]; then
+              echo "Folder 'css' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/css .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/js" ]; then
+              echo "Folder 'js' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/js .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/icon" ]; then
+              echo "Folder 'icon' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/icon .
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/icon/* .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/icons" ]; then
+              echo "Folder 'icons' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/icons .
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/icons/* .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/img" ]; then
+              echo "Folder 'img' found, copying"
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/img .
+              cp -rv $CWD/${{env.HTML_SRC_PATH}}/img/* .
+            fi
+            if [ -e "$CWD/${{env.HTML_SRC_PATH}}/${{env.HTML_SERVER_SPAWNER_NAME}}" ]; then
+              echo "File ${{env.HTML_SERVER_SPAWNER_NAME}} found, copying"
+              cp -v $CWD/${{env.HTML_SRC_PATH}}/${{env.HTML_SERVER_SPAWNER_NAME}} ./${{env.HTML_SERVER_SPAWNER_NAME}}
+              chmod a+x ${{env.HTML_SERVER_SPAWNER_NAME}}
+            fi
+            echo "Content of '$(pwd)':"
+            ls -lsa
+            echo "Returning to '$CWD'"
             cd $CWD
           else
             echo "There was no html generated"
           fi
+
       - name: Save cache
         id: cache-save
         uses: actions/cache@v4
@@ -279,6 +304,11 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Show restored content
+        run: |
+          echo "Displaying content of ${{env.OUTPUT_GENERATION}}:"
+          ls -aR ${{env.OUTPUT_GENERATION}}
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -288,14 +318,12 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
   export_other_formats_when_present:
     runs-on: ubuntu-latest
     needs: [clean_up_generation]
     if: success()
     env:
-      MAC_MON_ZIP_NAME: mac_apple_chip.zip
-      MAC_INTEL_ZIP_NAME: mac_intel_chip.zip
-      LINUX_ZIP_NAME: linux.zip
       DOCUMENTATION_ZIP_NAME: documentation.zip
     steps:
       - name: Checkout code
@@ -339,7 +367,7 @@ jobs:
           echo "LATEST_TAG=$latest_tag" >> $GITHUB_ENV
           echo -e "\n\n\n\n\n\n\n\n\n"
           echo "new_tag = $latest_tag"
-          echo "env.new_tag = ${{env.tag_file}}"
+          echo "env.new_tag = ${{env.TAG_FILE}}"
           echo "cat env.new_tag = $(cat ${{env.TAG_FILE}})"
           echo "env.LATEST_TAG = ${{env.LATEST_TAG}}"
           echo -e "\n\n\n\n\n\n\n\n\n"
@@ -396,7 +424,6 @@ jobs:
           fi
           echo -e "\n\n\n\n\n\n\n\n\n"
           echo "new_tag = $new_tag"
-          echo "env.NEW_TAG = ${{env.NEW_TAG}}"
           echo "env.is_release = $(cat ${{env.IS_RELEASE}})"
           echo "cat env.new_tag = $(cat ${{env.TAG_FILE}})"
           echo "cat env.is_release = $(cat ${{env.IS_RELEASE}})"
@@ -463,12 +490,6 @@ jobs:
           ls -a ${{env.TEMPORARY_FOLDER}}
           echo "content of ${{env.OUTPUT_GENERATION}}"
           ls -a ${{env.OUTPUT_GENERATION}}
-          echo "content of ${{env.LINUX_BINARY_FOLDER}}"
-          ls -a ${{env.LINUX_BINARY_FOLDER}}
-          echo "content of ${{env.MAC_INTEL_BINARY_FOLDER}}"
-          ls -a ${{env.MAC_INTEL_BINARY_FOLDER}}
-          echo "content of ${{env.MAC_MONE_BINARY_FOLDER}}"
-          ls -a ${{env.MAC_MONE_BINARY_FOLDER}}
       
       - name: Create archives
         run: |
@@ -489,12 +510,6 @@ jobs:
           echo "Found folders in the documentation: $FORMATS"
           echo "Generating archive of $(basename "${{env.OUTPUT_GENERATION}}")"
           zip $COMMAND_OPTIONS ${{env.DOCUMENTATION_ZIP_NAME}} $(basename "${{env.OUTPUT_GENERATION}}")
-          echo "Generating archive of $(basename "${{env.LINUX_BINARY_FOLDER}}")"
-          zip $COMMAND_OPTIONS ${{env.LINUX_ZIP_NAME}} $(basename "${{env.LINUX_BINARY_FOLDER}}")
-          echo "Generating archive of $(basename "${{env.MAC_MONE_BINARY_FOLDER}}")"
-          zip $COMMAND_OPTIONS ${{env.MAC_MON_ZIP_NAME}} $(basename "${{env.MAC_MONE_BINARY_FOLDER}}")
-          echo "Generating archive of $(basename "${{env.MAC_INTEL_BINARY_FOLDER}}")"
-          zip $COMMAND_OPTIONS ${{env.MAC_INTEL_ZIP_NAME}} $(basename "${{env.MAC_INTEL_BINARY_FOLDER}}")
           for item in ${FORMATS[@]}
           do
             echo "Creating zip archive: '$item'"
@@ -513,31 +528,13 @@ jobs:
       - name: Get folders of interest
         id: output-files
         run: |
-          MMZN="${{env.MAC_MON_ZIP_NAME}}"
-          MIZN="${{env.MAC_INTEL_ZIP_NAME}}"
-          LZN="${{env.LINUX_ZIP_NAME}}"
           DZN="${{env.DOCUMENTATION_ZIP_NAME}}"
           OGRESULT="$(find ${{env.OUTPUT_GENERATION}} -maxdepth 1 -name '*.zip' -type f | tr '\n' ' ')"
-          LBFRESULT="$(find ${{env.LINUX_BINARY_FOLDER}} -maxdepth 1 -type f | tr '\n' ' ')"
-          MIBFRESULT="$(find ${{env.MAC_INTEL_BINARY_FOLDER}} -maxdepth 1 -type f | tr '\n' ' ')"
-          MMBFRESULT="$(find ${{env.MAC_MONE_BINARY_FOLDER}} -maxdepth 1 -type f | tr '\n' ' ')"
-          echo "MMZN=$MMZN" >> "$GITHUB_OUTPUT" # Files of interest
-          echo "MIZN=$MIZN" >> "$GITHUB_OUTPUT" # Files of interest
-          echo "LZN=$LZN" >> "$GITHUB_OUTPUT" # Files of interest
           echo "DZN=$DZN" >> "$GITHUB_OUTPUT" # Files of interest
           echo "OGRESULT=$OGRESULT" >> "$GITHUB_OUTPUT" # Files of interest
-          echo "LBFRESULT=$LBFRESULT" >> "$GITHUB_OUTPUT" # Files of interest
-          echo "MIBFRESULT=$MIBFRESULT" >> "$GITHUB_OUTPUT" # Files of interest
-          echo "MMBFRESULT=$MMBFRESULT" >> "$GITHUB_OUTPUT" # Files of interest
-          echo "MMZN=$MMZN"
-          echo "MIZN=$MIZN"
-          echo "LZN=$LZN"
           echo "DZN=$DZN"
           echo "OGRESULT=$OGRESULT"
-          echo "LBFRESULT=$LBFRESULT"
-          echo "MIBFRESULT=$MIBFRESULT"
-          echo "MMBFRESULT=$MMBFRESULT"
-          FILE_LIST="$MMZN $MIZN $LZN $DZN $OGRESULT $LBFRESULT $MIBFRESULT $MMBFRESULT"
+          FILE_LIST="$DZN $OGRESULT"
           echo "Final file list='$FILE_LIST'"
           echo "FOI=$(echo $FILE_LIST | tr '\n' ' ')" >> "$GITHUB_OUTPUT" # Files of interest
 
