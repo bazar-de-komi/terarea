@@ -155,11 +155,6 @@ class Authentication:
             error=False
         )
         body["token"] = data["token"]
-        user_data = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}'")
-        self.disp.log_debug(user_data, title)
-        if isinstance(user_data, int):
-            return HCI.internal_server_error({"error": "Internal server error."})
-        body["id"] = user_data[0]["id"]
         self.disp.log_debug(body, title)
         return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
