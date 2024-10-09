@@ -2,7 +2,6 @@
     File in charge of tracking the encpoints meant to manage the user.
 """
 
-import uuid
 from random import randint
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME

@@ -58,17 +58,21 @@ class BoilerplateResponses:
         msg += ", token in self.user_data = "
         msg += f"{token in self.runtime_data_initialised.user_data}"
         self.disp.log_debug(msg, func_title)
-        logged_in_users = self.runtime_data_initialised.database_link.get_data_from_table(
-            table=CONST.TAB_CONNECTIONS,
-            column="token",
-            where=f"token='{token}'",
-            beautify=False
-        )
-        self.disp.log_debug(f"User data = {logged_in_users}", func_title)
-        if token is not None and token == logged_in_users[0][0]:
-            json_body[CONST.JSON_LOGGED_IN] = True
-        else:
+        if token is None:
             json_body[CONST.JSON_LOGGED_IN] = False
+        else:
+            logged_in_users = self.runtime_data_initialised.database_link.get_data_from_table(
+                table=CONST.TAB_CONNECTIONS,
+                column="token",
+                where=f"token='{token}'",
+                beautify=False
+            )
+            self.disp.log_debug(f"User data = {logged_in_users}", func_title)
+
+            if len(logged_in_users) > 0 and len(logged_in_users[0]) > 0 and token == logged_in_users[0][0]:
+                json_body[CONST.JSON_LOGGED_IN] = True
+            else:
+                json_body[CONST.JSON_LOGGED_IN] = False
         return json_body
 
     def invalid_token(self, title: str) -> Response:

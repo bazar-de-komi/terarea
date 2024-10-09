@@ -35,15 +35,11 @@ PORT = 6000
 SUCCESS = 0
 ERROR = 1
 
-APP_NAME = "Survivor - Testing"
+APP_NAME = "Area - Testing"
 
 # DEBUG = False
 DEBUG = True
 IDISP.debug = DEBUG
-
-SKIP_CACHE_GATHERING = True
-
-QUERY_DELAY = 2
 
 # Creating a string that is void of injection material
 SAFE_STRING = ascii_letters+digits
@@ -204,3 +200,13 @@ POST_LOGIN = "/login"
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
 ADMIN_USER_TOKEN_KEY: str = "admin_user"
+
+# User data (test input)
+USER_DATA_EMAIL = f"some_email_{CACHE_BUSTER}@company.example"
+USER_DATA_NAME = USER_DATA_EMAIL.split("@")[0]
+USER_DATA_PASSWORD = f"some_password_{CACHE_BUSTER}"
+USER_DATA_METHOD = "local"
+USER_DATA_FAVICON = "NULL"
+USER_DATA_ADMIN = "0"
+USER_DATA_TOKEN = f"some_token_{CACHE_BUSTER}_some_token"
+USER_DATA_TOKEN_LIFESPAN = 3600  # seconds
