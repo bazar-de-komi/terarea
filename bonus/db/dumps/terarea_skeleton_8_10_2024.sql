@@ -66,7 +66,7 @@ DROP TABLE IF EXISTS `Connections`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Connections` (
-  `id` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` varchar(900) DEFAULT NULL COMMENT 'The token of the user.',
   `usr_id` bigint(20) unsigned DEFAULT NULL COMMENT 'The e-mail of the user.',
   `expiration_date` datetime DEFAULT NULL COMMENT 'The date at which the token is invalidated.',
