@@ -119,6 +119,11 @@ CHECK_ACTIONS_INTERVAL = int(_get_toml_variable(
     TOML_CONF, "Crons", "check_actions_interval", 300
 ))
 
+# |- Verification
+EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Verification", "email_verification_delay", 120
+))
+
 # |- Status codes
 SUCCESS = int(_get_toml_variable(TOML_CONF, "Status_codes", "success", 0))
 ERROR = int(_get_toml_variable(TOML_CONF, "Status_codes", "error", 84))
@@ -133,6 +138,7 @@ JSON_ERROR: str = "error"
 JSON_RESP: str = "resp"
 JSON_LOGGED_IN: str = "logged in"
 JSON_UID: str = "user_uid"
+
 # JSON Header keys
 JSON_HEADER_APP_NAME: str = "app_sender"
 JSON_HEADER_HOST: str = "serving_host"
@@ -140,6 +146,13 @@ JSON_HEADER_PORT: str = "serving_port"
 JSON_HEADER_CHARACTER_NAME: str = "character_name"
 CONTENT_TYPE: str = "JSON"
 
+# Database table names
+TAB_ACCOUNTS = "Users"
+TAB_ACTIONS = "Actions"
+TAB_SERVICES = "Services"
+TAB_CONNECTIONS = "Connections"
+TAB_VERIFICATION = "Verification"
+TAB_USER_SERVICES = "User Services"
 
 # Character info config
 CHAR_NODE_KEY: str = "node"
@@ -184,6 +197,10 @@ REQUEST_BEARER_KEY = "authorization"
 
 # Cache loop
 THREAD_CACHE_REFRESH_DELAY = 10
+
+# E-mail token generation
+RANDOM_MIN = 100000
+RANDOM_MAX = 999999
 
 # User sql data
 UA_TOKEN_LIFESPAN: int = 7200

@@ -1,52 +1,51 @@
 """_summary_
+    File in charge of tracking the encpoints meant to manage the user.
 """
 
-import random
+import uuid
+from random import randint
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
+from ..http_codes import HCI
 from .. import constants as CONST
 from ..runtime_data import RuntimeData
-from ..http_codes import HCI
-from ..password_handling import PasswordHandling
 from ..mail_management import MailManagement
+from ..password_handling import PasswordHandling
 
 
-class Authentication:
+class UserEndpoints:
     """_summary_
     """
 
-    def __init__(self, runtime_data: RuntimeData, success: int = 0, error: int = 84, debug: bool = False) -> None:
+    def __init__(self, runtime_data: RuntimeData, error: int = 84, success: int = 0, debug: bool = False) -> None:
         """_summary_
-
-        Args:
-            runtime_data (RuntimeData): _description_
-            success (int, optional): _description_. Defaults to 0.
-            error (int, optional): _description_. Defaults to 84.
-            debug (bool, optional): _description_. Defaults to False.
         """
-        self.debug: bool = debug
-        self.success: int = success
-        self.error: int = error
+        # -------------------------- Inherited values --------------------------
         self.runtime_data_initialised: RuntimeData = runtime_data
+        self.error: int = error
+        self.success: int = success
+        self.debug: bool = debug
+        # ------------------------ The logging function ------------------------
+        self.disp: Disp = Disp(
+            TOML_CONF,
+            FILE_DESCRIPTOR,
+            SAVE_TO_FILE,
+            FILE_NAME,
+            debug=self.debug,
+            logger=self.__class__.__name__
+        )
+        # ------------------------ The password checker ------------------------
         self.password_handling_initialised: PasswordHandling = PasswordHandling(
             self.error,
             self.success,
             self.debug
         )
+        # ---------------------------- Mail sending ----------------------------
         self.mail_management_initialised: MailManagement = MailManagement(
             self.error,
             self.success,
             self.debug
         )
-        self.disp: Disp = Disp(
-            TOML_CONF,
-            SAVE_TO_FILE,
-            FILE_NAME,
-            FILE_DESCRIPTOR,
-            debug=self.debug,
-            logger=self.__class__.__name__
-        )
-        self.code_for_forgot_password: list[dict] = []
 
     async def post_login(self, request: Request) -> Response:
         """_summary_
@@ -62,9 +61,8 @@ class Authentication:
             return HCI.bad_request({"error": "Bad request."})
         email = request_body["email"]
         password = request_body["password"]
-        table = "Users"
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
-            table, "*", f"email='{email}'")
+            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         self.disp.log_debug(f"Retrived data: {user_info}", title)
         if isinstance(user_info, int):
             return HCI.unauthorized({"error": "Access denied."})
@@ -109,9 +107,8 @@ class Authentication:
             return HCI.bad_request({"error": "Bad request."})
         email: str = request_body["email"]
         password = request_body["password"]
-        table = "Users"
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
-            table, "*", f"email='{email}'")
+            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
             return HCI.conflict({"error": "Email already exist."})
         hashed_password = self.password_handling_initialised.hash_password(
@@ -123,7 +120,7 @@ class Authentication:
         data = [username, email, hashed_password, "local", favicon, admin]
         self.disp.log_debug(f"Data list = {data}", title)
         column = self.runtime_data_initialised.database_link.get_table_column_names(
-            table
+            CONST.TAB_ACCOUNTS
         )
         self.disp.log_debug(f"Column = {column}", title)
         if isinstance(column, int):
@@ -143,22 +140,44 @@ class Authentication:
         if not request_body or ("email") not in request_body:
             return HCI.bad_request({"error": "Bad request."})
         email: str = request_body["email"]
-        table = "Users"
         data = self.runtime_data_initialised.database_link.get_data_from_table(
-            table, "email", f"email='{email}'")
+            CONST.TAB_ACCOUNTS, "email", f"email='{email}'")
         if data == self.error:
             return HCI.bad_request({"error": "Bad request."})
         email_subject = "[AREA] Verification code"
-        code = random.randint(100000, 999999)
-        code_str = str(code)
+        code = f"{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        for i in range(4):
+            code += f"-{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        expiration_time = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
+            CONST.EMAIL_VERIFICATION_DELAY
+        )
+        expiration_time_str = self.runtime_data_initialised.database_link.datetime_to_string(
+            expiration_time, False
+        )
         new_node = {}
         new_node['email'] = email
-        new_node['code'] = code_str
-        self.code_for_forgot_password.append(new_node)
-        body = "The code is "
-        body += code_str
+        new_node['code'] = code
+        tab_column = self.runtime_data_initialised.database_link.get_table_column_names(
+            CONST.TAB_VERIFICATION)
+        if tab_column == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        if len(tab_column) == 0:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        tab_column.pop(0)
+        self.runtime_data_initialised.database_link.insert_data_into_table(
+            table=CONST.TAB_VERIFICATION,
+            data=[email, code, expiration_time_str],
+            column=tab_column
+        )
+        body = "<html><head><title>Verification code</title></head><body>"
+        body += "<style>span{background-color: lightgray;border: 2px lightgray solid;border-radius: 6px;color: black;font-weight: bold;padding: 5px;padding-top: 5px;padding-bottom: 5px;padding-top: 0px;padding-bottom: 0px;}</style>"
+        body += f"<p>The code is: <span style=''>{code}</span></p>"
+        body += "<p>The code will be valid until "
+        body += f"<span>{expiration_time_str}</span>.</p>"
+        body += "</body></html>"
         status = self.mail_management_initialised.send_email(
-            email, email_subject, body)
+            email, email_subject, body
+        )
         if status == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "Email send successfully."})
