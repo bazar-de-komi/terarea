@@ -66,7 +66,7 @@ class Endpoints:
             "/", self.bonus.get_welcome, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/stop", self.bonus.post_stop_server, "POST"
+            "/api/v1/", self.bonus.get_welcome, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/test", self.bonus.my_test_component, "GET"
@@ -89,20 +89,44 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/get_recent_services", self.services.get_recent_services, "GET"
         )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/stop", self.bonus.post_stop_server, "PUT"
+        )
 
         # Authentication routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/login", self.user_endpoints.post_login, "POST"
+            "/api/v1/login", self.user_endpoints.post_login, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/register", self.user_endpoints.put_register, "PUT"
+            "/api/v1/register", self.user_endpoints.post_register, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/send_email_verification", self.user_endpoints.post_email_reset_password, "POST"
+            "/api/v1/send_email_verification", self.user_endpoints.post_email_reset_password, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/reset_password", self.user_endpoints.put_reset_password, "PUT"
+            "/api/v1/reset_password", self.user_endpoints.put_reset_password, "PATCH"
         )
-        # self.runtime_data_initialised.paths_initialised.add_path(
-        #     "/github_check", self.authentication.check_github, "GET"
-        # )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user", self.user_endpoints.patch_user, "PATCH"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user", self.user_endpoints.put_user, "PUT"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user", self.user_endpoints.get_user, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user", self.user_endpoints.delete_user, "DELETE"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user_favicon", self.user_endpoints.put_user_favicon, "PUT"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user_favicon", self.user_endpoints.delete_user_favicon, "DELETE"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/logout", self.user_endpoints.post_logout, "POST"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user_id", self.user_endpoints.get_user_id, "GET"
+        )
