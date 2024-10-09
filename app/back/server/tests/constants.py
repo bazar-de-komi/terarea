@@ -32,6 +32,9 @@ SERVER_HOST = "0.0.0.0"
 QUERY_HOST = "http://127.0.0.1"
 PORT = 6000
 
+# For the client
+QUERY_DELAY = 2
+
 SUCCESS = 0
 ERROR = 1
 
