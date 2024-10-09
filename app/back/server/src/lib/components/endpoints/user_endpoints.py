@@ -127,7 +127,7 @@ class UserEndpoints:
             return HCI.internal_server_error({"error": "Internal server error."})
         column.pop(0)
         self.disp.log_debug(f"Column after id pop = {column}", title)
-        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, column) == self.error:
+        if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_ACCOUNTS, data, column) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "Account created successfully."})
 
