@@ -213,6 +213,12 @@ class BackgroundTasks:
                 "add_task"
             )
             raise ValueError("The seconds must be an integer.")
+        msg = f"Adding job: {func.__name__} "
+        msg += f"with trigger: {trigger}, "
+        msg += f"seconds = {seconds}, "
+        msg += f"args = {args}, "
+        msg += f"kwargs = {kwargs}."
+        self.disp.log_debug(msg, "add_task")
         return self.scheduler.add_job(
             func=func,
             trigger=trigger,

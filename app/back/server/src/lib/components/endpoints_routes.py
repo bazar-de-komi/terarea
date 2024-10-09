@@ -4,7 +4,8 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
-from .endpoints import Bonus, Authentication  # , Github_check#, IFTTT_Manager
+# , Github_check#, IFTTT_Manager
+from .endpoints import Bonus, Authentication, Services
 
 
 class Endpoints:
@@ -44,6 +45,12 @@ class Endpoints:
             error=error,
             debug=debug
         )
+        self.services: Services = Services(
+            runtime_data=self.runtime_data_initialised,
+            success=self.success,
+            error=self.error,
+            debug=self.debug
+        )
         self.authentication: Authentication = Authentication(
             runtime_data=runtime_data,
             success=success,
@@ -69,6 +76,18 @@ class Endpoints:
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/get_table", self.bonus.get_table, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_services", self.services.get_services, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_service/{name}", self.services.get_service, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_services_by_tag/{tag}", self.services.get_services_by_tag, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_recent_services", self.services.get_recent_services, "GET"
         )
 
         # Authentication routes
