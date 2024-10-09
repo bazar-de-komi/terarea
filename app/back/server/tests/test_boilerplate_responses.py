@@ -336,7 +336,7 @@ def test_insuffisant_rights_valid_token() -> None:
         content_type=CONST.CONTENT_TYPE,
         headers=RDI.json_header
     )
-    _unregister_fake_user()
+    _sign_fake_user_out()
     assert data.status_code == compiled_response.status_code
     assert data.headers == compiled_response.headers
     assert data.body == compiled_response.body
