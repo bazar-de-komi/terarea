@@ -41,10 +41,11 @@ class BoilerplateResponses:
         Returns:
             Dict[str, any]: _description_: the final version of the body message
         """
+        func_title = "build_response_body"
         json_body = {}
         msg = f"title={title}, message={message}, resp={resp},"
         msg += f"token={token}, error={error}"
-        self.disp.log_debug(msg, "build_response_body")
+        self.disp.log_debug(msg, func_title)
 
         json_body[CONST.JSON_TITLE] = title
         json_body[CONST.JSON_MESSAGE] = message
@@ -56,8 +57,15 @@ class BoilerplateResponses:
         msg += f"self.user_data = {self.runtime_data_initialised.user_data}"
         msg += ", token in self.user_data = "
         msg += f"{token in self.runtime_data_initialised.user_data}"
-        self.disp.log_debug(msg, "build_response_body")
-        if token is not None and token in self.runtime_data_initialised.user_data:
+        self.disp.log_debug(msg, func_title)
+        logged_in_users = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_CONNECTIONS,
+            column="token",
+            where=f"token='{token}'",
+            beautify=False
+        )
+        self.disp.log_debug(f"User data = {logged_in_users}", func_title)
+        if token is not None and token == logged_in_users[0][0]:
             json_body[CONST.JSON_LOGGED_IN] = True
         else:
             json_body[CONST.JSON_LOGGED_IN] = False

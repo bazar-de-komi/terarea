@@ -82,6 +82,17 @@ SENDER_KEY = _get_environement_variable(ENV, "SENDER_KEY")
 SENDER_HOST = _get_environement_variable(ENV, "SENDER_HOST")
 SENDER_PORT = int(_get_environement_variable(ENV, "SENDER_PORT"))
 
+# Server oath variables
+REDIRECT_URI = _get_environement_variable(ENV, "REDIRECT_URI")
+
+# |- Github
+GITHUB_CLIENT_ID = _get_environement_variable(ENV, "GITHUB_CLIENT_ID")
+GITHUB_CLIENT_SECRET = _get_environement_variable(ENV, "GITHUB_CLIENT_SECRET")
+
+# |- Google
+GOOGLE_CLIENT_ID = _get_environement_variable(ENV, "GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = _get_environement_variable(ENV, "GOOGLE_CLIENT_SECRET")
+
 # Database management
 DB_HOST = _get_environement_variable(ENV, "DB_HOST")
 DB_PORT = int(_get_environement_variable(ENV, "DB_PORT"))
@@ -95,25 +106,30 @@ MINIO_PORT = int(_get_environement_variable(ENV, "MINIO_PORT"))
 MINIO_ROOT_USER = _get_environement_variable(ENV, "MINIO_ROOT_USER")
 MINIO_ROOT_PASSWORD = _get_environement_variable(ENV, "MINIO_ROOT_PASSWORD")
 
+# TOML variables
+# |- Cron settings
+CLEAN_TOKENS = _get_toml_variable(TOML_CONF, "Crons", "clean_tokens", True)
+CLEAN_TOKENS_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Crons", "clean_tokens_interval", 1800
+))
+ENABLE_TEST_CRONS = _get_toml_variable(
+    TOML_CONF, "Crons", "enable_test_crons", False
+)
+CHECK_ACTIONS_INTERVAL = int(_get_toml_variable(
+    TOML_CONF, "Crons", "check_actions_interval", 300
+))
 
-# Getting data from the toml file
-# |- Cache updater
-STARTUP_DELAY = int(_get_toml_variable(
-    TOML_CONF, "Cache_updater", "startup_delay", 20
+# |- Verification
+EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Verification", "email_verification_delay", 120
 ))
-# |- Toml status codes
-SUCCESS = int(_get_toml_variable(
-    TOML_CONF, "Status_codes", "success", 0
-))
+
+# |- Status codes
+SUCCESS = int(_get_toml_variable(TOML_CONF, "Status_codes", "success", 0))
 ERROR = int(_get_toml_variable(TOML_CONF, "Status_codes", "error", 84))
-# |- Toml Debug mode
-DEBUG = bool(_get_toml_variable(TOML_CONF, "Debug_mode", "debug", False))
 
-
-# endpints help
-HELP_COMMANDS: Dict[str, str] = {
-    "/": "The home endpoint"
-}
+# |- Debug
+DEBUG = _get_toml_variable(TOML_CONF, "Debug_mode", "debug", False)
 
 # Json response default keys
 JSON_TITLE: str = "title"
@@ -122,6 +138,7 @@ JSON_ERROR: str = "error"
 JSON_RESP: str = "resp"
 JSON_LOGGED_IN: str = "logged in"
 JSON_UID: str = "user_uid"
+
 # JSON Header keys
 JSON_HEADER_APP_NAME: str = "app_sender"
 JSON_HEADER_HOST: str = "serving_host"
@@ -129,6 +146,13 @@ JSON_HEADER_PORT: str = "serving_port"
 JSON_HEADER_CHARACTER_NAME: str = "character_name"
 CONTENT_TYPE: str = "JSON"
 
+# Database table names
+TAB_ACCOUNTS = "Users"
+TAB_ACTIONS = "Actions"
+TAB_SERVICES = "Services"
+TAB_CONNECTIONS = "Connections"
+TAB_VERIFICATION = "Verification"
+TAB_USER_SERVICES = "User Services"
 
 # Character info config
 CHAR_NODE_KEY: str = "node"
@@ -173,6 +197,10 @@ REQUEST_BEARER_KEY = "authorization"
 
 # Cache loop
 THREAD_CACHE_REFRESH_DELAY = 10
+
+# E-mail token generation
+RANDOM_MIN = 100000
+RANDOM_MAX = 999999
 
 # User sql data
 UA_TOKEN_LIFESPAN: int = 7200

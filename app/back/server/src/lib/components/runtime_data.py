@@ -8,6 +8,7 @@ from . import constants as CONST
 from ..sql.sql_manager import SQL
 from ..bucket import Bucket
 if TYPE_CHECKING:
+    from .crons import Crons
     from .paths import ServerPaths
     from .endpoints_routes import Endpoints
     from .background_tasks import BackgroundTasks
@@ -58,6 +59,7 @@ class RuntimeData:
         self.server_running: bool = True
         self.continue_running: bool = True
         # ------------------------- Classes reference  -------------------------
+        self.crons_initialised: 'Crons' = None
         self.paths_initialised: 'ServerPaths' = None
         self.endpoints_initialised: 'Endpoints' = None
         self.background_tasks_initialised: 'BackgroundTasks' = None

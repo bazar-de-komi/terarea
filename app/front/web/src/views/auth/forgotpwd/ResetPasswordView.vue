@@ -5,7 +5,7 @@
       <button @click.prevent="resendVerificationEmail" class="resend-email-btn">Resend verification email</button>
       <input v-model="verificationCode" type="text" placeholder="Verification code" required />
       <div class="password-container">
-        <input :type="showPassword ? 'text' : 'password'" v-model="newPassword" placeholder="Password" required />
+        <input :type="showPassword ? 'text' : 'password'" v-model="newPassword" placeholder="New Password" required />
         <button type="button" class="toggle-password" @click="togglePassword">
           <img :src="showPassword ? showIcon : hideIcon" alt="toggle password visibility" />
         </button>

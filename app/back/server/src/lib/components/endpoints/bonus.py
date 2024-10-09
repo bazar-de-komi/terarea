@@ -114,10 +114,18 @@ class Bonus:
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
-        self.disp.log_critical(
-            "Please add admin verification in order to stop the server.",
-            "post_stop_server"
-        )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(token) is False:
+            self.disp.log_error(
+                "Non-admin user tried to stop the server.", title
+            )
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="You do not have enough privileges to run this endpoint.",
+                resp="privilege to low",
+                token=token,
+                error=True
+            )
+            return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message="The server is stopping",

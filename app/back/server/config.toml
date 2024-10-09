@@ -1,44 +1,30 @@
 title = "Server file configuration"
 
-[Cache_updater]
-# The delay (in seconds) before the cache loop starts any actions
-# The default value is 20
-startup_delay = 20
+# The settings for the automation of the cache of the program.
+[Crons]
+# Enable token cleaning (removing epxired tokens)
+# default: true
+clean_tokens = true
 
-# Disable the process in charge of updating the database
-# The default value is false
-skip_cache_updating = false
+# The interval in which the loop for removing the expried tokens is run
+# The clean_tokens needs to be true for this setting to have an impact
+# default: 1800 seconds (30 minutes)
+clean_tokens_interval = 1800 #seconds
 
-# Skip the online data gathering (will fallback to the file contained in QUERY_DATA_FILE)
-# This setting is considered False if restore_from_file is True
-# The default value is false
-skip_online_gathering = false
+# Enable test cron functions
+# default: false
+enable_test_crons = false
 
-# Create a restore point (The name will be specified in QUERY_DATA_FILE)
-# If this setting is True skip_online_gathering will have no effect.
-# The default value is false
-restore_from_file = false
+# The interval in which the checks for actions are run
+# default: 300 seconds (5 minutes)
+check_actions_interval = 300 #seconds
 
-# This is the variable containing the data to be written to the database.
-# This data should be a file that would of been created by the cache_creator.py program (or at least the same data structure)
-# The default value is "./endpoint_data.json"
-query_data_file = "./endpoint_data.json"
+# The verification section
+[Verification]
 
-# The configurations regarding the times when gathering information from the reference backend
-[Cache_updater.querying]
-
-# Timeout for Any queries made (in seconds)
-# The default value is 10
-query_timeout = 10
-
-# Query management (avoiding getting banned)
-# number of queries that can be done before taking a break
-# The default value is 100
-endpoint_pause = 100
-
-# Delay in seconds that is waited between each batch
-# The default value is 2
-endpoint_pause_length = 2
+# The delay for the e-mail verification token (the time before the token expires)
+# default: 120 seconds (2 minutes)
+email_verification_delay = 120 #seconds
 
 # The status codes used by the program:
 [Status_codes]
@@ -57,10 +43,6 @@ error = 1
 # This is a variable that will act on the general server on if to activate or not the debug mode
 # The default value is false
 debug = false
-
-# This is a shackle to limmit the amount of information displayed during the gathering process of the reference backend
-# The default value is true
-silent_cache_gathering = true
 
 # Arg, here comes the test territory
 [Test]
