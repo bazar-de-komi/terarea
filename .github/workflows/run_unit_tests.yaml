@@ -89,7 +89,7 @@ jobs:
 
       - name: Install mariadb into t-server
         run: |
-          RUN_COMMAND="apt update && apt install -y mariadb-client"
+          RUN_COMMAND="apt update && echo 'Installing apt-utils' && apt install -y apt-utils && echo 'Installing mariadb-client' && apt install -y mariadb-client"
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$RUN_COMMAND"
 
       - name: Check for database connection
