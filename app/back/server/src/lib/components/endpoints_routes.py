@@ -66,7 +66,7 @@ class Endpoints:
             "/", self.bonus.get_welcome, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/stop", self.bonus.post_stop_server, "PUT"
+            "/api/v1/", self.bonus.get_welcome, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/test", self.bonus.my_test_component, "GET"
@@ -88,6 +88,9 @@ class Endpoints:
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/get_recent_services", self.services.get_recent_services, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/stop", self.bonus.post_stop_server, "PUT"
         )
 
         # Authentication routes
