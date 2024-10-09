@@ -70,6 +70,18 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/get_table", self.bonus.get_table, "GET"
         )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_services", self.bonus.get_services, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_service/{name}", self.bonus.get_service, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_services_by_tag/{tag}", self.bonus.get_services_by_tag, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/get_recent_services", self.bonus.get_recent_services, "GET"
+        )
 
         # Authentication routes
         self.runtime_data_initialised.paths_initialised.add_path(
