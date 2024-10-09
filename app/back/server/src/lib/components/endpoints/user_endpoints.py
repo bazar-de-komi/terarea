@@ -90,7 +90,7 @@ class UserEndpoints:
         body["token"] = data["token"]
         return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
-    async def put_register(self, request: Request) -> Response:
+    async def post_register(self, request: Request) -> Response:
         """_summary_
 
         Args:
@@ -214,3 +214,117 @@ class UserEndpoints:
                 self.code_for_forgot_password.remove(user)
                 break
         return HCI.success({"msg": "Password changed successfully."})
+
+    async def put_user(self, request: Request) -> Response:
+        """_summary_
+            Endpoint allowing the user to update it's account data.
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+
+    async def patch_user(self, request: Request) -> Response:
+        """_summary_
+            Endpoint allowing the user to update it's account data.
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+
+    async def get_user(self, request: Request) -> Response:
+        """_summary_
+            Endpoint allowing the user to get it's account data.
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+
+    async def delete_user(self, request: Request) -> Response:
+        """_summary_
+            Endpoint allowing the user to delete it's account.
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+        title = "Delete user"
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if not request_body or not all(key in request_body for key in ("email", "password")):
+            return HCI.bad_request({"error": "Bad request."})
+        email: str = request_body["email"]
+        password: str = request_body["password"]
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
+        self.disp.log_debug(f"Retrived data: {user_info}", title)
+        if isinstance(user_info, int):
+            return HCI.unauthorized({"error": "Access denied."})
+        if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
+            return HCI.unauthorized({"error": "Access denied."})
+        status = self.runtime_data_initialised.database_link.delete_data_from_table(
+            CONST.TAB_ACCOUNTS, f"email='{email}'")
+        if status == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.success({"msg": "Account deleted successfully."})
+
+    async def put_user_favicon(self, request: Request) -> Response:
+        """_summary_
+            Endpoint allowing the user to update it's favicon.
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+
+    async def delete_user_favicon(self, request: Request) -> Response:
+        """_summary_
+            Endpoint allowing the user to delete it's favicon.
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+
+    async def post_logout(self, request: Request) -> Response:
+        """_summary_
+            The endpoint allowing a user to log out of the server.
+
+        Returns:
+            Response: _description_: The data to send back to the user as a response.
+        """
+        title = "Logout"
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request)
+        if token is None:
+            return HCI.unauthorized({"error": "Authorization required."})
+        status = self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_CONNECTIONS, f"token='{token}'")
+        if status == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.success({"msg": "Logout successful."})
+
+    async def get_user_id(self, request: Request) -> Response:
+        """_summary_
+            This is an endpoint that will allow the user to query it's id.
+
+        Args:
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
