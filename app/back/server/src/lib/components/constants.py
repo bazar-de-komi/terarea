@@ -82,6 +82,17 @@ SENDER_KEY = _get_environement_variable(ENV, "SENDER_KEY")
 SENDER_HOST = _get_environement_variable(ENV, "SENDER_HOST")
 SENDER_PORT = int(_get_environement_variable(ENV, "SENDER_PORT"))
 
+# Server oath variables
+REDIRECT_URI = _get_environement_variable(ENV, "REDIRECT_URI")
+
+# |- Github
+GITHUB_CLIENT_ID = _get_environement_variable(ENV, "GITHUB_CLIENT_ID")
+GITHUB_CLIENT_SECRET = _get_environement_variable(ENV, "GITHUB_CLIENT_SECRET")
+
+# |- Google
+GOOGLE_CLIENT_ID = _get_environement_variable(ENV, "GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = _get_environement_variable(ENV, "GOOGLE_CLIENT_SECRET")
+
 # Database management
 DB_HOST = _get_environement_variable(ENV, "DB_HOST")
 DB_PORT = int(_get_environement_variable(ENV, "DB_PORT"))
