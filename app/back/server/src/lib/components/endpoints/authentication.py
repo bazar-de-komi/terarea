@@ -2,6 +2,8 @@
 """
 
 import random
+import requests
+from typing import Union
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .. import constants as CONST
@@ -132,7 +134,34 @@ class Authentication:
         self.disp.log_debug(f"Column after id pop = {column}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, column) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "Account created successfully."})
+        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
+            email
+        )
+        if data["status"] == self.error:
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="Login failed.",
+                resp="error",
+                token=data["token"],
+                error=True
+            )
+            return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+        name = user_info[0]["username"]
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=f"Welcome {name}",
+            resp="success",
+            token=data["token"],
+            error=False
+        )
+        body["token"] = data["token"]
+        user_data = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"email='{email}'")
+        self.disp.log_debug(user_data, title)
+        if isinstance(user_data, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        body["id"] = user_data[0]["id"]
+        self.disp.log_debug(body, title)
+        return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def post_email_reset_password(self, request: Request) -> Response:
         """_summary_
@@ -196,3 +225,102 @@ class Authentication:
                 self.code_for_forgot_password.remove(user)
                 break
         return HCI.success({"msg": "Password changed successfully."})
+    
+    # Oauth login part
+    
+    def generate_oauth_authorization_url(self, provider: str) -> Union[int, str]:
+        """_summary_
+        """
+        title = "generate_oauth_authorization_url"
+        if provider == "google":
+            base_url = "https://accounts.google.com/o/oauth2/v2/auth"
+            client_id = CONST.GOOGLE_CLIENT_ID
+            scope = "email"
+        elif provider == "github":
+            base_url = "https://github.com/login/oauth/authorize"
+            client_id = CONST.GITHUB_CLIENT_ID
+            scope = "user:email"
+        else:
+            self.disp.log_error("Unknown or Unsupported Oauth provider", title)
+            return self.error
+        redirect_uri = CONST.REDIRECT_URI
+        url = base_url
+        url += f"?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}"
+        self.disp.log_debug(f"url = {url}", title)
+        return url
+    
+    def exchange_code_for_token(self, provider: str, code: str):
+        """_summary_
+        """
+        title = "exchange_code_for_token"
+        if provider == "google":
+            token_url = "https://oauth2.googleapis.com/token"
+            data = {
+                "client_id": CONST.GOOGLE_CLIENT_ID,
+                "client_secret": CONST.GOOGLE_CLIENT_SECRET,
+                "code": code,
+                "redirect_uri": CONST.REDIRECT_URI,
+                "grant_type": "authorization_code"
+            }
+        elif provider == "github":
+            token_url = "https://github.com/login/oauth/access_token"
+            data = {
+                "client_id": CONST.GITHUB_CLIENT_ID,
+                "client_secret": CONST.GITHUB_CLIENT_SECRET,
+                "code": code,
+                "redirect_uri": CONST.REDIRECT_URI
+            }
+        else:
+            self.disp.log_error("Unknown or Unsupported Oauth provider", title)
+            return self.error
+        self.disp.log_debug(f"data = {data}", title)
+        headers = {"Accept": "application/json"}
+        response = requests.post(token_url, data=data, headers=headers)
+        self.disp.log_debug(f"Response = {response}", title)
+        if response.status_code != 200:
+            self.disp.log_error("Error during code exchange.", title)
+            return self.error
+        return response.json()
+    
+    def get_user_info(self, provider: str, access_token: str):
+        """_summary_
+        """
+        if provider == "google":
+            user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
+        elif provider == "github":
+            user_info_url = "https://api.github.com/user"
+        else:
+            return self.error
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
+        response = requests.get(user_info_url, headers=headers)
+        if response.status_code != 200:
+            return self.error
+        return response.json()
+    
+    def oauth_callback(self, provider: str, code: str):
+        try:
+            token_response = self.exchange_code_for_token(provider, code)
+            access_token = token_response.get("access_token")
+            if not access_token:
+                raise HTTPException(status_code=400, detail="Token d'accès non trouvé")
+            # Récupérer les informations utilisateur
+            user_info = get_user_info(provider, access_token)
+            return {"user_info": user_info}
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+
+    async def oauth_login(self, request: Request) -> Response:
+        """_summary_
+        """
+        title = "oauth_login"
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if not request_body or not all(key in request_body for key in ("code", "provider")):
+            return HCI.bad_request({"error": "Bad request."})
+        try:
+            authorization_url = self.get_authorization_url(provider)
+            return {"authorization_url": authorization_url}
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
