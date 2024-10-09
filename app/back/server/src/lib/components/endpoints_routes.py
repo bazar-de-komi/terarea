@@ -4,8 +4,7 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
-from .endpoints import Bonus, Authentication  # , Github_check#, IFTTT_Manager
-
+from .endpoints import Bonus, Authentication, Services  # , Github_check#, IFTTT_Manager
 
 class Endpoints:
     """_summary_
