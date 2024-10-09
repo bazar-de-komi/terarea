@@ -63,9 +63,28 @@ class BoilerplateNonHTTP:
         Returns:
             str: _description_: The token generated
         """
+        title = "generate_token"
         token = str(uuid.uuid4())
-        while token in self.runtime_data_initialised.user_data:
+        user_token = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_CONNECTIONS,
+            column="token",
+            where=f"token='{token}'",
+            beautify=False
+        )
+        self.disp.log_debug(f"user_token = {user_token}", title)
+        while len(user_token) > 0:
             token = str(uuid.uuid4())
+            user_token = self.runtime_data_initialised.database_link.get_data_from_table(
+                table=CONST.TAB_CONNECTIONS,
+                column="token",
+                where=f"token='{token}'",
+                beautify=False
+            )
+            self.disp.log_debug(f"user_token = {user_token}", title)
+            if isinstance(user_token, int) is True and user_token == self.error:
+                return token
+            if len(user_token) == 0:
+                return token
         return token
 
     def server_show_item_content(self, function_name: str = "show_item_content", item_name: str = "", item: object = None, show: bool = True) -> None:

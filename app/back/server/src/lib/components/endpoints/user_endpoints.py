@@ -2,6 +2,7 @@
     File in charge of tracking the encpoints meant to manage the user.
 """
 
+import uuid
 from random import randint
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
@@ -144,16 +145,39 @@ class UserEndpoints:
         if data == self.error:
             return HCI.bad_request({"error": "Bad request."})
         email_subject = "[AREA] Verification code"
-        code = randint(100000, 999999)
-        code_str = str(code)
+        code = f"{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        for i in range(4):
+            code += f"-{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        expiration_time = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
+            CONST.EMAIL_VERIFICATION_DELAY
+        )
+        expiration_time_str = self.runtime_data_initialised.database_link.datetime_to_string(
+            expiration_time, False
+        )
         new_node = {}
         new_node['email'] = email
-        new_node['code'] = code_str
-        self.code_for_forgot_password.append(new_node)
-        body = "The code is "
-        body += code_str
+        new_node['code'] = code
+        tab_column = self.runtime_data_initialised.database_link.get_table_column_names(
+            CONST.TAB_VERIFICATION)
+        if tab_column == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        if len(tab_column) == 0:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        tab_column.pop(0)
+        self.runtime_data_initialised.database_link.insert_data_into_table(
+            table=CONST.TAB_VERIFICATION,
+            data=[email, code, expiration_time_str],
+            column=tab_column
+        )
+        body = "<html><head><title>Verification code</title></head><body>"
+        body += "<style>span{background-color: lightgray;border: 2px lightgray solid;border-radius: 6px;color: black;font-weight: bold;padding: 5px;padding-top: 5px;padding-bottom: 5px;padding-top: 0px;padding-bottom: 0px;}</style>"
+        body += f"<p>The code is: <span style=''>{code}</span></p>"
+        body += "<p>The code will be valid until "
+        body += f"<span>{expiration_time_str}</span>.</p>"
+        body += "</body></html>"
         status = self.mail_management_initialised.send_email(
-            email, email_subject, body)
+            email, email_subject, body
+        )
         if status == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "Email send successfully."})

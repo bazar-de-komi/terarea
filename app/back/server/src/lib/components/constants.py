@@ -119,6 +119,11 @@ CHECK_ACTIONS_INTERVAL = int(_get_toml_variable(
     TOML_CONF, "Crons", "check_actions_interval", 300
 ))
 
+# |- Verification
+EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Verification", "email_verification_delay", 120
+))
+
 # |- Status codes
 SUCCESS = int(_get_toml_variable(TOML_CONF, "Status_codes", "success", 0))
 ERROR = int(_get_toml_variable(TOML_CONF, "Status_codes", "error", 84))
@@ -192,6 +197,10 @@ REQUEST_BEARER_KEY = "authorization"
 
 # Cache loop
 THREAD_CACHE_REFRESH_DELAY = 10
+
+# E-mail token generation
+RANDOM_MIN = 100000
+RANDOM_MAX = 999999
 
 # User sql data
 UA_TOKEN_LIFESPAN: int = 7200

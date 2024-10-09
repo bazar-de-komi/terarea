@@ -19,6 +19,13 @@ enable_test_crons = false
 # default: 300 seconds (5 minutes)
 check_actions_interval = 300 #seconds
 
+# The verification section
+[Verification]
+
+# The delay for the e-mail verification token (the time before the token expires)
+# default: 120 seconds (2 minutes)
+email_verification_delay = 120 #seconds
+
 # The status codes used by the program:
 [Status_codes]
 
