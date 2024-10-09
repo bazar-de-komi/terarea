@@ -51,7 +51,7 @@ jobs:
           echo "${{secrets.BACK_ENVIRONEMENT}}" > .env
           cd ../../front/mobile
           echo "${{secrets.FRONT_MOBILE_ENVIRONEMENT}}" > .env
-          cd ../front/web
+          cd ../web
           echo "${{secrets.FRONT_WEB_ENVIRONEMENT}}" > .env
 
       - name: Create docker network
