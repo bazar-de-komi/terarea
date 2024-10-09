@@ -48,9 +48,9 @@ jobs:
           echo "${{secrets.BUCKET_ENVIRONEMENT}}" > .env
           cd ../server
           echo "${{secrets.BACK_ENVIRONEMENT}}" > .env
-          cd ../../fron/mobile
+          cd ../../front/mobile
           echo "${{secrets.FRONT_MOBILE_ENVIRONEMENT}}" > .env
-          cd ../fron/web
+          cd ../front/web
           echo "${{secrets.FRONT_WEB_ENVIRONEMENT}}" > .env
 
       - name: Create docker network
