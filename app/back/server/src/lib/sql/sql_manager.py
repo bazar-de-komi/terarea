@@ -48,6 +48,10 @@ class SQL:
             debug=self.debug,
             logger=self.__class__.__name__
         )
+        # -------------------------- datetime parsing --------------------------
+        self.date_only: str = '%Y-%m-%d'
+        self.date_and_time: str = '%Y-%m-%d %H:%M:%S'
+        # --------------------------- debug section  ---------------------------
         if self.debug is True:
             msg = f"self.debug = '{self.debug}'\n"
             msg += f"self.success = '{self.success}'\n"
@@ -95,7 +99,7 @@ class SQL:
             Convert a datetime instance to a string.
 
         Args:
-            datetime_instance (datetime): _description_: TJe datetime item
+            datetime_instance (datetime): _description_: The datetime item
             date_only (bool, optional): _description_. Defaults to False.: if True will only return the date section, otherwise will return the date and time section.
 
         Raises:
@@ -112,8 +116,33 @@ class SQL:
             )
             raise ValueError("Error: Expected a datetime instance.")
         if date_only is True:
-            return datetime_instance.strftime('%Y-%m-%d')
-        return datetime_instance.strftime('%Y-%m-%d %H:%M:%S')
+            return datetime_instance.strftime(self.date_only)
+        return datetime_instance.strftime(self.date_and_time)
+
+    def string_to_datetime(self, datetime_string_instance: str, date_only: bool = False) -> str:
+        """_summary_
+            Convert a datetime instance to a string.
+
+        Args:
+            datetime_string_instance (str): _description_: The string datetime item
+            date_only (bool, optional): _description_. Defaults to False.: if True will only return the date section, otherwise will return the date and time section.
+
+        Raises:
+            ValueError: _description_: If the datetime instance is not a datetime, a valueerror is raised.
+
+        Returns:
+            str: _description_: A string instance of the datetime.
+        """
+
+        if isinstance(datetime_string_instance, str) is False:
+            self.disp.log_error(
+                "The input is not a string instance.",
+                "string_to_datetime"
+            )
+            raise ValueError("Error: Expected a string instance.")
+        if date_only is True:
+            return datetime.strptime(datetime_string_instance, self.date_only)
+        return datetime.strptime(datetime_string_instance, self.date_and_time)
 
     def _get_correct_now_value(self) -> str:
         """_summary_

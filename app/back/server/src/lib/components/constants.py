@@ -95,25 +95,25 @@ MINIO_PORT = int(_get_environement_variable(ENV, "MINIO_PORT"))
 MINIO_ROOT_USER = _get_environement_variable(ENV, "MINIO_ROOT_USER")
 MINIO_ROOT_PASSWORD = _get_environement_variable(ENV, "MINIO_ROOT_PASSWORD")
 
+# TOML variables
+# |- Cron settings
+CLEAN_TOKENS = _get_toml_variable(TOML_CONF, "Crons", "clean_tokens", True)
+CLEAN_TOKENS_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Crons", "clean_tokens_interval", 1800
+))
+ENABLE_TEST_CRONS = _get_toml_variable(
+    TOML_CONF, "Crons", "enable_test_crons", False
+)
+CHECK_ACTIONS_INTERVAL = int(_get_toml_variable(
+    TOML_CONF, "Crons", "check_actions_interval", 300
+))
 
-# Getting data from the toml file
-# |- Cache updater
-STARTUP_DELAY = int(_get_toml_variable(
-    TOML_CONF, "Cache_updater", "startup_delay", 20
-))
-# |- Toml status codes
-SUCCESS = int(_get_toml_variable(
-    TOML_CONF, "Status_codes", "success", 0
-))
+# |- Status codes
+SUCCESS = int(_get_toml_variable(TOML_CONF, "Status_codes", "success", 0))
 ERROR = int(_get_toml_variable(TOML_CONF, "Status_codes", "error", 84))
-# |- Toml Debug mode
-DEBUG = bool(_get_toml_variable(TOML_CONF, "Debug_mode", "debug", False))
 
-
-# endpints help
-HELP_COMMANDS: Dict[str, str] = {
-    "/": "The home endpoint"
-}
+# |- Debug
+DEBUG = _get_toml_variable(TOML_CONF, "Debug_mode", "debug", False)
 
 # Json response default keys
 JSON_TITLE: str = "title"
