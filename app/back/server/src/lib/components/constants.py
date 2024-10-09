@@ -133,6 +133,7 @@ JSON_ERROR: str = "error"
 JSON_RESP: str = "resp"
 JSON_LOGGED_IN: str = "logged in"
 JSON_UID: str = "user_uid"
+
 # JSON Header keys
 JSON_HEADER_APP_NAME: str = "app_sender"
 JSON_HEADER_HOST: str = "serving_host"
@@ -140,6 +141,13 @@ JSON_HEADER_PORT: str = "serving_port"
 JSON_HEADER_CHARACTER_NAME: str = "character_name"
 CONTENT_TYPE: str = "JSON"
 
+# Database table names
+TAB_ACCOUNTS = "Users"
+TAB_ACTIONS = "Actions"
+TAB_SERVICES = "Services"
+TAB_CONNECTIONS = "Connections"
+TAB_VERIFICATION = "Verification"
+TAB_USER_SERVICES = "User Services"
 
 # Character info config
 CHAR_NODE_KEY: str = "node"

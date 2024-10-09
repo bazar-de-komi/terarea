@@ -1,11 +1,12 @@
 """
 """
 
-from .authentication import Authentication
 from .bonus import Bonus
 from .services import Services
+from .user_endpoints import UserEndpoints
 
 __all__ = [
-    "Authentication",
-    "Bonus"
+    "Bonus",
+    "Services",
+    "UserEndpoints"
 ]

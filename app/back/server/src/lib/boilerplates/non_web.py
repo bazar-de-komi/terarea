@@ -143,3 +143,39 @@ class BoilerplateNonHTTP:
                 except RuntimeError as e:
                     msg = "(_check_database_health) Could not connect to the database."
                     raise RuntimeError(msg) from e
+
+    def is_token_admin(self, token: str) -> bool:
+        """_summary_
+            Check if the user's token has admin privileges.
+        Args:
+            token (str): _description_
+
+        Returns:
+            bool: _description_
+        """
+        title = "is_token_admin"
+        user_id = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_CONNECTIONS,
+            column="user_id",
+            where=f"token='{token}'",
+            beautify=False
+        )
+        if isinstance(user_id, int) is True and user_id == self.error:
+            self.disp.log_error(
+                f"Failed to find token {token} in the database.", title
+            )
+            return False
+        self.disp.log_debug(f"usr_id = {user_id}", title)
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="admin",
+            where=f"id={user_id[0][0]}",
+            beautify=False
+        )
+        if isinstance(user_info, int) is True and user_info == self.error:
+            self.disp.log_error(
+                f"Failed to find user {user_id[0][0]} in the database.", title
+            )
+            return False
+        self.disp.log_debug(f"usr_info = {user_info}", title)
+        return user_info[0][0] == 1

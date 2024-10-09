@@ -96,12 +96,11 @@ class Crons:
             Remove the tokens that have passed their lifespan.
         """
         title = "clean_expired_tokens"
-        token_table = "Connections"
         date_node = "expiration_date"
         current_time = datetime.now()
         self.disp.log_info("Cleaning expired tokens", title)
         current_tokens = self.runtime_data.database_link.get_data_from_table(
-            table=token_table,
+            table=CONST.TAB_CONNECTIONS,
             column="*",
             where="",
             beautify=True
@@ -120,7 +119,7 @@ class Crons:
                 self.disp.log_debug(f"Did not convert {i[date_node]}.", title)
             if datetime_node < current_time:
                 self.runtime_data.database_link.remove_data_from_table(
-                    table=token_table,
+                    table=CONST.TAB_CONNECTIONS,
                     where=f"id='{i['id']}'"
                 )
                 self.disp.log_debug(f"Removed {i}.", title)

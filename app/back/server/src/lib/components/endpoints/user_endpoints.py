@@ -1,52 +1,50 @@
 """_summary_
+    File in charge of tracking the encpoints meant to manage the user.
 """
 
-import random
+from random import randint
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
+from ..http_codes import HCI
 from .. import constants as CONST
 from ..runtime_data import RuntimeData
-from ..http_codes import HCI
-from ..password_handling import PasswordHandling
 from ..mail_management import MailManagement
+from ..password_handling import PasswordHandling
 
 
-class Authentication:
+class UserEndpoints:
     """_summary_
     """
 
-    def __init__(self, runtime_data: RuntimeData, success: int = 0, error: int = 84, debug: bool = False) -> None:
+    def __init__(self, runtime_data: RuntimeData, error: int = 84, success: int = 0, debug: bool = False) -> None:
         """_summary_
-
-        Args:
-            runtime_data (RuntimeData): _description_
-            success (int, optional): _description_. Defaults to 0.
-            error (int, optional): _description_. Defaults to 84.
-            debug (bool, optional): _description_. Defaults to False.
         """
-        self.debug: bool = debug
-        self.success: int = success
-        self.error: int = error
+        # -------------------------- Inherited values --------------------------
         self.runtime_data_initialised: RuntimeData = runtime_data
+        self.error: int = error
+        self.success: int = success
+        self.debug: bool = debug
+        # ------------------------ The logging function ------------------------
+        self.disp: Disp = Disp(
+            TOML_CONF,
+            FILE_DESCRIPTOR,
+            SAVE_TO_FILE,
+            FILE_NAME,
+            debug=self.debug,
+            logger=self.__class__.__name__
+        )
+        # ------------------------ The password checker ------------------------
         self.password_handling_initialised: PasswordHandling = PasswordHandling(
             self.error,
             self.success,
             self.debug
         )
+        # ---------------------------- Mail sending ----------------------------
         self.mail_management_initialised: MailManagement = MailManagement(
             self.error,
             self.success,
             self.debug
         )
-        self.disp: Disp = Disp(
-            TOML_CONF,
-            SAVE_TO_FILE,
-            FILE_NAME,
-            FILE_DESCRIPTOR,
-            debug=self.debug,
-            logger=self.__class__.__name__
-        )
-        self.code_for_forgot_password: list[dict] = []
 
     async def post_login(self, request: Request) -> Response:
         """_summary_
@@ -62,9 +60,8 @@ class Authentication:
             return HCI.bad_request({"error": "Bad request."})
         email = request_body["email"]
         password = request_body["password"]
-        table = "Users"
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
-            table, "*", f"email='{email}'")
+            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         self.disp.log_debug(f"Retrived data: {user_info}", title)
         if isinstance(user_info, int):
             return HCI.unauthorized({"error": "Access denied."})
@@ -109,9 +106,8 @@ class Authentication:
             return HCI.bad_request({"error": "Bad request."})
         email: str = request_body["email"]
         password = request_body["password"]
-        table = "Users"
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
-            table, "*", f"email='{email}'")
+            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
             return HCI.conflict({"error": "Email already exist."})
         hashed_password = self.password_handling_initialised.hash_password(
@@ -123,7 +119,7 @@ class Authentication:
         data = [username, email, hashed_password, "local", favicon, admin]
         self.disp.log_debug(f"Data list = {data}", title)
         column = self.runtime_data_initialised.database_link.get_table_column_names(
-            table
+            CONST.TAB_ACCOUNTS
         )
         self.disp.log_debug(f"Column = {column}", title)
         if isinstance(column, int):
@@ -143,13 +139,12 @@ class Authentication:
         if not request_body or ("email") not in request_body:
             return HCI.bad_request({"error": "Bad request."})
         email: str = request_body["email"]
-        table = "Users"
         data = self.runtime_data_initialised.database_link.get_data_from_table(
-            table, "email", f"email='{email}'")
+            CONST.TAB_ACCOUNTS, "email", f"email='{email}'")
         if data == self.error:
             return HCI.bad_request({"error": "Bad request."})
         email_subject = "[AREA] Verification code"
-        code = random.randint(100000, 999999)
+        code = randint(100000, 999999)
         code_str = str(code)
         new_node = {}
         new_node['email'] = email

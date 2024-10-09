@@ -38,12 +38,13 @@ class BoilerplateIncoming:
         Returns:
             bool: _description_: True if the token is correct, False otherwise
         """
+        title = "token_correct"
         self.disp.log_debug(
-            f"request = {request}", "token_correct"
+            f"request = {request}", title
         )
         token = self.get_token_if_present(request)
         self.disp.log_debug(
-            f"token = {token}", "token_correct"
+            f"token = {token}", title
         )
         if token is None:
             return False
@@ -60,12 +61,13 @@ class BoilerplateIncoming:
         Returns:
             bool: _description_: True if the user is logged in, False otherwise
         """
+        title = "logged_in"
         self.disp.log_debug(
-            f"request = {request}", "logged_in"
+            f"request = {request}", title
         )
         token = self.get_token_if_present(request)
         self.disp.log_debug(
-            f"token = {token}", "logged_in"
+            f"token = {token}", title
         )
         if token is None:
             return False
@@ -84,29 +86,27 @@ class BoilerplateIncoming:
         Returns:
             int: _description_: The status of the operation
         """
+        title = "_insert_login_into_database"
         if len(user_data) != 3:
             self.disp.log_error(
-                "The user data is not in the correct format !", "_insert_login_into_database"
+                "The user data is not in the correct format !", title
             )
             return self.error
         self.disp.log_debug(
-            f"user_data = {user_data}",
-            "_insert_login_into_database"
+            f"user_data = {user_data}", title
         )
         user_data[-1] = self.runtime_data_initialised.database_link.datetime_to_string(
             user_data[-1]
         )
         self.disp.log_debug(
-            f"stringed_datetime = {user_data}",
-            "_insert_login_into_database"
+            f"stringed_datetime = {user_data}", title
         )
         table_columns = self.runtime_data_initialised.database_link.get_table_column_names(
-            "Connections"
+            CONST.TAB_CONNECTIONS
         )
         table_columns.pop(0)
         self.disp.log_debug(
-            f"table_columns = {table_columns}",
-            "_insert_login_into_database"
+            f"table_columns = {table_columns}", title
         )
         status = self.runtime_data_initialised.database_link.insert_or_update_data_into_table(
             table="Connections",
@@ -115,13 +115,11 @@ class BoilerplateIncoming:
         )
         if status != self.success:
             self.disp.log_error(
-                "Data not inserted successfully !",
-                "_insert_login_into_database"
+                "Data not inserted successfully !", title
             )
             return self.error
         self.disp.log_debug(
-            "Data inserted successfully.",
-            "_insert_login_into_database"
+            "Data inserted successfully.", title
         )
         return self.success
 
@@ -140,7 +138,7 @@ class BoilerplateIncoming:
         self.disp.log_debug(f"e-mail = {email}", "log_user_in")
         token = self.runtime_data_initialised.boilerplate_non_http_initialised.generate_token()
         usr_id = self.runtime_data_initialised.database_link.get_data_from_table(
-            "Users",
+            CONST.TAB_ACCOUNTS,
             "id",
             f"email='{email}'",
             beautify=False

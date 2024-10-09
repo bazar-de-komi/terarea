@@ -5,7 +5,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
 # , Github_check#, IFTTT_Manager
-from .endpoints import Bonus, Authentication, Services
+from .endpoints import Bonus, UserEndpoints, Services
 
 
 class Endpoints:
@@ -51,7 +51,7 @@ class Endpoints:
             error=self.error,
             debug=self.debug
         )
-        self.authentication: Authentication = Authentication(
+        self.user_endpoints: UserEndpoints = UserEndpoints(
             runtime_data=runtime_data,
             success=success,
             error=error,
@@ -92,16 +92,16 @@ class Endpoints:
 
         # Authentication routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/login", self.authentication.post_login, "POST"
+            "/login", self.user_endpoints.post_login, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/register", self.authentication.put_register, "PUT"
+            "/register", self.user_endpoints.put_register, "PUT"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/send_email_verification", self.authentication.post_email_reset_password, "POST"
+            "/send_email_verification", self.user_endpoints.post_email_reset_password, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/reset_password", self.authentication.put_reset_password, "PUT"
+            "/reset_password", self.user_endpoints.put_reset_password, "PUT"
         )
         # self.runtime_data_initialised.paths_initialised.add_path(
         #     "/github_check", self.authentication.check_github, "GET"
