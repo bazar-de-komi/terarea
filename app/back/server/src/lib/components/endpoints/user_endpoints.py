@@ -63,9 +63,9 @@ class UserEndpoints:
             CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         self.disp.log_debug(f"Retrived data: {user_info}", title)
         if isinstance(user_info, int):
-            return HCI.unauthorized({"error": "Access denied."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
         if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
-            return HCI.unauthorized({"error": "Access denied."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
         data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
             email
         )
@@ -167,10 +167,16 @@ class UserEndpoints:
         tab_column.pop(0)
         status = self.runtime_data_initialised.database_link.insert_data_into_table(
             table=CONST.TAB_VERIFICATION,
-            data=[email, code, expiration_time],
+            data=[
+                email,
+                code,
+                self.runtime_data_initialised.database_link.datetime_to_string(
+                    expiration_time, False, True
+                )
+            ],
             column=tab_column
         )
-        if status == self.error or len(status) == 0:
+        if status == self.error:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         code_style = "background-color: lightgray;border: 2px lightgray solid;border-radius: 6px;color: black;font-weight: bold;padding: 5px;padding-top: 5px;padding-bottom: 5px;padding-top: 0px;padding-bottom: 0px;"
         body = ""
@@ -295,9 +301,9 @@ class UserEndpoints:
             CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         self.disp.log_debug(f"Retrived data: {user_info}", title)
         if isinstance(user_info, int):
-            return HCI.unauthorized({"error": "Access denied."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
         if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
-            return HCI.unauthorized({"error": "Access denied."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
         status = self.runtime_data_initialised.database_link.remove_data_from_table(
             CONST.TAB_ACCOUNTS, f"email='{email}'")
         if status == self.error:
