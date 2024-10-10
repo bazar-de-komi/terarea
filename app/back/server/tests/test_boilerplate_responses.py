@@ -340,3 +340,91 @@ def test_insuffisant_rights_valid_token() -> None:
     assert data.status_code == compiled_response.status_code
     assert data.headers == compiled_response.headers
     assert data.body == compiled_response.body
+
+
+def test_bad_request_invalid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    title = "Hello World"
+    data = BRI.bad_request(title, "not_a_token")
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "The request was not formatted correctly."
+    resp[CONST.JSON_ERROR] = "Bad request"
+    resp[CONST.JSON_LOGGED_IN] = False
+    compiled_response = HCI.bad_request(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_bad_request_valid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    _sing_fake_user_in()
+    title = "Hello World"
+    data = BRI.bad_request(title, TCONST.USER_DATA_TOKEN)
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "The request was not formatted correctly."
+    resp[CONST.JSON_ERROR] = "Bad request"
+    resp[CONST.JSON_LOGGED_IN] = True
+    compiled_response = HCI.bad_request(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    _sign_fake_user_out()
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_internal_server_error_invalid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    title = "Hello World"
+    data = BRI.internal_server_error(title, "not_a_token")
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "The server has encountered an error."
+    resp[CONST.JSON_ERROR] = "Internal server error."
+    resp[CONST.JSON_LOGGED_IN] = False
+    compiled_response = HCI.internal_server_error(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_internal_server_error_valid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    _sing_fake_user_in()
+    title = "Hello World"
+    data = BRI.internal_server_error(title, TCONST.USER_DATA_TOKEN)
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "The server has encountered an error."
+    resp[CONST.JSON_ERROR] = "Internal server error."
+    resp[CONST.JSON_LOGGED_IN] = True
+    compiled_response = HCI.internal_server_error(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    _sign_fake_user_out()
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
