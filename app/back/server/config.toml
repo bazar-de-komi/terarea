@@ -23,8 +23,8 @@ check_actions_interval = 300 #seconds
 [Verification]
 
 # The delay for the e-mail verification token (the time before the token expires)
-# default: 120 seconds (2 minutes)
-email_verification_delay = 120 #seconds
+# default: 240 seconds (4 minutes)
+email_verification_delay = 240 #seconds
 
 # The number fo chunks to put in the token
 # default: 4 (chunks)

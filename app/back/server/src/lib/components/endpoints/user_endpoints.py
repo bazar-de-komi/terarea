@@ -158,22 +158,22 @@ class UserEndpoints:
         new_node['code'] = code
         tab_column = self.runtime_data_initialised.database_link.get_table_column_names(
             CONST.TAB_VERIFICATION)
-        if tab_column == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        if len(tab_column) == 0:
-            return HCI.internal_server_error({"error": "Internal server error."})
+        if tab_column == self.error or len(tab_column) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         tab_column.pop(0)
         self.runtime_data_initialised.database_link.insert_data_into_table(
             table=CONST.TAB_VERIFICATION,
             data=[email, code, expiration_time_str],
             column=tab_column
         )
-        body = "<html><head><title>Verification code</title></head><body>"
-        body += "<style>span{background-color: lightgray;border: 2px lightgray solid;border-radius: 6px;color: black;font-weight: bold;padding: 5px;padding-top: 5px;padding-bottom: 5px;padding-top: 0px;padding-bottom: 0px;}</style>"
-        body += f"<p>The code is: <span style=''>{code}</span></p>"
+        code_style = "background-color: lightgray;border: 2px lightgray solid;border-radius: 6px;color: black;font-weight: bold;padding: 5px;padding-top: 5px;padding-bottom: 5px;padding-top: 0px;padding-bottom: 0px;"
+        body = ""
+        body += "<p>The code is: "
+        body += f"<span style=\"{code_style}\">{code}</span></p>"
         body += "<p>The code will be valid until "
-        body += f"<span>{expiration_time_str}</span>.</p>"
-        body += "</body></html>"
+        body += f"<span style=\"{code_style}\">"
+        body += f"{expiration_time_str}</span>.</p>"
+        self.disp.log_debug(f"e-mail body: {body}", title)
         status = self.mail_management_initialised.send_email(
             email, email_subject, body
         )
@@ -196,9 +196,11 @@ class UserEndpoints:
         current_codes = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_CONNECTIONS,
             column="*",
-            where=f"key="
+            where=f"key={body_email}",
+            beautify=True
         )
-        for user in self.code_for_forgot_password:
+        self.disp.log_debug(f"Current codes: {current_codes}", title)
+        for user in current_codes:
             if user.get("email") == body_email and user.get("code") == body_code:
                 verified_user = user
         if not verified_user:
