@@ -264,12 +264,23 @@ class SQL:
         else:
             data = columns
         for index, item in enumerate(data):
-            if item.upper() in self.risky_keywords:
+            if "=" in item:
+                key, value = item.split("=", maxsplit=1)
+                self.disp.log_debug(f"key = {key}, value = {value}", title)
+                if key.upper() in self.risky_keywords:
+                    self.disp.log_warning(
+                        f"Escaping risky column name '{key}'.",
+                        "_escape_risky_column_names"
+                    )
+                    data[index] = f"`{key}`={value}"
+            elif item.upper() in self.risky_keywords:
                 self.disp.log_warning(
                     f"Escaping risky column name '{item}'.",
                     "_escape_risky_column_names"
                 )
                 data[index] = f"`{item}`"
+            else:
+                continue
         self.disp.log_debug("Escaped risky column names.", title)
         if isinstance(columns, str):
             return data[0]
