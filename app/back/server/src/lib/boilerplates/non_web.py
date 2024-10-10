@@ -32,8 +32,6 @@ class BoilerplateNonHTTP:
             debug=self.debug,
             logger=self.__class__.__name__
         )
-        # ----------------     The user databse credentials     ----------------
-        self.check_database_health()
 
     def pause(self) -> str:
         """_summary_
@@ -133,6 +131,10 @@ class BoilerplateNonHTTP:
         """
         if self.runtime_data_initialised.database_link is None:
             try:
+                self.disp.log_debug(
+                    "database_link is none, initialising sql.",
+                    "check_database_health"
+                )
                 self.runtime_data_initialised.database_link = SQL(
                     url=CONST.DB_HOST,
                     port=CONST.DB_PORT,
@@ -150,6 +152,10 @@ class BoilerplateNonHTTP:
         if self.runtime_data_initialised.database_link.is_connected() is False:
             if self.runtime_data_initialised.database_link.connect_to_db() is False:
                 try:
+                    self.disp.log_debug(
+                        "database_link is none, initialising sql.",
+                        "check_database_health"
+                    )
                     self.runtime_data_initialised.database_link = SQL(
                         url=CONST.DB_HOST,
                         port=CONST.DB_PORT,
@@ -161,7 +167,7 @@ class BoilerplateNonHTTP:
                         debug=self.debug
                     )
                 except RuntimeError as e:
-                    msg = "(_check_database_health) Could not connect to the database."
+                    msg = "(check_database_health) Could not connect to the database."
                     raise RuntimeError(msg) from e
 
     def is_token_admin(self, token: str) -> bool:
