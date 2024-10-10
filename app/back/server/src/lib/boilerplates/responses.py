@@ -53,11 +53,7 @@ class BoilerplateResponses:
             json_body[CONST.JSON_RESP] = resp
         else:
             json_body[CONST.JSON_ERROR] = resp
-        msg = f"token = {token}, "
-        msg += f"self.user_data = {self.runtime_data_initialised.user_data}"
-        msg += ", token in self.user_data = "
-        msg += f"{token in self.runtime_data_initialised.user_data}"
-        self.disp.log_debug(msg, func_title)
+        self.disp.log_debug(f"token = {token}", func_title)
         if token is None:
             json_body[CONST.JSON_LOGGED_IN] = False
         else:
@@ -186,8 +182,28 @@ class BoilerplateResponses:
         body = self.build_response_body(
             title=title,
             message="The server has encountered an error.",
-            resp="Internal server error.",
+            resp="Internal server error",
             token=token,
             error=True
         )
         return HCI.internal_server_error(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    def unauthorized(self, title: str, token: Union[str, None] = None) -> Response:
+        """_summary_
+            This is a function that will return an internal server error response.
+
+        Args:
+            title (str): _description_: The title of the called endpoint
+            token (Union[str, None], optional): _description_. Defaults to None.: The token provided by the user of the called endpoint
+
+        Returns:
+            Response: _description_: The response ready to be sent back to the user
+        """
+        body = self.build_response_body(
+            title=title,
+            message="You do not have permission to run this endpoint.",
+            resp="Access denied",
+            token=token,
+            error=True
+        )
+        return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
