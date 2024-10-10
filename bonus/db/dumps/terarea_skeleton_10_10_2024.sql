@@ -73,7 +73,7 @@ CREATE TABLE `Connections` (
   PRIMARY KEY (`id`),
   KEY `Connections_Users_FK` (`usr_id`),
   CONSTRAINT `Connections_Users_FK` FOREIGN KEY (`usr_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,8 +97,8 @@ CREATE TABLE `Services` (
   `name` varchar(200) NOT NULL,
   `url` varchar(2048) NOT NULL,
   `key` varchar(1024) NOT NULL COMMENT 'api token',
-  `Categorie` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api',
-  `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '''The amount of tymes the service is used''',
+  `category` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api',
+  `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '''The amount of times the service is used''',
   `type` varchar(200) NOT NULL DEFAULT 'service' COMMENT 'The type of the api.',
   `tags` longtext DEFAULT NULL COMMENT 'The keywords to search for the api',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -165,7 +165,7 @@ CREATE TABLE `Users` (
   `admin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Informs the server if the user is an administrator or not.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Users_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,7 +188,7 @@ CREATE TABLE `Verification` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `key` mediumtext DEFAULT NULL COMMENT 'This is the identification for the code reference.',
   `code` mediumtext NOT NULL,
-  `expiration` datetime DEFAULT NULL COMMENT 'The time meft before the code expires.',
+  `expiration` datetime DEFAULT NULL COMMENT 'The time left before the code expires.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Verification_UNIQUE` (`code`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='This is the table in charge of storing the verification codes for user side events.';
