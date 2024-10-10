@@ -129,10 +129,10 @@ class UserEndpoints:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "Account created successfully."})
 
-    async def post_email_reset_password(self, request: Request) -> Response:
+    async def post_send_email_verification(self, request: Request) -> Response:
         """_summary_
         """
-        title = "Email reset password"
+        title = "Send e-mail verification"
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
         if not request_body or ("email") not in request_body:
@@ -216,36 +216,46 @@ class UserEndpoints:
         current_codes = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_CONNECTIONS,
             column="*",
-            where=f"key={body_email}",
+            where=f"key='{body_email}'",
             beautify=True
         )
         self.disp.log_debug(f"Current codes: {current_codes}", title)
+        if current_codes == self.error or len(current_codes) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         for user in current_codes:
             if user.get("email") == body_email and user.get("code") == body_code:
                 verified_user = user
         if not verified_user:
-            return HCI.bad_request({"error": "Invalid verification code."})
-        table = "Users"
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_verification_code(title)
         data: list = []
         column: list = []
         hashed_password = self.password_handling_initialised.hash_password(
-            body_password)
+            body_password
+        )
         data.append(hashed_password)
         column.append("password")
         status = self.runtime_data_initialised.database_link.update_data_in_table(
-            table, data, column, f"email='{body_email}'")
+            CONST.TAB_ACCOUNTS, data, column, f"email='{body_email}'"
+        )
         if status == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         current_codes = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_CONNECTIONS,
             column="*",
             where=""
         )
-        for user in self.code_for_forgot_password:
-            if user.get("email") == body_email and user.get("code") == body_code:
-                self.code_for_forgot_password.remove(user)
-                break
-        return HCI.success({"msg": "Password changed successfully."})
+        self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            f"key='{body_email}' AND code='{body_code}'"
+        )
+        response_body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="Password changed successfully.",
+            resp="success",
+            token=None,
+            error=False
+        )
+        return HCI.success(response_body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def put_user(self, request: Request) -> Response:
         """_summary_
