@@ -73,7 +73,7 @@ CREATE TABLE `Connections` (
   PRIMARY KEY (`id`),
   KEY `Connections_Users_FK` (`usr_id`),
   CONSTRAINT `Connections_Users_FK` FOREIGN KEY (`usr_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
+) ENGINE=InnoDB AUTO_INCREMENT=52 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -165,7 +165,7 @@ CREATE TABLE `Users` (
   `admin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Informs the server if the user is an administrator or not.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Users_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -185,7 +185,7 @@ DROP TABLE IF EXISTS `Verification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Verification` (
-  `id` bigint(20) unsigned NOT NULL DEFAULT 0,
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `key` mediumtext DEFAULT NULL COMMENT 'This is the identification for the code reference.',
   `code` mediumtext NOT NULL,
   `expiration` datetime DEFAULT NULL COMMENT 'The time meft before the code expires.',
@@ -212,4 +212,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-08 17:17:37
+-- Dump completed on 2024-10-10 20:45:54
