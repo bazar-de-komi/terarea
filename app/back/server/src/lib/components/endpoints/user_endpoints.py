@@ -139,7 +139,10 @@ class UserEndpoints:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email: str = request_body["email"]
         data = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACCOUNTS, "email", f"email='{email}'"
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"email='{email}'",
+            beautify=True
         )
         self.disp.log_debug(f"user query = {data}", title)
         if data == self.error or len(data) == 0:
@@ -162,11 +165,13 @@ class UserEndpoints:
         if tab_column == self.error or len(tab_column) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         tab_column.pop(0)
-        self.runtime_data_initialised.database_link.insert_data_into_table(
+        status = self.runtime_data_initialised.database_link.insert_data_into_table(
             table=CONST.TAB_VERIFICATION,
-            data=[email, code, expiration_time_str],
+            data=[email, code, expiration_time],
             column=tab_column
         )
+        if status == self.error or len(status) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         code_style = "background-color: lightgray;border: 2px lightgray solid;border-radius: 6px;color: black;font-weight: bold;padding: 5px;padding-top: 5px;padding-bottom: 5px;padding-top: 0px;padding-bottom: 0px;"
         body = ""
         body += "<p>The code is: "

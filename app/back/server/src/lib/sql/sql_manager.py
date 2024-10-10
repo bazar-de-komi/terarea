@@ -152,7 +152,7 @@ class SQL:
             str: _description_
         """
         current_time = datetime.now()
-        return current_time.strftime('%Y-%m-%d %H:%M:%S')
+        return current_time.strftime(self.date_and_time)
 
     def _get_correct_current_date_value(self) -> str:
         """_summary_
@@ -162,7 +162,7 @@ class SQL:
             str: _description_
         """
         current_time = datetime.now()
-        return current_time.strftime('%Y-%m-%d')
+        return current_time.strftime(self.date_only)
 
     def _beautify_table(self, column_names: List[str], table_content: List[List[Any]]) -> Union[List[Dict[str, Any]], int]:
         """_summary_
@@ -322,13 +322,13 @@ class SQL:
         """
         self._reconnect()
         self.disp.log_debug(
-            f"(_run_editing_command) running command {sql_query}",
+            f"running command {sql_query}",
             "_run_editing_command"
         )
         try:
             self.cursor.execute(sql_query)
             self.disp.log_debug(
-                "(_run_editing_command) command ran successfully.",
+                "command ran successfully.",
                 "_run_editing_command"
             )
         except mariadb.Error as e:
@@ -546,7 +546,7 @@ class SQL:
             return self.error
         sql_query = f"INSERT INTO {table} ({column_str}) VALUES {values}"
         self.disp.log_debug(
-            f"() sql_query = '{sql_query}'",
+            f"sql_query = '{sql_query}'",
             "insert_data_into_table"
         )
         return self._run_editing_command(sql_query, table, "insert")

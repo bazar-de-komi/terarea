@@ -1,7 +1,7 @@
 """_summary_
     File in charge of containing the functions that will be run in the background.
 """
-from typing import Union, Dict, Any
+from typing import Any
 from datetime import datetime
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
@@ -28,6 +28,15 @@ class Crons:
             debug=self.debug,
             logger=self.__class__.__name__
         )
+
+    def __del__(self) -> None:
+        """_summary_
+            The destructor of the class
+        """
+        self.disp.log_info("Cron sub processes are shutting down.", "__del__")
+        if self.runtime_data.background_tasks_initialised is not None:
+            del self.runtime_data.background_tasks_initialised
+            self.runtime_data.background_tasks_initialised = None
 
     def inject_crons(self) -> int:
         """_summary_
