@@ -51,7 +51,9 @@ class Server:
         self.runtime_data_initialised: RuntimeData = RuntimeData(
             host=self.host,
             port=self.port,
-            app_name=app_name
+            app_name=app_name,
+            error=self.error,
+            success=self.success
         )
         # ----- The classes that need to be tracked for the server to run  -----
         self.runtime_data_initialised.background_tasks_initialised = BackgroundTasks(
@@ -99,11 +101,14 @@ class Server:
             username=CONST.DB_USER,
             password=CONST.DB_PASSWORD,
             db_name=CONST.DB_DATABASE,
+            success=self.success,
+            error=self.error,
             debug=self.debug
         )
         self.runtime_data_initialised.bucket_link = Bucket(
             error=self.error,
-            success=self.success
+            success=self.success,
+            debug=self.debug
         )
         self.runtime_data_initialised.endpoints_initialised = Endpoints(
             self.runtime_data_initialised,

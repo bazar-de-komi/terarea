@@ -2,7 +2,6 @@
     File in charge of tracking the encpoints meant to manage the user.
 """
 
-from random import randint
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from ..http_codes import HCI
@@ -140,8 +139,10 @@ class UserEndpoints:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email: str = request_body["email"]
         data = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACCOUNTS, "email", f"email='{email}'")
-        if data == self.error:
+            CONST.TAB_ACCOUNTS, "email", f"email='{email}'"
+        )
+        self.disp.log_debug(f"user query = {data}", title)
+        if data == self.error or len(data) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email_subject = "[AREA] Verification code"
         code = self.runtime_data_initialised.boilerplate_non_http_initialised.generate_check_token(
@@ -178,17 +179,25 @@ class UserEndpoints:
             email, email_subject, body
         )
         if status == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "Email send successfully."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="Email send successfully.",
+            resp="success",
+            token=None,
+            error=False
+        )
+        return HCI.success(body)
 
     async def put_reset_password(self, request: Request) -> Response:
         """_summary_
+            The function in charge of resetting the user's password.
         """
         title = "Reset password"
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
         if not request_body or not all(key in request_body for key in ("email", "code", "password")):
-            return HCI.bad_request({"error": "Bad request."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         body_email: str = request_body["email"]
         body_code: str = request_body["code"]
         body_password: str = request_body["password"]

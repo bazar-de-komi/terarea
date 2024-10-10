@@ -11,6 +11,15 @@ clean_tokens = true
 # default: 1800 seconds (30 minutes)
 clean_tokens_interval = 1800 #seconds
 
+# Enable verification cleaning (removing epxired lines)
+# default: true
+clean_verification = true
+
+# The interval in which the loop for removing the expried tokens is run
+# The clean_tokens needs to be true for this setting to have an impact
+# default: 900 seconds (15 minutes)
+clean_verification_interval = 900 #seconds
+
 # Enable test cron functions
 # default: false
 enable_test_crons = false

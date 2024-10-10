@@ -109,7 +109,7 @@ MINIO_ROOT_PASSWORD = _get_environement_variable(ENV, "MINIO_ROOT_PASSWORD")
 # TOML variables
 # |- Cron settings
 CLEAN_TOKENS = _get_toml_variable(TOML_CONF, "Crons", "clean_tokens", True)
-CLEAN_TOKENS_DELAY = int(_get_toml_variable(
+CLEAN_TOKENS_INTERVAL = int(_get_toml_variable(
     TOML_CONF, "Crons", "clean_tokens_interval", 1800
 ))
 ENABLE_TEST_CRONS = _get_toml_variable(
@@ -118,6 +118,12 @@ ENABLE_TEST_CRONS = _get_toml_variable(
 CHECK_ACTIONS_INTERVAL = int(_get_toml_variable(
     TOML_CONF, "Crons", "check_actions_interval", 300
 ))
+CLEAN_VERIFICATION = _get_toml_variable(
+    TOML_CONF, "Crons", "clean_verification", True
+)
+CLEAN_VERIFICATION_INTERVAL = _get_toml_variable(
+    TOML_CONF, "Crons", "clean_verification_interval", 900
+)
 
 # |- Verification
 EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
