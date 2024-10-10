@@ -48,6 +48,38 @@ class SQL:
             debug=self.debug,
             logger=self.__class__.__name__
         )
+        # ----------------- Database risky keyword sanitising  -----------------
+        self.risky_keywords: List[str] = [
+            "ADD", "ALL", "ALTER", "ANALYZE", "AND", "AS", "ASC", "ASENSITIVE", "BEFORE", "BETWEEN",
+            "BIGINT", "BINARY", "BLOB", "BOTH", "BY", "CALL", "CASCADE", "CASE", "CHANGE", "CHAR",
+            "CHARACTER", "CHECK", "COLLATE", "COLUMN", "CONDITION", "CONSTRAINT", "CONTINUE",
+            "CONVERT", "CREATE", "CROSS", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP",
+            "CURSOR", "DATABASE", "DATABASES", "DAY_HOUR", "DAY_MICROSECOND", "DAY_MINUTE",
+            "DAY_SECOND", "DEC", "DECIMAL", "DECLARE", "DEFAULT", "DELAYED", "DELETE", "DESC",
+            "DESCRIBE", "DETERMINISTIC", "DISTINCT", "DISTINCTROW", "DIV", "DOUBLE", "DROP",
+            "DUAL", "EACH", "ELSE", "ELSEIF", "ENCLOSED", "ESCAPED", "EXISTS", "EXIT", "EXPLAIN",
+            "FALSE", "FETCH", "FLOAT", "FOR", "FORCE", "FOREIGN", "FROM", "FULLTEXT", "GENERAL",
+            "GRANT", "GROUP", "HAVING", "HIGH_PRIORITY", "HOUR_MICROSECOND", "HOUR_MINUTE",
+            "HOUR_SECOND", "IF", "IGNORE", "IN", "INDEX", "INFILE", "INNER", "INOUT",
+            "INSENSITIVE", "INSERT", "INT", "INTEGER", "INTERVAL", "INTO", "IS", "ITERATE", "JOIN",
+            "KEY", "KEYS", "KILL", "LEADING", "LEAVE", "LEFT", "LIKE", "LIMIT", "LINEAR", "LINES",
+            "LOAD", "LOCALTIME", "LOCALTIMESTAMP", "LOCK", "LONG", "LONGBLOB", "LONGTEXT", "LOOP",
+            "LOW_PRIORITY", "MASTER_SSL_VERIFY_SERVER_CERT", "MATCH", "MAXVALUE", "MEDIUMBLOB",
+            "MEDIUMINT", "MEDIUMTEXT", "MIDDLEINT", "MINUTE_MICROSECOND", "MINUTE_SECOND", "MOD",
+            "MODIFIES", "NATURAL", "NOT", "NO_WRITE_TO_BINLOG", "NULL", "NUMERIC", "ON", "OPTIMIZE",
+            "OPTION", "OPTIONALLY", "OR", "ORDER", "OUT", "OUTER", "OUTFILE", "PRECISION", "PRIMARY",
+            "PROCEDURE", "PURGE", "RANGE", "READ", "READS", "READ_WRITE", "REAL", "REFERENCES",
+            "REGEXP", "RELEASE", "RENAME", "REPEAT", "REPLACE", "REQUIRE", "RESIGNAL", "RESTRICT",
+            "RETURN", "REVOKE", "RIGHT", "RLIKE", "SCHEMA", "SCHEMAS", "SECOND_MICROSECOND",
+            "SELECT", "SENSITIVE", "SEPARATOR", "SET", "SHOW", "SIGNAL", "SMALLINT", "SPATIAL",
+            "SPECIFIC", "SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "SQL_BIG_RESULT",
+            "SQL_CALC_FOUND_ROWS", "SQL_SMALL_RESULT", "SSL", "STARTING", "STORED", "STRAIGHT_JOIN",
+            "TABLE", "TERMINATED", "THEN", "TINYBLOB", "TINYINT", "TINYTEXT", "TO", "TRAILING",
+            "TRIGGER", "TRUE", "UNDO", "UNION", "UNIQUE", "UNLOCK", "UNSIGNED", "UPDATE", "USAGE",
+            "USE", "USING", "UTC_DATE", "UTC_TIME", "UTC_TIMESTAMP", "VALUES", "VARBINARY",
+            "VARCHAR", "VARCHARACTER", "VARYING", "VIRTUAL", "WHEN", "WHERE", "WHILE", "WITH",
+            "WRITE", "XOR", "YEAR_MONTH", "ZEROFILL"
+        ]
         # -------------------------- datetime parsing --------------------------
         self.date_only: str = '%Y-%m-%d'
         self.date_and_time: str = '%Y-%m-%d %H:%M:%S'
@@ -94,13 +126,14 @@ class SQL:
                 result += char
         return result
 
-    def datetime_to_string(self, datetime_instance: datetime, date_only: bool = False) -> str:
+    def datetime_to_string(self, datetime_instance: datetime, date_only: bool = False, sql_mode: bool = False) -> str:
         """_summary_
             Convert a datetime instance to a string.
 
         Args:
             datetime_instance (datetime): _description_: The datetime item
             date_only (bool, optional): _description_. Defaults to False.: if True will only return the date section, otherwise will return the date and time section.
+            sql_mode (bool, optional): _description_. Defaults to False.: if True, will add the microseconds to the response so that it can be directly inserted into an sql command.
 
         Raises:
             ValueError: _description_: If the datetime instance is not a datetime, a valueerror is raised.
@@ -117,7 +150,11 @@ class SQL:
             raise ValueError("Error: Expected a datetime instance.")
         if date_only is True:
             return datetime_instance.strftime(self.date_only)
-        return datetime_instance.strftime(self.date_and_time)
+        microsecond = ""
+        if sql_mode is True:
+            microsecond = datetime_instance.strftime("%f")[:3]
+        converted_time = datetime_instance.strftime(self.date_and_time)
+        return f"{converted_time}.{microsecond}"
 
     def string_to_datetime(self, datetime_string_instance: str, date_only: bool = False) -> str:
         """_summary_
@@ -209,6 +246,34 @@ class SQL:
             v_index += 1
         self.disp.log_debug(f"beautified_table = {data}", "_beautify_table")
         return data
+
+    def _escape_risky_column_names(self, columns: Union[List[str], str]) -> Union[List[str], str]:
+        """_summary_
+            Escape the risky column names.
+
+        Args:
+            columns (List[str]): _description_
+
+        Returns:
+            List[str]: _description_
+        """
+        title = "_escape_risky_column_names"
+        self.disp.log_debug("Escaping risky column names.", title)
+        if isinstance(columns, str):
+            data = [columns]
+        else:
+            data = columns
+        for index, item in enumerate(data):
+            if item.upper() in self.risky_keywords:
+                self.disp.log_warning(
+                    f"Escaping risky column name '{item}'.",
+                    "_escape_risky_column_names"
+                )
+                data[index] = f"`{item}`"
+        self.disp.log_debug("Escaped risky column names.", title)
+        if isinstance(columns, str):
+            return data[0]
+        return columns
 
     def get_table_column_names(self, table_name: str) -> Union[List[str], int]:
         """_summary_
@@ -515,6 +580,8 @@ class SQL:
         if column == "":
             column = self.get_table_column_names(table)
 
+        column = self._escape_risky_column_names(column)
+
         column_str = ", ".join(column)
         column_length = len(column)
 
@@ -656,6 +723,8 @@ class SQL:
 
         if column == "":
             column = self.get_table_column_names(table)
+
+        column = self._escape_risky_column_names(column)
 
         column_length = len(column)
 
