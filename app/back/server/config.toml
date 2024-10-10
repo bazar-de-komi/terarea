@@ -26,6 +26,18 @@ check_actions_interval = 300 #seconds
 # default: 120 seconds (2 minutes)
 email_verification_delay = 120 #seconds
 
+# The number fo chunks to put in the token
+# default: 4 (chunks)
+check_token_size = 4
+
+# The minimun value used in the random token generator
+# default: 1000000
+random_min = 100000
+
+# The maximum value used in the random token generator
+# default: 999999
+random_max = 999999
+
 # The status codes used by the program:
 [Status_codes]
 

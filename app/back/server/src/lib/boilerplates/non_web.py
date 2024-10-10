@@ -4,6 +4,7 @@
 
 import re
 import uuid
+from random import randint
 from datetime import datetime, timedelta
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -198,3 +199,19 @@ class BoilerplateNonHTTP:
             return False
         self.disp.log_debug(f"usr_info = {user_info}", title)
         return user_info[0][0] == 1
+
+    def generate_check_token(self, token_size: int = 4) -> str:
+        """_summary_
+            Create a token that can be used for e-mail verification.
+
+        Returns:
+            str: _description_
+        """
+        if isinstance(token_size, (int, float)) is False:
+            token_size = 4
+        token_size = int(token_size)
+        token_size = max(token_size, 0)
+        code = f"{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        for i in range(token_size):
+            code += f"-{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        return code

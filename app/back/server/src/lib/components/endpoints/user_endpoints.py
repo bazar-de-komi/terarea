@@ -137,16 +137,16 @@ class UserEndpoints:
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
         if not request_body or ("email") not in request_body:
-            return HCI.bad_request({"error": "Bad request."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email: str = request_body["email"]
         data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_ACCOUNTS, "email", f"email='{email}'")
         if data == self.error:
-            return HCI.bad_request({"error": "Bad request."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email_subject = "[AREA] Verification code"
-        code = f"{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
-        for i in range(4):
-            code += f"-{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        code = self.runtime_data_initialised.boilerplate_non_http_initialised.generate_check_token(
+            CONST.CHECK_TOKEN_SIZE
+        )
         expiration_time = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
             CONST.EMAIL_VERIFICATION_DELAY
         )
@@ -193,6 +193,11 @@ class UserEndpoints:
         body_code: str = request_body["code"]
         body_password: str = request_body["password"]
         verified_user: dict = {}
+        current_codes = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            column="*",
+            where=f"key="
+        )
         for user in self.code_for_forgot_password:
             if user.get("email") == body_email and user.get("code") == body_code:
                 verified_user = user
@@ -209,6 +214,11 @@ class UserEndpoints:
             table, data, column, f"email='{body_email}'")
         if status == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
+        current_codes = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            column="*",
+            where=""
+        )
         for user in self.code_for_forgot_password:
             if user.get("email") == body_email and user.get("code") == body_code:
                 self.code_for_forgot_password.remove(user)
@@ -272,7 +282,7 @@ class UserEndpoints:
             return HCI.unauthorized({"error": "Access denied."})
         if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
             return HCI.unauthorized({"error": "Access denied."})
-        status = self.runtime_data_initialised.database_link.delete_data_from_table(
+        status = self.runtime_data_initialised.database_link.remove_data_from_table(
             CONST.TAB_ACCOUNTS, f"email='{email}'")
         if status == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})

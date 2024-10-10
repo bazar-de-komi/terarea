@@ -99,3 +99,63 @@ def test_check_incorrect_format() -> None:
         Function in charge of testing the check date function with an incorrect date.
     """
     assert BNHTTPI.check_date("12-12-2021") is False
+
+
+def test_check_token_generator() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with 4.
+    """
+    code = BNHTTPI.generate_check_token(token_size=4)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 4
+
+
+def test_check_token_generator_size_0() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with 0.
+    """
+    code = BNHTTPI.generate_check_token(token_size=0)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 0
+
+
+def test_check_token_generator_size_negative_number() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a negative number.
+    """
+    code = BNHTTPI.generate_check_token(token_size=-1)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 0
+
+
+def test_check_token_generator_string_as_arg() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a string.
+    """
+    code = BNHTTPI.generate_check_token(token_size="e")
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 4
+
+
+def test_check_token_generator_size_floating_number() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a floating number.
+    """
+    code = BNHTTPI.generate_check_token(token_size=4.8)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 4
+
+
+def test_check_token_generator_size_negative_floating_number() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a negative floating number.
+    """
+    code = BNHTTPI.generate_check_token(token_size=-4.5)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 0
