@@ -214,17 +214,19 @@ class UserEndpoints:
         body_password: str = request_body["password"]
         verified_user: dict = {}
         current_codes = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_CONNECTIONS,
+            CONST.TAB_VERIFICATION,
             column="*",
-            where=f"key='{body_email}'",
+            where=f"term='{body_email}'",
             beautify=True
         )
         self.disp.log_debug(f"Current codes: {current_codes}", title)
+        nodes_of_interest = []
         if current_codes == self.error or len(current_codes) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         for user in current_codes:
-            if user.get("email") == body_email and user.get("code") == body_code:
+            if user.get("term") == body_email and user.get("definition") == body_code:
                 verified_user = user
+                nodes_of_interest.append(user)
         if not verified_user:
             return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_verification_code(title)
         data: list = []
@@ -239,15 +241,13 @@ class UserEndpoints:
         )
         if status == self.error:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
-        current_codes = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_CONNECTIONS,
-            column="*",
-            where=""
-        )
-        self.runtime_data_initialised.database_link.remove_data_from_table(
-            CONST.TAB_CONNECTIONS,
-            f"key='{body_email}' AND code='{body_code}'"
-        )
+        self.disp.log_debug(f"Nodes found: {nodes_of_interest}", title)
+        for line in nodes_of_interest:
+            self.disp.log_debug(f"line removed: {line}", title)
+            self.runtime_data_initialised.database_link.remove_data_from_table(
+                CONST.TAB_VERIFICATION,
+                f"id='{line['id']}'"
+            )
         response_body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message="Password changed successfully.",
