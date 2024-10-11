@@ -485,7 +485,7 @@ def test_invalid_verification_code_invalid_token() -> None:
     resp[CONST.JSON_MESSAGE] = "The verification code you have entered is incorrect."
     resp[CONST.JSON_ERROR] = "Invalid verification code"
     resp[CONST.JSON_LOGGED_IN] = False
-    compiled_response = HCI.invalid_verification_code(
+    compiled_response = HCI.bad_request(
         content=resp,
         content_type=CONST.CONTENT_TYPE,
         headers=RDI.json_header
@@ -507,7 +507,7 @@ def test_invalid_verification_code_valid_token() -> None:
     resp[CONST.JSON_MESSAGE] = "The verification code you have entered is incorrect."
     resp[CONST.JSON_ERROR] = "Invalid verification code"
     resp[CONST.JSON_LOGGED_IN] = True
-    compiled_response = HCI.invalid_verification_code(
+    compiled_response = HCI.bad_request(
         content=resp,
         content_type=CONST.CONTENT_TYPE,
         headers=RDI.json_header
