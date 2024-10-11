@@ -96,7 +96,7 @@ CREATE TABLE `Services` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL,
   `url` varchar(2048) NOT NULL,
-  `key` varchar(1024) NOT NULL COMMENT 'api token',
+  `api_key` varchar(1024) NOT NULL COMMENT 'api token',
   `category` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api',
   `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '''The amount of times the service is used''',
   `type` varchar(200) NOT NULL DEFAULT 'service' COMMENT 'The type of the api.',
@@ -186,11 +186,11 @@ DROP TABLE IF EXISTS `Verification`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Verification` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `key` mediumtext DEFAULT NULL COMMENT 'This is the identification for the code reference.',
-  `code` mediumtext NOT NULL,
+  `term` mediumtext DEFAULT NULL COMMENT 'This is the identification for the code reference.',
+  `definition` mediumtext NOT NULL,
   `expiration` datetime DEFAULT NULL COMMENT 'The time left before the code expires.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `Verification_UNIQUE` (`code`) USING HASH
+  UNIQUE KEY `Verification_UNIQUE` (`definition`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='This is the table in charge of storing the verification codes for user side events.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -212,4 +212,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-10 20:45:54
+-- Dump completed on 2024-11-10 03:33:00

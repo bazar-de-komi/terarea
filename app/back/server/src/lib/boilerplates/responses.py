@@ -190,7 +190,7 @@ class BoilerplateResponses:
 
     def unauthorized(self, title: str, token: Union[str, None] = None) -> Response:
         """_summary_
-            This is a function that will return an internal server error response.
+            This is a function that will return an unauthorized response.
 
         Args:
             title (str): _description_: The title of the called endpoint
@@ -207,3 +207,23 @@ class BoilerplateResponses:
             error=True
         )
         return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    def invalid_verification_code(self, title: str, token: Union[str, None] = None) -> Response:
+        """_summary_
+            This is a function that will return an invalid verification code response.
+
+        Args:
+            title (str): _description_: The title of the called endpoint
+            token (Union[str, None], optional): _description_. Defaults to None.: The token provided by the user of the called endpoint
+
+        Returns:
+            Response: _description_: The response ready to be sent back to the user
+        """
+        body = self.build_response_body(
+            title=title,
+            message="The verification code you have entered is incorrect.",
+            resp="Invalid verification code",
+            token=token,
+            error=True
+        )
+        return HCI.bad_request(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
