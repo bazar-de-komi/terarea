@@ -190,7 +190,7 @@ CREATE TABLE `Verification` (
   `definition` mediumtext NOT NULL,
   `expiration` datetime DEFAULT NULL COMMENT 'The time left before the code expires.',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `Verification_UNIQUE` (`code`) USING HASH
+  UNIQUE KEY `Verification_UNIQUE` (`definition`) USING HASH
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='This is the table in charge of storing the verification codes for user side events.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
