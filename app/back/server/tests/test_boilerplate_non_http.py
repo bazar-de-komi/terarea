@@ -11,27 +11,40 @@ from fastapi import FastAPI
 sys.path.append(os.getcwd())
 
 try:
+    from src.lib.sql import SQL
+    from src.lib.components import constants as CONST
     from src.lib.components.runtime_data import RuntimeData
     from src.lib.components.endpoints_routes import Endpoints
     from src.lib.boilerplates.non_web import BoilerplateNonHTTP
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 
-ERROR = 84
-SUCCESS = 0
+ERROR = CONST.ERROR
+DEBUG = False
+SUCCESS = CONST.SUCCESS
 RDI = RuntimeData("0.0.0.0", 5000, "Area", ERROR, SUCCESS)
 RDI.app = FastAPI()
 RDI.endpoints_initialised = Endpoints(
     runtime_data=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
+)
+RDI.database_link = SQL(
+    url=CONST.DB_HOST,
+    port=CONST.DB_PORT,
+    username=CONST.DB_USER,
+    password=CONST.DB_PASSWORD,
+    db_name=CONST.DB_DATABASE,
+    success=SUCCESS,
+    error=ERROR,
+    debug=DEBUG
 )
 BNHTTPI = BoilerplateNonHTTP(
     runtime_data_initialised=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
 )
 
 
