@@ -50,35 +50,40 @@ class SQL:
         )
         # ----------------- Database risky keyword sanitising  -----------------
         self.risky_keywords: List[str] = [
-            "ADD", "ALL", "ALTER", "ANALYZE", "AND", "AS", "ASC", "ASENSITIVE", "BEFORE", "BETWEEN",
-            "BIGINT", "BINARY", "BLOB", "BOTH", "BY", "CALL", "CASCADE", "CASE", "CHANGE", "CHAR",
-            "CHARACTER", "CHECK", "COLLATE", "COLUMN", "CONDITION", "CONSTRAINT", "CONTINUE",
-            "CONVERT", "CREATE", "CROSS", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP",
-            "CURSOR", "DATABASE", "DATABASES", "DAY_HOUR", "DAY_MICROSECOND", "DAY_MINUTE",
-            "DAY_SECOND", "DEC", "DECIMAL", "DECLARE", "DEFAULT", "DELAYED", "DELETE", "DESC",
-            "DESCRIBE", "DETERMINISTIC", "DISTINCT", "DISTINCTROW", "DIV", "DOUBLE", "DROP",
-            "DUAL", "EACH", "ELSE", "ELSEIF", "ENCLOSED", "ESCAPED", "EXISTS", "EXIT", "EXPLAIN",
-            "FALSE", "FETCH", "FLOAT", "FOR", "FORCE", "FOREIGN", "FROM", "FULLTEXT", "GENERAL",
-            "GRANT", "GROUP", "HAVING", "HIGH_PRIORITY", "HOUR_MICROSECOND", "HOUR_MINUTE",
-            "HOUR_SECOND", "IF", "IGNORE", "IN", "INDEX", "INFILE", "INNER", "INOUT",
-            "INSENSITIVE", "INSERT", "INT", "INTEGER", "INTERVAL", "INTO", "IS", "ITERATE", "JOIN",
-            "KEY", "KEYS", "KILL", "LEADING", "LEAVE", "LEFT", "LIKE", "LIMIT", "LINEAR", "LINES",
-            "LOAD", "LOCALTIME", "LOCALTIMESTAMP", "LOCK", "LONG", "LONGBLOB", "LONGTEXT", "LOOP",
-            "LOW_PRIORITY", "MASTER_SSL_VERIFY_SERVER_CERT", "MATCH", "MAXVALUE", "MEDIUMBLOB",
-            "MEDIUMINT", "MEDIUMTEXT", "MIDDLEINT", "MINUTE_MICROSECOND", "MINUTE_SECOND", "MOD",
-            "MODIFIES", "NATURAL", "NOT", "NO_WRITE_TO_BINLOG", "NULL", "NUMERIC", "ON", "OPTIMIZE",
-            "OPTION", "OPTIONALLY", "OR", "ORDER", "OUT", "OUTER", "OUTFILE", "PRECISION", "PRIMARY",
-            "PROCEDURE", "PURGE", "RANGE", "READ", "READS", "READ_WRITE", "REAL", "REFERENCES",
-            "REGEXP", "RELEASE", "RENAME", "REPEAT", "REPLACE", "REQUIRE", "RESIGNAL", "RESTRICT",
-            "RETURN", "REVOKE", "RIGHT", "RLIKE", "SCHEMA", "SCHEMAS", "SECOND_MICROSECOND",
-            "SELECT", "SENSITIVE", "SEPARATOR", "SET", "SHOW", "SIGNAL", "SMALLINT", "SPATIAL",
-            "SPECIFIC", "SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "SQL_BIG_RESULT",
-            "SQL_CALC_FOUND_ROWS", "SQL_SMALL_RESULT", "SSL", "STARTING", "STORED", "STRAIGHT_JOIN",
-            "TABLE", "TERMINATED", "THEN", "TINYBLOB", "TINYINT", "TINYTEXT", "TO", "TRAILING",
-            "TRIGGER", "TRUE", "UNDO", "UNION", "UNIQUE", "UNLOCK", "UNSIGNED", "UPDATE", "USAGE",
-            "USE", "USING", "UTC_DATE", "UTC_TIME", "UTC_TIMESTAMP", "VALUES", "VARBINARY",
-            "VARCHAR", "VARCHARACTER", "VARYING", "VIRTUAL", "WHEN", "WHERE", "WHILE", "WITH",
-            "WRITE", "XOR", "YEAR_MONTH", "ZEROFILL"
+            "add", "all", "alter", "analyze", "and", "as", "asc", "asensitive", "before", "between",
+            "bigint", "binary", "blob", "both", "by", "call", "cascade", "case", "change", "char",
+            "character", "check", "collate", "column", "condition", "constraint", "continue",
+            "convert", "create", "cross", "current_date", "current_time", "current_timestamp",
+            "cursor", "database", "databases", "day_hour", "day_microsecond", "day_minute",
+            "day_second", "dec", "decimal", "declare", "default", "delayed", "delete", "desc",
+            "describe", "deterministic", "distinct", "distinctrow", "div", "double", "drop",
+            "dual", "each", "else", "elseif", "enclosed", "escaped", "exists", "exit", "explain",
+            "false", "fetch", "float", "for", "force", "foreign", "from", "fulltext", "general",
+            "grant", "group", "having", "high_priority", "hour_microsecond", "hour_minute",
+            "hour_second", "if", "ignore", "in", "index", "infile", "inner", "inout",
+            "insensitive", "insert", "int", "integer", "interval", "into", "is", "iterate", "join",
+            "key", "keys", "kill", "leading", "leave", "left", "like", "limit", "linear", "lines",
+            "load", "localtime", "localtimestamp", "lock", "long", "longblob", "longtext", "loop",
+            "low_priority", "master_ssl_verify_server_cert", "match", "maxvalue", "mediumblob",
+            "mediumint", "mediumtext", "middleint", "minute_microsecond", "minute_second", "mod",
+            "modifies", "natural", "not", "no_write_to_binlog", "null", "numeric", "on", "optimize",
+            "option", "optionally", "or", "order", "out", "outer", "outfile", "precision", "primary",
+            "procedure", "purge", "range", "read", "reads", "read_write", "real", "references",
+            "regexp", "release", "rename", "repeat", "replace", "require", "resignal", "restrict",
+            "return", "revoke", "right", "rlike", "schema", "schemas", "second_microsecond",
+            "select", "sensitive", "separator", "set", "show", "signal", "smallint", "spatial",
+            "specific", "sql", "sqlexception", "sqlstate", "sqlwarning", "sql_big_result",
+            "sql_calc_found_rows", "sql_small_result", "ssl", "starting", "stored", "straight_join",
+            "table", "terminated", "then", "tinyblob", "tinyint", "tinytext", "to", "trailing",
+            "trigger", "true", "undo", "union", "unique", "unlock", "unsigned", "update", "usage",
+            "use", "using", "utc_date", "utc_time", "utc_timestamp", "values", "varbinary",
+            "varchar", "varcharacter", "varying", "virtual", "when", "where", "while", "with",
+            "write", "xor", "year_month", "zerofill"
+        ]
+        self.keyword_logic_gates: List[str] = [
+            'and', 'or', 'not', 'xor', 'between', 'in', 'is', 'like', 'regexp', 'rlike', 'null', 'true', 'false', 'exists',
+            'distinct', 'limit', 'having', 'join', 'union', 'current_date', 'current_time', 'current_timestamp', 'utc_date',
+            'utc_time', 'utc_timestamp', 'mod', 'if'
         ]
         # -------------------------- datetime parsing --------------------------
         self.date_only: str = '%Y-%m-%d'
@@ -267,13 +272,13 @@ class SQL:
             if "=" in item:
                 key, value = item.split("=", maxsplit=1)
                 self.disp.log_debug(f"key = {key}, value = {value}", title)
-                if key.upper() in self.risky_keywords:
+                if key.lower() in self.risky_keywords:
                     self.disp.log_warning(
                         f"Escaping risky column name '{key}'.",
                         "_escape_risky_column_names"
                     )
                     data[index] = f"`{key}`={value}"
-            elif item.upper() in self.risky_keywords:
+            elif item.lower() in self.risky_keywords:
                 self.disp.log_warning(
                     f"Escaping risky column name '{item}'.",
                     "_escape_risky_column_names"
@@ -285,6 +290,52 @@ class SQL:
         if isinstance(columns, str):
             return data[0]
         return columns
+
+    def _escape_risky_column_names_where_mode(self, columns: Union[List[str], str]) -> Union[List[str], str]:
+        """
+        Escape the risky column names in where mode, except for those in keyword_logic_gates.
+
+        Args:
+            columns (Union[str, List[str]]): Column names to be processed.
+
+        Returns:
+            Union[List[str], str]: Processed column names with risky ones escaped.
+        """
+        title = "_escape_risky_column_names_where_mode"
+        self.disp.log_debug(
+            "Escaping risky column names in where mode.",
+            title
+        )
+
+        if isinstance(columns, str):
+            data = [columns]
+        else:
+            data = columns
+
+        for index, item in enumerate(data):
+            if "=" in item:
+                key, value = item.split("=", maxsplit=1)
+                self.disp.log_debug(f"key = {key}, value = {value}", title)
+
+                if key.lower() not in self.keyword_logic_gates and key.lower() in self.risky_keywords:
+                    self.disp.log_warning(
+                        f"Escaping risky column name '{key}'.",
+                        title
+                    )
+                    data[index] = f"`{key}`={value}"
+
+            elif item.lower() not in self.keyword_logic_gates and item.lower() in self.risky_keywords:
+                self.disp.log_warning(
+                    f"Escaping risky column name '{item}'.",
+                    title
+                )
+                data[index] = f"`{item}`"
+
+        self.disp.log_debug("Escaped risky column names in where mode.", title)
+
+        if isinstance(columns, str):
+            return data[0]
+        return data
 
     def get_table_column_names(self, table_name: str) -> Union[List[str], int]:
         """_summary_
@@ -650,7 +701,10 @@ class SQL:
         if isinstance(column, list) is True:
             column = ", ".join(column)
         sql_command = f"SELECT {column} FROM {table}"
+        if isinstance(where, str) is True:
+            where = self._escape_risky_column_names_where_mode(where)
         if isinstance(where, List) is True:
+            where = self._escape_risky_column_names_where_mode(where)
             where = " AND ".join(where)
         if where != "":
             sql_command += f" WHERE {where}"
