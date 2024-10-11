@@ -48,6 +48,43 @@ class SQL:
             debug=self.debug,
             logger=self.__class__.__name__
         )
+        # ----------------- Database risky keyword sanitising  -----------------
+        self.risky_keywords: List[str] = [
+            "add", "all", "alter", "analyze", "and", "as", "asc", "asensitive", "before", "between",
+            "bigint", "binary", "blob", "both", "by", "call", "cascade", "case", "change", "char",
+            "character", "check", "collate", "column", "condition", "constraint", "continue",
+            "convert", "create", "cross", "current_date", "current_time", "current_timestamp",
+            "cursor", "database", "databases", "day_hour", "day_microsecond", "day_minute",
+            "day_second", "dec", "decimal", "declare", "default", "delayed", "delete", "desc",
+            "describe", "deterministic", "distinct", "distinctrow", "div", "double", "drop",
+            "dual", "each", "else", "elseif", "enclosed", "escaped", "exists", "exit", "explain",
+            "false", "fetch", "float", "for", "force", "foreign", "from", "fulltext", "general",
+            "grant", "group", "having", "high_priority", "hour_microsecond", "hour_minute",
+            "hour_second", "if", "ignore", "in", "index", "infile", "inner", "inout",
+            "insensitive", "insert", "int", "integer", "interval", "into", "is", "iterate", "join",
+            "key", "keys", "kill", "leading", "leave", "left", "like", "limit", "linear", "lines",
+            "load", "localtime", "localtimestamp", "lock", "long", "longblob", "longtext", "loop",
+            "low_priority", "master_ssl_verify_server_cert", "match", "maxvalue", "mediumblob",
+            "mediumint", "mediumtext", "middleint", "minute_microsecond", "minute_second", "mod",
+            "modifies", "natural", "not", "no_write_to_binlog", "null", "numeric", "on", "optimize",
+            "option", "optionally", "or", "order", "out", "outer", "outfile", "precision", "primary",
+            "procedure", "purge", "range", "read", "reads", "read_write", "real", "references",
+            "regexp", "release", "rename", "repeat", "replace", "require", "resignal", "restrict",
+            "return", "revoke", "right", "rlike", "schema", "schemas", "second_microsecond",
+            "select", "sensitive", "separator", "set", "show", "signal", "smallint", "spatial",
+            "specific", "sql", "sqlexception", "sqlstate", "sqlwarning", "sql_big_result",
+            "sql_calc_found_rows", "sql_small_result", "ssl", "starting", "stored", "straight_join",
+            "table", "terminated", "then", "tinyblob", "tinyint", "tinytext", "to", "trailing",
+            "trigger", "true", "undo", "union", "unique", "unlock", "unsigned", "update", "usage",
+            "use", "using", "utc_date", "utc_time", "utc_timestamp", "values", "varbinary",
+            "varchar", "varcharacter", "varying", "virtual", "when", "where", "while", "with",
+            "write", "xor", "year_month", "zerofill"
+        ]
+        self.keyword_logic_gates: List[str] = [
+            'and', 'or', 'not', 'xor', 'between', 'in', 'is', 'like', 'regexp', 'rlike', 'null', 'true', 'false', 'exists',
+            'distinct', 'limit', 'having', 'join', 'union', 'current_date', 'current_time', 'current_timestamp', 'utc_date',
+            'utc_time', 'utc_timestamp', 'mod', 'if'
+        ]
         # -------------------------- datetime parsing --------------------------
         self.date_only: str = '%Y-%m-%d'
         self.date_and_time: str = '%Y-%m-%d %H:%M:%S'
@@ -94,13 +131,14 @@ class SQL:
                 result += char
         return result
 
-    def datetime_to_string(self, datetime_instance: datetime, date_only: bool = False) -> str:
+    def datetime_to_string(self, datetime_instance: datetime, date_only: bool = False, sql_mode: bool = False) -> str:
         """_summary_
             Convert a datetime instance to a string.
 
         Args:
             datetime_instance (datetime): _description_: The datetime item
             date_only (bool, optional): _description_. Defaults to False.: if True will only return the date section, otherwise will return the date and time section.
+            sql_mode (bool, optional): _description_. Defaults to False.: if True, will add the microseconds to the response so that it can be directly inserted into an sql command.
 
         Raises:
             ValueError: _description_: If the datetime instance is not a datetime, a valueerror is raised.
@@ -117,7 +155,11 @@ class SQL:
             raise ValueError("Error: Expected a datetime instance.")
         if date_only is True:
             return datetime_instance.strftime(self.date_only)
-        return datetime_instance.strftime(self.date_and_time)
+        microsecond = ""
+        if sql_mode is True:
+            microsecond = datetime_instance.strftime("%f")[:3]
+        converted_time = datetime_instance.strftime(self.date_and_time)
+        return f"{converted_time}.{microsecond}"
 
     def string_to_datetime(self, datetime_string_instance: str, date_only: bool = False) -> str:
         """_summary_
@@ -152,7 +194,7 @@ class SQL:
             str: _description_
         """
         current_time = datetime.now()
-        return current_time.strftime('%Y-%m-%d %H:%M:%S')
+        return current_time.strftime(self.date_and_time)
 
     def _get_correct_current_date_value(self) -> str:
         """_summary_
@@ -162,7 +204,7 @@ class SQL:
             str: _description_
         """
         current_time = datetime.now()
-        return current_time.strftime('%Y-%m-%d')
+        return current_time.strftime(self.date_only)
 
     def _beautify_table(self, column_names: List[str], table_content: List[List[Any]]) -> Union[List[Dict[str, Any]], int]:
         """_summary_
@@ -208,6 +250,91 @@ class SQL:
                 data[v_index][items[0]] = i[index]
             v_index += 1
         self.disp.log_debug(f"beautified_table = {data}", "_beautify_table")
+        return data
+
+    def _escape_risky_column_names(self, columns: Union[List[str], str]) -> Union[List[str], str]:
+        """_summary_
+            Escape the risky column names.
+
+        Args:
+            columns (List[str]): _description_
+
+        Returns:
+            List[str]: _description_
+        """
+        title = "_escape_risky_column_names"
+        self.disp.log_debug("Escaping risky column names.", title)
+        if isinstance(columns, str):
+            data = [columns]
+        else:
+            data = columns
+        for index, item in enumerate(data):
+            if "=" in item:
+                key, value = item.split("=", maxsplit=1)
+                self.disp.log_debug(f"key = {key}, value = {value}", title)
+                if key.lower() in self.risky_keywords:
+                    self.disp.log_warning(
+                        f"Escaping risky column name '{key}'.",
+                        "_escape_risky_column_names"
+                    )
+                    data[index] = f"`{key}`={value}"
+            elif item.lower() in self.risky_keywords:
+                self.disp.log_warning(
+                    f"Escaping risky column name '{item}'.",
+                    "_escape_risky_column_names"
+                )
+                data[index] = f"`{item}`"
+            else:
+                continue
+        self.disp.log_debug("Escaped risky column names.", title)
+        if isinstance(columns, str):
+            return data[0]
+        return columns
+
+    def _escape_risky_column_names_where_mode(self, columns: Union[List[str], str]) -> Union[List[str], str]:
+        """
+        Escape the risky column names in where mode, except for those in keyword_logic_gates.
+
+        Args:
+            columns (Union[str, List[str]]): Column names to be processed.
+
+        Returns:
+            Union[List[str], str]: Processed column names with risky ones escaped.
+        """
+        title = "_escape_risky_column_names_where_mode"
+        self.disp.log_debug(
+            "Escaping risky column names in where mode.",
+            title
+        )
+
+        if isinstance(columns, str):
+            data = [columns]
+        else:
+            data = columns
+
+        for index, item in enumerate(data):
+            if "=" in item:
+                key, value = item.split("=", maxsplit=1)
+                self.disp.log_debug(f"key = {key}, value = {value}", title)
+
+                if key.lower() not in self.keyword_logic_gates and key.lower() in self.risky_keywords:
+                    self.disp.log_warning(
+                        f"Escaping risky column name '{key}'.",
+                        title
+                    )
+                    data[index] = f"\'{key}\'={value}"
+
+            elif item.lower() not in self.keyword_logic_gates and item.lower() in self.risky_keywords:
+                self.disp.log_warning(
+                    f"Escaping risky column name '{item}'.",
+                    title
+                )
+                data[index] = f"\'{item}\'"
+
+        self.disp.log_debug("Escaped risky column names in where mode.", title)
+
+        if isinstance(columns, str):
+            return data[0]
         return data
 
     def get_table_column_names(self, table_name: str) -> Union[List[str], int]:
@@ -322,13 +449,13 @@ class SQL:
         """
         self._reconnect()
         self.disp.log_debug(
-            f"(_run_editing_command) running command {sql_query}",
+            f"running command {sql_query}",
             "_run_editing_command"
         )
         try:
             self.cursor.execute(sql_query)
             self.disp.log_debug(
-                "(_run_editing_command) command ran successfully.",
+                "command ran successfully.",
                 "_run_editing_command"
             )
         except mariadb.Error as e:
@@ -515,6 +642,8 @@ class SQL:
         if column == "":
             column = self.get_table_column_names(table)
 
+        column = self._escape_risky_column_names(column)
+
         column_str = ", ".join(column)
         column_length = len(column)
 
@@ -546,7 +675,7 @@ class SQL:
             return self.error
         sql_query = f"INSERT INTO {table} ({column_str}) VALUES {values}"
         self.disp.log_debug(
-            f"() sql_query = '{sql_query}'",
+            f"sql_query = '{sql_query}'",
             "insert_data_into_table"
         )
         return self._run_editing_command(sql_query, table, "insert")
@@ -572,7 +701,10 @@ class SQL:
         if isinstance(column, list) is True:
             column = ", ".join(column)
         sql_command = f"SELECT {column} FROM {table}"
+        if isinstance(where, str) is True:
+            where = self._escape_risky_column_names_where_mode(where)
         if isinstance(where, List) is True:
+            where = self._escape_risky_column_names_where_mode(where)
             where = " AND ".join(where)
         if where != "":
             sql_command += f" WHERE {where}"
@@ -656,6 +788,8 @@ class SQL:
 
         if column == "":
             column = self.get_table_column_names(table)
+
+        column = self._escape_risky_column_names(column)
 
         column_length = len(column)
 

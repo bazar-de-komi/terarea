@@ -5,8 +5,6 @@
 # pet_server.py
 ##
 
-from typing import Any
-from datetime import datetime
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .sql import SQL
 from .bucket import Bucket
@@ -37,7 +35,6 @@ class Server:
         self.success: int = success
         self.error: int = error
         self.debug: bool = debug
-        self.continue_running: bool = False
         # ------------------------ The logging function ------------------------
         self.disp: Disp = Disp(
             TOML_CONF,
@@ -51,7 +48,9 @@ class Server:
         self.runtime_data_initialised: RuntimeData = RuntimeData(
             host=self.host,
             port=self.port,
-            app_name=app_name
+            app_name=app_name,
+            error=self.error,
+            success=self.success
         )
         # ----- The classes that need to be tracked for the server to run  -----
         self.runtime_data_initialised.background_tasks_initialised = BackgroundTasks(
@@ -61,6 +60,17 @@ class Server:
         )
         self.runtime_data_initialised.crons_initialised = Crons(
             self.runtime_data_initialised,
+            success=self.success,
+            error=self.error,
+            debug=self.debug
+        )
+        self.disp.log_debug("Initialising database link.", "__init__")
+        self.runtime_data_initialised.database_link = SQL(
+            url=CONST.DB_HOST,
+            port=CONST.DB_PORT,
+            username=CONST.DB_USER,
+            password=CONST.DB_PASSWORD,
+            db_name=CONST.DB_DATABASE,
             success=self.success,
             error=self.error,
             debug=self.debug
@@ -93,17 +103,10 @@ class Server:
             success=self.success,
             debug=self.debug
         )
-        self.runtime_data_initialised.database_link = SQL(
-            url=CONST.DB_HOST,
-            port=CONST.DB_PORT,
-            username=CONST.DB_USER,
-            password=CONST.DB_PASSWORD,
-            db_name=CONST.DB_DATABASE,
-            debug=self.debug
-        )
         self.runtime_data_initialised.bucket_link = Bucket(
             error=self.error,
-            success=self.success
+            success=self.success,
+            debug=self.debug
         )
         self.runtime_data_initialised.endpoints_initialised = Endpoints(
             self.runtime_data_initialised,
@@ -111,8 +114,18 @@ class Server:
             success=self.success,
             debug=self.debug
         )
-        # ----------------------------- The crons  -----------------------------
-        self.runtime_data_initialised.crons_initialised.inject_crons()
+
+    def __del__(self) -> None:
+        """_summary_
+            The destructor of the class.
+        """
+        self.disp.log_info("The server is shutting down.", "__del__")
+        if self.runtime_data_initialised.server_management_initialised is not None:
+            del self.runtime_data_initialised.server_management_initialised
+            self.runtime_data_initialised.server_management_initialised = None
+        if self.runtime_data_initialised.crons_initialised is not None:
+            del self.runtime_data_initialised.crons_initialised
+            self.runtime_data_initialised.crons_initialised = None
 
     def main(self) -> int:
         """_summary_
@@ -125,6 +138,7 @@ class Server:
         self.runtime_data_initialised.server_management_initialised.initialise_classes()
         self.runtime_data_initialised.paths_initialised.load_default_paths_initialised()
         self.runtime_data_initialised.paths_initialised.inject_routes()
+        self.runtime_data_initialised.crons_initialised.inject_crons()
         status = self.runtime_data_initialised.background_tasks_initialised.safe_start()
         if status != self.success:
             self.disp.log_error(

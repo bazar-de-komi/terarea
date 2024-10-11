@@ -11,6 +11,15 @@ clean_tokens = true
 # default: 1800 seconds (30 minutes)
 clean_tokens_interval = 1800 #seconds
 
+# Enable verification cleaning (removing epxired lines)
+# default: true
+clean_verification = true
+
+# The interval in which the loop for removing the expried tokens is run
+# The clean_tokens needs to be true for this setting to have an impact
+# default: 900 seconds (15 minutes)
+clean_verification_interval = 900 #seconds
+
 # Enable test cron functions
 # default: false
 enable_test_crons = false
@@ -23,8 +32,20 @@ check_actions_interval = 300 #seconds
 [Verification]
 
 # The delay for the e-mail verification token (the time before the token expires)
-# default: 120 seconds (2 minutes)
-email_verification_delay = 120 #seconds
+# default: 240 seconds (4 minutes)
+email_verification_delay = 240 #seconds
+
+# The number fo chunks to put in the token
+# default: 4 (chunks)
+check_token_size = 4
+
+# The minimun value used in the random token generator
+# default: 1000000
+random_min = 100000
+
+# The maximum value used in the random token generator
+# default: 999999
+random_max = 999999
 
 # The status codes used by the program:
 [Status_codes]

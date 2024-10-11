@@ -1,7 +1,7 @@
 """_summary_
     File in charge of containing the functions that will be run in the background.
 """
-from typing import Union, Dict, Any
+from typing import Any
 from datetime import datetime
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
@@ -28,6 +28,15 @@ class Crons:
             debug=self.debug,
             logger=self.__class__.__name__
         )
+
+    def __del__(self) -> None:
+        """_summary_
+            The destructor of the class
+        """
+        self.disp.log_info("Cron sub processes are shutting down.", "__del__")
+        if self.runtime_data.background_tasks_initialised is not None:
+            del self.runtime_data.background_tasks_initialised
+            self.runtime_data.background_tasks_initialised = None
 
     def inject_crons(self) -> int:
         """_summary_
@@ -61,7 +70,14 @@ class Crons:
                 func=self.clean_expired_tokens,
                 args=None,
                 trigger='interval',
-                seconds=CONST.CLEAN_TOKENS_DELAY
+                seconds=CONST.CLEAN_TOKENS_INTERVAL
+            )
+        if CONST.CLEAN_VERIFICATION is True:
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self.clean_expired_verification_nodes,
+                args=None,
+                trigger='interval',
+                seconds=CONST.CLEAN_VERIFICATION_INTERVAL
             )
 
     def _test_hello_world(self) -> None:
@@ -124,6 +140,43 @@ class Crons:
                 )
                 self.disp.log_debug(f"Removed {i}.", title)
         self.disp.log_debug("Cleaned expired tokens", title)
+
+    def clean_expired_verification_nodes(self) -> None:
+        """_summary_
+            Remove the nodes in the verification table that have passed their lifespan.
+        """
+        title = "clean_expired_verification_nodes"
+        date_node = "expiration"
+        current_time = datetime.now()
+        self.disp.log_info(
+            f"Cleaning expired lines in the {CONST.TAB_VERIFICATION} table.",
+            title
+        )
+        current_lines = self.runtime_data.database_link.get_data_from_table(
+            table=CONST.TAB_VERIFICATION,
+            column="*",
+            where="",
+            beautify=True
+        )
+        self.disp.log_debug(f"current lines = {current_lines}", title)
+        for i in current_lines:
+            if i[date_node] is not None and i[date_node] != "" and isinstance(i[date_node], str) is True:
+                datetime_node = self.runtime_data.database_link.string_to_datetime(
+                    i[date_node]
+                )
+                msg = f"Converted {i[date_node]} to a datetime instance"
+                msg += f" ({datetime_node})."
+                self.disp.log_debug(msg, title)
+            else:
+                datetime_node = i[date_node]
+                self.disp.log_debug(f"Did not convert {i[date_node]}.", title)
+            if datetime_node < current_time:
+                self.runtime_data.database_link.remove_data_from_table(
+                    table=CONST.TAB_VERIFICATION,
+                    where=f"id='{i['id']}'"
+                )
+                self.disp.log_debug(f"Removed {i}.", title)
+        self.disp.log_debug("Cleaned expired lines", title)
 
     def check_actions(self) -> None:
         """_summary_

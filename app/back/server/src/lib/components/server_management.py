@@ -38,14 +38,20 @@ class ServerManagement:
         """_summary_
             The destructor of the class
         """
+        self.disp.log_info(
+            "Server sub processes are shutting down.",
+            "__del__"
+        )
         if self.is_server_alive() is True:
             del self.runtime_data_initialised.database_link
+            self.runtime_data_initialised.database_link = None
             del self.runtime_data_initialised.bucket_link
             self.runtime_data_initialised.continue_running = False
             if self.runtime_data_initialised.server is not None:
                 self.runtime_data_initialised.server.handle_exit(
                     signal.SIGTERM, None
                 )
+                self.runtime_data_initialised.server = None
         if self.runtime_data_initialised.background_tasks_initialised is not None:
             del self.runtime_data_initialised.background_tasks_initialised
             self.runtime_data_initialised.background_tasks_initialised = None
