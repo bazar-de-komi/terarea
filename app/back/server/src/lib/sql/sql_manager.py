@@ -322,14 +322,14 @@ class SQL:
                         f"Escaping risky column name '{key}'.",
                         title
                     )
-                    data[index] = f"`{key}`={value}"
+                    data[index] = f"\'{key}\'={value}"
 
             elif item.lower() not in self.keyword_logic_gates and item.lower() in self.risky_keywords:
                 self.disp.log_warning(
                     f"Escaping risky column name '{item}'.",
                     title
                 )
-                data[index] = f"`{item}`"
+                data[index] = f"\'{item}\'"
 
         self.disp.log_debug("Escaped risky column names in where mode.", title)
 
