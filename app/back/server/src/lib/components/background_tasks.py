@@ -42,6 +42,7 @@ class BackgroundTasks:
         """_summary_
             The destructor of the class
         """
+        self.disp.log_info("Stopping background tasks.", "__del__")
         exit_code = self.safe_stop()
         msg = f"The cron exited with status {exit_code}."
         if exit_code != self.success:

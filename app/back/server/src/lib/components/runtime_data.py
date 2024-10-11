@@ -28,13 +28,6 @@ class RuntimeData:
         self.error: int = error
         self.success: int = success
         self.app_name: str = app_name
-        # -------------------------- Active sessions  --------------------------
-        # <token>: {
-        #     "user": <user>,
-        #     "email": <email>,
-        #     "lifespan": <datetime>
-        # }
-        self.user_data: Dict[Dict[str, Any]] = {}
         # --------------------- The rest api boiling class ---------------------
         self.app: FastAPI = None
         # ------------------------ The active database  ------------------------

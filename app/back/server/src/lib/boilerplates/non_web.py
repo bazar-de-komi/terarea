@@ -4,6 +4,7 @@
 
 import re
 import uuid
+from random import randint
 from datetime import datetime, timedelta
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -31,8 +32,6 @@ class BoilerplateNonHTTP:
             debug=self.debug,
             logger=self.__class__.__name__
         )
-        # ----------------     The user databse credentials     ----------------
-        self.check_database_health()
 
     def pause(self) -> str:
         """_summary_
@@ -132,6 +131,10 @@ class BoilerplateNonHTTP:
         """
         if self.runtime_data_initialised.database_link is None:
             try:
+                self.disp.log_debug(
+                    "database_link is none, initialising sql.",
+                    "check_database_health"
+                )
                 self.runtime_data_initialised.database_link = SQL(
                     url=CONST.DB_HOST,
                     port=CONST.DB_PORT,
@@ -149,6 +152,10 @@ class BoilerplateNonHTTP:
         if self.runtime_data_initialised.database_link.is_connected() is False:
             if self.runtime_data_initialised.database_link.connect_to_db() is False:
                 try:
+                    self.disp.log_debug(
+                        "database_link is none, initialising sql.",
+                        "check_database_health"
+                    )
                     self.runtime_data_initialised.database_link = SQL(
                         url=CONST.DB_HOST,
                         port=CONST.DB_PORT,
@@ -160,7 +167,7 @@ class BoilerplateNonHTTP:
                         debug=self.debug
                     )
                 except RuntimeError as e:
-                    msg = "(_check_database_health) Could not connect to the database."
+                    msg = "(check_database_health) Could not connect to the database."
                     raise RuntimeError(msg) from e
 
     def is_token_admin(self, token: str) -> bool:
@@ -198,3 +205,19 @@ class BoilerplateNonHTTP:
             return False
         self.disp.log_debug(f"usr_info = {user_info}", title)
         return user_info[0][0] == 1
+
+    def generate_check_token(self, token_size: int = 4) -> str:
+        """_summary_
+            Create a token that can be used for e-mail verification.
+
+        Returns:
+            str: _description_
+        """
+        if isinstance(token_size, (int, float)) is False:
+            token_size = 4
+        token_size = int(token_size)
+        token_size = max(token_size, 0)
+        code = f"{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        for i in range(token_size):
+            code += f"-{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        return code

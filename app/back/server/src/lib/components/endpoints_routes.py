@@ -101,7 +101,7 @@ class Endpoints:
             "/api/v1/register", self.user_endpoints.post_register, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/send_email_verification", self.user_endpoints.post_email_reset_password, "POST"
+            "/api/v1/send_email_verification", self.user_endpoints.post_send_email_verification, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/reset_password", self.user_endpoints.put_reset_password, "PATCH"
