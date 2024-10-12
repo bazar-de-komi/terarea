@@ -63,7 +63,10 @@ class Endpoints:
         """
         # Bonus routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/", self.bonus.get_welcome, "GET"
+            "", self.bonus.get_welcome, ["GET", "POST", "PUT", "PATCH"]
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/", self.bonus.get_welcome, ["GET", "POST", "PUT", "PATCH"]
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/", self.bonus.get_welcome, "GET"
