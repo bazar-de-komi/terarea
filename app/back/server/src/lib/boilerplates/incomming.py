@@ -3,7 +3,7 @@
 """
 
 from typing import Union, Dict, Any
-# from time import sleep
+from datetime import datetime
 from fastapi import Request, UploadFile
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -48,7 +48,18 @@ class BoilerplateIncoming:
         )
         if token is None:
             return False
-        if token not in self.runtime_data_initialised.user_data:
+        login_table = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            "*",
+            where=f"token={token}",
+            beautify=False
+        )
+        if isinstance(login_table, int):
+            return False
+        if len(login_table) != 1:
+            return False
+        self.disp.log_debug(f"login_table = {login_table}", "token_correct")
+        if datetime.now() > login_table[0][-1]:
             return False
         return True
 
