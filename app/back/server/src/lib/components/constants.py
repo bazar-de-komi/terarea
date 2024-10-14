@@ -2,12 +2,15 @@
     This is the file in charge of containing the constants that run the server.
 """
 
-from typing import List
+from typing import List, Any
 
 import toml
 import dotenv
 from display_tty import IDISP
 IDISP.logger.name = "Constants"
+
+# Enable debugging for the functions in the constants file.
+IDISP.debug = True
 
 # Environement initialisation
 dotenv.load_dotenv(".env")
@@ -35,7 +38,7 @@ def _get_environement_variable(environement: dotenv, variable_name: str) -> str:
     return data
 
 
-def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) -> str:
+def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) -> Any:
     """
     Get the value of a configuration variable from the TOML file.
 
@@ -64,6 +67,15 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
                 )
 
         if key in current_section:
+            msg = f"current_section[{key}] = {current_section[key]} : "
+            msg += f"{type(current_section[key])}"
+            IDISP.log_debug(msg, "_get_toml_variable")
+            if current_section[key] == "none":
+                IDISP.log_debug(
+                    "The value none has been converted to None.",
+                    "_get_toml_variable"
+                )
+                return None
             return current_section[key]
         if default is None:
             msg = f"Key '{key}' not found in section '{section}' "
@@ -107,6 +119,39 @@ MINIO_ROOT_USER = _get_environement_variable(ENV, "MINIO_ROOT_USER")
 MINIO_ROOT_PASSWORD = _get_environement_variable(ENV, "MINIO_ROOT_PASSWORD")
 
 # TOML variables
+# |- Server configurations
+SERVER_WORKERS = _get_toml_variable(
+    TOML_CONF, "Server_configuration", "workers", None
+)
+SERVER_LIFESPAN = _get_toml_variable(
+    TOML_CONF, "Server_configuration", "lifespan", "auto"
+)
+SERVER_TIMEOUT_KEEP_ALIVE = _get_toml_variable(
+    TOML_CONF, "Server_configuration", "timeout_keep_alive", 30
+)
+
+# |- Server configuration -> development
+SERVER_DEV_RELOAD = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "reload", False
+)
+SERVER_DEV_RELOAD_DIRS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "reload_dirs", None
+)
+SERVER_DEV_LOG_LEVEL = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "log_level", "info"
+)
+SERVER_DEV_USE_COLOURS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "use_colours", True
+)
+
+# |- Server configuration -> production
+SERVER_PROD_PROXY_HEADERS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.production", "proxy_headers", True
+)
+SERVER_PROD_FORWARDED_ALLOW_IPS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.production", "forwarded_allow_ips", None
+)
+
 # |- Cron settings
 CLEAN_TOKENS = _get_toml_variable(TOML_CONF, "Crons", "clean_tokens", True)
 CLEAN_TOKENS_INTERVAL = int(_get_toml_variable(
