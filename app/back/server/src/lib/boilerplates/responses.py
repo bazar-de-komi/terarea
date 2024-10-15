@@ -54,21 +54,9 @@ class BoilerplateResponses:
         else:
             json_body[CONST.JSON_ERROR] = resp
         self.disp.log_debug(f"token = {token}", func_title)
-        if token is None:
-            json_body[CONST.JSON_LOGGED_IN] = False
-        else:
-            logged_in_users = self.runtime_data_initialised.database_link.get_data_from_table(
-                table=CONST.TAB_CONNECTIONS,
-                column="token",
-                where=f"token='{token}'",
-                beautify=False
-            )
-            self.disp.log_debug(f"User data = {logged_in_users}", func_title)
-
-            if len(logged_in_users) > 0 and len(logged_in_users[0]) > 0 and token == logged_in_users[0][0]:
-                json_body[CONST.JSON_LOGGED_IN] = True
-            else:
-                json_body[CONST.JSON_LOGGED_IN] = False
+        json_body[CONST.JSON_LOGGED_IN] = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
         return json_body
 
     def invalid_token(self, title: str) -> Response:

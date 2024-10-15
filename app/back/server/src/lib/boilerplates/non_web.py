@@ -56,6 +56,52 @@ class BoilerplateNonHTTP:
         offset_time = current_time + timedelta(seconds=seconds)
         return offset_time
 
+    def is_token_correct(self, token: str) -> bool:
+        """_summary_
+            Check if the token is correct.
+        Args:
+            token (str): _description_: The token to check
+
+        Returns:
+            bool: _description_: True if the token is correct, False otherwise
+        """
+        title = "is_token_correct"
+        if isinstance(token, str) is False:
+            return False
+        login_table = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            "*",
+            where=f"token={token}",
+            beautify=False
+        )
+        if isinstance(login_table, int):
+            return False
+        if len(login_table) != 1:
+            return False
+        self.disp.log_debug(f"login_table = {login_table}", title)
+        if datetime.now() > login_table[0][-1]:
+            return False
+        new_date = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
+            CONST.UA_TOKEN_LIFESPAN
+        )
+        new_date_str = self.runtime_data_initialised.database_link.datetime_to_string(
+            datetime_instance=new_date,
+            date_only=False,
+            sql_mode=True
+        )
+        status = self.runtime_data_initialised.database_link.update_data_in_table(
+            table=CONST.TAB_CONNECTIONS,
+            data=new_date_str,
+            column="expiration_date",
+            where=f"token={token}"
+        )
+        if status != self.success:
+            self.disp.log_warning(
+                f"Failed to update expiration_date for {token}.",
+                title
+            )
+        return True
+
     def generate_token(self) -> str:
         """_summary_
             This is a function that will generate a token for the user.

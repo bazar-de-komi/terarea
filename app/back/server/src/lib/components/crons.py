@@ -122,6 +122,11 @@ class Crons:
             where="",
             beautify=True
         )
+        if isinstance(current_tokens, int) is True:
+            msg = "There is no data to be cleared in "
+            msg += f"{CONST.TAB_CONNECTIONS} table."
+            self.disp.log_warning(msg, title)
+            return
         self.disp.log_debug(f"current tokens = {current_tokens}", title)
         for i in current_tokens:
             if i[date_node] is not None and i[date_node] != "" and isinstance(i[date_node], str) is True:
