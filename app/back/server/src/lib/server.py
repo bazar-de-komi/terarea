@@ -146,9 +146,12 @@ class Server:
                 "main"
             )
             return status
+        # print("Cron: check_actions")
+        # print("Cron: test_current_date")
+        # print("Cron: clean_expired_tokens")
+        # print("Cron: clean_expired_verification_nodes")
         try:
             self.runtime_data_initialised.server.run()
-            print("ffd")
         except Exception as e:
             self.disp.log_error(f"Error: {e}", "main")
             return self.error
