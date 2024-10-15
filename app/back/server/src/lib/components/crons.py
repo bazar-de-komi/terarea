@@ -45,12 +45,13 @@ class Crons:
         Returns:
             int: _description_: The overall status of the injection.
         """
-        self.runtime_data.background_tasks_initialised.safe_add_task(
-            func=self.check_actions,
-            args=None,
-            trigger='interval',
-            seconds=CONST.CHECK_ACTIONS_INTERVAL
-        )
+        if False is True:
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self.check_actions,
+                args=None,
+                trigger='interval',
+                seconds=CONST.CHECK_ACTIONS_INTERVAL
+            )
         if CONST.ENABLE_TEST_CRONS is True:
             test_delay = 200
             self.runtime_data.background_tasks_initialised.safe_add_task(
@@ -158,6 +159,14 @@ class Crons:
             where="",
             beautify=True
         )
+        if isinstance(current_lines, int) is True:
+            msg = "There is no data to be cleared in "
+            msg += f"{CONST.TAB_VERIFICATION} table."
+            self.disp.log_warning(
+                msg,
+                title
+            )
+            return
         self.disp.log_debug(f"current lines = {current_lines}", title)
         for i in current_lines:
             if i[date_node] is not None and i[date_node] != "" and isinstance(i[date_node], str) is True:
