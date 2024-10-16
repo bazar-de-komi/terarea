@@ -45,11 +45,17 @@ class Crons:
         Returns:
             int: _description_: The overall status of the injection.
         """
+        # self.runtime_data.background_tasks_initialised.safe_add_task(
+        #     func=self.check_actions,
+        #     args=None,
+        #     trigger='interval',
+        #     seconds=CONST.CHECK_ACTIONS_INTERVAL
+        # )
         self.runtime_data.background_tasks_initialised.safe_add_task(
-            func=self.check_actions,
+            func=self._harass_database,
             args=None,
             trigger='interval',
-            seconds=CONST.CHECK_ACTIONS_INTERVAL
+            seconds=2
         )
         if CONST.ENABLE_TEST_CRONS is True:
             self.runtime_data.background_tasks_initialised.safe_add_task(
@@ -105,6 +111,68 @@ class Crons:
                 f"(Not called) Current date: {date}",
                 "_test_current_date"
             )
+
+    def _harass_database(self, *args: Any) -> None:
+        """_summary_
+            This is a test function that will print the current date.
+        Args:
+            date (datetime): _description_
+        """
+        title = "_harass_database"
+        self.disp.log_info(f"In {title}", title)
+        self.runtime_data.database_link.show_connection_info()
+        connection = self.runtime_data.database_link.is_connected()
+        self.disp.log_info(
+            f"Connection status: {connection}",
+            title
+        )
+        if connection is False:
+            self.runtime_data.database_link.connect_to_db()
+            connection = self.runtime_data.database_link.is_connected()
+            self.disp.log_info(
+                f"Connection status: {connection}",
+                title
+            )
+            connection = self.runtime_data.database_link.is_connected()
+            self.disp.log_info(
+                f"Connection status: {connection}",
+                title
+            )
+        if connection is True:
+            data = self.runtime_data.database_link.get_table_names()
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.describe_table(
+                CONST.TAB_CONNECTIONS
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_data_from_table(
+                CONST.TAB_CONNECTIONS, "*", "", True
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_table_column_names(
+                CONST.TAB_CONNECTIONS
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_table_size(
+                CONST.TAB_CONNECTIONS, "*", ""
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+        self.disp.log_info(f"Out of {title}.", title)
 
     def clean_expired_tokens(self) -> None:
         """_summary_
