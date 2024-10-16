@@ -9,6 +9,8 @@ coverage_data/**
 .bash_history
 .python_history
 .mysql_history
+.lesshst
+.core
 
 # Ignore all the sql files in the server
 *.sql

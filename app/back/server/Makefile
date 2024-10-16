@@ -171,6 +171,8 @@ clean_coverage:
 # Remove docker cache
 clean_docker:
 	@echo -e "$(C_YELLOW)Cleaning docker cache$(C_RESET)"
+	$(SILENT) rm -rf .docker
+	$(SILENT) rm -rf .lesshst
 	$(SILENT) rm -rf .bash_history 
 	$(SILENT) rm -rf .mysql_history
 	$(SILENT) rm -rf .python_history
