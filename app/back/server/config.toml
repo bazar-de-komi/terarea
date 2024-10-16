@@ -125,24 +125,24 @@ local_infile = false
 compress = false
 
 # Command(s) which will be executed when connecting and reconnecting to the database server
-# type: string
-# default: ''
-init_command = ''
+# type: string, 'none'
+# default: 'none'
+init_command = 'none'
 
 # Read options from the specified option file
-# type: string
-# default: ''
-default_file = ''
+# type: string, 'none'
+# default: 'none'
+default_file = 'none'
 
 # Read options from the specified group
-# type: string
-# default: ''
-default_group = ''
+# type: string, 'none'
+# default: 'none'
+default_group = 'none'
 
 # Directory which contains MariaDB client plugins
-# type: string
-# default: ''
-plugin_dir = ''
+# type: string, 'none'
+# default: 'none'
+plugin_dir = 'none'
 
 # Enables or disables automatic reconnect
 # type: boolean
@@ -150,34 +150,34 @@ plugin_dir = ''
 reconnect = false
 
 # Path to a private key file to use for TLS (absolute path)
-# type: string
-# default: ''
-ssl_key = ''
+# type: string, 'none'
+# default: 'none'
+ssl_key = 'none'
 
 # Path to the X509 certificate file to use for TLS (absolute path)
-# type: string
-# default: ''
-ssl_cert = ''
+# type: string, 'none'
+# default: 'none'
+ssl_cert = 'none'
 
 # Path to a PEM file that contains X509 certificates for trusted CAs (absolute path)
-# type: string
-# default: ''
-ssl_ca = ''
+# type: string, 'none'
+# default: 'none'
+ssl_ca = 'none'
 
 # Path to a directory that contains PEM files for trusted CAs
-# type: string
-# default: ''
-ssl_capath = ''
+# type: string, 'none'
+# default: 'none'
+ssl_capath = 'none'
 
 # List of permitted cipher suites for TLS
-# type: string
-# default: ''
-ssl_cipher = ''
+# type: string, 'none'
+# default: 'none'
+ssl_cipher = 'none'
 
 # Path to a PEM file containing revoked X509 certificates (absolute path)
-# type: string
-# default: ''
-ssl_crlpath = ''
+# type: string, 'none'
+# default: 'none'
+ssl_crlpath = 'none'
 
 # Enables server certificate verification
 # type: boolean
@@ -190,10 +190,10 @@ ssl_verify_cert = false
 ssl = false
 
 # A comma-separated list of TLS versions
-# type: List[string]
+# type: string, 'none'
 # valid options: TLSv1.0, TLSv1.1, TLSv1.2, TLSv1.3
-# default: ['TLSv1.2','TLSv1.3']
-tls_version = ['TLSv1.2','TLSv1.3']
+# default: 'TLSv1.2, TLSv1.3'
+tls_version = 'none'
 
 # Specifies the autocommit settings
 # type: boolean
@@ -225,7 +225,7 @@ clean_tokens_interval = 10 #1800 #seconds
 # type: boolean
 # options: true, false
 # default: true
-clean_verification = true
+clean_verification = false
 
 # The interval in which the loop for removing the expried tokens is run
 # The clean_tokens needs to be true for this setting to have an impact

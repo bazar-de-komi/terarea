@@ -102,17 +102,60 @@ class SQL:
         """
             Show the connection information
         """
-        msg = f"\nself.debug = '{self.debug}'\n"
-        msg += f"self.success = '{self.success}'\n"
-        msg += f"self.error = '{self.error}'\n"
-        msg += f"self.url = '{self.url}'\n"
-        msg += f"self.port = '{self.port}'\n"
-        msg += f"self.username = '{self.username}'\n"
-        msg += f"self.password = '{self.password}'\n"
-        msg += f"self.db_name = '{self.db_name}'\n"
-        msg += f"self.connection = '{self.connection}'\n"
-        msg += f"self.cursor = '{self.cursor}'\n"
-        msg += f"self.injection = '{self.injection}'\n"
+        msg = f"\nself.debug = '{self.debug}': {type(self.debug)}\n"
+        msg += f"self.success = '{self.success}': {type(self.success)}\n"
+        msg += f"self.error = '{self.error}': {type(self.error)}\n"
+        msg += f"self.url = '{self.url}': {type(self.url)}\n"
+        msg += f"self.port = '{self.port}': {type(self.port)}\n"
+        msg += f"self.username = '{self.username}': {type(self.username)}\n"
+        msg += f"self.password = '{self.password}': {type(self.password)}\n"
+        msg += f"self.db_name = '{self.db_name}': {type(self.db_name)}\n"
+        msg += f"self.connection = '{self.connection}':"
+        msg += f" {type(self.connection)}\n"
+        msg += f"self.cursor = '{self.cursor}': {type(self.cursor)}\n"
+        msg += f"self.injection = '{self.injection}': {type(self.injection)}\n"
+        msg += f"connection_timeout='{CONST.DATABASE_CONNECTION_TIMEOUT}':"
+        msg += f"{type(CONST.DATABASE_CONNECTION_TIMEOUT)}\n"
+        msg += f"read_timeout='{CONST.DATABASE_READ_TIMEOUT}':"
+        msg += f" {type(CONST.DATABASE_READ_TIMEOUT)}\n"
+        msg += f"write_timeout='{CONST.DATABASE_WRITE_TIMEOUT}':"
+        msg += f" {type(CONST.DATABASE_WRITE_TIMEOUT)}\n"
+        msg += f"local_infile='{CONST.DATABASE_LOCAL_INFILE}':"
+        msg += f" {type(CONST.DATABASE_LOCAL_INFILE)}\n"
+        msg += f"compress='{CONST.DATABASE_COMPRESS}':"
+        msg += f" {type(CONST.DATABASE_COMPRESS)}\n"
+        msg += f"init_command='{CONST.DATABASE_INIT_COMMAND}':"
+        msg += f" {type(CONST.DATABASE_INIT_COMMAND)}\n"
+        msg += f"default_file='{CONST.DATABASE_DEFAULT_FILE}':"
+        msg += f" {type(CONST.DATABASE_DEFAULT_FILE)}\n"
+        msg += f"default_group='{CONST.DATABASE_DEFAULT_GROUP}':"
+        msg += f" {type(CONST.DATABASE_DEFAULT_GROUP)}\n"
+        msg += f"plugin_dir='{CONST.DATABASE_PLUGIN_DIR}':"
+        msg += f" {type(CONST.DATABASE_PLUGIN_DIR)}\n"
+        msg += f"reconnect='{CONST.DATABASE_RECONNECT}':"
+        msg += f" {type(CONST.DATABASE_RECONNECT)}\n"
+        msg += f"ssl_key='{CONST.DATABASE_SSL_KEY}':"
+        msg += f" {type(CONST.DATABASE_SSL_KEY)}\n"
+        msg += f"ssl_cert='{CONST.DATABASE_SSL_CERT}':"
+        msg += f" {type(CONST.DATABASE_SSL_CERT)}\n"
+        msg += f"ssl_ca='{CONST.DATABASE_SSL_CA}':"
+        msg += f" {type(CONST.DATABASE_SSL_CA)}\n"
+        msg += f"ssl_capath='{CONST.DATABASE_SSL_CAPATH}':"
+        msg += f" {type(CONST.DATABASE_SSL_CAPATH)}\n"
+        msg += f"ssl_cipher='{CONST.DATABASE_SSL_CIPHER}':"
+        msg += f" {type(CONST.DATABASE_SSL_CIPHER)}\n"
+        msg += f"ssl_crlpath='{CONST.DATABASE_SSL_CRLPATH}':"
+        msg += f" {type(CONST.DATABASE_SSL_CRLPATH)}\n"
+        msg += f"ssl_verify_cert='{CONST.DATABASE_SSL_VERIFY_CERT}':"
+        msg += f" {type(CONST.DATABASE_SSL_VERIFY_CERT)}\n"
+        msg += f"ssl='{CONST.DATABASE_SSL}':"
+        msg += f" {type(CONST.DATABASE_SSL)}\n"
+        msg += f"tls_version='{CONST.DATABASE_TLS_VERSION}':"
+        msg += f" {type(CONST.DATABASE_TLS_VERSION)}\n"
+        msg += f"autocommit='{CONST.DATABASE_AUTOCOMMIT}':"
+        msg += f" {type(CONST.DATABASE_AUTOCOMMIT)}\n"
+        msg += f"converter='{CONST.DATABASE_CONVERTER}':"
+        msg += f" {type(CONST.DATABASE_CONVERTER)}\n"
         self.disp.log_debug(msg, func_name)
 
     def _protect_sql_cell(self, cell: str) -> str:
@@ -568,7 +611,7 @@ class SQL:
                 host=self.url,
                 port=self.port,
                 database=self.db_name,
-                connection_timeout=CONST.DATABASE_CONNECTION_TIMEOUT,
+                connect_timeout=CONST.DATABASE_CONNECTION_TIMEOUT,
                 read_timeout=CONST.DATABASE_READ_TIMEOUT,
                 write_timeout=CONST.DATABASE_WRITE_TIMEOUT,
                 local_infile=CONST.DATABASE_LOCAL_INFILE,
@@ -586,7 +629,7 @@ class SQL:
                 ssl_crlpath=CONST.DATABASE_SSL_CRLPATH,
                 ssl_verify_cert=CONST.DATABASE_SSL_VERIFY_CERT,
                 ssl=CONST.DATABASE_SSL,
-                tls_version=CONST.DATABASE_TLS_VERSION,
+                # tls_version=CONST.DATABASE_TLS_VERSION,
                 autocommit=CONST.DATABASE_AUTOCOMMIT,
                 converter=CONST.DATABASE_CONVERTER
             )
@@ -595,6 +638,16 @@ class SQL:
                 "connect_to_db"
             )
         except mariadb.Error as e:
+            self.disp.log_critical(
+                f"Failed to connect to {self.db_name}",
+                "connect_to_db"
+            )
+            self.connection = None
+            self.cursor = None
+            raise RuntimeError(
+                "Error: Failed to connect to the database."
+            ) from e
+        except mariadb.ProgrammingError as e:
             self.disp.log_critical(
                 f"Failed to connect to {self.db_name}",
                 "connect_to_db"

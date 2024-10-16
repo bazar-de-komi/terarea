@@ -5,6 +5,7 @@
 from typing import List, Any
 
 import toml
+import json
 import dotenv
 from display_tty import IDISP
 IDISP.logger.name = "Constants"
@@ -182,37 +183,37 @@ DATABASE_COMPRESS = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "compress", False
 )
 DATABASE_INIT_COMMAND = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "init_command", ''
+    TOML_CONF, "Server_configuration.database", "init_command", None
 )
 DATABASE_DEFAULT_FILE = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "default_file", ''
+    TOML_CONF, "Server_configuration.database", "default_file", None
 )
 DATABASE_DEFAULT_GROUP = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "default_group", ''
+    TOML_CONF, "Server_configuration.database", "default_group", None
 )
 DATABASE_PLUGIN_DIR = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "plugin_dir", ''
+    TOML_CONF, "Server_configuration.database", "plugin_dir", None
 )
 DATABASE_RECONNECT = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "reconnect", False
 )
 DATABASE_SSL_KEY = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "ssl_key", ''
+    TOML_CONF, "Server_configuration.database", "ssl_key", None
 )
 DATABASE_SSL_CERT = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "ssl_cert", ''
+    TOML_CONF, "Server_configuration.database", "ssl_cert", None
 )
 DATABASE_SSL_CA = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "ssl_ca", ''
+    TOML_CONF, "Server_configuration.database", "ssl_ca", None
 )
 DATABASE_SSL_CAPATH = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "ssl_capath", ''
+    TOML_CONF, "Server_configuration.database", "ssl_capath", None
 )
 DATABASE_SSL_CIPHER = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "ssl_cipher", ''
+    TOML_CONF, "Server_configuration.database", "ssl_cipher", None
 )
 DATABASE_SSL_CRLPATH = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "ssl_crlpath", ''
+    TOML_CONF, "Server_configuration.database", "ssl_crlpath", None
 )
 DATABASE_SSL_VERIFY_CERT = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "ssl_verify_cert", False
@@ -221,14 +222,23 @@ DATABASE_SSL = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "ssl", False
 )
 DATABASE_TLS_VERSION = _get_toml_variable(
-    TOML_CONF, "Server_configuration.database", "tls_version", "TLSv1.2,TLSv1.3"
+    TOML_CONF, "Server_configuration.database", "tls_version", None
 )
 DATABASE_AUTOCOMMIT = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "autocommit", False
 )
-DATABASE_CONVERTER = _get_toml_variable(
+
+_data = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "converter", {}
 )
+try:
+    DATABASE_CONVERTER = dict(_data)
+except ValueError as e:
+    try:
+        DATABASE_CONVERTER = json.loads(_data)
+    except json.JSONDecodeError:
+        IDISP.log_error(f"Failed to convert the database converter: {e}")
+        DATABASE_CONVERTER = {}
 
 # |- Cron settings
 CLEAN_TOKENS = _get_toml_variable(TOML_CONF, "Crons", "clean_tokens", True)
