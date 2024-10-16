@@ -161,7 +161,7 @@ ENABLE_TEST_CRONS = _get_toml_variable(
     TOML_CONF, "Crons", "enable_test_crons", False
 )
 TEST_CRONS_INTERVAL = int(_get_toml_variable(
-    TOML_CONF, "Crons", "test_crons_interval", 200
+    TOML_CONF, "Crons", "test_cron_interval", 200
 ))
 CHECK_ACTIONS_INTERVAL = int(_get_toml_variable(
     TOML_CONF, "Crons", "check_actions_interval", 300
