@@ -52,18 +52,23 @@ class Crons:
             seconds=CONST.CHECK_ACTIONS_INTERVAL
         )
         if CONST.ENABLE_TEST_CRONS is True:
-            test_delay = 200
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self._harass_database,
+                args=None,
+                trigger='interval',
+                seconds=CONST.TEST_CRONS_INTERVAL
+            )
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._test_current_date,
                 args=datetime.now,
                 trigger='interval',
-                seconds=test_delay
+                seconds=CONST.TEST_CRONS_INTERVAL
             )
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._test_hello_world,
                 args=None,
                 trigger='interval',
-                seconds=test_delay
+                seconds=CONST.TEST_CRONS_INTERVAL
             )
         if CONST.CLEAN_TOKENS is True:
             self.runtime_data.background_tasks_initialised.safe_add_task(
@@ -107,6 +112,68 @@ class Crons:
                 "_test_current_date"
             )
 
+    def _harass_database(self, *args: Any) -> None:
+        """_summary_
+            This is a test function that will print the current date.
+        Args:
+            date (datetime): _description_
+        """
+        title = "_harass_database"
+        self.disp.log_info(f"In {title}", title)
+        self.runtime_data.database_link.show_connection_info()
+        connection = self.runtime_data.database_link.is_connected()
+        self.disp.log_info(
+            f"Connection status: {connection}",
+            title
+        )
+        if connection is False:
+            self.runtime_data.database_link.connect_to_db()
+            connection = self.runtime_data.database_link.is_connected()
+            self.disp.log_info(
+                f"Connection status: {connection}",
+                title
+            )
+            connection = self.runtime_data.database_link.is_connected()
+            self.disp.log_info(
+                f"Connection status: {connection}",
+                title
+            )
+        if connection is True:
+            data = self.runtime_data.database_link.get_table_names()
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.describe_table(
+                CONST.TAB_CONNECTIONS
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_data_from_table(
+                CONST.TAB_CONNECTIONS, "*", "", True
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_table_column_names(
+                CONST.TAB_CONNECTIONS
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_table_size(
+                CONST.TAB_CONNECTIONS, "*", ""
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+        self.disp.log_info(f"Out of {title}.", title)
+
     def clean_expired_tokens(self) -> None:
         """_summary_
             Remove the tokens that have passed their lifespan.
@@ -121,6 +188,11 @@ class Crons:
             where="",
             beautify=True
         )
+        if isinstance(current_tokens, int) is True:
+            msg = "There is no data to be cleared in "
+            msg += f"{CONST.TAB_CONNECTIONS} table."
+            self.disp.log_warning(msg, title)
+            return
         self.disp.log_debug(f"current tokens = {current_tokens}", title)
         for i in current_tokens:
             if i[date_node] is not None and i[date_node] != "" and isinstance(i[date_node], str) is True:
@@ -158,6 +230,14 @@ class Crons:
             where="",
             beautify=True
         )
+        if isinstance(current_lines, int) is True:
+            msg = "There is no data to be cleared in "
+            msg += f"{CONST.TAB_VERIFICATION} table."
+            self.disp.log_warning(
+                msg,
+                title
+            )
+            return
         self.disp.log_debug(f"current lines = {current_lines}", title)
         for i in current_lines:
             if i[date_node] is not None and i[date_node] != "" and isinstance(i[date_node], str) is True:

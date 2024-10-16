@@ -89,25 +89,30 @@ class SQL:
         self.date_only: str = '%Y-%m-%d'
         self.date_and_time: str = '%Y-%m-%d %H:%M:%S'
         # --------------------------- debug section  ---------------------------
-        if self.debug is True:
-            msg = f"self.debug = '{self.debug}'\n"
-            msg += f"self.success = '{self.success}'\n"
-            msg += f"self.error = '{self.error}'\n"
-            msg += f"self.url = '{self.url}'\n"
-            msg += f"self.port = '{self.port}'\n"
-            msg += f"self.username = '{self.username}'\n"
-            msg += f"self.password = '{self.password}'\n"
-            msg += f"self.db_name = '{self.db_name}'\n"
-            msg += f"self.connection = '{self.connection}'\n"
-            msg += f"self.cursor = '{self.cursor}'\n"
-            msg += f"self.injection = '{self.injection}'\n"
-            self.disp.log_debug(msg, "__init__")
+        self.show_connection_info("__init__")
 
     def __del__(self) -> None:
         """
             Disconnect the database when the class is destroyed
         """
         self.disconnect_db()
+
+    def show_connection_info(self, func_name: str = "show_connection_info") -> None:
+        """
+            Show the connection information
+        """
+        msg = f"\nself.debug = '{self.debug}'\n"
+        msg += f"self.success = '{self.success}'\n"
+        msg += f"self.error = '{self.error}'\n"
+        msg += f"self.url = '{self.url}'\n"
+        msg += f"self.port = '{self.port}'\n"
+        msg += f"self.username = '{self.username}'\n"
+        msg += f"self.password = '{self.password}'\n"
+        msg += f"self.db_name = '{self.db_name}'\n"
+        msg += f"self.connection = '{self.connection}'\n"
+        msg += f"self.cursor = '{self.cursor}'\n"
+        msg += f"self.injection = '{self.injection}'\n"
+        self.disp.log_debug(msg, func_name)
 
     def _protect_sql_cell(self, cell: str) -> str:
         """_summary_
@@ -425,7 +430,15 @@ class SQL:
         Returns:
             int: _description_
         """
+        title = "_save"
         self.disp.log_debug("Saving changes to the database.", "_save")
+        self._reconnect()
+        if self.is_connected() is False:
+            self.disp.log_critical(
+                "Connection to the database is non-existant, aborting command.",
+                title
+            )
+            return self.error
         try:
             self.connection.commit()
             self.disp.log_debug("Changes saved.", "_save")
@@ -447,21 +460,28 @@ class SQL:
         Returns:
             int: _description_
         """
+        title = "_run_editing_command"
         self._reconnect()
+        if self.is_connected() is False:
+            self.disp.log_critical(
+                "Connection to the database is non-existant, aborting command.",
+                title
+            )
+            return self.error
         self.disp.log_debug(
             f"running command {sql_query}",
-            "_run_editing_command"
+            title
         )
         try:
             self.cursor.execute(sql_query)
             self.disp.log_debug(
                 "command ran successfully.",
-                "_run_editing_command"
+                title
             )
         except mariadb.Error as e:
             self.disp.log_error(
                 f"Failed to {action_type} data in '{table}': {str(e)}",
-                "_run_editing_command"
+                title
             )
             return self.error
         return self._save()
@@ -507,13 +527,21 @@ class SQL:
         Returns:
             List[str]: _description_
         """
-        self.disp.log_debug("Getting table names.", "get_table_names")
+        title = "get_table_names"
+        self.disp.log_debug("Getting table names.", title)
+        self._reconnect()
+        if self.is_connected() is False:
+            self.disp.log_critical(
+                "Connection to the database is non-existant, aborting command.",
+                title
+            )
+            return self.error
         self.cursor.execute("SHOW TABLES")
         tables = self.cursor.fetchall()
         data = []
         for i in tables:
             data.append(i[0])
-        self.disp.log_debug("Tables fetched", "get_table_names")
+        self.disp.log_debug("Tables fetched", title)
         return data
 
     def connect_to_db(self, username: str = "", password: str = "", db_name: str = "") -> None:
@@ -584,7 +612,7 @@ class SQL:
             )
             return False
 
-    def describe_table(self, table: str) -> List[Any]:
+    def describe_table(self, table: str) -> Union[int, List[Any]]:
         """_summary_
             This is the function in charge of fetching the headers of a table.
 
@@ -595,22 +623,25 @@ class SQL:
             RuntimeError: _description_
 
         Returns:
-            List[Any]: _description_
+            Union[int, List[Any]]: _description_: will return a list of the content you queried, otherwise self.error will be returned
         """
-        self.disp.log_debug(
-            f"describing table {table}",
-            "describe_table"
-        )
+        title = "describe_table"
+        self.disp.log_debug(f"describing table {table}", title)
         if self.injection.check_if_sql_injection(table) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
         try:
             self._reconnect()
+            if self.is_connected() is False:
+                self.disp.log_critical(
+                    "Connection to the database is non-existant, aborting command.",
+                    title
+                )
+                return self.error
             self.cursor.execute(f"DESCRIBE {table}")
         except mariadb.Error as e:
             self.disp.log_critical(
-                f" The table '{table}' does not exist.",
-                "describe_table"
+                f" The table '{table}' does not exist.", title
             )
             raise RuntimeError(
                 f"Error: The table '{table}' does not exist."
@@ -689,7 +720,7 @@ class SQL:
             where (Union[str, List[str]]): _description_
 
         Returns:
-            List[Dict[str, Any]]: _description_
+            Union[int, List[Dict[str, Any]]]: _description_: Will return the data you requested, self.error otherwise
         """
         self.disp.log_debug(
             f"fetching data from the table {table}",
@@ -709,11 +740,17 @@ class SQL:
         if where != "":
             sql_command += f" WHERE {where}"
         data = self.describe_table(table)
-        self._reconnect()
         self.disp.log_debug(
             f"sql_query = '{sql_command}'",
             "get_data_from_table"
         )
+        self._reconnect()
+        if self.is_connected() is False:
+            self.disp.log_critical(
+                "Connection to the database is non-existant, aborting command.",
+                "get_data_from_table"
+            )
+            return self.error
         self.cursor.execute(sql_command)
         table_data = self.cursor.fetchall()
         if beautify is False:
@@ -747,6 +784,12 @@ class SQL:
         if where != "":
             sql_command += f" WHERE {where}"
         self._reconnect()
+        if self.is_connected() is False:
+            self.disp.log_critical(
+                "Connection to the database is non-existant, aborting command.",
+                "get_table_size"
+            )
+            return (-1)
         self.disp.log_debug(
             f"sql_query = '{sql_command}'",
             "get_table_size"
