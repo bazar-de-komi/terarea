@@ -77,7 +77,7 @@ clean_tokens = true
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 1800 seconds (30 minutes)
-clean_tokens_interval = 1800 #seconds
+clean_tokens_interval = 10 #1800 #seconds
 
 # Enable verification cleaning (removing epxired lines)
 # type: boolean
@@ -90,7 +90,7 @@ clean_verification = true
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 900 seconds (15 minutes)
-clean_verification_interval = 900 #seconds
+clean_verification_interval = 10 #900 #seconds
 
 # Enable test cron functions
 # type: boolean
@@ -98,11 +98,17 @@ clean_verification_interval = 900 #seconds
 # default: false
 enable_test_crons = false
 
+# Test cron interval
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.
+# default: 200 seconds (~3 minutes)
+test_cron_interval = 200 #seconds
+
 # The interval in which the checks for actions are run
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 300 seconds (5 minutes)
-check_actions_interval = 300 #seconds
+check_actions_interval = 10 #300 #seconds
 
 # The verification section
 [Verification]
