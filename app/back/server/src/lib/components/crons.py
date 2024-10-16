@@ -45,26 +45,24 @@ class Crons:
         Returns:
             int: _description_: The overall status of the injection.
         """
-        if False is True:
-            self.runtime_data.background_tasks_initialised.safe_add_task(
-                func=self.check_actions,
-                args=None,
-                trigger='interval',
-                seconds=CONST.CHECK_ACTIONS_INTERVAL
-            )
+        self.runtime_data.background_tasks_initialised.safe_add_task(
+            func=self.check_actions,
+            args=None,
+            trigger='interval',
+            seconds=CONST.CHECK_ACTIONS_INTERVAL
+        )
         if CONST.ENABLE_TEST_CRONS is True:
-            test_delay = 200
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._test_current_date,
                 args=datetime.now,
                 trigger='interval',
-                seconds=test_delay
+                seconds=CONST.TEST_CRONS_INTERVAL
             )
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._test_hello_world,
                 args=None,
                 trigger='interval',
-                seconds=test_delay
+                seconds=CONST.TEST_CRONS_INTERVAL
             )
         if CONST.CLEAN_TOKENS is True:
             self.runtime_data.background_tasks_initialised.safe_add_task(
