@@ -92,6 +92,23 @@ forwarded_allow_ips = "none"
 # The settings for database connection for the server
 [Server_configuration.database]
 
+# Set the name to be used for the sql pool
+# type: string
+# default: "mypool"
+pool_name = "mypool"
+
+# Set the maximum size for the sql pool of connections
+# type: integer
+# options: 1 (no falback, not recommended) -> 64 (maximum allowed connections)
+# default: 10
+max_pool_connections = 10
+
+# Reset the connection of the node before returning it to the pool
+# type: boolean
+# options: true, false
+# default: true
+reset_pool_node_connection = true
+
 # The maximum delay for before the connection is considered dead
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
@@ -225,7 +242,7 @@ clean_tokens_interval = 10 #1800 #seconds
 # type: boolean
 # options: true, false
 # default: true
-clean_verification = false
+clean_verification = true
 
 # The interval in which the loop for removing the expried tokens is run
 # The clean_tokens needs to be true for this setting to have an impact

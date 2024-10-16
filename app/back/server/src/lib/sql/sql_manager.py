@@ -2,6 +2,7 @@ from typing import Union, List, Dict, Any
 from datetime import datetime
 
 import mariadb
+from mariadb import ConnectionPool
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 from .injection import Injection
 from ..components import constants as CONST
@@ -34,6 +35,7 @@ class SQL:
         self.password: str = password
         self.db_name: str = db_name
         # ----------------------------- sql section -----------------------------
+        self.pool: ConnectionPool = None
         self.connection = None
         self.cursor = None
         self.injection: Injection = Injection(
@@ -91,6 +93,8 @@ class SQL:
         self.date_and_time: str = '%Y-%m-%d %H:%M:%S'
         # --------------------------- debug section  ---------------------------
         self.show_connection_info("__init__")
+        # --------------------------- initialise pool --------------------------
+        self._recreate_pool()
 
     def __del__(self) -> None:
         """
@@ -102,7 +106,16 @@ class SQL:
         """
             Show the connection information
         """
-        msg = f"\nself.debug = '{self.debug}': {type(self.debug)}\n"
+        msg = "\n"
+        msg += f"pool_name = '{CONST.DATABASE_POOL_NAME}': "
+        msg += f"{type(CONST.DATABASE_POOL_NAME)}\n"
+        msg += "max_pool_connections = "
+        msg += f"'{CONST.DATABASE_MAX_POOL_CONNECTIONS}': "
+        msg += f"{type(CONST.DATABASE_MAX_POOL_CONNECTIONS)}\n"
+        msg += f"reset_pool_node_connection = "
+        msg += f"'{CONST.DATABASE_RESET_POOL_NODE_CONNECTION}': "
+        msg += f"{type(CONST.DATABASE_RESET_POOL_NODE_CONNECTION)}\n"
+        msg += f"self.debug = '{self.debug}': {type(self.debug)}\n"
         msg += f"self.success = '{self.success}': {type(self.success)}\n"
         msg += f"self.error = '{self.error}': {type(self.error)}\n"
         msg += f"self.url = '{self.url}': {type(self.url)}\n"
@@ -465,6 +478,7 @@ class SQL:
             Reconnect to the database.
         """
         if self.is_connected() is False:
+            self.disconnect_db()
             self.connect_to_db()
 
     def _save(self) -> int:
@@ -588,6 +602,21 @@ class SQL:
         self.disp.log_debug("Tables fetched", title)
         return data
 
+    def _recreate_pool(self) -> None:
+        """_summary_
+            Recreate the connection pool.
+        """
+        title = "_recreate_pool"
+        self.disp.log_debug("Recreating the connection pool.", title)
+        if self.pool is not None:
+            self.pool.close()
+            self.pool = None
+        self.pool = ConnectionPool(
+            pool_name=CONST.DATABASE_POOL_NAME,
+            pool_size=CONST.DATABASE_MAX_POOL_CONNECTIONS,
+            pool_reset_connection=CONST.DATABASE_RESET_POOL_NODE_CONNECTION
+        )
+
     def connect_to_db(self, username: str = "", password: str = "", db_name: str = "") -> None:
         """
             The function to connect to the database
@@ -598,12 +627,18 @@ class SQL:
             db_name (str, optional): Name of the database. Defaults to "".
         """
         self.disp.log_debug("Connecting to database", "connect_to_db")
+        reset_pool = False
         if username != "":
             self.username = username
+            reset_pool = True
         if password != "":
             self.password = password
+            reset_pool = True
         if db_name != "":
+            reset_pool = True
             self.db_name = db_name
+        if reset_pool is True:
+            self._recreate_pool()
         try:
             self.connection = mariadb.connect(
                 user=self.username,
@@ -637,17 +672,7 @@ class SQL:
                 f"Connected to {self.db_name}",
                 "connect_to_db"
             )
-        except mariadb.Error as e:
-            self.disp.log_critical(
-                f"Failed to connect to {self.db_name}",
-                "connect_to_db"
-            )
-            self.connection = None
-            self.cursor = None
-            raise RuntimeError(
-                "Error: Failed to connect to the database."
-            ) from e
-        except mariadb.ProgrammingError as e:
+        except (mariadb.Error, mariadb.ProgrammingError) as e:
             self.disp.log_critical(
                 f"Failed to connect to {self.db_name}",
                 "connect_to_db"
@@ -666,25 +691,19 @@ class SQL:
         Returns:
             bool: _description_
         """
+        title = "is_connected"
         self.disp.log_debug(
-            "Checking if we are still connected to the database.",
-            "is_connected"
+            "Checking if we are still connected to the database.", title
         )
         if self.connection is None:
-            self.disp.log_error(
-                "No active connection found.",
-                "is_connected"
-            )
+            self.disp.log_error("No active connection found.", title)
             return False
         try:
             self.connection.ping()
-            self.disp.log_info("Connection is alive.", "is_connected")
+            self.disp.log_info("Connection is alive.", title)
             return True
         except mariadb.Error as e:
-            self.disp.log_error(
-                f"Connection lost: {str(e)}",
-                "is_connected"
-            )
+            self.disp.log_error(f"Connection lost: {str(e)}", title)
             return False
 
     def describe_table(self, table: str) -> Union[int, List[Any]]:
@@ -714,14 +733,23 @@ class SQL:
                 )
                 return self.error
             self.cursor.execute(f"DESCRIBE {table}")
+            if self.cursor is not None and self.cursor._description is not None:
+                result = self.cursor.fetchall()
+                self.disp.log_debug(
+                    f"Description for table '{table}': {result}",
+                    title
+                )
+                return result
+            return self.error
         except mariadb.Error as e:
-            self.disp.log_critical(
-                f" The table '{table}' does not exist.", title
-            )
-            raise RuntimeError(
-                f"Error: The table '{table}' does not exist."
-            ) from e
-        return self.cursor.fetchall()
+            msg = f"ProgrammingError: The table '{table}' does not exist"
+            msg += " or the query failed."
+            self.disp.log_critical(msg, title)
+            raise RuntimeError(msg) from e
+        except RuntimeError as e:
+            msg = "Database error"
+            self.disp.log_critical(msg, title)
+            raise RuntimeError(msg) from e
 
     def insert_data_into_table(self, table: str, data: Union[List[List[str]], List[str]], column: Union[List[str], None] = None) -> int:
         """_summary_

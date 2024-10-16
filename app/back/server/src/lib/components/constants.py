@@ -167,6 +167,15 @@ SERVER_PROD_FORWARDED_ALLOW_IPS = _get_toml_variable(
 )
 
 # |- Server configuration -> database settings
+DATABASE_POOL_NAME = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "pool_name", None
+)
+DATABASE_MAX_POOL_CONNECTIONS = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "max_pool_connections", 10
+))
+DATABASE_RESET_POOL_NODE_CONNECTION = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "reset_pool_node_connection", True
+)
 DATABASE_CONNECTION_TIMEOUT = int(_get_toml_variable(
     TOML_CONF, "Server_configuration.database", "connection_timeout", 10
 ))
