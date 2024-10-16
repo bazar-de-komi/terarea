@@ -629,7 +629,7 @@ class SQL:
                 ssl_crlpath=CONST.DATABASE_SSL_CRLPATH,
                 ssl_verify_cert=CONST.DATABASE_SSL_VERIFY_CERT,
                 ssl=CONST.DATABASE_SSL,
-                # tls_version=CONST.DATABASE_TLS_VERSION,
+                tls_version=CONST.DATABASE_TLS_VERSION,
                 autocommit=CONST.DATABASE_AUTOCOMMIT,
                 converter=CONST.DATABASE_CONVERTER
             )
