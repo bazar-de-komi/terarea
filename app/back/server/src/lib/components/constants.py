@@ -187,7 +187,7 @@ DATABASE_INIT_COMMAND = _get_toml_variable(
 DATABASE_DEFAULT_FILE = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "default_file", ''
 )
-DATABASE_DEFAULT_GROUPE = _get_toml_variable(
+DATABASE_DEFAULT_GROUP = _get_toml_variable(
     TOML_CONF, "Server_configuration.database", "default_group", ''
 )
 DATABASE_PLUGIN_DIR = _get_toml_variable(

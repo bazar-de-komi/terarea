@@ -190,10 +190,10 @@ ssl_verify_cert = false
 ssl = false
 
 # A comma-separated list of TLS versions
-# type: string
+# type: List[string]
 # valid options: TLSv1.0, TLSv1.1, TLSv1.2, TLSv1.3
-# default: 'TLSv1.2,TLSv1.3'
-tls_version = 'TLSv1.2,TLSv1.3'
+# default: ['TLSv1.2','TLSv1.3']
+tls_version = ['TLSv1.2','TLSv1.3']
 
 # Specifies the autocommit settings
 # type: boolean

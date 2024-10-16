@@ -4,6 +4,7 @@ from datetime import datetime
 import mariadb
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 from .injection import Injection
+from ..components import constants as CONST
 
 
 class SQL:
@@ -566,7 +567,28 @@ class SQL:
                 password=self.password,
                 host=self.url,
                 port=self.port,
-                database=self.db_name
+                database=self.db_name,
+                connection_timeout=CONST.DATABASE_CONNECTION_TIMEOUT,
+                read_timeout=CONST.DATABASE_READ_TIMEOUT,
+                write_timeout=CONST.DATABASE_WRITE_TIMEOUT,
+                local_infile=CONST.DATABASE_LOCAL_INFILE,
+                compress=CONST.DATABASE_COMPRESS,
+                init_command=CONST.DATABASE_INIT_COMMAND,
+                default_file=CONST.DATABASE_DEFAULT_FILE,
+                default_group=CONST.DATABASE_DEFAULT_GROUP,
+                plugin_dir=CONST.DATABASE_PLUGIN_DIR,
+                reconnect=CONST.DATABASE_RECONNECT,
+                ssl_key=CONST.DATABASE_SSL_KEY,
+                ssl_cert=CONST.DATABASE_SSL_CERT,
+                ssl_ca=CONST.DATABASE_SSL_CA,
+                ssl_capath=CONST.DATABASE_SSL_CAPATH,
+                ssl_cipher=CONST.DATABASE_SSL_CIPHER,
+                ssl_crlpath=CONST.DATABASE_SSL_CRLPATH,
+                ssl_verify_cert=CONST.DATABASE_SSL_VERIFY_CERT,
+                ssl=CONST.DATABASE_SSL,
+                tls_version=CONST.DATABASE_TLS_VERSION,
+                autocommit=CONST.DATABASE_AUTOCOMMIT,
+                converter=CONST.DATABASE_CONVERTER
             )
             self.disp.log_info(
                 f"Connected to {self.db_name}",
