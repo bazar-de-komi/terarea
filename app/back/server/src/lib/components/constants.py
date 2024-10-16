@@ -130,6 +130,19 @@ SERVER_TIMEOUT_KEEP_ALIVE = _get_toml_variable(
     TOML_CONF, "Server_configuration", "timeout_keep_alive", 30
 )
 
+# |- Server configuration -> Status codes
+SUCCESS = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.status_codes", "success", 0
+))
+ERROR = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.status_codes", "error", 84
+))
+
+# |- Server configuration -> Debug
+DEBUG = _get_toml_variable(
+    TOML_CONF, "Server_configuration.debug_mode", "debug", False
+)
+
 # |- Server configuration -> development
 SERVER_DEV_RELOAD = _get_toml_variable(
     TOML_CONF, "Server_configuration.development", "reload", False
@@ -150,6 +163,71 @@ SERVER_PROD_PROXY_HEADERS = _get_toml_variable(
 )
 SERVER_PROD_FORWARDED_ALLOW_IPS = _get_toml_variable(
     TOML_CONF, "Server_configuration.production", "forwarded_allow_ips", None
+)
+
+# |- Server configuration -> database settings
+DATABASE_CONNECTION_TIMEOUT = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "connection_timeout", 10
+))
+DATABASE_READ_TIMEOUT = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "read_timeout", 10
+))
+DATABASE_WRITE_TIMEOUT = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "write_timeout", 10
+))
+DATABASE_LOCAL_INFILE = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "local_infile", False
+)
+DATABASE_COMPRESS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "compress", False
+)
+DATABASE_INIT_COMMAND = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "init_command", ''
+)
+DATABASE_DEFAULT_FILE = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "default_file", ''
+)
+DATABASE_DEFAULT_GROUPE = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "default_group", ''
+)
+DATABASE_PLUGIN_DIR = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "plugin_dir", ''
+)
+DATABASE_RECONNECT = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "reconnect", False
+)
+DATABASE_SSL_KEY = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_key", ''
+)
+DATABASE_SSL_CERT = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_cert", ''
+)
+DATABASE_SSL_CA = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_ca", ''
+)
+DATABASE_SSL_CAPATH = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_capath", ''
+)
+DATABASE_SSL_CIPHER = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_cipher", ''
+)
+DATABASE_SSL_CRLPATH = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_crlpath", ''
+)
+DATABASE_SSL_VERIFY_CERT = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_verify_cert", False
+)
+DATABASE_SSL = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl", False
+)
+DATABASE_TLS_VERSION = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "tls_version", "TLSv1.2,TLSv1.3"
+)
+DATABASE_AUTOCOMMIT = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "autocommit", False
+)
+DATABASE_CONVERTER = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "converter", {}
 )
 
 # |- Cron settings
@@ -177,22 +255,15 @@ CLEAN_VERIFICATION_INTERVAL = _get_toml_variable(
 EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
     TOML_CONF, "Verification", "email_verification_delay", 120
 ))
+CHECK_TOKEN_SIZE = int(_get_toml_variable(
+    TOML_CONF,  "Verification", "check_token_size", 4
+))
 RANDOM_MIN = int(_get_toml_variable(
     TOML_CONF,  "Verification", "random_min", 100000
 ))
 RANDOM_MAX = int(_get_toml_variable(
     TOML_CONF,  "Verification", "random_max", 999999
 ))
-CHECK_TOKEN_SIZE = int(_get_toml_variable(
-    TOML_CONF,  "Verification", "check_token_size", 4
-))
-
-# |- Status codes
-SUCCESS = int(_get_toml_variable(TOML_CONF, "Status_codes", "success", 0))
-ERROR = int(_get_toml_variable(TOML_CONF, "Status_codes", "error", 84))
-
-# |- Debug
-DEBUG = _get_toml_variable(TOML_CONF, "Debug_mode", "debug", False)
 
 # Json default keys
 JSON_TITLE: str = "title"

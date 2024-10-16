@@ -23,6 +23,32 @@ lifespan = "auto"
 # default: 30
 timeout_keep_alive = 5
 
+# To see a list of the unix codes, go to: https://chromium.googlesource.com/chromiumos/docs/+/master/constants/errnos.md
+# If you are on linux, you can run the command: errno -ls (or you can run: man 3 errno)
+# The status codes used by the program:
+[Server_configuration.status_codes]
+
+# The code when everything goes according to plan
+# type: integer
+# options: 0 (unix success code) -> 255 (abnormal termination)
+# The default code is 0 (unix: success) (epitech: standard success code)
+success = 0
+
+# The code when there is an error
+# type: integer
+# options: 0 (unix success code) -> 255 (abnormal termination)
+# The default code is 84 (unix: EILSEQ 84 Invalid or incomplete multibyte or wide character) (epitech: standard error code)
+error = 1
+
+# Debug mode, the mode that shows everything (almost) that is going on in the server
+# Be cautious, you may get a mind overflow with all the information.
+[Server_configuration.debug_mode]
+# This is a variable that will act on the general server on if to activate or not the debug mode
+# type: boolean
+# options: true, false
+# The default value is false
+debug = false
+
 # The configuration for development mode
 [Server_configuration.development]
 
@@ -62,6 +88,122 @@ proxy_headers = true
 # type: list[str], str, "none"
 # default: "none"
 forwarded_allow_ips = "none"
+
+# The settings for database connection for the server
+[Server_configuration.database]
+
+# The maximum delay for before the connection is considered dead
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
+# connector default settings: 28800 secs (8 hours)
+# default: 10
+connection_timeout = 10 # seconds
+
+# The maximum delay before a read command is considered failed
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
+# connector default settings: 28800 secs (8 hours)
+# default: 10
+read_timeout = 10 # seconds
+
+# The maximum delay beofre a wrtie command is considered failed
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
+# connector default settings: 28800 secs (8 hours)
+# default: 10
+write_timeout = 10 # seconds
+
+
+# Enables or disables the use of LOAD DATA LOCAL INFILE statements
+# type: boolean
+# default: false
+local_infile = false
+
+# Uses the compressed protocol for client-server communication
+# type: boolean
+# default: false
+compress = false
+
+# Command(s) which will be executed when connecting and reconnecting to the database server
+# type: string
+# default: ''
+init_command = ''
+
+# Read options from the specified option file
+# type: string
+# default: ''
+default_file = ''
+
+# Read options from the specified group
+# type: string
+# default: ''
+default_group = ''
+
+# Directory which contains MariaDB client plugins
+# type: string
+# default: ''
+plugin_dir = ''
+
+# Enables or disables automatic reconnect
+# type: boolean
+# default: false
+reconnect = false
+
+# Path to a private key file to use for TLS (absolute path)
+# type: string
+# default: ''
+ssl_key = ''
+
+# Path to the X509 certificate file to use for TLS (absolute path)
+# type: string
+# default: ''
+ssl_cert = ''
+
+# Path to a PEM file that contains X509 certificates for trusted CAs (absolute path)
+# type: string
+# default: ''
+ssl_ca = ''
+
+# Path to a directory that contains PEM files for trusted CAs
+# type: string
+# default: ''
+ssl_capath = ''
+
+# List of permitted cipher suites for TLS
+# type: string
+# default: ''
+ssl_cipher = ''
+
+# Path to a PEM file containing revoked X509 certificates (absolute path)
+# type: string
+# default: ''
+ssl_crlpath = ''
+
+# Enables server certificate verification
+# type: boolean
+# default: false
+ssl_verify_cert = false
+
+# Forces the connection to use TLS security, or it will fail
+# type: boolean
+# default: false
+ssl = false
+
+# A comma-separated list of TLS versions
+# type: string
+# valid options: TLSv1.0, TLSv1.1, TLSv1.2, TLSv1.3
+# default: 'TLSv1.2,TLSv1.3'
+tls_version = 'TLSv1.2,TLSv1.3'
+
+# Specifies the autocommit settings
+# type: boolean
+# default: false
+autocommit = false
+
+# Specifies a conversion dictionary (FIELD_TYPE values mapped to conversion functions)
+# type: dictionary
+# default: {}
+converter = {}
 
 
 # The settings for the automation of the cache of the program.
@@ -137,31 +279,6 @@ random_min = 100000
 # default: 999999
 random_max = 999999
 
-# To see a list of the unix codes, go to: https://chromium.googlesource.com/chromiumos/docs/+/master/constants/errnos.md
-# If you are on linux, you can run the command: errno -ls (or you can run: man 3 errno)
-# The status codes used by the program:
-[Status_codes]
-
-# The code when everything goes according to plan
-# type: integer
-# options: 0 (unix success code) -> 255 (abnormal termination)
-# The default code is 0 (unix: success) (epitech: standard success code)
-success = 0
-
-# The code when there is an error
-# type: integer
-# options: 0 (unix success code) -> 255 (abnormal termination)
-# The default code is 84 (unix: EILSEQ 84 Invalid or incomplete multibyte or wide character) (epitech: standard error code)
-error = 1
-
-# Debug mode, the mode that shows everything (almost) that is going on in the server
-# Be cautious, you may get a mind overflow with all the information.
-[Debug_mode]
-# This is a variable that will act on the general server on if to activate or not the debug mode
-# type: boolean
-# options: true, false
-# The default value is false
-debug = false
 
 # Arg, here comes the test territory
 [Test]
