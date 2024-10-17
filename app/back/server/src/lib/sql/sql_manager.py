@@ -1,10 +1,17 @@
+"""
+    File in charge of containing the interfacing between an sql library and the program.
+    This contains functions that simplify the process of interracting with databases as well as check for injection attempts.
+"""
 from typing import Union, List, Dict, Any
-from datetime import datetime
 
-import mariadb
-from mariadb import ConnectionPool
+# import mariadb
+# from mariadb import ConnectionPool
+import mysql.connector
+import mysql.connector.cursor
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
+from . import sql_constants as SCONST
 from .injection import Injection
+from .time_manipulation import TimeManipulation
 from ..components import constants as CONST
 
 
@@ -35,14 +42,20 @@ class SQL:
         self.password: str = password
         self.db_name: str = db_name
         # ----------------------------- sql section -----------------------------
-        self.pool: ConnectionPool = None
-        self.connection = None
-        self.cursor = None
+        self.pool: mysql.connector.pooling.MySQLConnectionPool = None
+        self.connection: mysql.connector.pooling.PooledMySQLConnection = None
+        self.cursor: mysql.connector.cursor.MySQLCursor = None
         self.injection: Injection = Injection(
             self.error,
             self.success,
             self.debug
         )
+        # ---------------------------- Time logger  ----------------------------
+        self.time_manipulation: TimeManipulation = TimeManipulation(self.debug)
+        self.datetime_to_string: TimeManipulation.datetime_to_string = self.time_manipulation.datetime_to_string
+        self.string_to_datetime: TimeManipulation.string_to_datetime = self.time_manipulation.string_to_datetime
+        self._get_correct_now_value: TimeManipulation.get_correct_now_value = self.time_manipulation.get_correct_now_value
+        self._get_correct_current_date_value: TimeManipulation.get_correct_current_date_value = self.time_manipulation.get_correct_current_date_value
         # --------------------------- logger section ---------------------------
         self.disp: Disp = Disp(
             TOML_CONF,
@@ -52,45 +65,11 @@ class SQL:
             logger=self.__class__.__name__
         )
         # ----------------- Database risky keyword sanitising  -----------------
-        self.risky_keywords: List[str] = [
-            "add", "all", "alter", "analyze", "and", "as", "asc", "asensitive", "before", "between",
-            "bigint", "binary", "blob", "both", "by", "call", "cascade", "case", "change", "char",
-            "character", "check", "collate", "column", "condition", "constraint", "continue",
-            "convert", "create", "cross", "current_date", "current_time", "current_timestamp",
-            "cursor", "database", "databases", "day_hour", "day_microsecond", "day_minute",
-            "day_second", "dec", "decimal", "declare", "default", "delayed", "delete", "desc",
-            "describe", "deterministic", "distinct", "distinctrow", "div", "double", "drop",
-            "dual", "each", "else", "elseif", "enclosed", "escaped", "exists", "exit", "explain",
-            "false", "fetch", "float", "for", "force", "foreign", "from", "fulltext", "general",
-            "grant", "group", "having", "high_priority", "hour_microsecond", "hour_minute",
-            "hour_second", "if", "ignore", "in", "index", "infile", "inner", "inout",
-            "insensitive", "insert", "int", "integer", "interval", "into", "is", "iterate", "join",
-            "key", "keys", "kill", "leading", "leave", "left", "like", "limit", "linear", "lines",
-            "load", "localtime", "localtimestamp", "lock", "long", "longblob", "longtext", "loop",
-            "low_priority", "master_ssl_verify_server_cert", "match", "maxvalue", "mediumblob",
-            "mediumint", "mediumtext", "middleint", "minute_microsecond", "minute_second", "mod",
-            "modifies", "natural", "not", "no_write_to_binlog", "null", "numeric", "on", "optimize",
-            "option", "optionally", "or", "order", "out", "outer", "outfile", "precision", "primary",
-            "procedure", "purge", "range", "read", "reads", "read_write", "real", "references",
-            "regexp", "release", "rename", "repeat", "replace", "require", "resignal", "restrict",
-            "return", "revoke", "right", "rlike", "schema", "schemas", "second_microsecond",
-            "select", "sensitive", "separator", "set", "show", "signal", "smallint", "spatial",
-            "specific", "sql", "sqlexception", "sqlstate", "sqlwarning", "sql_big_result",
-            "sql_calc_found_rows", "sql_small_result", "ssl", "starting", "stored", "straight_join",
-            "table", "terminated", "then", "tinyblob", "tinyint", "tinytext", "to", "trailing",
-            "trigger", "true", "undo", "union", "unique", "unlock", "unsigned", "update", "usage",
-            "use", "using", "utc_date", "utc_time", "utc_timestamp", "values", "varbinary",
-            "varchar", "varcharacter", "varying", "virtual", "when", "where", "while", "with",
-            "write", "xor", "year_month", "zerofill"
-        ]
-        self.keyword_logic_gates: List[str] = [
-            'and', 'or', 'not', 'xor', 'between', 'in', 'is', 'like', 'regexp', 'rlike', 'null', 'true', 'false', 'exists',
-            'distinct', 'limit', 'having', 'join', 'union', 'current_date', 'current_time', 'current_timestamp', 'utc_date',
-            'utc_time', 'utc_timestamp', 'mod', 'if'
-        ]
+        self.risky_keywords: List[str] = SCONST.RISKY_KEYWORDS
+        self.keyword_logic_gates: List[str] = SCONST.KEYWORD_LOGIC_GATES
         # -------------------------- datetime parsing --------------------------
-        self.date_only: str = '%Y-%m-%d'
-        self.date_and_time: str = '%Y-%m-%d %H:%M:%S'
+        self.date_only: str = SCONST.DATE_ONLY
+        self.date_and_time: str = SCONST.DATE_AND_TIME
         # --------------------------- debug section  ---------------------------
         self.show_connection_info("__init__")
         # --------------------------- initialise pool --------------------------
@@ -112,7 +91,7 @@ class SQL:
         msg += "max_pool_connections = "
         msg += f"'{CONST.DATABASE_MAX_POOL_CONNECTIONS}': "
         msg += f"{type(CONST.DATABASE_MAX_POOL_CONNECTIONS)}\n"
-        msg += f"reset_pool_node_connection = "
+        msg += "reset_pool_node_connection = "
         msg += f"'{CONST.DATABASE_RESET_POOL_NODE_CONNECTION}': "
         msg += f"{type(CONST.DATABASE_RESET_POOL_NODE_CONNECTION)}\n"
         msg += f"self.debug = '{self.debug}': {type(self.debug)}\n"
@@ -127,48 +106,48 @@ class SQL:
         msg += f" {type(self.connection)}\n"
         msg += f"self.cursor = '{self.cursor}': {type(self.cursor)}\n"
         msg += f"self.injection = '{self.injection}': {type(self.injection)}\n"
-        msg += f"connection_timeout='{CONST.DATABASE_CONNECTION_TIMEOUT}':"
-        msg += f"{type(CONST.DATABASE_CONNECTION_TIMEOUT)}\n"
-        msg += f"read_timeout='{CONST.DATABASE_READ_TIMEOUT}':"
-        msg += f" {type(CONST.DATABASE_READ_TIMEOUT)}\n"
-        msg += f"write_timeout='{CONST.DATABASE_WRITE_TIMEOUT}':"
-        msg += f" {type(CONST.DATABASE_WRITE_TIMEOUT)}\n"
-        msg += f"local_infile='{CONST.DATABASE_LOCAL_INFILE}':"
-        msg += f" {type(CONST.DATABASE_LOCAL_INFILE)}\n"
-        msg += f"compress='{CONST.DATABASE_COMPRESS}':"
-        msg += f" {type(CONST.DATABASE_COMPRESS)}\n"
-        msg += f"init_command='{CONST.DATABASE_INIT_COMMAND}':"
-        msg += f" {type(CONST.DATABASE_INIT_COMMAND)}\n"
-        msg += f"default_file='{CONST.DATABASE_DEFAULT_FILE}':"
-        msg += f" {type(CONST.DATABASE_DEFAULT_FILE)}\n"
-        msg += f"default_group='{CONST.DATABASE_DEFAULT_GROUP}':"
-        msg += f" {type(CONST.DATABASE_DEFAULT_GROUP)}\n"
-        msg += f"plugin_dir='{CONST.DATABASE_PLUGIN_DIR}':"
-        msg += f" {type(CONST.DATABASE_PLUGIN_DIR)}\n"
-        msg += f"reconnect='{CONST.DATABASE_RECONNECT}':"
-        msg += f" {type(CONST.DATABASE_RECONNECT)}\n"
-        msg += f"ssl_key='{CONST.DATABASE_SSL_KEY}':"
-        msg += f" {type(CONST.DATABASE_SSL_KEY)}\n"
-        msg += f"ssl_cert='{CONST.DATABASE_SSL_CERT}':"
-        msg += f" {type(CONST.DATABASE_SSL_CERT)}\n"
-        msg += f"ssl_ca='{CONST.DATABASE_SSL_CA}':"
-        msg += f" {type(CONST.DATABASE_SSL_CA)}\n"
-        msg += f"ssl_capath='{CONST.DATABASE_SSL_CAPATH}':"
-        msg += f" {type(CONST.DATABASE_SSL_CAPATH)}\n"
-        msg += f"ssl_cipher='{CONST.DATABASE_SSL_CIPHER}':"
-        msg += f" {type(CONST.DATABASE_SSL_CIPHER)}\n"
-        msg += f"ssl_crlpath='{CONST.DATABASE_SSL_CRLPATH}':"
-        msg += f" {type(CONST.DATABASE_SSL_CRLPATH)}\n"
-        msg += f"ssl_verify_cert='{CONST.DATABASE_SSL_VERIFY_CERT}':"
-        msg += f" {type(CONST.DATABASE_SSL_VERIFY_CERT)}\n"
-        msg += f"ssl='{CONST.DATABASE_SSL}':"
-        msg += f" {type(CONST.DATABASE_SSL)}\n"
-        msg += f"tls_version='{CONST.DATABASE_TLS_VERSION}':"
-        msg += f" {type(CONST.DATABASE_TLS_VERSION)}\n"
-        msg += f"autocommit='{CONST.DATABASE_AUTOCOMMIT}':"
-        msg += f" {type(CONST.DATABASE_AUTOCOMMIT)}\n"
-        msg += f"converter='{CONST.DATABASE_CONVERTER}':"
-        msg += f" {type(CONST.DATABASE_CONVERTER)}\n"
+        # msg += f"connection_timeout='{CONST.DATABASE_CONNECTION_TIMEOUT}':"
+        # msg += f"{type(CONST.DATABASE_CONNECTION_TIMEOUT)}\n"
+        # msg += f"read_timeout='{CONST.DATABASE_READ_TIMEOUT}':"
+        # msg += f" {type(CONST.DATABASE_READ_TIMEOUT)}\n"
+        # msg += f"write_timeout='{CONST.DATABASE_WRITE_TIMEOUT}':"
+        # msg += f" {type(CONST.DATABASE_WRITE_TIMEOUT)}\n"
+        # msg += f"local_infile='{CONST.DATABASE_LOCAL_INFILE}':"
+        # msg += f" {type(CONST.DATABASE_LOCAL_INFILE)}\n"
+        # msg += f"compress='{CONST.DATABASE_COMPRESS}':"
+        # msg += f" {type(CONST.DATABASE_COMPRESS)}\n"
+        # msg += f"init_command='{CONST.DATABASE_INIT_COMMAND}':"
+        # msg += f" {type(CONST.DATABASE_INIT_COMMAND)}\n"
+        # msg += f"default_file='{CONST.DATABASE_DEFAULT_FILE}':"
+        # msg += f" {type(CONST.DATABASE_DEFAULT_FILE)}\n"
+        # msg += f"default_group='{CONST.DATABASE_DEFAULT_GROUP}':"
+        # msg += f" {type(CONST.DATABASE_DEFAULT_GROUP)}\n"
+        # msg += f"plugin_dir='{CONST.DATABASE_PLUGIN_DIR}':"
+        # msg += f" {type(CONST.DATABASE_PLUGIN_DIR)}\n"
+        # msg += f"reconnect='{CONST.DATABASE_RECONNECT}':"
+        # msg += f" {type(CONST.DATABASE_RECONNECT)}\n"
+        # msg += f"ssl_key='{CONST.DATABASE_SSL_KEY}':"
+        # msg += f" {type(CONST.DATABASE_SSL_KEY)}\n"
+        # msg += f"ssl_cert='{CONST.DATABASE_SSL_CERT}':"
+        # msg += f" {type(CONST.DATABASE_SSL_CERT)}\n"
+        # msg += f"ssl_ca='{CONST.DATABASE_SSL_CA}':"
+        # msg += f" {type(CONST.DATABASE_SSL_CA)}\n"
+        # msg += f"ssl_capath='{CONST.DATABASE_SSL_CAPATH}':"
+        # msg += f" {type(CONST.DATABASE_SSL_CAPATH)}\n"
+        # msg += f"ssl_cipher='{CONST.DATABASE_SSL_CIPHER}':"
+        # msg += f" {type(CONST.DATABASE_SSL_CIPHER)}\n"
+        # msg += f"ssl_crlpath='{CONST.DATABASE_SSL_CRLPATH}':"
+        # msg += f" {type(CONST.DATABASE_SSL_CRLPATH)}\n"
+        # msg += f"ssl_verify_cert='{CONST.DATABASE_SSL_VERIFY_CERT}':"
+        # msg += f" {type(CONST.DATABASE_SSL_VERIFY_CERT)}\n"
+        # msg += f"ssl='{CONST.DATABASE_SSL}':"
+        # msg += f" {type(CONST.DATABASE_SSL)}\n"
+        # msg += f"tls_version='{CONST.DATABASE_TLS_VERSION}':"
+        # msg += f" {type(CONST.DATABASE_TLS_VERSION)}\n"
+        # msg += f"autocommit='{CONST.DATABASE_AUTOCOMMIT}':"
+        # msg += f" {type(CONST.DATABASE_AUTOCOMMIT)}\n"
+        # msg += f"converter='{CONST.DATABASE_CONVERTER}':"
+        # msg += f" {type(CONST.DATABASE_CONVERTER)}\n"
         self.disp.log_debug(msg, func_name)
 
     def _protect_sql_cell(self, cell: str) -> str:
@@ -192,81 +171,6 @@ class SQL:
             else:
                 result += char
         return result
-
-    def datetime_to_string(self, datetime_instance: datetime, date_only: bool = False, sql_mode: bool = False) -> str:
-        """_summary_
-            Convert a datetime instance to a string.
-
-        Args:
-            datetime_instance (datetime): _description_: The datetime item
-            date_only (bool, optional): _description_. Defaults to False.: if True will only return the date section, otherwise will return the date and time section.
-            sql_mode (bool, optional): _description_. Defaults to False.: if True, will add the microseconds to the response so that it can be directly inserted into an sql command.
-
-        Raises:
-            ValueError: _description_: If the datetime instance is not a datetime, a valueerror is raised.
-
-        Returns:
-            str: _description_: A string instance of the datetime.
-        """
-
-        if isinstance(datetime_instance, datetime) is False:
-            self.disp.log_error(
-                "The input is not a datetime instance.",
-                "datetime_to_string"
-            )
-            raise ValueError("Error: Expected a datetime instance.")
-        if date_only is True:
-            return datetime_instance.strftime(self.date_only)
-        microsecond = ""
-        if sql_mode is True:
-            microsecond = datetime_instance.strftime("%f")[:3]
-        converted_time = datetime_instance.strftime(self.date_and_time)
-        return f"{converted_time}.{microsecond}"
-
-    def string_to_datetime(self, datetime_string_instance: str, date_only: bool = False) -> str:
-        """_summary_
-            Convert a datetime instance to a string.
-
-        Args:
-            datetime_string_instance (str): _description_: The string datetime item
-            date_only (bool, optional): _description_. Defaults to False.: if True will only return the date section, otherwise will return the date and time section.
-
-        Raises:
-            ValueError: _description_: If the datetime instance is not a datetime, a valueerror is raised.
-
-        Returns:
-            str: _description_: A string instance of the datetime.
-        """
-
-        if isinstance(datetime_string_instance, str) is False:
-            self.disp.log_error(
-                "The input is not a string instance.",
-                "string_to_datetime"
-            )
-            raise ValueError("Error: Expected a string instance.")
-        if date_only is True:
-            return datetime.strptime(datetime_string_instance, self.date_only)
-        return datetime.strptime(datetime_string_instance, self.date_and_time)
-
-    def _get_correct_now_value(self) -> str:
-        """_summary_
-            Get the current date and time in the correct format for the database.
-
-        Returns:
-            str: _description_
-        """
-        current_time = datetime.now()
-        return current_time.strftime(self.date_and_time)
-
-    def _get_correct_current_date_value(self) -> str:
-        """_summary_
-            Get the current date and time in the correct format for the database.
-
-        Returns:
-            str: _description_
-        """
-        current_time = datetime.now()
-        return current_time.strftime(self.date_only)
 
     def _beautify_table(self, column_names: List[str], table_content: List[List[Any]]) -> Union[List[Dict[str, Any]], int]:
         """_summary_
@@ -501,7 +405,7 @@ class SQL:
             self.connection.commit()
             self.disp.log_debug("Changes saved.", "_save")
             return self.success
-        except mariadb.Error as e:
+        except mysql.connector.Error as e:
             self.disp.log_error(
                 f"Failed to save changes: {str(e)}",
                 "_save"
@@ -536,7 +440,7 @@ class SQL:
                 "command ran successfully.",
                 title
             )
-        except mariadb.Error as e:
+        except mysql.connector.Error as e:
             self.disp.log_error(
                 f"Failed to {action_type} data in '{table}': {str(e)}",
                 title
@@ -609,13 +513,28 @@ class SQL:
         title = "_recreate_pool"
         self.disp.log_debug("Recreating the connection pool.", title)
         if self.pool is not None:
-            self.pool.close()
+            del self.pool
             self.pool = None
-        self.pool = ConnectionPool(
+        self.pool = mysql.connector.pooling.MySQLConnectionPool(
             pool_name=CONST.DATABASE_POOL_NAME,
             pool_size=CONST.DATABASE_MAX_POOL_CONNECTIONS,
-            pool_reset_connection=CONST.DATABASE_RESET_POOL_NODE_CONNECTION
+            pool_reset_session=CONST.DATABASE_RESET_POOL_NODE_CONNECTION,
+            user=self.username,
+            password=self.password,
+            host=self.url,
+            port=self.port,
+            database=self.db_name
         )
+
+    def _abort_attempt(self) -> None:
+        """_summary_
+        """
+        if self.cursor is not None:
+            self.cursor.close()
+            self.cursor = None
+        if self.connection is not None:
+            self.connection.close()
+            self.connection = None
 
     def connect_to_db(self, username: str = "", password: str = "", db_name: str = "") -> None:
         """
@@ -626,7 +545,8 @@ class SQL:
             password (str, optional): Password of the account. Defaults to "".
             db_name (str, optional): Name of the database. Defaults to "".
         """
-        self.disp.log_debug("Connecting to database", "connect_to_db")
+        title = "connect_to_db"
+        self.disp.log_debug("Connecting to database", title)
         reset_pool = False
         if username != "":
             self.username = username
@@ -640,100 +560,120 @@ class SQL:
         if reset_pool is True:
             self._recreate_pool()
         try:
-            self.connection = mariadb.connect(
-                user=self.username,
-                password=self.password,
-                host=self.url,
-                port=self.port,
-                database=self.db_name,
-                connect_timeout=CONST.DATABASE_CONNECTION_TIMEOUT,
-                read_timeout=CONST.DATABASE_READ_TIMEOUT,
-                write_timeout=CONST.DATABASE_WRITE_TIMEOUT,
-                local_infile=CONST.DATABASE_LOCAL_INFILE,
-                compress=CONST.DATABASE_COMPRESS,
-                init_command=CONST.DATABASE_INIT_COMMAND,
-                default_file=CONST.DATABASE_DEFAULT_FILE,
-                default_group=CONST.DATABASE_DEFAULT_GROUP,
-                plugin_dir=CONST.DATABASE_PLUGIN_DIR,
-                reconnect=CONST.DATABASE_RECONNECT,
-                ssl_key=CONST.DATABASE_SSL_KEY,
-                ssl_cert=CONST.DATABASE_SSL_CERT,
-                ssl_ca=CONST.DATABASE_SSL_CA,
-                ssl_capath=CONST.DATABASE_SSL_CAPATH,
-                ssl_cipher=CONST.DATABASE_SSL_CIPHER,
-                ssl_crlpath=CONST.DATABASE_SSL_CRLPATH,
-                ssl_verify_cert=CONST.DATABASE_SSL_VERIFY_CERT,
-                ssl=CONST.DATABASE_SSL,
-                tls_version=CONST.DATABASE_TLS_VERSION,
-                autocommit=CONST.DATABASE_AUTOCOMMIT,
-                converter=CONST.DATABASE_CONVERTER
-            )
+            self.connection = self.pool.get_connection()
+            # self.connection = mariadb.connect(
+            #     user=self.username,
+            #     password=self.password,
+            #     host=self.url,
+            #     port=self.port,
+            #     database=self.db_name,
+            #     connect_timeout=CONST.DATABASE_CONNECTION_TIMEOUT,
+            #     read_timeout=CONST.DATABASE_READ_TIMEOUT,
+            #     write_timeout=CONST.DATABASE_WRITE_TIMEOUT,
+            #     local_infile=CONST.DATABASE_LOCAL_INFILE,
+            #     compress=CONST.DATABASE_COMPRESS,
+            #     init_command=CONST.DATABASE_INIT_COMMAND,
+            #     default_file=CONST.DATABASE_DEFAULT_FILE,
+            #     default_group=CONST.DATABASE_DEFAULT_GROUP,
+            #     plugin_dir=CONST.DATABASE_PLUGIN_DIR,
+            #     reconnect=CONST.DATABASE_RECONNECT,
+            #     ssl_key=CONST.DATABASE_SSL_KEY,
+            #     ssl_cert=CONST.DATABASE_SSL_CERT,
+            #     ssl_ca=CONST.DATABASE_SSL_CA,
+            #     ssl_capath=CONST.DATABASE_SSL_CAPATH,
+            #     ssl_cipher=CONST.DATABASE_SSL_CIPHER,
+            #     ssl_crlpath=CONST.DATABASE_SSL_CRLPATH,
+            #     ssl_verify_cert=CONST.DATABASE_SSL_VERIFY_CERT,
+            #     ssl=CONST.DATABASE_SSL,
+            #     tls_version=CONST.DATABASE_TLS_VERSION,
+            #     autocommit=CONST.DATABASE_AUTOCOMMIT,
+            #     converter=CONST.DATABASE_CONVERTER
+            # )
             self.disp.log_info(
                 f"Connected to {self.db_name}",
                 "connect_to_db"
             )
-        except (mariadb.Error, mariadb.ProgrammingError) as e:
-            self.disp.log_critical(
-                f"Failed to connect to {self.db_name}",
-                "connect_to_db"
-            )
-            self.connection = None
-            self.cursor = None
-            raise RuntimeError(
-                "Error: Failed to connect to the database."
-            ) from e
-        self.cursor = self.connection.cursor()
+        except mysql.connector.Error as e:
+            msg = f"Failed to connect to {self.db_name}"
+            self.disp.log_critical(msg, title)
+            self._abort_attempt()
+            raise RuntimeError(f"Error: {msg}") from e
+        try:
+            self.cursor = self.connection.cursor()
+        except Exception as e:
+            msg = "Failed to create a cursor."
+            self.disp.log_error(msg, title)
+            self._abort_attempt()
+            raise RuntimeError(msg) from e
 
     def is_connected(self) -> bool:
         """_summary_
             Check if the connection to the database is still active.
 
         Returns:
-            bool: _description_
+            bool: _description_: True if the connection is active, False otherwise.
         """
         title = "is_connected"
         self.disp.log_debug(
             "Checking if we are still connected to the database.", title
         )
         if self.connection is None:
-            self.disp.log_error("No active connection found.", title)
+            self.disp.log_error("No active connection object found.", title)
             return False
         try:
-            self.connection.ping()
+            self.connection.ping(reconnect=False)
             self.disp.log_info("Connection is alive.", title)
             return True
-        except mariadb.Error as e:
-            self.disp.log_error(f"Connection lost: {str(e)}", title)
+        except mysql.connector.errors.InterfaceError as ie:
+            self.disp.log_error(
+                f"InterfaceError: Connection is no longer active: {str(ie)}",
+                title
+            )
+            return False
+        except mysql.connector.errors.OperationalError as oe:
+            msg = "OperationalError: Lost connection or server "
+            msg += f"issue: {str(oe)}"
+            self.disp.log_error(msg, title)
+            return False
+        except mysql.connector.Error as e:
+            self.disp.log_error(
+                f"MySQL Error: Connection lost: {str(e)}", title
+            )
+            return False
+        except Exception as e:
+            self.disp.log_error(
+                f"Unexpected error while checking connection: {str(e)}", title
+            )
             return False
 
     def describe_table(self, table: str) -> Union[int, List[Any]]:
         """_summary_
-            This is the function in charge of fetching the headers of a table.
+            Fetch the headers (description) of a table from the database.
 
         Args:
-            table (str): _description_
+            table (str): _description_: The name of the table to describe.
 
         Raises:
-            RuntimeError: _description_
+            RuntimeError: _description_: If there is a critical issue with the table or the database connection.
 
         Returns:
-            Union[int, List[Any]]: _description_: will return a list of the content you queried, otherwise self.error will be returned
+            Union[int, List[Any]]: _description_: A list containing the description of the table, or self.error if an error occurs.
         """
         title = "describe_table"
-        self.disp.log_debug(f"describing table {table}", title)
+        self.disp.log_debug(f"Describing table {table}", title)
         if self.injection.check_if_sql_injection(table) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
+        self._reconnect()
+        if self.is_connected() is False:
+            self.disp.log_critical(
+                "Connection to the database is non-existant, aborting command.",
+                title
+            )
+            return self.error
         try:
-            self._reconnect()
-            if self.is_connected() is False:
-                self.disp.log_critical(
-                    "Connection to the database is non-existant, aborting command.",
-                    title
-                )
-                return self.error
             self.cursor.execute(f"DESCRIBE {table}")
-            if self.cursor is not None and self.cursor._description is not None:
+            if self.cursor is not None and self.cursor.description is not None:
                 result = self.cursor.fetchall()
                 self.disp.log_debug(
                     f"Description for table '{table}': {result}",
@@ -741,13 +681,28 @@ class SQL:
                 )
                 return result
             return self.error
-        except mariadb.Error as e:
-            msg = f"ProgrammingError: The table '{table}' does not exist"
-            msg += " or the query failed."
+        except mysql.connector.errors.ProgrammingError as pe:
+            msg = f"ProgrammingError: The table '{table}'"
+            msg += "does not exist or the query failed."
+            self.disp.log_critical(msg, title)
+            raise RuntimeError(msg) from pe
+        except mysql.connector.errors.IntegrityError as ie:
+            msg = "IntegrityError: There was an integrity constraint "
+            msg += f"issue while describing the table '{table}'."
+            self.disp.log_critical(msg, title)
+            raise RuntimeError(msg) from ie
+        except mysql.connector.errors.OperationalError as oe:
+            msg = "OperationalError: There was an operational error "
+            msg += f"while describing the table '{table}'."
+            self.disp.log_critical(msg, title)
+            raise RuntimeError(msg) from oe
+        except mysql.connector.Error as e:
+            msg = "MySQL Error: An unexpected error occurred while "
+            msg += f"describing the table '{table}'."
             self.disp.log_critical(msg, title)
             raise RuntimeError(msg) from e
         except RuntimeError as e:
-            msg = "Database error"
+            msg = "A runtime error occurred during the table description process."
             self.disp.log_critical(msg, title)
             raise RuntimeError(msg) from e
 
@@ -825,10 +780,8 @@ class SQL:
         Returns:
             Union[int, List[Dict[str, Any]]]: _description_: Will return the data you requested, self.error otherwise
         """
-        self.disp.log_debug(
-            f"fetching data from the table {table}",
-            "get_data_from_table"
-        )
+        title = "get_data_from_table"
+        self.disp.log_debug(f"fetching data from the table {table}", title)
         if self.injection.check_if_injections_in_strings([table, column]) is True or self.injection.check_if_symbol_and_command_injection(where) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
@@ -843,15 +796,12 @@ class SQL:
         if where != "":
             sql_command += f" WHERE {where}"
         data = self.describe_table(table)
-        self.disp.log_debug(
-            f"sql_query = '{sql_command}'",
-            "get_data_from_table"
-        )
+        self.disp.log_debug(f"sql_query = '{sql_command}'", title)
         self._reconnect()
         if self.is_connected() is False:
             self.disp.log_critical(
                 "Connection to the database is non-existant, aborting command.",
-                "get_data_from_table"
+                title
             )
             return self.error
         self.cursor.execute(sql_command)
@@ -870,12 +820,10 @@ class SQL:
             where (Union[str, List[str]]): _description_
 
         Returns:
-            int: _description_: Return the size of the table, -1 if an error occured.
+            int: _description_: Return the size of the table, -1 if an error occurred.
         """
-        self.disp.log_debug(
-            f"fetching data from the table {table}",
-            "get_table_size"
-        )
+        title = "get_table_size"
+        self.disp.log_debug(f"fetching data from the table {table}", title)
         if self.injection.check_if_injections_in_strings([table, column]) is True or self.injection.check_if_symbol_and_command_injection(where) is True:
             self.disp.log_error("Injection detected.", "sql")
             return (-1)
@@ -890,24 +838,19 @@ class SQL:
         if self.is_connected() is False:
             self.disp.log_critical(
                 "Connection to the database is non-existant, aborting command.",
-                "get_table_size"
+                title
             )
             return (-1)
-        self.disp.log_debug(
-            f"sql_query = '{sql_command}'",
-            "get_table_size"
-        )
+        self.disp.log_debug(f"sql_query = '{sql_command}'", title)
         self.cursor.execute(sql_command)
         table_data = self.cursor.fetchall()
         if len(table_data) == 0:
             self.disp.log_error(
-                "There was no data returned by the query.", "get_table_size"
+                "There was no data returned by the query.", title
             )
             return (-1)
         if isinstance(table_data[0], tuple) is False:
-            self.disp.log_error(
-                "The data returned is not a tuple.", "get_table_size"
-            )
+            self.disp.log_error("The data returned is not a tuple.", title)
             return (-1)
         return table_data[0][0]
 
@@ -923,8 +866,9 @@ class SQL:
         Returns:
             int: _description_
         """
+        title = "update_data_in_table"
         msg = f"Updating the data contained in the table: {table}"
-        self.disp.log_debug(msg, "update_data_in_table")
+        self.disp.log_debug(msg, title)
         if column is None:
             column = ""
 
@@ -949,10 +893,7 @@ class SQL:
         if where != "":
             sql_query += f" WHERE {where}"
 
-        self.disp.log_debug(
-            f"sql_query = '{sql_query}'",
-            "update_data_in_table"
-        )
+        self.disp.log_debug(f"sql_query = '{sql_query}'", title)
 
         return self._run_editing_command(sql_query, table, "update")
 
@@ -968,9 +909,9 @@ class SQL:
         Returns:
             int: _description_
         """
+        title = "insert_or_update_data_into_table"
         self.disp.log_debug(
-            "Inserting or updating data into the table.",
-            "insertor_update_data_into_table"
+            "Inserting or updating data into the table.", title
         )
 
         if column is None:
@@ -991,7 +932,7 @@ class SQL:
         if isinstance(table_content, int) is True and table_content != self.success:
             self.disp.log_critical(
                 f"Failed to retrieve data from table {table}",
-                "insert_or_update_data_into_table"
+                title
             )
             return self.error
 
@@ -1000,15 +941,12 @@ class SQL:
 
         if isinstance(data, List) is True and (len(data) > 0 and isinstance(data[0], List) is True):
             self.disp.log_debug(
-                "Processing double data list",
-                "insert_or_update_data_into_table"
-            )
+                "Processing double data list",                title)
             for line in data:
                 node_found = False
                 if len(line) == 0:
                     self.disp.log_warning(
-                        "The line is empty, skipping.",
-                        "insert_or_update_data_into_table"
+                        "The line is empty, skipping.", title
                     )
                     continue
                 node0 = str(line[0])
@@ -1026,14 +964,11 @@ class SQL:
                     self.insert_data_into_table(table, line, column)
 
         elif isinstance(data, List) is True:
-            self.disp.log_debug(
-                "Processing single data list",
-                "insert_or_update_data_into_table"
-            )
+            self.disp.log_debug("Processing single data list", title)
             if len(data) == 0:
                 self.disp.log_warning(
                     "The data list is empty, skipping.",
-                    "insert_or_update_data_into_table"
+                    title
                 )
                 return self.success
             node0 = str(data[0])
@@ -1044,7 +979,7 @@ class SQL:
         else:
             self.disp.log_error(
                 "data is expected to be, either of type: List[str] or List[List[str]]",
-                "insert_or_update_data_into_table"
+                title
             )
             return self.error
 
