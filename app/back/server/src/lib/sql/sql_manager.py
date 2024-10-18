@@ -4,14 +4,13 @@
 """
 from typing import Union, List, Dict, Any
 
-# import mariadb
-# from mariadb import ConnectionPool
 import mysql.connector
 import mysql.connector.cursor
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 from . import sql_constants as SCONST
 from .injection import Injection
 from .time_manipulation import TimeManipulation
+from .sanitisation_functions import SanitiseFunctions
 from ..components import constants as CONST
 
 
@@ -64,9 +63,14 @@ class SQL:
             debug=self.debug,
             logger=self.__class__.__name__
         )
-        # ----------------- Database risky keyword sanitising  -----------------
-        self.risky_keywords: List[str] = SCONST.RISKY_KEYWORDS
-        self.keyword_logic_gates: List[str] = SCONST.KEYWORD_LOGIC_GATES
+        # -------------------- Keyword sanitizing functions --------------------
+        self.sanitize_functions: SanitiseFunctions = SanitiseFunctions(
+            self.debug
+        )
+        self._protect_sql_cell: SanitiseFunctions.protect_sql_cell = self.sanitize_functions.protect_sql_cell
+        self._escape_risky_column_names: SanitiseFunctions.escape_risky_column_names = self.sanitize_functions.escape_risky_column_names
+        self._escape_risky_column_names_where_mode: SanitiseFunctions.escape_risky_column_names_where_mode = self.sanitize_functions.escape_risky_column_names_where_mode
+        self._check_sql_cell: SanitiseFunctions.check_sql_cell = self.sanitize_functions.check_sql_cell
         # -------------------------- datetime parsing --------------------------
         self.date_only: str = SCONST.DATE_ONLY
         self.date_and_time: str = SCONST.DATE_AND_TIME
@@ -150,28 +154,6 @@ class SQL:
         # msg += f" {type(CONST.DATABASE_CONVERTER)}\n"
         self.disp.log_debug(msg, func_name)
 
-    def _protect_sql_cell(self, cell: str) -> str:
-        """_summary_
-            This is a function in charge of cleaning by nullifying (escaping) characters that could cause the sql command to break.
-
-        Args:
-            cells (str): _description_: The cell to be checked
-
-        Returns:
-            str: _description_: A (hopfully) clean string.
-        """
-        result = ""
-        for char in cell:
-            if char in ("'", '"', "\\", '\0', "\r"):
-                self.disp.log_info(
-                    f"Escaped character '{char}' in '{cell}'.",
-                    "_protect_sql_cell"
-                )
-                result += "\\"+char
-            else:
-                result += char
-        return result
-
     def _beautify_table(self, column_names: List[str], table_content: List[List[Any]]) -> Union[List[Dict[str, Any]], int]:
         """_summary_
             Convert the table to an easier version for navigating.
@@ -218,91 +200,6 @@ class SQL:
         self.disp.log_debug(f"beautified_table = {data}", "_beautify_table")
         return data
 
-    def _escape_risky_column_names(self, columns: Union[List[str], str]) -> Union[List[str], str]:
-        """_summary_
-            Escape the risky column names.
-
-        Args:
-            columns (List[str]): _description_
-
-        Returns:
-            List[str]: _description_
-        """
-        title = "_escape_risky_column_names"
-        self.disp.log_debug("Escaping risky column names.", title)
-        if isinstance(columns, str):
-            data = [columns]
-        else:
-            data = columns
-        for index, item in enumerate(data):
-            if "=" in item:
-                key, value = item.split("=", maxsplit=1)
-                self.disp.log_debug(f"key = {key}, value = {value}", title)
-                if key.lower() in self.risky_keywords:
-                    self.disp.log_warning(
-                        f"Escaping risky column name '{key}'.",
-                        "_escape_risky_column_names"
-                    )
-                    data[index] = f"`{key}`={value}"
-            elif item.lower() in self.risky_keywords:
-                self.disp.log_warning(
-                    f"Escaping risky column name '{item}'.",
-                    "_escape_risky_column_names"
-                )
-                data[index] = f"`{item}`"
-            else:
-                continue
-        self.disp.log_debug("Escaped risky column names.", title)
-        if isinstance(columns, str):
-            return data[0]
-        return columns
-
-    def _escape_risky_column_names_where_mode(self, columns: Union[List[str], str]) -> Union[List[str], str]:
-        """
-        Escape the risky column names in where mode, except for those in keyword_logic_gates.
-
-        Args:
-            columns (Union[str, List[str]]): Column names to be processed.
-
-        Returns:
-            Union[List[str], str]: Processed column names with risky ones escaped.
-        """
-        title = "_escape_risky_column_names_where_mode"
-        self.disp.log_debug(
-            "Escaping risky column names in where mode.",
-            title
-        )
-
-        if isinstance(columns, str):
-            data = [columns]
-        else:
-            data = columns
-
-        for index, item in enumerate(data):
-            if "=" in item:
-                key, value = item.split("=", maxsplit=1)
-                self.disp.log_debug(f"key = {key}, value = {value}", title)
-
-                if key.lower() not in self.keyword_logic_gates and key.lower() in self.risky_keywords:
-                    self.disp.log_warning(
-                        f"Escaping risky column name '{key}'.",
-                        title
-                    )
-                    data[index] = f"\'{key}\'={value}"
-
-            elif item.lower() not in self.keyword_logic_gates and item.lower() in self.risky_keywords:
-                self.disp.log_warning(
-                    f"Escaping risky column name '{item}'.",
-                    title
-                )
-                data[index] = f"\'{item}\'"
-
-        self.disp.log_debug("Escaped risky column names in where mode.", title)
-
-        if isinstance(columns, str):
-            return data[0]
-        return data
-
     def get_table_column_names(self, table_name: str) -> Union[List[str], int]:
         """_summary_
             Get the names of the columns in a table.
@@ -324,35 +221,6 @@ class SQL:
             msg += f"\"{str(e)}\""
             self.disp.log_error(msg, "get_table_column_names")
             return self.error
-
-    def _check_sql_cell(self, cell: str) -> str:
-        """_summary_
-            Check if the cell is a string or a number.
-
-        Args:
-            cell (str): _description_
-
-        Returns:
-            str: _description_
-        """
-        if isinstance(cell, (str, float)) is True:
-            cell = str(cell)
-        if isinstance(cell, str) is False:
-            msg = "The expected type of the input is a string,"
-            msg += f"but got {type(cell)}"
-            self.disp.log_error(msg, "_check_sql_cell")
-            return cell
-        cell = self._protect_sql_cell(cell)
-        tmp = cell.lower()
-        if tmp in ("now", "now()"):
-            tmp = self._get_correct_now_value()
-        elif tmp in ("current_date", "current_date()"):
-            tmp = self._get_correct_current_date_value()
-        else:
-            tmp = str(cell)
-        if ";base" not in tmp:
-            self.disp.log_debug(f"result = {tmp}", "_check_sql_cell")
-        return f"\"{str(tmp)}\""
 
     def _compile_update_line(self, line: List, column: List, column_length) -> str:
         """_summary_
@@ -523,7 +391,8 @@ class SQL:
             password=self.password,
             host=self.url,
             port=self.port,
-            database=self.db_name
+            database=self.db_name,
+            collation="utf8mb4_unicode_ci"
         )
 
     def _abort_attempt(self) -> None:
@@ -561,38 +430,7 @@ class SQL:
             self._recreate_pool()
         try:
             self.connection = self.pool.get_connection()
-            # self.connection = mariadb.connect(
-            #     user=self.username,
-            #     password=self.password,
-            #     host=self.url,
-            #     port=self.port,
-            #     database=self.db_name,
-            #     connect_timeout=CONST.DATABASE_CONNECTION_TIMEOUT,
-            #     read_timeout=CONST.DATABASE_READ_TIMEOUT,
-            #     write_timeout=CONST.DATABASE_WRITE_TIMEOUT,
-            #     local_infile=CONST.DATABASE_LOCAL_INFILE,
-            #     compress=CONST.DATABASE_COMPRESS,
-            #     init_command=CONST.DATABASE_INIT_COMMAND,
-            #     default_file=CONST.DATABASE_DEFAULT_FILE,
-            #     default_group=CONST.DATABASE_DEFAULT_GROUP,
-            #     plugin_dir=CONST.DATABASE_PLUGIN_DIR,
-            #     reconnect=CONST.DATABASE_RECONNECT,
-            #     ssl_key=CONST.DATABASE_SSL_KEY,
-            #     ssl_cert=CONST.DATABASE_SSL_CERT,
-            #     ssl_ca=CONST.DATABASE_SSL_CA,
-            #     ssl_capath=CONST.DATABASE_SSL_CAPATH,
-            #     ssl_cipher=CONST.DATABASE_SSL_CIPHER,
-            #     ssl_crlpath=CONST.DATABASE_SSL_CRLPATH,
-            #     ssl_verify_cert=CONST.DATABASE_SSL_VERIFY_CERT,
-            #     ssl=CONST.DATABASE_SSL,
-            #     tls_version=CONST.DATABASE_TLS_VERSION,
-            #     autocommit=CONST.DATABASE_AUTOCOMMIT,
-            #     converter=CONST.DATABASE_CONVERTER
-            # )
-            self.disp.log_info(
-                f"Connected to {self.db_name}",
-                "connect_to_db"
-            )
+            self.disp.log_info(f"Connected to {self.db_name}", title)
         except mysql.connector.Error as e:
             msg = f"Failed to connect to {self.db_name}"
             self.disp.log_critical(msg, title)
