@@ -23,7 +23,7 @@ except ImportError as e:
 
 ERROR = CONST.ERROR
 SUCCESS = CONST.SUCCESS
-DEBUG = False
+DEBUG = True
 
 
 RDI = RuntimeData("0.0.0.0", 5000, "Area", ERROR, SUCCESS)
