@@ -4,6 +4,13 @@
 
 from typing import List
 
+# initialisation arguments to remove if empty (or equal to None)
+UNWANTED_ARGUMENTS = [
+    "option_files"
+
+]
+
+# Sql sanitisation for word that can be considered as commands
 RISKY_KEYWORDS: List[str] = [
     "add", "all", "alter", "analyze", "and", "as", "asc", "asensitive", "before", "between",
     "bigint", "binary", "blob", "both", "by", "call", "cascade", "case", "change", "char",
@@ -46,3 +53,11 @@ KEYWORD_LOGIC_GATES: List[str] = [
 DATE_ONLY: str = '%Y-%m-%d'
 
 DATE_AND_TIME: str = '%Y-%m-%d %H:%M:%S'
+
+# Error messages
+CONNECTION_FAILED: str = "Connection to the database is non-existant, aborting command."
+
+CURSOR_FAILED: str = "Cursor to the database is non-existant, aborting command."
+
+# Specific error codes
+GET_TABLE_SIZE_ERROR: int = (-1)
