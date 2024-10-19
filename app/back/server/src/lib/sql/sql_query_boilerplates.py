@@ -3,15 +3,16 @@
 """
 
 from typing import List, Dict, Union, Any
-from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 
 import mysql
 import mysql.connector
+from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 
-from .injection import Injection
+
 from . import sql_constants as SCONST
-from .sql_sanitisation_functions import SQLSanitiseFunctions
+from .sql_injection import SQLInjection
 from .sql_connections import SQLManageConnections
+from .sql_sanitisation_functions import SQLSanitiseFunctions
 
 
 class SQLQueryBoilerplates:
@@ -42,7 +43,7 @@ class SQLQueryBoilerplates:
             logger=self.__class__.__name__
         )
         # ---------------------- The anty injection class ----------------------
-        self.injection: Injection = Injection(
+        self.sql_injection: SQLInjection = SQLInjection(
             self.error,
             self.success,
             self.debug
@@ -118,7 +119,7 @@ class SQLQueryBoilerplates:
         """
         title = "describe_table"
         self.disp.log_debug(f"Describing table {table}", title)
-        if self.injection.check_if_sql_injection(table) is True:
+        if self.sql_injection.check_if_sql_injection(table) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
         try:
@@ -170,7 +171,7 @@ class SQLQueryBoilerplates:
         self.disp.log_debug("Inserting data into the table.", title)
         if column is None:
             column = ""
-        if self.injection.check_if_injections_in_strings([table, data, column]) is True:
+        if self.sql_injection.check_if_injections_in_strings([table, data, column]) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
 
@@ -223,7 +224,7 @@ class SQLQueryBoilerplates:
         """
         title = "get_data_from_table"
         self.disp.log_debug(f"fetching data from the table {table}", title)
-        if self.injection.check_if_injections_in_strings([table, column]) is True or self.injection.check_if_symbol_and_command_injection(where) is True:
+        if self.sql_injection.check_if_injections_in_strings([table, column]) is True or self.sql_injection.check_if_symbol_and_command_injection(where) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
         if isinstance(column, list) is True:
@@ -264,7 +265,7 @@ class SQLQueryBoilerplates:
         """
         title = "get_table_size"
         self.disp.log_debug(f"fetching data from the table {table}", title)
-        if self.injection.check_if_injections_in_strings([table, column]) is True or self.injection.check_if_symbol_and_command_injection(where) is True:
+        if self.sql_injection.check_if_injections_in_strings([table, column]) is True or self.sql_injection.check_if_symbol_and_command_injection(where) is True:
             self.disp.log_error("Injection detected.", "sql")
             return SCONST.GET_TABLE_SIZE_ERROR
         if isinstance(column, list) is True:
@@ -313,7 +314,7 @@ class SQLQueryBoilerplates:
         if column is None:
             column = ""
 
-        if self.injection.check_if_injections_in_strings([table, column, data]) is True or self.injection.check_if_symbol_and_command_injection(where) is True:
+        if self.sql_injection.check_if_injections_in_strings([table, column, data]) is True or self.sql_injection.check_if_symbol_and_command_injection(where) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
 
@@ -359,7 +360,7 @@ class SQLQueryBoilerplates:
 
         if column is None:
             column = ""
-        if self.injection.check_if_injections_in_strings([table, data, column]) is True:
+        if self.sql_injection.check_if_injections_in_strings([table, data, column]) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
 
@@ -440,7 +441,7 @@ class SQLQueryBoilerplates:
             f"Removing data from table {table}",
             "remove_data_from_table"
         )
-        if self.injection.check_if_sql_injection(table) is True or self.injection.check_if_symbol_and_command_injection(where) is True:
+        if self.sql_injection.check_if_sql_injection(table) is True or self.sql_injection.check_if_symbol_and_command_injection(where) is True:
             self.disp.log_error("Injection detected.", "sql")
             return self.error
 

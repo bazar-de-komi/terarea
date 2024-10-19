@@ -3,6 +3,7 @@
 """
 
 from typing import List, Dict, Any, Union
+
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 
 from . import sql_constants as SCONST
