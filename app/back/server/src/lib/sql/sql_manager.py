@@ -2,15 +2,10 @@
     File in charge of containing the interfacing between an sql library and the program.
     This contains functions that simplify the process of interracting with databases as well as check for injection attempts.
 """
-from typing import Union, List, Dict, Any
 
-import mysql.connector
-import mysql.connector.cursor
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
-from .injection import Injection
-from .time_manipulation import TimeManipulation
+from .sql_time_manipulation import SQLTimeManipulation
 from .sql_connections import SQLManageConnections
-from .sanitisation_functions import SanitiseFunctions
 from .sql_query_boilerplates import SQLQueryBoilerplates
 
 
@@ -59,26 +54,15 @@ class SQL:
             error=self.error,
             debug=self.debug
         )
-        # ---------------------------- sql section  ----------------------------
-        self.injection: Injection = Injection(
-            self.error,
-            self.success,
-            self.debug
-        )
+
         # ---------------------------- Time logger  ----------------------------
-        self.time_manipulation: TimeManipulation = TimeManipulation(self.debug)
-        self.datetime_to_string: TimeManipulation.datetime_to_string = self.time_manipulation.datetime_to_string
-        self.string_to_datetime: TimeManipulation.string_to_datetime = self.time_manipulation.string_to_datetime
-        self._get_correct_now_value: TimeManipulation.get_correct_now_value = self.time_manipulation.get_correct_now_value
-        self._get_correct_current_date_value: TimeManipulation.get_correct_current_date_value = self.time_manipulation.get_correct_current_date_value
-        # -------------------- Keyword sanitizing functions --------------------
-        self.sanitize_functions: SanitiseFunctions = SanitiseFunctions(
+        self.sql_time_manipulation: SQLTimeManipulation = SQLTimeManipulation(
             self.debug
         )
-        self._protect_sql_cell: SanitiseFunctions.protect_sql_cell = self.sanitize_functions.protect_sql_cell
-        self._escape_risky_column_names: SanitiseFunctions.escape_risky_column_names = self.sanitize_functions.escape_risky_column_names
-        self._escape_risky_column_names_where_mode: SanitiseFunctions.escape_risky_column_names_where_mode = self.sanitize_functions.escape_risky_column_names_where_mode
-        self._check_sql_cell: SanitiseFunctions.check_sql_cell = self.sanitize_functions.check_sql_cell
+        self.datetime_to_string: SQLTimeManipulation.datetime_to_string = self.sql_time_manipulation.datetime_to_string
+        self.string_to_datetime: SQLTimeManipulation.string_to_datetime = self.sql_time_manipulation.string_to_datetime
+        self._get_correct_now_value: SQLTimeManipulation.get_correct_now_value = self.sql_time_manipulation.get_correct_now_value
+        self._get_correct_current_date_value: SQLTimeManipulation.get_correct_current_date_value = self.sql_time_manipulation.get_correct_current_date_value
         # --------------------------- debug section  ---------------------------
         self.sql_manage_connections.show_connection_info("__init__")
         # --------------------------- initialise pool --------------------------
@@ -91,6 +75,16 @@ class SQL:
             sql_pool=self.sql_manage_connections, success=self.success,
             error=self.error, debug=self.debug
         )
+        self.get_table_column_names: SQLQueryBoilerplates.get_table_column_names = self.sql_query_boilerplates.get_table_column_names
+        self.get_table_names: SQLQueryBoilerplates.get_table_names = self.sql_query_boilerplates.get_table_names
+        self.describe_table: SQLQueryBoilerplates.describe_table = self.sql_query_boilerplates.describe_table
+        self.insert_data_into_table: SQLQueryBoilerplates.insert_data_into_table = self.sql_query_boilerplates.insert_data_into_table
+        self.get_data_from_table: SQLQueryBoilerplates.get_data_from_table = self.sql_query_boilerplates.get_data_from_table
+        self.get_table_size: SQLQueryBoilerplates.get_table_size = self.sql_query_boilerplates.get_table_size
+        self.update_data_in_table: SQLQueryBoilerplates.update_data_in_table = self.sql_query_boilerplates.update_data_in_table
+        self.insert_or_update_data_into_table: SQLQueryBoilerplates.insert_or_update_data_into_table = self.sql_query_boilerplates.insert_or_update_data_into_table
+        self.remove_data_from_table: SQLQueryBoilerplates.remove_data_from_table = self.sql_query_boilerplates.remove_data_from_table
+        self.drop_data_from_table: SQLQueryBoilerplates.remove_data_from_table = self.sql_query_boilerplates.remove_data_from_table
 
     def __del__(self) -> None:
         """
@@ -98,3 +92,10 @@ class SQL:
         """
         if self.sql_manage_connections is not None:
             del self.sql_manage_connections
+            self.sql_manage_connections = None
+        if self.sql_time_manipulation is not None:
+            del self.sql_time_manipulation
+            self.sql_time_manipulation = None
+        if self.sql_query_boilerplates is not None:
+            del self.sql_query_boilerplates
+            self.sql_query_boilerplates = None

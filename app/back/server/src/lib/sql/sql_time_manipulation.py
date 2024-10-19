@@ -8,7 +8,7 @@ from datetime import datetime
 from . import sql_constants as SCONST
 
 
-class TimeManipulation:
+class SQLTimeManipulation:
     """_summary_
     """
 

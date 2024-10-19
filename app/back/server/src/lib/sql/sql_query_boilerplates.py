@@ -10,8 +10,7 @@ import mysql.connector
 
 from .injection import Injection
 from . import sql_constants as SCONST
-from .time_manipulation import TimeManipulation
-from .sanitisation_functions import SanitiseFunctions
+from .sql_sanitisation_functions import SQLSanitiseFunctions
 from .sql_connections import SQLManageConnections
 
 
@@ -49,11 +48,9 @@ class SQLQueryBoilerplates:
             self.debug
         )
         # -------------------- Keyword sanitizing functions --------------------
-        self.sanitize_functions: SanitiseFunctions = SanitiseFunctions(
+        self.sanitize_functions: SQLSanitiseFunctions = SQLSanitiseFunctions(
             success=self.success, error=self.error, debug=self.debug
         )
-        # ---------------------------- Time logger  ----------------------------
-        self.time_manipulation: TimeManipulation = TimeManipulation(self.debug)
 
     def get_table_column_names(self, table_name: str) -> Union[List[str], int]:
         """_summary_

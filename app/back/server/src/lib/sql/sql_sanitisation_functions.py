@@ -6,10 +6,10 @@ from typing import List, Dict, Any, Union
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 
 from . import sql_constants as SCONST
-from .time_manipulation import TimeManipulation
+from .sql_time_manipulation import SQLTimeManipulation
 
 
-class SanitiseFunctions:
+class SQLSanitiseFunctions:
     """_summary_
     """
 
@@ -35,7 +35,9 @@ class SanitiseFunctions:
         self.risky_keywords: List[str] = SCONST.RISKY_KEYWORDS
         self.keyword_logic_gates: List[str] = SCONST.KEYWORD_LOGIC_GATES
         # ---------------------- Time manipulation class  ----------------------
-        self.time_manipulation: TimeManipulation = TimeManipulation(self.debug)
+        self.sql_time_manipulation: SQLTimeManipulation = SQLTimeManipulation(
+            self.debug
+        )
 
     def protect_sql_cell(self, cell: str) -> str:
         """_summary_
@@ -164,9 +166,9 @@ class SanitiseFunctions:
         cell = self.protect_sql_cell(cell)
         tmp = cell.lower()
         if tmp in ("now", "now()"):
-            tmp = self.time_manipulation.get_correct_now_value()
+            tmp = self.sql_time_manipulation.get_correct_now_value()
         elif tmp in ("current_date", "current_date()"):
-            tmp = self.time_manipulation.get_correct_current_date_value()
+            tmp = self.sql_time_manipulation.get_correct_current_date_value()
         else:
             tmp = str(cell)
         if ";base" not in tmp:

@@ -396,7 +396,7 @@ class SQLManageConnections:
         self.disp.log_error("The connection is not active.", title)
         return False
 
-    def is_cursor_active(self, cursor: mysql.connector.pooling) -> bool:
+    def is_cursor_active(self, cursor: mysql.connector.cursor.MySQLCursor) -> bool:
         """
         Checks if the cursor is active.
 
@@ -410,7 +410,7 @@ class SQLManageConnections:
         self.disp.log_debug(
             "Checking if the provided cursor is active.", title
         )
-        resp = cursor is not None and cursor.connection is not None
+        resp = cursor is not None and cursor._connection is not None
         if resp:
             self.disp.log_debug("The cursor is active.", title)
             return True
