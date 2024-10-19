@@ -48,7 +48,29 @@ class SQLManageConnections:
             debug=self.debug,
             logger=self.__class__.__name__
         )
-
+        # -------------------------- Pool parameters  --------------------------
+        self.pool_parameters = {
+            "pool_name": CONST.DATABASE_POOL_NAME,
+            "pool_size": CONST.DATABASE_MAX_POOL_CONNECTIONS,
+            "pool_reset_session": CONST.DATABASE_RESET_POOL_NODE_CONNECTION,
+            "user": self.username,
+            "password": self.password,
+            "host": self.url,
+            "port": self.port,
+            "database": self.db_name,
+            "collation": CONST.DATABASE_COLLATION,
+            "connection_timeout": CONST.DATABASE_CONNECTION_TIMEOUT,
+            "allow_local_infile": CONST.DATABASE_LOCAL_INFILE,
+            "init_command": CONST.DATABASE_INIT_COMMAND,
+            "option_files": CONST.DATABASE_DEFAULT_FILE,  # type error
+            "autocommit": CONST.DATABASE_AUTOCOMMIT,
+            "ssl_disabled": not CONST.DATABASE_SSL,
+            "ssl_key": CONST.DATABASE_SSL_KEY,
+            "ssl_cert": CONST.DATABASE_SSL_CERT,
+            "ssl_ca": CONST.DATABASE_SSL_CA,
+            "ssl_cipher": CONST.DATABASE_SSL_CIPHER,
+            "ssl_verify_cert": CONST.DATABASE_SSL_VERIFY_CERT
+        }
         # ---------------- variables containing the connection  ----------------
         self.pool: Union[
             None,
@@ -60,22 +82,8 @@ class SQLManageConnections:
             Show the connection information
         """
         msg = "\n"
-        msg += f"pool_name = '{CONST.DATABASE_POOL_NAME}': "
-        msg += f"{type(CONST.DATABASE_POOL_NAME)}\n"
-        msg += "max_pool_connections = "
-        msg += f"'{CONST.DATABASE_MAX_POOL_CONNECTIONS}': "
-        msg += f"{type(CONST.DATABASE_MAX_POOL_CONNECTIONS)}\n"
-        msg += "reset_pool_node_connection = "
-        msg += f"'{CONST.DATABASE_RESET_POOL_NODE_CONNECTION}': "
-        msg += f"{type(CONST.DATABASE_RESET_POOL_NODE_CONNECTION)}\n"
-        msg += f"self.debug = '{self.debug}': {type(self.debug)}\n"
-        msg += f"self.success = '{self.success}': {type(self.success)}\n"
-        msg += f"self.error = '{self.error}': {type(self.error)}\n"
-        msg += f"self.url = '{self.url}': {type(self.url)}\n"
-        msg += f"self.port = '{self.port}': {type(self.port)}\n"
-        msg += f"self.username = '{self.username}': {type(self.username)}\n"
-        msg += f"self.password = '{self.password}': {type(self.password)}\n"
-        msg += f"self.db_name = '{self.db_name}': {type(self.db_name)}\n"
+        for key, value in self.pool_parameters.items():
+            msg += f"{key} = '{value}': Type: {type(value)}\n"
         self.disp.log_debug(msg, func_name)
 
     def initialise_pool(self) -> int:
@@ -91,16 +99,37 @@ class SQLManageConnections:
         title = "initialise_pool"
         self.disp.log_debug("Initialising the connection pool.", title)
         try:
+            self.pool_parameters = {
+                "pool_name": CONST.DATABASE_POOL_NAME,
+                "pool_size": CONST.DATABASE_MAX_POOL_CONNECTIONS,
+                "pool_reset_session": CONST.DATABASE_RESET_POOL_NODE_CONNECTION,
+                "user": self.username,
+                "password": self.password,
+                "host": self.url,
+                "port": self.port,
+                "database": self.db_name,
+                "collation": CONST.DATABASE_COLLATION,
+                "connection_timeout": CONST.DATABASE_CONNECTION_TIMEOUT,
+                "allow_local_infile": CONST.DATABASE_LOCAL_INFILE,
+                "init_command": CONST.DATABASE_INIT_COMMAND,
+                "option_files": CONST.DATABASE_DEFAULT_FILE,  # type error
+                "autocommit": CONST.DATABASE_AUTOCOMMIT,
+                "ssl_disabled": not CONST.DATABASE_SSL,
+                "ssl_key": CONST.DATABASE_SSL_KEY,
+                "ssl_cert": CONST.DATABASE_SSL_CERT,
+                "ssl_ca": CONST.DATABASE_SSL_CA,
+                "ssl_cipher": CONST.DATABASE_SSL_CIPHER,
+                "ssl_verify_cert": CONST.DATABASE_SSL_VERIFY_CERT
+            }
+            for i in SCONST.UNWANTED_ARGUMENTS:
+                if i in self.pool_parameters and self.pool_parameters[i] is None:
+                    self.disp.log_debug(
+                        f"Removed '{i}' from the pool parameters.", title
+                    )
+                    self.pool_parameters.pop(i)
+            self.show_connection_info(title)
             self.pool = mysql.connector.pooling.MySQLConnectionPool(
-                pool_name=CONST.DATABASE_POOL_NAME,
-                pool_size=CONST.DATABASE_MAX_POOL_CONNECTIONS,
-                pool_reset_session=CONST.DATABASE_RESET_POOL_NODE_CONNECTION,
-                user=self.username,
-                password=self.password,
-                host=self.url,
-                port=self.port,
-                database=self.db_name,
-                collation="utf8mb4_unicode_ci"
+                **self.pool_parameters
             )
             return self.success
         except mysql.connector.errors.ProgrammingError as pe:

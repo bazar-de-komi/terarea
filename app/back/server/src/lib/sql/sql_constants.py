@@ -4,6 +4,13 @@
 
 from typing import List
 
+# initialisation arguments to remove if empty (or equal to None)
+UNWANTED_ARGUMENTS = [
+    "option_files"
+
+]
+
+# Sql sanitisation for word that can be considered as commands
 RISKY_KEYWORDS: List[str] = [
     "add", "all", "alter", "analyze", "and", "as", "asc", "asensitive", "before", "between",
     "bigint", "binary", "blob", "both", "by", "call", "cascade", "case", "change", "char",
