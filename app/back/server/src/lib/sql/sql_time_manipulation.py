@@ -2,13 +2,14 @@
     File in charge of containing the functions that allow for time conversion between datetime and strings.
 """
 
-from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 from datetime import datetime
+
+from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 
 from . import sql_constants as SCONST
 
 
-class TimeManipulation:
+class SQLTimeManipulation:
     """_summary_
     """
 

@@ -2,25 +2,28 @@
     File in charge of cleaning and sanitising sql queries before they are submitted to the database.
 """
 
-from typing import List, Union
+from typing import List, Dict, Any, Union
+
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 
 from . import sql_constants as SCONST
-from .time_manipulation import TimeManipulation
+from .sql_time_manipulation import SQLTimeManipulation
 
 
-class SanitiseFunctions:
+class SQLSanitiseFunctions:
     """_summary_
     """
 
-    def __init__(self, debug: bool = False) -> None:
+    def __init__(self, success: int = 0, error: int = 84, debug: bool = False) -> None:
         """_summary_
             This is the class that contains functions in charge of sanitising sql queries.
 
         Args:
             debug (bool, optional): _description_. Defaults to False.: enable debug mode
         """
+        self.error: int = error
         self.debug: bool = debug
+        self.success: int = success
         # --------------------------- logger section ---------------------------
         self.disp: Disp = Disp(
             TOML_CONF,
@@ -33,7 +36,9 @@ class SanitiseFunctions:
         self.risky_keywords: List[str] = SCONST.RISKY_KEYWORDS
         self.keyword_logic_gates: List[str] = SCONST.KEYWORD_LOGIC_GATES
         # ---------------------- Time manipulation class  ----------------------
-        self.time_manipulation: TimeManipulation = TimeManipulation(self.debug)
+        self.sql_time_manipulation: SQLTimeManipulation = SQLTimeManipulation(
+            self.debug
+        )
 
     def protect_sql_cell(self, cell: str) -> str:
         """_summary_
@@ -162,11 +167,114 @@ class SanitiseFunctions:
         cell = self.protect_sql_cell(cell)
         tmp = cell.lower()
         if tmp in ("now", "now()"):
-            tmp = self.time_manipulation.get_correct_now_value()
+            tmp = self.sql_time_manipulation.get_correct_now_value()
         elif tmp in ("current_date", "current_date()"):
-            tmp = self.time_manipulation.get_correct_current_date_value()
+            tmp = self.sql_time_manipulation.get_correct_current_date_value()
         else:
             tmp = str(cell)
         if ";base" not in tmp:
             self.disp.log_debug(f"result = {tmp}", "_check_sql_cell")
         return f"\"{str(tmp)}\""
+
+    def beautify_table(self, column_names: List[str], table_content: List[List[Any]]) -> Union[List[Dict[str, Any]], int]:
+        """_summary_
+            Convert the table to an easier version for navigating.
+
+        Args:
+            column_names (List[str]): _description_
+            table_content (List[List[Any]]): _description_
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: the formated content or self.error if an error occured.
+        """
+        data: List[Dict[str, Any]] = []
+        v_index: int = 0
+        if len(column_names) == 0:
+            self.disp.log_error(
+                "There are not provided table column names.",
+                "_beautify_table"
+            )
+            return table_content
+        if len(table_content) == 0:
+            self.disp.log_error(
+                "There is no table content.",
+                "_beautify_table"
+            )
+            return self.error
+        column_length = len(column_names)
+        for i in table_content:
+            cell_length = len(i)
+            if cell_length != column_length:
+                self.disp.log_warning(
+                    "Table content and column lengths do not correspond.",
+                    "_beautify_table"
+                )
+            data.append({})
+            for index, items in enumerate(column_names):
+                if index == cell_length:
+                    self.disp.log_warning(
+                        "Skipping the rest of the tuple because it is shorter than the column names.",
+                        "_beautify_table"
+                    )
+                    break
+                data[v_index][items[0]] = i[index]
+            v_index += 1
+        self.disp.log_debug(f"beautified_table = {data}", "_beautify_table")
+        return data
+
+    def compile_update_line(self, line: List, column: List, column_length) -> str:
+        """_summary_
+            Compile the line required for an sql update to work.
+
+        Args:
+            line (List): _description_
+            column (List): _description_
+            column_length (_type_): _description_
+
+        Returns:
+            str: _description_
+        """
+        final_line = ""
+        for i in range(0, column_length):
+            cell_content = self.check_sql_cell(line[i])
+            final_line += f"{column[i]} = {cell_content}"
+            if i < column_length - 1:
+                final_line += ", "
+            if i == column_length:
+                break
+        self.disp.log_debug(f"line = {final_line}", "_compile_update_line")
+        return final_line
+
+    def process_sql_line(self, line: List[str], column: List[str], column_length: int = (-1)) -> str:
+        """_summary_
+            Convert a List of strings to an sql line so that it can be inserted into a table.
+
+        Args:
+            line (List[str]): _description_
+
+        Returns:
+            str: _description_
+        """
+        if column_length == -1:
+            column_length = len(column)
+        line_length = len(line)
+
+        line_final = "("
+        if self.debug is True and ";base" not in str(line):
+            msg = f"line = {line}"
+            self.disp.log_debug(msg, "_process_sql_line")
+        for i in range(0, column_length):
+            line_final += self.check_sql_cell(line[i])
+            if i < column_length - 1:
+                line_final += ", "
+            if i == column_length:
+                if i < line_length:
+                    msg = "The line is longer than the number of columns, truncating."
+                    self.disp.log_warning(msg, "_process_sql_line")
+                break
+        line_final += ")"
+        if ";base" not in str(line_final):
+            msg = f"line_final = '{line_final}'"
+            msg += f", type(line_final) = '{type(line_final)}'"
+            self.disp.log_debug(msg, "_process_sql_line")
+        return line_final

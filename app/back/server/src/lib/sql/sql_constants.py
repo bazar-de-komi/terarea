@@ -46,3 +46,11 @@ KEYWORD_LOGIC_GATES: List[str] = [
 DATE_ONLY: str = '%Y-%m-%d'
 
 DATE_AND_TIME: str = '%Y-%m-%d %H:%M:%S'
+
+# Error messages
+CONNECTION_FAILED: str = "Connection to the database is non-existant, aborting command."
+
+CURSOR_FAILED: str = "Cursor to the database is non-existant, aborting command."
+
+# Specific error codes
+GET_TABLE_SIZE_ERROR: int = (-1)
