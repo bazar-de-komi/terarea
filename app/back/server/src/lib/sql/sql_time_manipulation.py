@@ -58,11 +58,13 @@ class SQLTimeManipulation:
             raise ValueError("Error: Expected a datetime instance.")
         if date_only is True:
             return datetime_instance.strftime(self.date_only)
-        microsecond = ""
+        converted_time = datetime_instance.strftime(self.date_and_time)
         if sql_mode is True:
             microsecond = datetime_instance.strftime("%f")[:3]
-        converted_time = datetime_instance.strftime(self.date_and_time)
-        return f"{converted_time}.{microsecond}"
+            res = f"{converted_time}.{microsecond}"
+        else:
+            res = f"{converted_time}"
+        return res
 
     def string_to_datetime(self, datetime_string_instance: str, date_only: bool = False) -> str:
         """_summary_
