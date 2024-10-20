@@ -199,7 +199,7 @@ class TestServer:
             "password": accounts["password"]
         }
         TCONST.IDISP.log_info(f"body = {body}")
-        response = query.put_endpoint(path, content=body)
+        response = query.post_endpoint(path, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
         assert status.success(response) is True
 
