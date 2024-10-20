@@ -120,12 +120,7 @@ class Server:
             The destructor of the class.
         """
         self.disp.log_info("The server is shutting down.", "__del__")
-        if self.runtime_data_initialised.server_management_initialised is not None:
-            del self.runtime_data_initialised.server_management_initialised
-            self.runtime_data_initialised.server_management_initialised = None
-        if self.runtime_data_initialised.crons_initialised is not None:
-            del self.runtime_data_initialised.crons_initialised
-            self.runtime_data_initialised.crons_initialised = None
+        self.stop_server()
 
     def main(self) -> int:
         """_summary_
@@ -146,10 +141,6 @@ class Server:
                 "main"
             )
             return status
-        # print("Cron: check_actions")
-        # print("Cron: test_current_date")
-        # print("Cron: clean_expired_tokens")
-        # print("Cron: clean_expired_verification_nodes")
         try:
             self.runtime_data_initialised.server.run()
         except Exception as e:
@@ -165,3 +156,17 @@ class Server:
             bool: _description_: Returns True if the server is running.
         """
         return self.runtime_data_initialised.server_management_initialised.is_server_running()
+
+    def stop_server(self) -> None:
+        """_summary_
+            The function in charge of stopping the server.
+        """
+        title = "stop_server"
+        self.disp.log_info("Stopping server", title)
+        if self.runtime_data_initialised.server_management_initialised is not None:
+            del self.runtime_data_initialised.server_management_initialised
+            self.runtime_data_initialised.server_management_initialised = None
+        if self.runtime_data_initialised.crons_initialised is not None:
+            del self.runtime_data_initialised.crons_initialised
+            self.runtime_data_initialised.crons_initialised = None
+        self.disp.log_info("Server stopped", title)

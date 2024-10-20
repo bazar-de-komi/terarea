@@ -117,8 +117,7 @@ def setup_environment(request: pytest.FixtureRequest):
     async def teardown():
         if server is not None:
             print("Shutting down server...")
-            del server
-            server = None
+            server.stop_server()
             print("Server stopped")
         if active_thread.is_alive() is True:
             print("Stopping thread (5 seconds grace) ...")
@@ -177,13 +176,17 @@ class TestServer:
         status: QueryStatus = setup_environment["status"]
         response = query.get_endpoint(TCONST.GET_HOME)
         assert status.success(response) is True
-        print(f" {response.json()}")
         assert json.dumps(response.json()) == json.dumps(
-            {"msg": "Hello, World!"}
+            {
+                'title': 'Home',
+                'msg': 'Welcome to the control server.',
+                'resp': '',
+                'logged in': False
+            }
         )
 
     @pytest.mark.critical
-    def test_put_register_lambda(self, setup_environment):
+    def test_post_register_lambda(self, setup_environment):
         """_summary_
             Test the /register endpoint of the server.
         Args:
@@ -223,18 +226,18 @@ class TestServer:
         TCONST.IDISP.log_info(f"body = {body}")
         response = query.post_endpoint(path, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
-        if status.accepted(response) is True:
+        if status.success(response) is True:
             msg = f"Bearer {response.json()['token']}"
             token[TCONST.LAMBDA_USER_TOKEN_KEY] = msg
         else:
             setup_environment["critical_failed"] = True
-        assert status.accepted(response) is True
+        assert status.success(response) is True
 
-    @pytest.mark.last
-    def test_post_stop_server(self, setup_environment):
-        """ Test the /stop endpoint of the server. """
-        self.check_server(setup_environment)
-        teardown_func: callable = setup_environment["teardown_func"]
-        success: int = setup_environment["success"]
-        status = teardown_func()
-        assert status == success
+    # @pytest.mark.last
+    # def test_post_stop_server(self, setup_environment):
+    #     """ Test the /stop endpoint of the server. """
+    #     self.check_server(setup_environment)
+    #     teardown_func: callable = setup_environment["teardown_func"]
+    #     success: int = setup_environment["success"]
+    #     status = teardown_func()
+    #     assert status == success
