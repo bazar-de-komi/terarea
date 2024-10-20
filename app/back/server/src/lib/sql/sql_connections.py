@@ -397,7 +397,9 @@ class SQLManageConnections:
             self.disp.log_debug(
                 "Storing a copy of the content of the cursor.", title
             )
-            data = internal_cursor.fetchall().copy()
+            raw_data = internal_cursor.fetchall()
+            self.disp.log_debug(f"Raw gathered data {raw_data}", title)
+            data = raw_data.copy()
             self.disp.log_debug(f"Data gathered: {data}.", title)
             if cursor is None:
                 self.disp.log_debug(
