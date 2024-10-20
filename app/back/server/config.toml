@@ -116,30 +116,11 @@ reset_pool_node_connection = true
 # default: 10
 connection_timeout = 10 # seconds
 
-# The maximum delay before a read command is considered failed
-# type: integer
-# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
-# connector default settings: 28800 secs (8 hours)
-# default: 10
-read_timeout = 10 # seconds
-
-# The maximum delay beofre a wrtie command is considered failed
-# type: integer
-# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
-# connector default settings: 28800 secs (8 hours)
-# default: 10
-write_timeout = 10 # seconds
-
 
 # Enables or disables the use of LOAD DATA LOCAL INFILE statements
 # type: boolean
 # default: false
 local_infile = false
-
-# Uses the compressed protocol for client-server communication
-# type: boolean
-# default: false
-compress = false
 
 # Command(s) which will be executed when connecting and reconnecting to the database server
 # type: string, 'none'
@@ -151,20 +132,6 @@ init_command = 'none'
 # default: 'none'
 default_file = 'none'
 
-# Read options from the specified group
-# type: string, 'none'
-# default: 'none'
-default_group = 'none'
-
-# Directory which contains MariaDB client plugins
-# type: string, 'none'
-# default: 'none'
-plugin_dir = 'none'
-
-# Enables or disables automatic reconnect
-# type: boolean
-# default: false
-reconnect = false
 
 # Path to a private key file to use for TLS (absolute path)
 # type: string, 'none'
@@ -181,20 +148,10 @@ ssl_cert = 'none'
 # default: 'none'
 ssl_ca = 'none'
 
-# Path to a directory that contains PEM files for trusted CAs
-# type: string, 'none'
-# default: 'none'
-ssl_capath = 'none'
-
 # List of permitted cipher suites for TLS
 # type: string, 'none'
 # default: 'none'
 ssl_cipher = 'none'
-
-# Path to a PEM file containing revoked X509 certificates (absolute path)
-# type: string, 'none'
-# default: 'none'
-ssl_crlpath = 'none'
 
 # Enables server certificate verification
 # type: boolean
@@ -206,22 +163,15 @@ ssl_verify_cert = false
 # default: false
 ssl = false
 
-# A comma-separated list of TLS versions
-# type: string, 'none'
-# valid options: TLSv1.0, TLSv1.1, TLSv1.2, TLSv1.3
-# default: 'TLSv1.2, TLSv1.3'
-tls_version = 'none'
-
 # Specifies the autocommit settings
 # type: boolean
 # default: false
 autocommit = false
 
-# Specifies a conversion dictionary (FIELD_TYPE values mapped to conversion functions)
-# type: dictionary
-# default: {}
-converter = {}
-
+# Database collation (the format used in the database, utf8mb4_unicode_ci is strongly recommended for it's cross compatibility between mariadb and mysql)
+# type: string
+# default: "utf8mb4_unicode_ci"
+collation = "utf8mb4_unicode_ci" #"utf8mb4_general_ci"
 
 # The settings for the automation of the cache of the program.
 [Crons]

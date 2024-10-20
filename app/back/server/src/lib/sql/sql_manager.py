@@ -36,6 +36,11 @@ class SQL:
         self.username: str = username
         self.password: str = password
         self.db_name: str = db_name
+        # ----------------- Pre class variable initialisation  -----------------
+        self.disp: Disp = None
+        self.sql_manage_connections: SQLManageConnections = None
+        self.sql_time_manipulation: SQLTimeManipulation = None
+        self.sql_query_boilerplates: SQLQueryBoilerplates = None
         # --------------------------- logger section ---------------------------
         self.disp: Disp = Disp(
             TOML_CONF,
