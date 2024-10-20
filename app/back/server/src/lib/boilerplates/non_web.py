@@ -66,6 +66,7 @@ class BoilerplateNonHTTP:
             bool: _description_: True if the token is correct, False otherwise
         """
         title = "is_token_correct"
+        self.disp.log_debug("Checking if the token is correct.", title)
         if isinstance(token, str) is False:
             return False
         login_table = self.runtime_data_initialised.database_link.get_data_from_table(
@@ -89,6 +90,7 @@ class BoilerplateNonHTTP:
             date_only=False,
             sql_mode=True
         )
+        self.disp.log_debug(f"string date: {new_date_str}", title)
         status = self.runtime_data_initialised.database_link.update_data_in_table(
             table=CONST.TAB_CONNECTIONS,
             data=new_date_str,
