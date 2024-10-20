@@ -21,12 +21,12 @@ try:
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 
-ERROR = CONST.ERROR
-SUCCESS = CONST.SUCCESS
-DEBUG = True
+ERROR = TCONST.ERROR
+SUCCESS = TCONST.SUCCESS
+DEBUG = TCONST.DEBUG
 
 
-RDI = RuntimeData("0.0.0.0", 5000, "Area", ERROR, SUCCESS)
+RDI = RuntimeData(TCONST.SERVER_HOST, TCONST.PORT, "Area", ERROR, SUCCESS)
 RDI.app = FastAPI()
 RDI.endpoints_initialised = Endpoints(
     runtime_data=RDI,

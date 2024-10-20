@@ -239,7 +239,6 @@ class SQLQueryBoilerplates:
             where = " AND ".join(where)
         if where != "":
             sql_command += f" WHERE {where}"
-        data = self.describe_table(table)
         self.disp.log_debug(f"sql_query = '{sql_command}'", title)
         resp = self.sql_pool.run_and_fetch_all(query=sql_command)
         if isinstance(resp, int) is True and resp != self.success:
@@ -247,8 +246,10 @@ class SQLQueryBoilerplates:
                 "Failed to fetch the data from the table.", title
             )
             return self.error
+        self.disp.log_debug(f"Queried data: {resp}", title)
         if beautify is False:
             return resp
+        data = self.describe_table(table)
         return self.sanitize_functions.beautify_table(data, resp)
 
     def get_table_size(self, table: str, column: Union[str, List[str]], where: Union[str, List[str]] = "") -> Union[int]:
@@ -323,7 +324,20 @@ class SQLQueryBoilerplates:
 
         column = self.sanitize_functions.escape_risky_column_names(column)
 
+        if isinstance(column, str) and isinstance(data, str):
+            data = [data]
+            column = [column]
+            column_length = len(column)
+
         column_length = len(column)
+        self.disp.log_debug(
+            f"data = {data}, column = {column}, length = {column_length}",
+            title
+        )
+
+        where = self.sanitize_functions.escape_risky_column_names_where_mode(
+            where
+        )
 
         if isinstance(where, List) is True:
             where = " AND ".join(where)

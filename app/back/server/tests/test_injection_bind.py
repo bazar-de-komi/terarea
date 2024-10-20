@@ -3,23 +3,20 @@
 """
 import os
 import sys
-from datetime import datetime
 from typing import List
+import constants as TCONST
 
-
-import pytest
 
 sys.path.append(os.getcwd())
 
 try:
-    from src.lib.sql.sql_manager import Injection
-    from src.lib.components import constants as CONST
+    from src.lib.sql.sql_injection import SQLInjection
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 
-DEBUG = False
-ERROR = CONST.ERROR
-SUCCESS = CONST.SUCCESS
+DEBUG = TCONST.DEBUG
+ERROR = TCONST.ERROR
+SUCCESS = TCONST.SUCCESS
 
 SENTENCES = [
     "SHOW TABLES;",
@@ -29,7 +26,7 @@ SENTENCES = [
     "SELECT * FROM table;",
 ]
 
-II = Injection(
+SQLII = SQLInjection(
     error=ERROR,
     success=SUCCESS,
     debug=DEBUG
@@ -48,8 +45,8 @@ def test_if_logic_gate_sql_injection_list_logic_gates() -> None:
         Function in charge of testing the logic gate for sql injection.
     """
     _run_test(
-        array=II.logic_gates,
-        function=II.check_if_logic_gate_sql_injection,
+        array=SQLII.logic_gates,
+        function=SQLII.check_if_logic_gate_sql_injection,
         expected_response=True
     )
 
@@ -59,8 +56,8 @@ def test_if_command_sql_injection_list_keywords() -> None:
         Function in charge of testing the command for sql injection.
     """
     _run_test(
-        array=II.keywords,
-        function=II.check_if_command_sql_injection,
+        array=SQLII.keywords,
+        function=SQLII.check_if_command_sql_injection,
         expected_response=True
     )
 
@@ -70,8 +67,8 @@ def test_if_symbol_sql_injection_list_symbols() -> None:
         Function in charge of testing the symbol for sql injection.
     """
     _run_test(
-        array=II.symbols,
-        function=II.check_if_symbol_sql_injection,
+        array=SQLII.symbols,
+        function=SQLII.check_if_symbol_sql_injection,
         expected_response=True
     )
 
@@ -81,8 +78,8 @@ def test_if_sql_injection_list_all() -> None:
         Function in charge of testing the list of all sql injections.
     """
     _run_test(
-        array=II.all,
-        function=II.check_if_sql_injection,
+        array=SQLII.all,
+        function=SQLII.check_if_sql_injection,
         expected_response=True
     )
 
@@ -92,8 +89,8 @@ def test_if_injections_in_strings_list_list_all() -> None:
         Function in charge of testing the list of all sql injections in strings.
     """
     _run_test(
-        array=[II.all],
-        function=II.check_if_injections_in_strings,
+        array=[SQLII.all],
+        function=SQLII.check_if_injections_in_strings,
         expected_response=True
     )
 
@@ -103,8 +100,8 @@ def test_if_injections_in_strings_list_list_all_list_all() -> None:
         Function in charge of testing the list of all sql injections in strings.
     """
     _run_test(
-        array=[II.all, II.all],
-        function=II.check_if_injections_in_strings,
+        array=[SQLII.all, SQLII.all],
+        function=SQLII.check_if_injections_in_strings,
         expected_response=True
     )
 
@@ -115,6 +112,6 @@ def test_if_sql_injection_list_sentence() -> None:
     """
     _run_test(
         array=SENTENCES,
-        function=II.check_if_sql_injection,
+        function=SQLII.check_if_sql_injection,
         expected_response=True,
     )

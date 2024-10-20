@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 import pytest
 from fastapi import FastAPI
+import constants as TCONST
 
 sys.path.append(os.getcwd())
 
@@ -19,10 +20,10 @@ try:
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 
-ERROR = CONST.ERROR
-DEBUG = False
-SUCCESS = CONST.SUCCESS
-RDI = RuntimeData("0.0.0.0", 5000, "Area", ERROR, SUCCESS)
+ERROR = TCONST.ERROR
+DEBUG = TCONST.DEBUG
+SUCCESS = TCONST.SUCCESS
+RDI = RuntimeData(TCONST.SERVER_HOST, 5000, TCONST.PORT, ERROR, SUCCESS)
 RDI.app = FastAPI()
 RDI.endpoints_initialised = Endpoints(
     runtime_data=RDI,

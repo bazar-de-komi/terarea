@@ -56,11 +56,12 @@ class UserEndpoints:
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
         if not request_body or not all(key in request_body for key in ("email", "password")):
-            return HCI.bad_request({"error": "Bad request."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email = request_body["email"]
         password = request_body["password"]
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
+            CONST.TAB_ACCOUNTS, "*", f"email='{email}'"
+        )
         self.disp.log_debug(f"Retrived data: {user_info}", title)
         if isinstance(user_info, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
