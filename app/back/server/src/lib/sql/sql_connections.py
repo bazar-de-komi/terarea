@@ -553,6 +553,7 @@ class SQLManageConnections:
         self.disp.log_debug(
             "Checking if the provided cursor is active.", title
         )
+        self.disp.log_debug(f"Content of the cursor: {dir(cursor)}.", title)
         resp = cursor is not None and cursor._connection is not None
         if resp:
             self.disp.log_debug("The cursor is active.", title)

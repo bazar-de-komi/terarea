@@ -107,16 +107,18 @@ def setup_environment(request: pytest.FixtureRequest):
         pytest.skip("(test_server) thread failed to start")
     if server.is_running() is not True:
         pytest.skip("(test_server) Server is not running")
-    if server.runtime_data_initialised.database_link.is_connected() is not True:
+    call = server.runtime_data_initialised.database_link.get_table_names()
+    if isinstance(call, int) and call == server.error:
         pytest.skip(
             "(test_server) Server failed to connect to the database"
         )
     print("Server started.")
 
     async def teardown():
-        if server.is_running() is True:
+        if server is not None:
             print("Shutting down server...")
-            await server.shutdown()
+            del server
+            server = None
             print("Server stopped")
         if active_thread.is_alive() is True:
             print("Stopping thread (5 seconds grace) ...")
@@ -160,7 +162,7 @@ class TestServer:
     def check_server(self, setup_environment, critical: bool = False):
         """Helper function to check if the server is still running."""
         server: Server = setup_environment["server"]
-        if server.is_server_running() is False or setup_environment["critical_failed"] is True:
+        if server is None or setup_environment["critical_failed"] is True:
             if critical is True:
                 setup_environment["critical_failed"] = True
             pytest.skip(

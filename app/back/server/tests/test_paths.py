@@ -4,6 +4,7 @@
 import os
 import sys
 from fastapi import Request, Response, FastAPI
+import constants as TCONST
 
 sys.path.append(os.getcwd())
 try:
@@ -22,21 +23,22 @@ def dummy_path(request: Request) -> Response:
     return {"msg": "Hello World !"}
 
 
-ERROR = 84
-SUCCESS = 0
-RDI = RuntimeData("0.0.0.0", 5000, "Area", ERROR, SUCCESS)
+ERROR = TCONST.ERROR
+SUCCESS = TCONST.SUCCESS
+DEBUG = TCONST.DEBUG
+RDI = RuntimeData(TCONST.SERVER_HOST, TCONST.PORT, "Area", ERROR, SUCCESS)
 RDI.app = FastAPI()
 RDI.endpoints_initialised = Endpoints(
     runtime_data=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
 )
 SPI = ServerPaths(
     runtime_data=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
 )
 RDI.paths_initialised = SPI
 
@@ -82,4 +84,5 @@ def test_inject_routes() -> None:
     try:
         SPI.inject_routes()
     except Exception as e:
+        print(f"error: {str(e)}")
         assert False

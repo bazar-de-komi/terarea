@@ -10,6 +10,7 @@ from datetime import datetime
 
 import pytest
 from apscheduler.job import Job
+import constants as TCONST
 
 sys.path.append(os.getcwd())
 try:
@@ -19,9 +20,9 @@ except ImportError as e:
 
 
 # Constants
-SUCCESS = 0
-ERROR = 84
-DEBUG = True
+SUCCESS = TCONST.SUCCESS
+ERROR = TCONST.ERROR
+DEBUG = TCONST.DEBUG
 
 # Create a test function for each test scenario
 
