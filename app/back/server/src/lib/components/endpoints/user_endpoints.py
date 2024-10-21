@@ -276,6 +276,7 @@ class UserEndpoints:
         token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
             token
         )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
         if token_valid is False:
             return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
@@ -293,21 +294,30 @@ class UserEndpoints:
         )
         if current_user == self.error or len(current_user) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
-        usr_id: str = str(current_user["usr_id"])
+        usr_id: str = str(current_user[0]["usr_id"])
+        user_profile: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{usr_id}'",
+        )
+        self.disp.log_debug(f"User profile = {user_profile}", title)
+        if user_profile == self.error or len(user_profile) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
         data: List[str] = [
             body_username,
             body_email,
             self.password_handling_initialised.hash_password(body_password),
-            current_user["method"],
-            current_user["admin"]
+            user_profile[0]["method"],
+            user_profile[0]["admin"]
         ]
+        self.disp.log_debug(f"Compile data: {data}.", title)
         columns: List[str] = self.runtime_data_initialised.database_link.get_table_column_names(
             CONST.TAB_ACCOUNTS
         )
         self.runtime_data_initialised.database_link.insert_or_update_data_into_table(
             table=CONST.TAB_ACCOUNTS,
             data=data,
-            column=columns,
+            columns=columns,
             where=f"id='{usr_id}'"
         )
         data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
