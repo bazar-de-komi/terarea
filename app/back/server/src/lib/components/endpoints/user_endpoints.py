@@ -314,10 +314,10 @@ class UserEndpoints:
         columns: List[str] = self.runtime_data_initialised.database_link.get_table_column_names(
             CONST.TAB_ACCOUNTS
         )
-        self.runtime_data_initialised.database_link.insert_or_update_data_into_table(
+        self.runtime_data_initialised.database_link.update_data_in_table(
             table=CONST.TAB_ACCOUNTS,
             data=data,
-            columns=columns,
+            column=columns,
             where=f"id='{usr_id}'"
         )
         data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
