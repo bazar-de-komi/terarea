@@ -52,7 +52,7 @@ class Services:
             return HCI.unauthorized({"error": "Authorisation required."})
 
         services_data = self.runtime_data_initialised.database_link.get_data_from_table(
-            "Services")
+            CONST.TAB_SERVICES)
         if services_data is None:
             return HCI.not_found({"error": "Services not found."}, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         self.disp.log_debug(f"received in {title}", services_data)
@@ -76,7 +76,7 @@ class Services:
             return HCI.unauthorized({"error": "Authorization required."}, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
-            "Services")
+            CONST.TAB_SERVICES)
         service = next(
             (srv for srv in service_data if srv["name"] == name), None)
         if service is None:
@@ -102,7 +102,7 @@ class Services:
             return HCI.unauthorized({"error": "Authorization required."})
 
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
-            "Services")
+            CONST.TAB_SERVICES)
         filtered_services = [
             srv for srv in service_data if tag in srv.get("tags", [])]
         if not filtered_services:
@@ -129,7 +129,7 @@ class Services:
             return HCI.unauthorized({"error": "Authorization required."})
 
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
-            "Services")
+            CONST.TAB_SERVICES)
         recent_services = sorted(
             service_data, key=lambda x: x["created_at"], reverse=True)[:10]
         if not recent_services:

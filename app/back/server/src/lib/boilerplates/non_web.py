@@ -4,6 +4,7 @@
 
 import re
 import uuid
+from random import randint
 from datetime import datetime, timedelta
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -31,8 +32,6 @@ class BoilerplateNonHTTP:
             debug=self.debug,
             logger=self.__class__.__name__
         )
-        # ----------------     The user databse credentials     ----------------
-        self.check_database_health()
 
     def pause(self) -> str:
         """_summary_
@@ -57,15 +56,82 @@ class BoilerplateNonHTTP:
         offset_time = current_time + timedelta(seconds=seconds)
         return offset_time
 
+    def is_token_correct(self, token: str) -> bool:
+        """_summary_
+            Check if the token is correct.
+        Args:
+            token (str): _description_: The token to check
+
+        Returns:
+            bool: _description_: True if the token is correct, False otherwise
+        """
+        title = "is_token_correct"
+        self.disp.log_debug("Checking if the token is correct.", title)
+        if isinstance(token, str) is False:
+            return False
+        login_table = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            "*",
+            where=f"token={token}",
+            beautify=False
+        )
+        if isinstance(login_table, int):
+            return False
+        if len(login_table) != 1:
+            return False
+        self.disp.log_debug(f"login_table = {login_table}", title)
+        if datetime.now() > login_table[0][-1]:
+            return False
+        new_date = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
+            CONST.UA_TOKEN_LIFESPAN
+        )
+        new_date_str = self.runtime_data_initialised.database_link.datetime_to_string(
+            datetime_instance=new_date,
+            date_only=False,
+            sql_mode=True
+        )
+        self.disp.log_debug(f"string date: {new_date_str}", title)
+        status = self.runtime_data_initialised.database_link.update_data_in_table(
+            table=CONST.TAB_CONNECTIONS,
+            data=new_date_str,
+            column="expiration_date",
+            where=f"token={token}"
+        )
+        if status != self.success:
+            self.disp.log_warning(
+                f"Failed to update expiration_date for {token}.",
+                title
+            )
+        return True
+
     def generate_token(self) -> str:
         """_summary_
             This is a function that will generate a token for the user.
         Returns:
             str: _description_: The token generated
         """
+        title = "generate_token"
         token = str(uuid.uuid4())
-        while token in self.runtime_data_initialised.user_data:
+        user_token = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_CONNECTIONS,
+            column="token",
+            where=f"token='{token}'",
+            beautify=False
+        )
+        self.disp.log_debug(f"user_token = {user_token}", title)
+        while len(user_token) > 0:
             token = str(uuid.uuid4())
+            user_token = self.runtime_data_initialised.database_link.get_data_from_table(
+                table=CONST.TAB_CONNECTIONS,
+                column="token",
+                where=f"token='{token}'",
+                beautify=False
+            )
+            self.disp.log_debug(f"user_token = {user_token}", title)
+            if isinstance(user_token, int) is True and user_token == self.error:
+                return token
+            if len(user_token) == 0:
+                return token
         return token
 
     def server_show_item_content(self, function_name: str = "show_item_content", item_name: str = "", item: object = None, show: bool = True) -> None:
@@ -113,6 +179,10 @@ class BoilerplateNonHTTP:
         """
         if self.runtime_data_initialised.database_link is None:
             try:
+                self.disp.log_debug(
+                    "database_link is none, initialising sql.",
+                    "check_database_health"
+                )
                 self.runtime_data_initialised.database_link = SQL(
                     url=CONST.DB_HOST,
                     port=CONST.DB_PORT,
@@ -130,6 +200,10 @@ class BoilerplateNonHTTP:
         if self.runtime_data_initialised.database_link.is_connected() is False:
             if self.runtime_data_initialised.database_link.connect_to_db() is False:
                 try:
+                    self.disp.log_debug(
+                        "database_link is none, initialising sql.",
+                        "check_database_health"
+                    )
                     self.runtime_data_initialised.database_link = SQL(
                         url=CONST.DB_HOST,
                         port=CONST.DB_PORT,
@@ -141,5 +215,57 @@ class BoilerplateNonHTTP:
                         debug=self.debug
                     )
                 except RuntimeError as e:
-                    msg = "(_check_database_health) Could not connect to the database."
+                    msg = "(check_database_health) Could not connect to the database."
                     raise RuntimeError(msg) from e
+
+    def is_token_admin(self, token: str) -> bool:
+        """_summary_
+            Check if the user's token has admin privileges.
+        Args:
+            token (str): _description_
+
+        Returns:
+            bool: _description_
+        """
+        title = "is_token_admin"
+        user_id = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_CONNECTIONS,
+            column="user_id",
+            where=f"token='{token}'",
+            beautify=False
+        )
+        if isinstance(user_id, int) is True and user_id == self.error:
+            self.disp.log_error(
+                f"Failed to find token {token} in the database.", title
+            )
+            return False
+        self.disp.log_debug(f"usr_id = {user_id}", title)
+        user_info = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="admin",
+            where=f"id={user_id[0][0]}",
+            beautify=False
+        )
+        if isinstance(user_info, int) is True and user_info == self.error:
+            self.disp.log_error(
+                f"Failed to find user {user_id[0][0]} in the database.", title
+            )
+            return False
+        self.disp.log_debug(f"usr_info = {user_info}", title)
+        return user_info[0][0] == 1
+
+    def generate_check_token(self, token_size: int = 4) -> str:
+        """_summary_
+            Create a token that can be used for e-mail verification.
+
+        Returns:
+            str: _description_
+        """
+        if isinstance(token_size, (int, float)) is False:
+            token_size = 4
+        token_size = int(token_size)
+        token_size = max(token_size, 0)
+        code = f"{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        for i in range(token_size):
+            code += f"-{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
+        return code

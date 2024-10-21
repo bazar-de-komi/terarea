@@ -3,7 +3,7 @@
 """
 
 from typing import Union, Dict, Any
-# from time import sleep
+from datetime import datetime
 from fastapi import Request, UploadFile
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -38,18 +38,17 @@ class BoilerplateIncoming:
         Returns:
             bool: _description_: True if the token is correct, False otherwise
         """
+        title = "token_correct"
         self.disp.log_debug(
-            f"request = {request}", "token_correct"
+            f"request = {request}", title
         )
         token = self.get_token_if_present(request)
         self.disp.log_debug(
-            f"token = {token}", "token_correct"
+            f"token = {token}", title
         )
         if token is None:
             return False
-        if token not in self.runtime_data_initialised.user_data:
-            return False
-        return True
+        return self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(token)
 
     def logged_in(self, request: Request) -> bool:
         """_summary_
@@ -60,20 +59,15 @@ class BoilerplateIncoming:
         Returns:
             bool: _description_: True if the user is logged in, False otherwise
         """
+        title = "logged_in"
         self.disp.log_debug(
-            f"request = {request}", "logged_in"
+            f"request = {request}", title
         )
-        token = self.get_token_if_present(request)
-        self.disp.log_debug(
-            f"token = {token}", "logged_in"
+        self.disp.log_warning(
+            "This function is the same as token_correct, please call token correct instead",
+            title
         )
-        if token is None:
-            return False
-        if self.token_correct(request) is False:
-            return False
-        if token in self.runtime_data_initialised.user_data:
-            return True
-        return False
+        return self.token_correct(request)
 
     def _insert_login_into_database(self, user_data: dict[str, any]) -> int:
         """_summary_
@@ -84,29 +78,27 @@ class BoilerplateIncoming:
         Returns:
             int: _description_: The status of the operation
         """
+        title = "_insert_login_into_database"
         if len(user_data) != 3:
             self.disp.log_error(
-                "The user data is not in the correct format !", "_insert_login_into_database"
+                "The user data is not in the correct format !", title
             )
             return self.error
         self.disp.log_debug(
-            f"user_data = {user_data}",
-            "_insert_login_into_database"
+            f"user_data = {user_data}", title
         )
         user_data[-1] = self.runtime_data_initialised.database_link.datetime_to_string(
             user_data[-1]
         )
         self.disp.log_debug(
-            f"stringed_datetime = {user_data}",
-            "_insert_login_into_database"
+            f"stringed_datetime = {user_data}", title
         )
         table_columns = self.runtime_data_initialised.database_link.get_table_column_names(
-            "Connections"
+            CONST.TAB_CONNECTIONS
         )
         table_columns.pop(0)
         self.disp.log_debug(
-            f"table_columns = {table_columns}",
-            "_insert_login_into_database"
+            f"table_columns = {table_columns}", title
         )
         status = self.runtime_data_initialised.database_link.insert_or_update_data_into_table(
             table="Connections",
@@ -115,13 +107,11 @@ class BoilerplateIncoming:
         )
         if status != self.success:
             self.disp.log_error(
-                "Data not inserted successfully !",
-                "_insert_login_into_database"
+                "Data not inserted successfully !", title
             )
             return self.error
         self.disp.log_debug(
-            "Data inserted successfully.",
-            "_insert_login_into_database"
+            "Data inserted successfully.", title
         )
         return self.success
 
@@ -136,11 +126,12 @@ class BoilerplateIncoming:
             Dict[str, Any]: _description_: The response status
             {'status':Union[success, error], 'token':Union['some_token', '']}
         """
+        title = "log_user_in"
         data = {'status': self.success, 'token': ''}
-        self.disp.log_debug(f"e-mail = {email}", "log_user_in")
+        self.disp.log_debug(f"e-mail = {email}", title)
         token = self.runtime_data_initialised.boilerplate_non_http_initialised.generate_token()
         usr_id = self.runtime_data_initialised.database_link.get_data_from_table(
-            "Users",
+            CONST.TAB_ACCOUNTS,
             "id",
             f"email='{email}'",
             beautify=False
@@ -148,20 +139,21 @@ class BoilerplateIncoming:
         if isinstance(usr_id, int):
             data['status'] = self.error
             return data
-        self.disp.log_debug(f"usr_id = {usr_id}", "log_user_in")
+        self.disp.log_debug(f"usr_id = {usr_id}", title)
         lifespan = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(
             CONST.UA_TOKEN_LIFESPAN
         )
         try:
             uid = str(int(usr_id[0][0]))
-            self.disp.log_debug(f"uid = {uid}", "log_user_in")
+            self.disp.log_debug(f"uid = {uid}", title)
         except ValueError:
             data['status'] = self.error
             return data
         usr_data = [token, uid, lifespan]
-        self.disp.log_debug(f"usr_data = {usr_data}", "log_user_in")
+        self.disp.log_debug(f"usr_data = {usr_data}", title)
         data['status'] = self._insert_login_into_database(usr_data)
         data['token'] = token
+        self.disp.log_debug(f"Response data: {data}", title)
         return data
 
     def get_token_if_present(self, request: Request) -> Union[str, None]:
@@ -237,13 +229,31 @@ class BoilerplateIncoming:
             Dict[str, Any]: _description_: The response status
             {'status':Union[success, error], 'msg':'message'}
         """
+        title = "log_user_out"
         data = {'status': self.error, 'msg': "You are not logged in !"}
         if token == "":
             data["msg"] = "No token provided !"
             return data
 
-        if token in self.runtime_data_initialised.user_data:
-            self.runtime_data_initialised.user_data.pop(token)
-            data["status"] = self.success
-            data["msg"] = "You have successfully logged out."
+        login_table = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            "*",
+            where=f"token={token}",
+            beautify=False
+        )
+        if isinstance(login_table, int):
+            return False
+        if len(login_table) != 1:
+            return False
+        self.disp.log_debug(f"login_table = {login_table}", title)
+        status = self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            f"token={token}"
+        )
+        if status != self.success:
+            data["msg"] = "Data not removed successfully !"
+            self.disp.log_error(data["msg"], title)
+            return data
+        data["status"] = self.success
+        data["msg"] = "You have successfully logged out."
         return data

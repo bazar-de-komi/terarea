@@ -3,10 +3,10 @@
 # File description:
 # __init__.py
 
-from .injection import Injection
+from .sql_injection import SQLInjection
 from .sql_manager import SQL
 
 __all__ = [
-    "Injection",
+    "SQLInjection",
     "SQL"
 ]

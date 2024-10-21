@@ -7,31 +7,45 @@ from datetime import datetime, timedelta
 
 import pytest
 from fastapi import FastAPI
+import constants as TCONST
 
 sys.path.append(os.getcwd())
 
 try:
+    from src.lib.sql import SQL
+    from src.lib.components import constants as CONST
     from src.lib.components.runtime_data import RuntimeData
     from src.lib.components.endpoints_routes import Endpoints
     from src.lib.boilerplates.non_web import BoilerplateNonHTTP
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 
-ERROR = 84
-SUCCESS = 0
-RDI = RuntimeData("0.0.0.0", 5000, "Area", ERROR, SUCCESS)
+ERROR = TCONST.ERROR
+DEBUG = TCONST.DEBUG
+SUCCESS = TCONST.SUCCESS
+RDI = RuntimeData(TCONST.SERVER_HOST, 5000, TCONST.PORT, ERROR, SUCCESS)
 RDI.app = FastAPI()
 RDI.endpoints_initialised = Endpoints(
     runtime_data=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
+)
+RDI.database_link = SQL(
+    url=CONST.DB_HOST,
+    port=CONST.DB_PORT,
+    username=CONST.DB_USER,
+    password=CONST.DB_PASSWORD,
+    db_name=CONST.DB_DATABASE,
+    success=SUCCESS,
+    error=ERROR,
+    debug=DEBUG
 )
 BNHTTPI = BoilerplateNonHTTP(
     runtime_data_initialised=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
 )
 
 
@@ -99,3 +113,63 @@ def test_check_incorrect_format() -> None:
         Function in charge of testing the check date function with an incorrect date.
     """
     assert BNHTTPI.check_date("12-12-2021") is False
+
+
+def test_check_token_generator() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with 4.
+    """
+    code = BNHTTPI.generate_check_token(token_size=4)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 4
+
+
+def test_check_token_generator_size_0() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with 0.
+    """
+    code = BNHTTPI.generate_check_token(token_size=0)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 0
+
+
+def test_check_token_generator_size_negative_number() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a negative number.
+    """
+    code = BNHTTPI.generate_check_token(token_size=-1)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 0
+
+
+def test_check_token_generator_string_as_arg() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a string.
+    """
+    code = BNHTTPI.generate_check_token(token_size="e")
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 4
+
+
+def test_check_token_generator_size_floating_number() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a floating number.
+    """
+    code = BNHTTPI.generate_check_token(token_size=4.8)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 4
+
+
+def test_check_token_generator_size_negative_floating_number() -> None:
+    """_summary_
+        Function in charge of testing the generate_check_token function with a negative floating number.
+    """
+    code = BNHTTPI.generate_check_token(token_size=-4.5)
+    assert isinstance(code, str)
+    assert code != ''
+    assert code.count('-') == 0

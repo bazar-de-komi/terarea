@@ -9,10 +9,11 @@
 
 import base64
 from typing import Union, List
+
 from display_tty import Disp, TOML_CONF, SAVE_TO_FILE, FILE_NAME
 
 
-class Injection:
+class SQLInjection:
     """ Check if an sql injection is present """
 
     def __init__(self, error: int = 84, success: int = 0, debug: bool = False) -> None:
@@ -269,6 +270,6 @@ class Injection:
 
 
 if __name__ == "__main__":
-    II = Injection()
+    II = SQLInjection()
     res = II.test_injection_class()
     print(f"test status = {res}")

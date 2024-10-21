@@ -45,7 +45,7 @@ class ServerPaths:
         Returns:
             int: _description_: success if it succeeded, error if there was an error in the data.
         """
-        self.disp.log_debug(f"Adding path {path}", "add_path")
+        self.disp.log_debug(f"Adding path <{path}>", "add_path")
 
         if isinstance(path, (str)) is False or isinstance(method, (str, list)) is False or callable(endpoint) is False:
             self.disp.log_error(

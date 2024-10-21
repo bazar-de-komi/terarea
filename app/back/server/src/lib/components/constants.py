@@ -2,12 +2,16 @@
     This is the file in charge of containing the constants that run the server.
 """
 
-from typing import List, Dict
+from typing import List, Any
 
 import toml
+import json
 import dotenv
 from display_tty import IDISP
 IDISP.logger.name = "Constants"
+
+# Enable debugging for the functions in the constants file.
+IDISP.debug = True
 
 # Environement initialisation
 dotenv.load_dotenv(".env")
@@ -35,7 +39,7 @@ def _get_environement_variable(environement: dotenv, variable_name: str) -> str:
     return data
 
 
-def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) -> str:
+def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) -> Any:
     """
     Get the value of a configuration variable from the TOML file.
 
@@ -64,6 +68,15 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
                 )
 
         if key in current_section:
+            msg = f"current_section[{key}] = {current_section[key]} : "
+            msg += f"{type(current_section[key])}"
+            IDISP.log_debug(msg, "_get_toml_variable")
+            if current_section[key] == "none":
+                IDISP.log_debug(
+                    "The value none has been converted to None.",
+                    "_get_toml_variable"
+                )
+                return None
             return current_section[key]
         if default is None:
             msg = f"Key '{key}' not found in section '{section}' "
@@ -107,39 +120,155 @@ MINIO_ROOT_USER = _get_environement_variable(ENV, "MINIO_ROOT_USER")
 MINIO_ROOT_PASSWORD = _get_environement_variable(ENV, "MINIO_ROOT_PASSWORD")
 
 # TOML variables
+# |- Server configurations
+SERVER_WORKERS = _get_toml_variable(
+    TOML_CONF, "Server_configuration", "workers", None
+)
+SERVER_LIFESPAN = _get_toml_variable(
+    TOML_CONF, "Server_configuration", "lifespan", "auto"
+)
+SERVER_TIMEOUT_KEEP_ALIVE = _get_toml_variable(
+    TOML_CONF, "Server_configuration", "timeout_keep_alive", 30
+)
+
+# |- Server configuration -> Status codes
+SUCCESS = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.status_codes", "success", 0
+))
+ERROR = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.status_codes", "error", 84
+))
+
+# |- Server configuration -> Debug
+DEBUG = _get_toml_variable(
+    TOML_CONF, "Server_configuration.debug_mode", "debug", False
+)
+
+# |- Server configuration -> development
+SERVER_DEV_RELOAD = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "reload", False
+)
+SERVER_DEV_RELOAD_DIRS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "reload_dirs", None
+)
+SERVER_DEV_LOG_LEVEL = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "log_level", "info"
+)
+SERVER_DEV_USE_COLOURS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.development", "use_colours", True
+)
+
+# |- Server configuration -> production
+SERVER_PROD_PROXY_HEADERS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.production", "proxy_headers", True
+)
+SERVER_PROD_FORWARDED_ALLOW_IPS = _get_toml_variable(
+    TOML_CONF, "Server_configuration.production", "forwarded_allow_ips", None
+)
+
+# |- Server configuration -> database settings
+DATABASE_POOL_NAME = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "pool_name", None
+)
+DATABASE_MAX_POOL_CONNECTIONS = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "max_pool_connections", 10
+))
+DATABASE_RESET_POOL_NODE_CONNECTION = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "reset_pool_node_connection", True
+)
+DATABASE_CONNECTION_TIMEOUT = int(_get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "connection_timeout", 10
+))
+DATABASE_LOCAL_INFILE = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "local_infile", False
+)
+DATABASE_INIT_COMMAND = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "init_command", None
+)
+DATABASE_DEFAULT_FILE = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "default_file", None
+)
+DATABASE_SSL_KEY = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_key", None
+)
+DATABASE_SSL_CERT = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_cert", None
+)
+DATABASE_SSL_CA = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_ca", None
+)
+DATABASE_SSL_CIPHER = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_cipher", None
+)
+DATABASE_SSL_VERIFY_CERT = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl_verify_cert", False
+)
+DATABASE_SSL = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "ssl", None
+)
+DATABASE_AUTOCOMMIT = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "autocommit", False
+)
+DATABASE_COLLATION = _get_toml_variable(
+    TOML_CONF, "Server_configuration.database", "collation", "utf8mb4_unicode_ci"
+)
+
 # |- Cron settings
 CLEAN_TOKENS = _get_toml_variable(TOML_CONF, "Crons", "clean_tokens", True)
-CLEAN_TOKENS_DELAY = int(_get_toml_variable(
+CLEAN_TOKENS_INTERVAL = int(_get_toml_variable(
     TOML_CONF, "Crons", "clean_tokens_interval", 1800
 ))
 ENABLE_TEST_CRONS = _get_toml_variable(
     TOML_CONF, "Crons", "enable_test_crons", False
 )
+TEST_CRONS_INTERVAL = int(_get_toml_variable(
+    TOML_CONF, "Crons", "test_cron_interval", 200
+))
 CHECK_ACTIONS_INTERVAL = int(_get_toml_variable(
     TOML_CONF, "Crons", "check_actions_interval", 300
 ))
+CLEAN_VERIFICATION = _get_toml_variable(
+    TOML_CONF, "Crons", "clean_verification", True
+)
+CLEAN_VERIFICATION_INTERVAL = _get_toml_variable(
+    TOML_CONF, "Crons", "clean_verification_interval", 900
+)
 
-# |- Status codes
-SUCCESS = int(_get_toml_variable(TOML_CONF, "Status_codes", "success", 0))
-ERROR = int(_get_toml_variable(TOML_CONF, "Status_codes", "error", 84))
+# |- Verification
+EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Verification", "email_verification_delay", 120
+))
+CHECK_TOKEN_SIZE = int(_get_toml_variable(
+    TOML_CONF,  "Verification", "check_token_size", 4
+))
+RANDOM_MIN = int(_get_toml_variable(
+    TOML_CONF,  "Verification", "random_min", 100000
+))
+RANDOM_MAX = int(_get_toml_variable(
+    TOML_CONF,  "Verification", "random_max", 999999
+))
 
-# |- Debug
-DEBUG = _get_toml_variable(TOML_CONF, "Debug_mode", "debug", False)
-
-# Json response default keys
+# Json default keys
 JSON_TITLE: str = "title"
 JSON_MESSAGE: str = "msg"
 JSON_ERROR: str = "error"
 JSON_RESP: str = "resp"
 JSON_LOGGED_IN: str = "logged in"
 JSON_UID: str = "user_uid"
+
 # JSON Header keys
 JSON_HEADER_APP_NAME: str = "app_sender"
 JSON_HEADER_HOST: str = "serving_host"
 JSON_HEADER_PORT: str = "serving_port"
-JSON_HEADER_CHARACTER_NAME: str = "character_name"
 CONTENT_TYPE: str = "JSON"
 
+# Database table names
+TAB_ACCOUNTS = "Users"
+TAB_ACTIONS = "Actions"
+TAB_SERVICES = "Services"
+TAB_CONNECTIONS = "Connections"
+TAB_VERIFICATION = "Verification"
+TAB_USER_SERVICES = "User Services"
 
 # Character info config
 CHAR_NODE_KEY: str = "node"

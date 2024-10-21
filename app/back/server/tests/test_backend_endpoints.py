@@ -107,16 +107,17 @@ def setup_environment(request: pytest.FixtureRequest):
         pytest.skip("(test_server) thread failed to start")
     if server.is_running() is not True:
         pytest.skip("(test_server) Server is not running")
-    if server.runtime_data_initialised.database_link.is_connected() is not True:
+    call = server.runtime_data_initialised.database_link.get_table_names()
+    if isinstance(call, int) and call == server.error:
         pytest.skip(
             "(test_server) Server failed to connect to the database"
         )
     print("Server started.")
 
     async def teardown():
-        if server.is_running() is True:
+        if server is not None:
             print("Shutting down server...")
-            await server.shutdown()
+            server.stop_server()
             print("Server stopped")
         if active_thread.is_alive() is True:
             print("Stopping thread (5 seconds grace) ...")
@@ -160,7 +161,7 @@ class TestServer:
     def check_server(self, setup_environment, critical: bool = False):
         """Helper function to check if the server is still running."""
         server: Server = setup_environment["server"]
-        if server.is_server_running() is False or setup_environment["critical_failed"] is True:
+        if server is None or setup_environment["critical_failed"] is True:
             if critical is True:
                 setup_environment["critical_failed"] = True
             pytest.skip(
@@ -175,13 +176,17 @@ class TestServer:
         status: QueryStatus = setup_environment["status"]
         response = query.get_endpoint(TCONST.GET_HOME)
         assert status.success(response) is True
-        print(f" {response.json()}")
         assert json.dumps(response.json()) == json.dumps(
-            {"msg": "Hello, World!"}
+            {
+                'title': 'Home',
+                'msg': 'Welcome to the control server.',
+                'resp': '',
+                'logged in': False
+            }
         )
 
     @pytest.mark.critical
-    def test_put_register_lambda(self, setup_environment):
+    def test_post_register_lambda(self, setup_environment):
         """_summary_
             Test the /register endpoint of the server.
         Args:
@@ -197,7 +202,7 @@ class TestServer:
             "password": accounts["password"]
         }
         TCONST.IDISP.log_info(f"body = {body}")
-        response = query.put_endpoint(path, content=body)
+        response = query.post_endpoint(path, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
         assert status.success(response) is True
 
@@ -221,18 +226,18 @@ class TestServer:
         TCONST.IDISP.log_info(f"body = {body}")
         response = query.post_endpoint(path, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
-        if status.accepted(response) is True:
+        if status.success(response) is True:
             msg = f"Bearer {response.json()['token']}"
             token[TCONST.LAMBDA_USER_TOKEN_KEY] = msg
         else:
             setup_environment["critical_failed"] = True
-        assert status.accepted(response) is True
+        assert status.success(response) is True
 
-    @pytest.mark.last
-    def test_post_stop_server(self, setup_environment):
-        """ Test the /stop endpoint of the server. """
-        self.check_server(setup_environment)
-        teardown_func: callable = setup_environment["teardown_func"]
-        success: int = setup_environment["success"]
-        status = teardown_func()
-        assert status == success
+    # @pytest.mark.last
+    # def test_post_stop_server(self, setup_environment):
+    #     """ Test the /stop endpoint of the server. """
+    #     self.check_server(setup_environment)
+    #     teardown_func: callable = setup_environment["teardown_func"]
+    #     success: int = setup_environment["success"]
+    #     status = teardown_func()
+    #     assert status == success

@@ -1,7 +1,7 @@
 """_summary_
     File in charge of containing the functions that will be run in the background.
 """
-from typing import Union, Dict, Any
+from typing import Any
 from datetime import datetime
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
@@ -29,6 +29,15 @@ class Crons:
             logger=self.__class__.__name__
         )
 
+    def __del__(self) -> None:
+        """_summary_
+            The destructor of the class
+        """
+        self.disp.log_info("Cron sub processes are shutting down.", "__del__")
+        if self.runtime_data.background_tasks_initialised is not None:
+            del self.runtime_data.background_tasks_initialised
+            self.runtime_data.background_tasks_initialised = None
+
     def inject_crons(self) -> int:
         """_summary_
             Add the cron functions to the cron loop.
@@ -36,32 +45,51 @@ class Crons:
         Returns:
             int: _description_: The overall status of the injection.
         """
-        self.runtime_data.background_tasks_initialised.safe_add_task(
-            func=self.check_actions,
-            args=None,
-            trigger='interval',
-            seconds=CONST.CHECK_ACTIONS_INTERVAL
-        )
+        if False is True:
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self.check_actions,
+                args=None,
+                trigger='interval',
+                seconds=CONST.CHECK_ACTIONS_INTERVAL
+            )
+        # self.runtime_data.background_tasks_initialised.safe_add_task(
+        #     func=self._harass_database,
+        #     args=None,
+        #     trigger='interval',
+        #     seconds=10
+        # )
         if CONST.ENABLE_TEST_CRONS is True:
-            test_delay = 200
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self._harass_database,
+                args=None,
+                trigger='interval',
+                seconds=CONST.TEST_CRONS_INTERVAL
+            )
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._test_current_date,
                 args=datetime.now,
                 trigger='interval',
-                seconds=test_delay
+                seconds=CONST.TEST_CRONS_INTERVAL
             )
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._test_hello_world,
                 args=None,
                 trigger='interval',
-                seconds=test_delay
+                seconds=CONST.TEST_CRONS_INTERVAL
             )
         if CONST.CLEAN_TOKENS is True:
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self.clean_expired_tokens,
                 args=None,
                 trigger='interval',
-                seconds=CONST.CLEAN_TOKENS_DELAY
+                seconds=CONST.CLEAN_TOKENS_INTERVAL
+            )
+        if CONST.CLEAN_VERIFICATION is True:
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self.clean_expired_verification_nodes,
+                args=None,
+                trigger='interval',
+                seconds=CONST.CLEAN_VERIFICATION_INTERVAL
             )
 
     def _test_hello_world(self) -> None:
@@ -91,21 +119,87 @@ class Crons:
                 "_test_current_date"
             )
 
+    def _harass_database(self, *args: Any) -> None:
+        """_summary_
+            This is a test function that will print the current date.
+        Args:
+            date (datetime): _description_
+        """
+        title = "_harass_database"
+        self.disp.log_info(f"In {title}", title)
+        self.runtime_data.database_link.show_connection_info()
+        connection = self.runtime_data.database_link.is_connected()
+        self.disp.log_info(
+            f"Connection status: {connection}",
+            title
+        )
+        if connection is False:
+            self.runtime_data.database_link.connect_to_db()
+            connection = self.runtime_data.database_link.is_connected()
+            self.disp.log_info(
+                f"Connection status: {connection}",
+                title
+            )
+            connection = self.runtime_data.database_link.is_connected()
+            self.disp.log_info(
+                f"Connection status: {connection}",
+                title
+            )
+        if connection is True:
+            data = self.runtime_data.database_link.get_table_names()
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.describe_table(
+                CONST.TAB_CONNECTIONS
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_data_from_table(
+                CONST.TAB_CONNECTIONS, "*", "", True
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_table_column_names(
+                CONST.TAB_CONNECTIONS
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+            data = self.runtime_data.database_link.get_table_size(
+                CONST.TAB_CONNECTIONS, "*", ""
+            )
+            self.disp.log_info(
+                f"Data from {CONST.TAB_CONNECTIONS}: {data}",
+                title
+            )
+        self.disp.log_info(f"Out of {title}.", title)
+
     def clean_expired_tokens(self) -> None:
         """_summary_
             Remove the tokens that have passed their lifespan.
         """
         title = "clean_expired_tokens"
-        token_table = "Connections"
         date_node = "expiration_date"
         current_time = datetime.now()
         self.disp.log_info("Cleaning expired tokens", title)
         current_tokens = self.runtime_data.database_link.get_data_from_table(
-            table=token_table,
+            table=CONST.TAB_CONNECTIONS,
             column="*",
             where="",
             beautify=True
         )
+        if isinstance(current_tokens, int) is True:
+            msg = "There is no data to be cleared in "
+            msg += f"{CONST.TAB_CONNECTIONS} table."
+            self.disp.log_warning(msg, title)
+            return
         self.disp.log_debug(f"current tokens = {current_tokens}", title)
         for i in current_tokens:
             if i[date_node] is not None and i[date_node] != "" and isinstance(i[date_node], str) is True:
@@ -120,11 +214,56 @@ class Crons:
                 self.disp.log_debug(f"Did not convert {i[date_node]}.", title)
             if datetime_node < current_time:
                 self.runtime_data.database_link.remove_data_from_table(
-                    table=token_table,
+                    table=CONST.TAB_CONNECTIONS,
                     where=f"id='{i['id']}'"
                 )
                 self.disp.log_debug(f"Removed {i}.", title)
         self.disp.log_debug("Cleaned expired tokens", title)
+
+    def clean_expired_verification_nodes(self) -> None:
+        """_summary_
+            Remove the nodes in the verification table that have passed their lifespan.
+        """
+        title = "clean_expired_verification_nodes"
+        date_node = "expiration"
+        current_time = datetime.now()
+        self.disp.log_info(
+            f"Cleaning expired lines in the {CONST.TAB_VERIFICATION} table.",
+            title
+        )
+        current_lines = self.runtime_data.database_link.get_data_from_table(
+            table=CONST.TAB_VERIFICATION,
+            column="*",
+            where="",
+            beautify=True
+        )
+        if isinstance(current_lines, int) is True:
+            msg = "There is no data to be cleared in "
+            msg += f"{CONST.TAB_VERIFICATION} table."
+            self.disp.log_warning(
+                msg,
+                title
+            )
+            return
+        self.disp.log_debug(f"current lines = {current_lines}", title)
+        for i in current_lines:
+            if i[date_node] is not None and i[date_node] != "" and isinstance(i[date_node], str) is True:
+                datetime_node = self.runtime_data.database_link.string_to_datetime(
+                    i[date_node]
+                )
+                msg = f"Converted {i[date_node]} to a datetime instance"
+                msg += f" ({datetime_node})."
+                self.disp.log_debug(msg, title)
+            else:
+                datetime_node = i[date_node]
+                self.disp.log_debug(f"Did not convert {i[date_node]}.", title)
+            if datetime_node < current_time:
+                self.runtime_data.database_link.remove_data_from_table(
+                    table=CONST.TAB_VERIFICATION,
+                    where=f"id='{i['id']}'"
+                )
+                self.disp.log_debug(f"Removed {i}.", title)
+        self.disp.log_debug("Cleaned expired lines", title)
 
     def check_actions(self) -> None:
         """_summary_

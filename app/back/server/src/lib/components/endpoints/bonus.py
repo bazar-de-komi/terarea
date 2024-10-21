@@ -50,9 +50,10 @@ class Bonus:
         Returns:
             Response: _description_: The data to send back to the user as a response.
         """
+        title = "get_welcome"
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request)
-        self.disp.log_debug(f'(get_welcome) token = {token}')
+        self.disp.log_debug(f'(get_welcome) token = {token}', title)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title="Home",
             message="Welcome to the control server.",
@@ -60,17 +61,16 @@ class Bonus:
             token=token,
             error=False
         )
-        self.disp.log_debug(f"sent body : {body}", "get_welcome")
+        self.disp.log_debug(f"sent body : {body}", title)
         self.disp.log_debug(
-            f"header = {self.runtime_data_initialised.json_header}",
-            "get_welcome"
+            f"header = {self.runtime_data_initialised.json_header}", title
         )
         outgoing = HCI.success(
             content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
-        self.disp.log_debug(f"ready_to_go: {outgoing}", "get_welcome")
+        self.disp.log_debug(f"ready_to_go: {outgoing}", title)
         return outgoing
 
     def get_s3_bucket_names(self, request: Request) -> Response:
@@ -114,10 +114,18 @@ class Bonus:
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
-        self.disp.log_critical(
-            "Please add admin verification in order to stop the server.",
-            "post_stop_server"
-        )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(token) is False:
+            self.disp.log_error(
+                "Non-admin user tried to stop the server.", title
+            )
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="You do not have enough privileges to run this endpoint.",
+                resp="privilege to low",
+                token=token,
+                error=True
+            )
+            return HCI.unauthorized(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message="The server is stopping",
