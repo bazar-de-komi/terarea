@@ -153,6 +153,7 @@ class BoilerplateIncoming:
         self.disp.log_debug(f"usr_data = {usr_data}", title)
         data['status'] = self._insert_login_into_database(usr_data)
         data['token'] = token
+        self.disp.log_debug(f"Response data: {data}", title)
         return data
 
     def get_token_if_present(self, request: Request) -> Union[str, None]:

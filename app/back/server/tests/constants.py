@@ -19,8 +19,13 @@ from string import ascii_letters, digits
 import toml
 import dotenv
 from display_tty import IDISP
-IDISP.logger.name = "Constants_tests"
 
+
+# Variable that will enable/disable the debug logging of the functions
+DEBUG = True
+IDISP.debug = DEBUG
+
+IDISP.logger.name = "Constants_tests"
 
 DB_PORT = 3307
 DB_HOST = "127.0.0.1"
@@ -40,9 +45,6 @@ ERROR = 1
 
 APP_NAME = "Area - Testing"
 
-# DEBUG = False
-DEBUG = True
-IDISP.debug = DEBUG
 
 # Creating a string that is void of injection material
 SAFE_STRING = ascii_letters+digits
@@ -197,8 +199,8 @@ PORT = int(_get_toml_variable(
 
 # Endpoints to test the server
 GET_HOME = "/"
-PUT_REGISTER = "/register"
-POST_LOGIN = "/login"
+PUT_REGISTER = "/api/v1/register"
+POST_LOGIN = "/api/v1/login"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"

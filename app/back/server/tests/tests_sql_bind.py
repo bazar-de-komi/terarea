@@ -4,6 +4,7 @@
 import os
 import sys
 from datetime import datetime
+import constants as TCONST
 
 
 import pytest
@@ -16,9 +17,9 @@ try:
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 
-ERROR = CONST.ERROR
-SUCCESS = CONST.SUCCESS
-DEBUG = False
+ERROR = TCONST.ERROR
+SUCCESS = TCONST.SUCCESS
+DEBUG = TCONST.DEBUG
 
 SI = SQL(
     url=CONST.DB_HOST,
