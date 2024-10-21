@@ -52,12 +52,6 @@ class Crons:
                 trigger='interval',
                 seconds=CONST.CHECK_ACTIONS_INTERVAL
             )
-        # self.runtime_data.background_tasks_initialised.safe_add_task(
-        #     func=self._harass_database,
-        #     args=None,
-        #     trigger='interval',
-        #     seconds=10
-        # )
         if CONST.ENABLE_TEST_CRONS is True:
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._harass_database,
@@ -218,6 +212,10 @@ class Crons:
                     where=f"id='{i['id']}'"
                 )
                 self.disp.log_debug(f"Removed {i}.", title)
+            else:
+                self.disp.log_debug(
+                    f"Did not remove {i} because it is not yet time.", title
+                )
         self.disp.log_debug("Cleaned expired tokens", title)
 
     def clean_expired_verification_nodes(self) -> None:
