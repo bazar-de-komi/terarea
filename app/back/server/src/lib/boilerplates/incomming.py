@@ -3,7 +3,6 @@
 """
 
 from typing import Union, Dict, Any
-from datetime import datetime
 from fastapi import Request, UploadFile
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
