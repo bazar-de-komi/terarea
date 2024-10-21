@@ -4,7 +4,7 @@ services:
       context: ./app/back/s3
       dockerfile: Dockerfile
     tty: true
-    image: tearea-minio
+    image: terarea-minio
     container_name: t-minio
     restart: always
     env_file:

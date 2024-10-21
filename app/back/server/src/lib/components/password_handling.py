@@ -54,7 +54,7 @@ class PasswordHandling:
         """
         msg = f"password = {type(password)}, "
         msg += f"password_hash = {type(password_hash)}"
-        self.disp.log_debug(msg)
+        self.disp.log_debug(msg, "check_password")
         if isinstance(password, bytes) is False:
             password = password.encode("utf-8")
         if isinstance(password_hash, bytes) is False:

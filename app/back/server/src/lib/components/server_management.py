@@ -38,14 +38,20 @@ class ServerManagement:
         """_summary_
             The destructor of the class
         """
+        self.disp.log_info(
+            "Server sub processes are shutting down.",
+            "__del__"
+        )
         if self.is_server_alive() is True:
             del self.runtime_data_initialised.database_link
+            self.runtime_data_initialised.database_link = None
             del self.runtime_data_initialised.bucket_link
             self.runtime_data_initialised.continue_running = False
             if self.runtime_data_initialised.server is not None:
                 self.runtime_data_initialised.server.handle_exit(
                     signal.SIGTERM, None
                 )
+                self.runtime_data_initialised.server = None
         if self.runtime_data_initialised.background_tasks_initialised is not None:
             del self.runtime_data_initialised.background_tasks_initialised
             self.runtime_data_initialised.background_tasks_initialised = None
@@ -102,10 +108,34 @@ class ServerManagement:
             allow_methods=["*"],
             allow_headers=["*"],
         )
+        msg = "uvicorn.Config(\n"
+        msg += f"app='{self.runtime_data_initialised.app}',\n"
+        msg += f"host='{self.runtime_data_initialised.host}',\n"
+        msg += f"port='{self.runtime_data_initialised.port}',\n"
+        msg += f"lifespan='{CONST.SERVER_LIFESPAN}',\n"
+        msg += f"timeout_keep_alive='{CONST.SERVER_TIMEOUT_KEEP_ALIVE}',\n"
+        msg += f"workers='{CONST.SERVER_WORKERS}',\n"
+        msg += f"reload='{CONST.SERVER_DEV_RELOAD}',\n"
+        msg += f"reload_dirs='{CONST.SERVER_DEV_RELOAD_DIRS}',\n"
+        msg += f"log_level='{CONST.SERVER_DEV_LOG_LEVEL}',\n"
+        msg += f"use_colors='{CONST.SERVER_DEV_USE_COLOURS}',\n"
+        msg += f"proxy_headers='{CONST.SERVER_PROD_PROXY_HEADERS}',\n"
+        msg += f"forwarded_allow_ips='{CONST.SERVER_PROD_FORWARDED_ALLOW_IPS}'"
+        msg += "\n\n)"
+        self.disp.log_debug(msg, "initialise_classes")
         self.runtime_data_initialised.config = uvicorn.Config(
-            self.runtime_data_initialised.app,
+            app=self.runtime_data_initialised.app,
             host=self.runtime_data_initialised.host,
-            port=self.runtime_data_initialised.port
+            port=self.runtime_data_initialised.port,
+            lifespan=CONST.SERVER_LIFESPAN,
+            timeout_keep_alive=CONST.SERVER_TIMEOUT_KEEP_ALIVE,
+            workers=CONST.SERVER_WORKERS,
+            reload=CONST.SERVER_DEV_RELOAD,
+            reload_dirs=CONST.SERVER_DEV_RELOAD_DIRS,
+            log_level=CONST.SERVER_DEV_LOG_LEVEL,
+            use_colors=CONST.SERVER_DEV_USE_COLOURS,
+            proxy_headers=CONST.SERVER_PROD_PROXY_HEADERS,
+            forwarded_allow_ips=CONST.SERVER_PROD_FORWARDED_ALLOW_IPS
         )
         self.runtime_data_initialised.server = uvicorn.Server(
             self.runtime_data_initialised.config)
