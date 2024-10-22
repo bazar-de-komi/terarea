@@ -164,7 +164,16 @@ class OAuthAuthentication:
                 None,
                 True
             )
-        return response.json()
+        user_info = response.json()
+        if provider == "github":
+            emails_response = requests.get("https://api.github.com/user/emails", headers=headers)
+            if emails_response.status_code == 200:
+                emails = emails_response.json()
+                primary_email = next((email["email"] for email in emails if email["primary"]), None)
+                user_info["email"] = primary_email
+            else:
+                user_info["email"] = None
+        return user_info
 
     def _insert_if_user_not_exist_in_database(self, user_info: Dict, provider: str) -> int:
         """
