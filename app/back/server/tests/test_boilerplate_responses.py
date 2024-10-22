@@ -81,7 +81,7 @@ def _register_fake_user() -> None:
     RDI.database_link.insert_or_update_data_into_table(
         table=CONST.TAB_ACCOUNTS,
         data=input_data,
-        column=column_names
+        columns=column_names
     )
 
 
@@ -122,7 +122,7 @@ def _sing_fake_user_in() -> None:
     RDI.database_link.insert_or_update_data_into_table(
         table=CONST.TAB_CONNECTIONS,
         data=input_data,
-        column=table_columns
+        columns=table_columns
     )
 
 
