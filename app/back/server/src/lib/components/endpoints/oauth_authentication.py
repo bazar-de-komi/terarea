@@ -127,14 +127,32 @@ class OAuthAuthentication:
             token_response = response.json()
             if "error" in token_response:
                 self.disp.log_error(f"OAuth error: {token_response['error_description']}", title)
-                return {"error": token_response["error"]}
+                return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                    "exchange_code_for_token",
+                    "Failed to get the token",
+                    f"{token_response['error']}",
+                    None,
+                    True
+                )
             return token_response
         except requests.RequestException as e:
             self.disp.log_error(f"RequestException: {str(e)}", title)
-            return {"error": "HTTP request failed", "details": str(e)}
+            return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                "exchange_code_for_token",
+                "HTTP request failed.",
+                f"{str(e)}",
+                None,
+                True
+            )
         except ValueError:
             self.disp.log_error("Failed to parse response JSON.", title)
-            return {"error": "Invalid JSON response from provider."}
+            return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                "exchange_code_for_token",
+                "Invalid JSON response from provider.",
+                "Invalid JSON",
+                None,
+                True
+            )
 
     def _get_user_info(self, provider: str, access_token: str):
         """
@@ -157,7 +175,13 @@ class OAuthAuthentication:
         }
         response = requests.get(user_info_url, headers=headers)
         if response.status_code != 200:
-            return {"error": f"Failed to fetch user info. Status code: {response.status_code}"}
+            return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                "get_user_info",
+                "Failed to fetch user info.",
+                "Fetching user info error.",
+                None,
+                True
+            )
         return response.json()
 
     def oauth_callback(self, provider: str, code: str) -> Response:
