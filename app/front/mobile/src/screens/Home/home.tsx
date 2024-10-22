@@ -15,18 +15,18 @@ const Home = () => {
         Navigation.navigate("Sign In");
     }
     const allScreens = () => {
-        Navigation.navigate("Sign In");
+        Navigation.navigate("All");
     }
     const appletsScreens = () => {
-        Navigation.navigate("Sign In");
+        Navigation.navigate("Applets");
     }
 
-    const servicesSreens = () => {
-        Navigation.navigate("Sign In");
+    const servicesScreens = () => {
+        Navigation.navigate("Services");
     }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-        {/* <View style={styles.bgNewForgotPass}> */}
             <View style={styles.headerContainer}>
                 <Image
                     source={AreaLogo}
@@ -36,78 +36,53 @@ const Home = () => {
                     source={ProfilLogo}
                     style={styles.profilLogo}
                 />
-                </View>
-                    <Text style={styles.homeTitle}>Explore</Text>
-                    <View style={styles.homeNavigation}>
-                        <CustomerButton
-                        text="All"
-                        onPress={allScreens}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                        />
-                        <CustomerButton
-                        text="Applets"
-                        onPress={appletsScreens}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                        />
-                        <CustomerButton
-                        text="Services"
-                        onPress={servicesSreens}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                        />
-                    </View>
-                    <View style={styles.searchBar}>
-                        <CustomerInput
-                        placeholder="Search Applets or Services"
-                        />
-                    </View>
-                        <AppletBox
-                        title="How we auotmate tiktok"
-                        description="Learn how to use"
-                        bgColor="#f54242"
-                        />
-                    {/* <CustomerInput
-                    placeholder="Enter your new password"
-                    value={newPassword}
-                    setValue={setNewPassword}
-                    secureTextEntry={false}
-                    /> */}
-                    {/* <View style={styles.appletBox}>
-                        <CustomerButton
-                        text="Back to Sign in"
-                        onPress={loginPressed}
-                        type="PRIMARY"
-                        bgColor={""}
-                        fgColor={""}
-                        />
-                    </View> */}
-                    <CustomerButton
-                    text="Back to Sign in"
-                    onPress={loginPressed}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                    />
-        
-                {/* </View> */}
-    </ScrollView>
+            </View>
+            <Text style={styles.homeTitle}>Explore</Text>
+            <View style={styles.homeNavigation}>
+                <CustomerButton
+                text="All"
+                onPress={allScreens}
+                type="TERTIARY"
+                bgColor={""}
+                fgColor={""}
+                />
+                <CustomerButton
+                text="Applets"
+                onPress={appletsScreens}
+                type="TERTIARY"
+                bgColor={""}
+                fgColor={""}
+                />
+                <CustomerButton
+                text="Services"
+                onPress={servicesScreens}
+                type="TERTIARY"
+                bgColor={""}
+                fgColor={""}
+                />
+            </View>
+            <View style={styles.searchBar}>
+                <CustomerInput
+                placeholder="Search Applets or Services"
+                />
+            </View>
+                <AppletBox
+                title="How we automate tiktok"
+                description="Learn how to use"
+                bgColor="#f54242"
+                />
+            <CustomerButton
+            text="Back to Sign in"
+            onPress={loginPressed}
+            type="TERTIARY"
+            bgColor={""}
+            fgColor={""}
+            />
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    // bgNewForgotPass: {
-    //     top: 10,
-    //     // marginTop: 20,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    //     padding: 20,
-    //     backgroundColor: '#F5F5F5',
-    // },
     headerContainer: {
         marginTop: 30,
         backgroundColor: '#e0d8d7',
@@ -116,13 +91,11 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     areaLogo: {
-        // maxWidth: 110,
         maxHeight: 50,
         marginTop: 10,
         marginLeft: -250,
     },
     profilLogo: {
-        // maxWidth: 100,
         maxHeight: 50,
         marginTop: -50,
         marginLeft: 300,
@@ -132,12 +105,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 30,
         marginLeft: 150,
-        // alignItems: 'center',
     },
     homeNavigation: {
-        flexDirection: 'row', // Arrange buttons in a row
-        justifyContent: 'space-around', // Distribute buttons evenly
-        alignItems: 'center', // Align items vertically centered
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
         marginBottom: 20,
     },
     searchBar: {
