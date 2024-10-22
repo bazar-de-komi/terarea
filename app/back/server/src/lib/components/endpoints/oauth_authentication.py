@@ -3,6 +3,7 @@ The file that contains all the methods for the OAuth authentication
 """
 
 import requests
+import uuid
 from typing import Union, Dict
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
@@ -38,18 +39,16 @@ class OAuthAuthentication:
         Generate an OAuth authorization url depends on the given provider
         """
         title = "generate_oauth_authorization_url"
-
-        # Dictionnaire pour gérer les informations des providers
         provider_info = {
             "google": {
                 "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
                 "client_id": CONST.GOOGLE_CLIENT_ID,
-                "scope": "email"
+                "scope": CONST.GOOGLE_SCOPE,
             },
             "github": {
                 "base_url": "https://github.com/login/oauth/authorize",
                 "client_id": CONST.GITHUB_CLIENT_ID,
-                "scope": "user:email"
+                "scope": CONST.GITHUB_SCOPE,
             }
         }
 
@@ -61,8 +60,11 @@ class OAuthAuthentication:
         client_id = provider_info[provider]["client_id"]
         scope = provider_info[provider]["scope"]
         redirect_uri = CONST.REDIRECT_URI
-
-        url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}"
+        state = str(uuid.uuid4())
+        # ADD THE STATE TO THE DB
+        state += ":"
+        state += provider
+        url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}&state={state}"
         self.disp.log_debug(f"url = {url}", title)
         return url
 
@@ -190,11 +192,17 @@ class OAuthAuthentication:
             return self.error
         return self.success
 
-    def oauth_callback(self, provider: str, code: str) -> Response:
+    def oauth_callback(self, request: Request) -> Response:
         """
         Callback of the OAuth login
         """
         title = "oauth_callback"
+        query_params = request.query_params
+        code = query_params.get("code")
+        state = query_params.get("state")
+        if not code or not state:
+            return HCI.bad_request({"error": "Authorization code or state not provided."})
+        provider, _ = state.split(":")
         token_response = self._exchange_code_for_token(provider, code)
         self.disp.log_debug(f"Token response: {token_response}", title)
         if "error" in token_response:
