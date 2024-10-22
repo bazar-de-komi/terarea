@@ -304,7 +304,8 @@ class UserEndpoints:
             body_email,
             self.password_handling_initialised.hash_password(body_password),
             user_profile[0]["method"],
-            user_profile[0]["admin"]
+            user_profile[0]["favicon"],
+            str(user_profile[0]["admin"])
         ]
         status = self.runtime_data_initialised.boilerplate_non_http_initialised.update_user_data(
             title, usr_id, data
@@ -358,22 +359,28 @@ class UserEndpoints:
         self.disp.log_debug(f"User profile = {user_profile}", title)
         if user_profile == self.error or len(user_profile) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        email: str = user_profile[0]["email"]
         username: str = user_profile[0]["username"]
+        password: str = user_profile[0]["password"]
+        msg = f"body_username = {body_username}, body_email = {body_email}, "
+        msg += f"body_password = {body_password}, email = {email}, "
+        msg += f"username = {username}, password = {password}"
+        self.disp.log_debug(msg, title)
         if body_username is not None:
             username = body_username
             self.disp.log_debug(f"username is now: {username}", title)
-        email: str = user_profile[0]["email"]
         if body_email is not None:
             email = body_email
             self.disp.log_debug(f"email is now: {email}", title)
-        password: str = user_profile[0]["password"]
-        if body_password is None:
+        if body_password is not None:
             password = self.password_handling_initialised.hash_password(
                 body_password
             )
             self.disp.log_debug(f"password is now: {password}", title)
         data: List[str] = [
-            username, email, password, user_profile[0]["method"], user_profile[0]["admin"]
+            username, email, password,
+            user_profile[0]["method"], user_profile[0]["favicon"],
+            str(user_profile[0]["admin"])
         ]
         status = self.runtime_data_initialised.boilerplate_non_http_initialised.update_user_data(
             title, usr_id, data
