@@ -247,8 +247,22 @@ class OAuthAuthentication:
         uuid_gotten, provider = state.split(":")
         if not uuid_gotten or not provider:
             return HCI.bad_request({"error": "The state is in bad format."})
-        #Add the check of the uuid
+        self.disp.log_debug(f"Uuid gotten: {uuid_gotten}", title)
         self.disp.log_debug(f"Provider: {provider}", title)
+        table = "Verification"
+        data = self.runtime_data_initialised.database_link.get_data_from_table(
+            table,
+            "*",
+            f"definition='{uuid_gotten}'"
+        )
+        self.disp.log_debug(f"Data gotten: {data}", title)
+        if isinstance(data, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        if self.runtime_data_initialised.database_link.drop_data_from_table(
+            table,
+            f"definition='{uuid_gotten}'"
+        ):
+            return HCI.internal_server_error({"error": "Internal server error."})
         token_response = self._exchange_code_for_token(provider, code)
         self.disp.log_debug(f"Token response: {token_response}", title)
         if "error" in token_response:
