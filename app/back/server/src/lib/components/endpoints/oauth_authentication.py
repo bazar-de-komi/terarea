@@ -3,7 +3,7 @@ The file that contains all the methods for the OAuth authentication
 """
 
 import requests
-from typing import Union
+from typing import Union, Dict
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .. import constants as CONST
@@ -184,19 +184,30 @@ class OAuthAuthentication:
             )
         return response.json()
 
+    def _insert_or_update_database(self, user_info: Dict) -> int:
+        """
+        The function to insert or update the user information in the database
+        """
+        return 0
+
     def oauth_callback(self, provider: str, code: str) -> Response:
         """
         Callback of the OAuth login
         """
+        title = "oauth_callback"
         token_response = self._exchange_code_for_token(provider, code)
+        self.disp.log_debug(f"Token response: {token_response}", title)
         if "error" in token_response:
             return HCI.bad_request({"error": token_response["error"]})
         access_token = token_response.get("access_token")
         if not access_token:
             return HCI.bad_request({"error": "Access token not found."})
         user_info = self._get_user_info(provider, access_token)
+        self.disp.log_debug(f"User info: {user_info}", title)
         if "error" in user_info:
             return HCI.internal_server_error({"error": user_info["error"]})
+        if self._insert_or_update_database(user_info):
+            return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.accepted({"user_info": user_info})
 
     async def oauth_login(self, request: Request) -> Response:
@@ -210,6 +221,7 @@ class OAuthAuthentication:
             return HCI.bad_request({"error": "Bad request."})
         provider = request_body["provider"]
         authorization_url = self._generate_oauth_authorization_url(provider)
+        self.disp.log_debug(f"Authorization url: {authorization_url}", title)
         if isinstance(authorization_url, int):
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"authorization_url": authorization_url})
