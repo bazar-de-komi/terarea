@@ -202,10 +202,18 @@ class OAuthAuthentication:
         if isinstance(columns, int):
             return self.error
         columns.pop(0)
+        self.disp.log_debug(f"Columns list = {columns}", title)
         username: str = email.split('@')[0]
         data: list = []
+        data.append(username)
         data.append(email)
         data.append(provider)
+        data.append(provider)
+        data.append("NULL")
+        data.append(str(int(False)))
+        self.disp.log_debug(f"Data list = {data}", title)
+        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+            return self.error
         return self.success
 
     def oauth_callback(self, provider: str, code: str) -> Response:
@@ -224,8 +232,8 @@ class OAuthAuthentication:
         self.disp.log_debug(f"User info: {user_info}", title)
         if "error" in user_info:
             return HCI.internal_server_error({"error": user_info["error"]})
-        # if self._insert_if_user_not_exist_in_database(user_info, provider):
-        #     return HCI.internal_server_error({"error": "Internal server error."})
+        if self._insert_if_user_not_exist_in_database(user_info, provider) == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.accepted({"user_info": user_info})
 
     async def oauth_login(self, request: Request) -> Response:
