@@ -69,7 +69,7 @@ def _register_fake_user() -> None:
         Function in charge of registering a fake user.
     """
     input_data = [
-        TCONST.USER_DATA_NAME,
+        TCONST.USER_DATA_USERNAME,
         TCONST.USER_DATA_EMAIL,
         PHI.hash_password(str(TCONST.USER_DATA_PASSWORD)),
         TCONST.USER_DATA_METHOD,
