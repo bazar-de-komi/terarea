@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerButton from "../../components/CustomerButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-import MenuIcon from '../../../assets/menuIcon.png';
+import ProfilLogo from '../../../assets/profilLogo.png';
 
 const AppletsScreen = () => {
     const Navigation = useNavigation();
@@ -14,38 +14,51 @@ const AppletsScreen = () => {
         Navigation.navigate('Home');
     }
 
+    const callServices = () => {
+        Navigation.navigate('Services')
+    }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.headerContainer}>
+            <View style={styles.backContainer}>
                 <Image
                     source={AreaLogo}
                     style={styles.areaLogo}
                 />
                 <Image
-                    source={MenuIcon}
+                    source={ProfilLogo}
                     style={styles.profilLogo}
                 />
-                <Text style={styles.homeTitle}>Automation for business and home</Text>
+                <View style={styles.backStyle}>
+                    <CustomerButton
+                    text='<'
+                    onPress={callServices}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
+                    />
+                </View>
+                <Text style={styles.homeTitle}>5-Minute Crafts integrations</Text>
                 <View style={styles.homeNavigation}>
                 </View>
-                <Text style={styles.title}>Save time and get more done</Text>
-                <View style={styles.back}>
+                <Text style={styles.description}>The 5-Minute Crafts Youtube channel is a</Text>
+            </View>
+            <View style={styles.connectStyle}>
                     <CustomerButton
-                    text="AppletsScreen Today"
+                    text="Connect"
                     onPress={signUp}
                     type="PRIMARY"
                     bgColor={""}
                     fgColor={""}
                     />
                 </View>
-            </View>
             <Text style={styles.homeTitle}>Get appletsScreensed with any Applet</Text>
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    headerContainer: {
+    backContainer: {
         marginTop: 30,
         backgroundColor: '#e0d8d7',
         borderRadius: 10,
@@ -59,10 +72,8 @@ const styles = StyleSheet.create({
         marginLeft: -250,
     },
     profilLogo: {
-        maxWidth: 30,
-        maxHeight: 30,
-        marginBottom: 60,
-        marginTop: -40,
+        maxHeight: 50,
+        marginTop: -50,
         marginLeft: 300,
     },
     homeTitle: {
@@ -70,8 +81,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 30,
     },
-    title: {
-        fontSize: 28,
+    description: {
+        fontSize: 20,
         margin: 30,
     },
     homeNavigation: {
@@ -80,10 +91,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    back: {
+    connectStyle: {
         alignItems: 'center',
         marginBottom: 40,
         width: '130%',
+        alignSelf: 'center',
+    },
+    backStyle: {
+        marginBottom: 40,
+        width: '180%',
         alignSelf: 'center',
     },
 })
