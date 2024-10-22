@@ -4,10 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import Header from '../../components/Header/header.tsx';
 import AppletBox from "../../components/AppletsBox/appletBox";
-
-import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-import ProfilLogo from '../../../assets/profilLogo.png';
 
 const Applets = () => {
     const Navigation = useNavigation();
@@ -28,72 +26,46 @@ const Applets = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.headerContainer}>
-                <Image
-                    source={AreaLogo}
-                    style={styles.areaLogo}
+            <Header/>
+            <Text style={styles.homeTitle}>Explore</Text>
+            <View style={styles.homeNavigation}>
+                <CustomerButton
+                text="All"
+                onPress={allScreens}
+                type="TERTIARY"
+                bgColor={""}
+                fgColor={""}
                 />
-                <Image
-                    source={ProfilLogo}
-                    style={styles.profilLogo}
+                <CustomerButton
+                text="Applets"
+                onPress={applets}
+                type="TERTIARY"
+                bgColor={""}
+                fgColor={""}
                 />
-                </View>
-                    <Text style={styles.homeTitle}>Explore</Text>
-                    <View style={styles.homeNavigation}>
-                        <CustomerButton
-                        text="All"
-                        onPress={allScreens}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                        />
-                        <CustomerButton
-                        text="Applets"
-                        onPress={applets}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                        />
-                        <CustomerButton
-                        text="Services"
-                        onPress={services}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                        />
-                    </View>
-                    <View style={styles.searchBar}>
-                        <CustomerInput
-                        placeholder="Search Applets or Services"
-                        />
-                    </View>
-                    <AppletBox
-                    title="Get the weather forecast every dat at 7:00 AM"
-                    description="Weather Underground"
-                    bgColor="orange"
-                    />
+                <CustomerButton
+                text="Services"
+                onPress={services}
+                type="TERTIARY"
+                bgColor={""}
+                fgColor={""}
+                />
+            </View>
+            <View style={styles.searchBar}>
+                <CustomerInput
+                placeholder="Search Applets or Services"
+                />
+            </View>
+            <AppletBox
+            title="Get the weather forecast every dat at 7:00 AM"
+            description="Weather Underground"
+            bgColor="orange"
+            />
     </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        marginTop: 30,
-        backgroundColor: '#e0d8d7',
-        borderRadius: 10,
-        alignItems: 'center',
-        padding: 5,
-    },
-    areaLogo: {
-        maxHeight: 50,
-        marginTop: 10,
-        marginLeft: -250,
-    },
-    profilLogo: {
-        maxHeight: 50,
-        marginTop: -50,
-        marginLeft: 300,
-    },
     homeTitle: {
         fontSize: 28,
         fontWeight: 'bold',
