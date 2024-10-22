@@ -104,13 +104,20 @@ class UserEndpoints:
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
         if not request_body or not all(key in request_body for key in ("email", "password")):
-            return HCI.bad_request({"error": "Bad request."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email: str = request_body["email"]
         password = request_body["password"]
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
-            return HCI.conflict({"error": "Email already exist."})
+            node = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="Email already exist.",
+                resp="email exists",
+                token=None,
+                error=True
+            )
+            return HCI.conflict(node)
         hashed_password = self.password_handling_initialised.hash_password(
             password)
         username = email.split('@')[0]
@@ -124,12 +131,19 @@ class UserEndpoints:
         )
         self.disp.log_debug(f"Column = {column}", title)
         if isinstance(column, int):
-            return HCI.internal_server_error({"error": "Internal server error."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         column.pop(0)
         self.disp.log_debug(f"Column after id pop = {column}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_ACCOUNTS, data, column) == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "Account created successfully."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
+        node = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="Account created successfully.",
+            resp="success",
+            token=None,
+            error=False
+        )
+        return HCI.success(node)
 
     async def post_send_email_verification(self, request: Request) -> Response:
         """_summary_
