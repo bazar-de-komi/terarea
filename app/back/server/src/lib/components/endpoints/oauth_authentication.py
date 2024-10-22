@@ -61,7 +61,21 @@ class OAuthAuthentication:
         scope = provider_info[provider]["scope"]
         redirect_uri = CONST.REDIRECT_URI
         state = str(uuid.uuid4())
-        # ADD THE STATE TO THE DB
+        table: str = "Verification"
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        self.disp.log_debug(f"Columns list: {columns}", title)
+        if isinstance(columns, int):
+            return self.error
+        columns.pop(0)
+        expiration_time = self.runtime_data_initialised.boilerplate_non_http_initialised.set_lifespan(CONST.EMAIL_VERIFICATION_DELAY)
+        et_str = self.runtime_data_initialised.database_link.datetime_to_string(expiration_time, False)
+        self.disp.log_debug(f"Expiration time: {et_str}", et_str)
+        data: list = []
+        data.append("state")
+        data.append(state)
+        data.append(et_str)
+        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+            return self.error
         state += ":"
         state += provider
         url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}&state={state}"
