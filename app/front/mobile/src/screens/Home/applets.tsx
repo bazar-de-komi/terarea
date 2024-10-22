@@ -20,6 +20,10 @@ const Applets = () => {
         Navigation.navigate("Services");
     }
 
+    const appletsBox = () => {
+        Navigation.navigate("Applet screen");
+    };
+
     const goHome = () => {
         Navigation.navigate('Home');
     }
@@ -60,6 +64,7 @@ const Applets = () => {
             title="Get the weather forecast every dat at 7:00 AM"
             description="Weather Underground"
             bgColor="orange"
+            onPress={appletsBox}
             />
     </ScrollView>
     )

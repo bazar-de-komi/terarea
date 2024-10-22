@@ -14,8 +14,8 @@ const AppletsScreen = () => {
         Navigation.navigate('Home');
     }
 
-    const callServices = () => {
-        Navigation.navigate('Services')
+    const callApplets = () => {
+        Navigation.navigate('Applets')
     }
 
     return (
@@ -32,7 +32,7 @@ const AppletsScreen = () => {
                 <View style={styles.backStyle}>
                     <CustomerButton
                     text='<'
-                    onPress={callServices}
+                    onPress={callApplets}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
@@ -60,7 +60,7 @@ const AppletsScreen = () => {
 const styles = StyleSheet.create({
     backContainer: {
         marginTop: 30,
-        backgroundColor: '#e0d8d7',
+        backgroundColor: "orange",
         borderRadius: 10,
         alignItems: 'center',
         padding: 5,
