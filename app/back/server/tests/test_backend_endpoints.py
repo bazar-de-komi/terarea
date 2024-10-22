@@ -216,7 +216,7 @@ class TestServer:
         assert status.success(response) is True
 
     @pytest.mark.critical
-    def test_post_register_admin_lambda(self, setup_environment):
+    def test_post_register_admin(self, setup_environment):
         """_summary_
             Test the /register endpoint of the server.
         Args:
@@ -242,7 +242,6 @@ class TestServer:
             if column == server.error or len(column) == 0:
                 setup_environment["critical_failed"] = True
                 assert column == server.success
-            column.pop(0)
             user_node = server.runtime_data_initialised.database_link.get_data_from_table(
                 CONST.TAB_ACCOUNTS,
                 column,
@@ -251,18 +250,24 @@ class TestServer:
             if user_node == server.error:
                 setup_environment["critical_failed"] = True
                 assert user_node == server.success
+            column.pop(0)
+            user_node[0].pop("id")
             user_node[0]['admin'] = str(TCONST.ADMIN_DATA_ADMIN)
-            status = server.runtime_data_initialised.database_link.update_data_in_table(
+            user_node_list = list(user_node[0].values())
+            msg = f"user_node_list = {user_node_list}\n"
+            msg += f"user_node = {user_node}"
+            server.disp.log_debug(msg, "test_post_register_admin")
+            command_status = server.runtime_data_initialised.database_link.update_data_in_table(
                 CONST.TAB_ACCOUNTS,
-                user_node,
+                user_node_list,
                 column,
                 f"email='{accounts['email']}'"
             )
-            assert status == server.success
+            assert command_status == server.success
         assert status.success(response) is True
 
     @pytest.mark.critical
-    def test_post_login_admin_lambda(self, setup_environment):
+    def test_post_login_admin(self, setup_environment):
         """_summary_
             Test the /login endpoint of the server.
         Args:
