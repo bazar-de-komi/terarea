@@ -355,88 +355,70 @@ class SQLQueryBoilerplates:
 
         return self.sql_pool.run_editing_command(sql_query, table, "update")
 
-    def insert_or_update_data_into_table(self, table: str, data: Union[List[List[str]], List[str]], column: Union[List[str], None] = None) -> int:
+    def insert_or_update_data_into_table(self, table: str, data: Union[List[List[str]], List[str]], columns: Union[List[str], None] = None) -> int:
         """_summary_
             Insert or update data into a given table.
 
         Args:
-            table (str): _description_
-            data (Union[List[List[str]], List[str]]): _description_
-            column (Union[List[str], None], optional): _description_. Defaults to None.
+            table (str): Table name.
+            data (Union[List[List[str]], List[str]]): Data to insert or update.
+            columns (Union[List[str], None], optional): Column names. Defaults to None.
 
         Returns:
-            int: _description_
+            int: Success or error code.
         """
         title = "insert_or_update_data_into_table"
         self.disp.log_debug(
-            "Inserting or updating data into the table.", title
-        )
+            "Inserting or updating data into the table.", title)
 
-        if column is None:
-            column = ""
-        if self.sql_injection.check_if_injections_in_strings([table, data, column]) is True:
-            self.disp.log_error("Injection detected.", "sql")
+        if self.sql_injection.check_if_injections_in_strings([table] + (columns or [])) is True:
+            self.disp.log_error("SQL Injection detected.", "sql")
             return self.error
 
-        if column == "":
-            column = self.get_table_column_names(table)
+        if columns is None:
+            columns = self.get_table_column_names(table)
 
         table_content = self.get_data_from_table(
-            table=table,
-            column=column,
-            where="",
-            beautify=False
+            table=table, column=columns, where="", beautify=False
         )
-        if isinstance(table_content, int) is True and table_content != self.success:
+        if isinstance(table_content, int) and table_content != self.success:
             self.disp.log_critical(
                 f"Failed to retrieve data from table {table}", title
             )
             return self.error
 
-        if len(table_content) == 0:
-            return self.insert_data_into_table(table, data, column)
+        if isinstance(data, list) and data and isinstance(data[0], list):
+            self.disp.log_debug("Processing double data list", title)
+            table_content_dict = {str(line[0]): line for line in table_content}
 
-        if isinstance(data, List) is True and (len(data) > 0 and isinstance(data[0], List) is True):
-            self.disp.log_debug(
-                "Processing double data list",                title)
             for line in data:
-                node_found = False
-                if len(line) == 0:
-                    self.disp.log_warning(
-                        "The line is empty, skipping.", title
-                    )
+                if not line:
+                    self.disp.log_warning("Empty line, skipping.", title)
                     continue
                 node0 = str(line[0])
-                for table_line in table_content:
-                    if str(table_line[0]) == node0:
-                        self.update_data_in_table(
-                            table,
-                            line,
-                            column,
-                            f"{column[0]} = {node0}"
-                        )
-                        node_found = True
-                        break
-                if node_found is False:
-                    self.insert_data_into_table(table, line, column)
+                if node0 in table_content_dict:
+                    self.update_data_in_table(
+                        table, line, columns,
+                        f"{columns[0]} = {node0}"
+                    )
+                else:
+                    self.insert_data_into_table(table, line, columns)
 
-        elif isinstance(data, List) is True:
+        elif isinstance(data, list):
             self.disp.log_debug("Processing single data list", title)
-            if len(data) == 0:
-                self.disp.log_warning(
-                    "The data list is empty, skipping.",
-                    title
-                )
+            if not data:
+                self.disp.log_warning("Empty data list, skipping.", title)
                 return self.success
+
             node0 = str(data[0])
             for line in table_content:
                 if str(line[0]) == node0:
-                    return self.update_data_in_table(table, data, column, [f"{column[0]} = {node0}"])
-            return self.insert_data_into_table(table, data, column)
+                    return self.update_data_in_table(table, data, columns, f"{columns[0]} = {node0}")
+            return self.insert_data_into_table(table, data, columns)
+
         else:
             self.disp.log_error(
-                "data is expected to be, either of type: List[str] or List[List[str]]",
-                title
+                "Data must be of type List[str] or List[List[str]]", title
             )
             return self.error
 
