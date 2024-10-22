@@ -29,6 +29,7 @@ sys.path.append(os.getcwd())
 
 try:
     from src import Server
+    from src import CONST
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
 
@@ -47,30 +48,6 @@ def pytest_configure(config: pytest.Config):
         "markers",
         "last: mark test to run after all other tests"
     )
-
-
-def _password_generator(length: int = 20) -> str:
-    """_summary_
-        This is a function in charge of generating a password for on the fly accounts.
-
-    Args:
-        length (int, optional): _description_. Defaults to 20.
-
-    Returns:
-        str: _description_
-    """
-    password = ""
-
-    iterations = 0
-    while iterations < length:
-        password += TCONST.SAFE_STRING[
-            randint(
-                0,
-                TCONST.SAFE_STRING_LENGTH - 1
-            )
-        ]
-        iterations += 1
-    return password
 
 
 @pytest.fixture(scope="module")
@@ -142,11 +119,16 @@ def setup_environment(request: pytest.FixtureRequest):
         "thread": active_thread,
         "tokens": {
             TCONST.LAMBDA_USER_TOKEN_KEY: "",
+            TCONST.ADMIN_USER_TOKEN_KEY: ""
         },
         "accounts": {
             "lambda_user": {
-                "email": f"lambda_user{TCONST.CACHE_BUSTER}@combobox.ttk",
-                "password": _password_generator()
+                "email": f"endpoint_{TCONST.USER_DATA_EMAIL}",
+                "password": f"endpoint_{TCONST.USER_DATA_PASSWORD}"
+            },
+            "admin_user": {
+                "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL}",
+                "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD}"
             }
         },
         "critical_failed": False,
@@ -229,6 +211,79 @@ class TestServer:
         if status.success(response) is True:
             msg = f"Bearer {response.json()['token']}"
             token[TCONST.LAMBDA_USER_TOKEN_KEY] = msg
+        else:
+            setup_environment["critical_failed"] = True
+        assert status.success(response) is True
+
+    @pytest.mark.critical
+    def test_post_register_admin_lambda(self, setup_environment):
+        """_summary_
+            Test the /register endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment, True)
+        server: Server = setup_environment["server"]
+        path = TCONST.PUT_REGISTER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        accounts: Dict[str, any] = setup_environment["accounts"]["admin_user"]
+        body = {
+            "email": accounts["email"],
+            "password": accounts["password"]
+        }
+        TCONST.IDISP.log_info(f"body = {body}")
+        response = query.post_endpoint(path, content=body)
+        TCONST.IDISP.log_info(f"response.json() = {response.json()}")
+        if status.success(response) is True:
+            column = server.runtime_data_initialised.database_link.get_table_column_names(
+                CONST.TAB_ACCOUNTS
+            )
+            if column == server.error or len(column) == 0:
+                setup_environment["critical_failed"] = True
+                assert column == server.success
+            column.pop(0)
+            user_node = server.runtime_data_initialised.database_link.get_data_from_table(
+                CONST.TAB_ACCOUNTS,
+                column,
+                f"email='{accounts['email']}'"
+            )
+            if user_node == server.error:
+                setup_environment["critical_failed"] = True
+                assert user_node == server.success
+            user_node[0]['admin'] = str(TCONST.ADMIN_DATA_ADMIN)
+            status = server.runtime_data_initialised.database_link.update_data_in_table(
+                CONST.TAB_ACCOUNTS,
+                user_node,
+                column,
+                f"email='{accounts['email']}'"
+            )
+            assert status == server.success
+        assert status.success(response) is True
+
+    @pytest.mark.critical
+    def test_post_login_admin_lambda(self, setup_environment):
+        """_summary_
+            Test the /login endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment, True)
+        path = TCONST.POST_LOGIN
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        accounts: Dict[str, any] = setup_environment["accounts"]["admin_user"]
+        body = {
+            "email": accounts["email"],
+            "password": accounts["password"]
+        }
+        TCONST.IDISP.log_info(f"body = {body}")
+        response = query.post_endpoint(path, content=body)
+        TCONST.IDISP.log_info(f"response.json() = {response.json()}")
+        if status.success(response) is True:
+            msg = f"Bearer {response.json()['token']}"
+            token[TCONST.ADMIN_USER_TOKEN_KEY] = msg
         else:
             setup_environment["critical_failed"] = True
         assert status.success(response) is True

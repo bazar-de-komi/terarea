@@ -154,7 +154,37 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
         return default
 
 
+def _password_generator(length: int = 20, encapsulation_node: str = "password") -> str:
+    """_summary_
+        This is a function in charge of generating a password for on the fly accounts.
+
+    Args:
+        length (int, optional): _description_. Defaults to 20.
+
+    Returns:
+        str: _description_
+    """
+    password = ""
+
+    password += str(encapsulation_node)
+    password += "_"
+
+    iterations = 0
+    while iterations < length:
+        password += SAFE_STRING[
+            randint(
+                0,
+                SAFE_STRING_LENGTH - 1
+            )
+        ]
+        iterations += 1
+    password += "_"
+    password += str(encapsulation_node)
+    return password
+
+
 CACHE_BUSTER = get_cache_busting()
+CACHE_BUSTER_ADMIN = f"admin_{get_cache_busting()}_admin"
 
 TEST_ENV = ".env"
 try:
@@ -201,6 +231,9 @@ PORT = int(_get_toml_variable(
 GET_HOME = "/"
 PUT_REGISTER = "/api/v1/register"
 POST_LOGIN = "/api/v1/login"
+PATCH_USER = "/api/v1/user"
+PUT_USER = "/api/v1/user"
+DELETE_USER = "/api/v1/user"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
@@ -209,9 +242,52 @@ ADMIN_USER_TOKEN_KEY: str = "admin_user"
 # User data (test input)
 USER_DATA_EMAIL = f"some_email_{CACHE_BUSTER}@company.example"
 USER_DATA_NAME = USER_DATA_EMAIL.split("@")[0]
-USER_DATA_PASSWORD = f"some_password_{CACHE_BUSTER}"
+USER_DATA_PASSWORD = _password_generator(
+    length=20, encapsulation_node="some_user"
+)
 USER_DATA_METHOD = "local"
 USER_DATA_FAVICON = "NULL"
 USER_DATA_ADMIN = "0"
 USER_DATA_TOKEN = f"some_token_{CACHE_BUSTER}_some_token"
 USER_DATA_TOKEN_LIFESPAN = 3600  # seconds
+
+# User data rebind
+USER_DATA_EMAIL_REBIND = f"some_email_{CACHE_BUSTER}_rebind@company.example"
+USER_DATA_NAME_REBIND = USER_DATA_EMAIL_REBIND.split("@")[0]
+USER_DATA_PASSWORD_REBIND = _password_generator(
+    length=20, encapsulation_node="some_user_rebind"
+)
+
+# User data patch
+USER_DATA_EMAIL_PATCH = f"some_email_{CACHE_BUSTER}_patch@company.com"
+USER_DATA_NAME_PATCH = USER_DATA_EMAIL_PATCH.split("@")[0]
+USER_DATA_PASSWORD_PATCH = _password_generator(
+    length=20, encapsulation_node="some_user_patch"
+)
+
+# Admin data (test input)
+ADMIN_DATA_EMAIL = f"some_email_{CACHE_BUSTER_ADMIN}@company.example"
+ADMIN_DATA_NAME = ADMIN_DATA_EMAIL.split("@")[0]
+ADMIN_DATA_PASSWORD = _password_generator(
+    length=20, encapsulation_node="some_admin"
+)
+ADMIN_DATA_METHOD = "local"
+ADMIN_DATA_FAVICON = "NULL"
+ADMIN_DATA_ADMIN = "1"
+ADMIN_DATA_TOKEN = f"some_token_{CACHE_BUSTER_ADMIN}_some_token"
+ADMIN_DATA_TOKEN_LIFESPAN = 3600  # seconds
+
+# Admin data rebind
+ADMIN_DATA_EMAIL_REBIND = f"some_email_{CACHE_BUSTER_ADMIN}_"
+ADMIN_DATA_EMAIL_REBIND += "rebind@company.example"
+ADMIN_DATA_NAME_REBIND = ADMIN_DATA_EMAIL_REBIND.split("@")[0]
+ADMIN_DATA_PASSWORD_REBIND = _password_generator(
+    length=20, encapsulation_node="some_admin_rebind"
+)
+
+# Admin data patch
+ADMIN_DATA_EMAIL_PATCH = f"some_email_{CACHE_BUSTER_ADMIN}_patch@company.com"
+ADMIN_DATA_NAME_PATCH = ADMIN_DATA_EMAIL_PATCH.split("@")[0]
+ADMIN_DATA_PASSWORD_PATCH = _password_generator(
+    length=20, encapsulation_node="some_admin_patch"
+)
