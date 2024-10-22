@@ -4,7 +4,9 @@
 
 import re
 import uuid
+from typing import Union, List, Dict
 from random import randint
+from fastapi import Response
 from datetime import datetime, timedelta
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -269,3 +271,53 @@ class BoilerplateNonHTTP:
         for i in range(token_size):
             code += f"-{randint(CONST.RANDOM_MIN, CONST.RANDOM_MAX)}"
         return code
+
+    def get_user_id_from_token(self, title: str, token: str) -> Union[str, Response]:
+        """_summary_
+            The function in charge of getting the user id based of the provided content.
+
+        Args:
+            title (str): _description_: The title of the endpoint calling it
+            token (str): _description_: The token of the user account
+
+        Returns:
+            Union[str, Response]: _description_: Returns as string id if success, otherwise, a pre-made response for the endpoint.
+        """
+        usr_id_node: str = "usr_id"
+        current_user: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_CONNECTIONS,
+            column="*",
+            where=f"token='{token}'",
+            beautify=True
+        )
+        if current_user == self.error or len(current_user) == 0 or len(current_user) > 1:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        if usr_id_node not in current_user[0]:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        return str(current_user[0][usr_id_node])
+
+    def update_user_data(self, title: str, usr_id: str, line_content: List[str]) -> Union[int, Response]:
+        """_summary_
+            Update the account information based on the provided line.
+
+        Args:
+            title (str): _description_: This is the title of the endpoint
+            usr_id (str): _description_: This is the id of the user that needs to be updated
+            line_content (List[str]): _description_: The content of the line to be edited.
+
+        Returns:
+            Union[int, Response]: _description_
+        """
+        self.disp.log_debug(f"Compile line_content: {line_content}.", title)
+        columns: List[str] = self.runtime_data_initialised.database_link.get_table_column_names(
+            CONST.TAB_ACCOUNTS
+        )
+        status = self.runtime_data_initialised.database_link.update_data_in_table(
+            table=CONST.TAB_ACCOUNTS,
+            data=line_content,
+            column=columns,
+            where=f"id='{usr_id}'"
+        )
+        if status == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, usr_id)
+        return self.success
