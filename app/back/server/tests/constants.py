@@ -10,6 +10,7 @@ Raises:
 Returns:
     _type_: _description_
 """
+import json
 from os import getpid
 from uuid import uuid4
 from random import randint
@@ -183,6 +184,40 @@ def _password_generator(length: int = 20, encapsulation_node: str = "password") 
     return password
 
 
+def are_json_responses_identical(json_response1: Dict[str, Any], json_response2: Dict[str, Any], test_name: str = "are_json_responses_identical") -> bool:
+    """_summary_
+        This function is in charge of comparing two json responses to see if they are identical.
+
+    Args:
+        json_response1 (Dict[str,Any]): _description_: The first json response you wish to compare
+        json_response2 (Dict[str,Any]): _description_: The json response that the first response will be compared against
+
+    Returns:
+        bool: _description_: Returns True if they are identical, False otherwise.
+    """
+    try:
+        json_response1_str = json.dumps(json_response1)
+    except TypeError:
+        IDISP.log_warning(
+            "Failed to convert json_response1 to json format", test_name
+        )
+        return False
+    try:
+        json_response2_str = json.dumps(json_response2)
+    except TypeError:
+        IDISP.log_warning(
+            "Failed to convert json_response2 to json format", test_name
+        )
+        return False
+    if json_response1_str == json_response2_str:
+        return True
+    msg = "The content of json_response1 is different from json_response2:\n"
+    msg += f"- json_response1_str = {json_response1_str}\n"
+    msg += f"- json_response2_str = {json_response2_str}\n"
+    IDISP.log_warning(msg, test_name)
+    return False
+
+
 CACHE_BUSTER = get_cache_busting()
 CACHE_BUSTER_ADMIN = f"admin_{get_cache_busting()}_admin"
 
@@ -241,7 +276,7 @@ ADMIN_USER_TOKEN_KEY: str = "admin_user"
 
 # User data (test input)
 USER_DATA_EMAIL = f"some_email_{CACHE_BUSTER}@company.example"
-USER_DATA_NAME = USER_DATA_EMAIL.split("@")[0]
+USER_DATA_USERNAME = USER_DATA_EMAIL.split("@")[0]
 USER_DATA_PASSWORD = _password_generator(
     length=20, encapsulation_node="some_user"
 )
@@ -253,21 +288,21 @@ USER_DATA_TOKEN_LIFESPAN = 3600  # seconds
 
 # User data rebind
 USER_DATA_EMAIL_REBIND = f"some_email_{CACHE_BUSTER}_rebind@company.example"
-USER_DATA_NAME_REBIND = USER_DATA_EMAIL_REBIND.split("@")[0]
+USER_DATA_USERNAME_REBIND = USER_DATA_EMAIL_REBIND.split("@")[0]
 USER_DATA_PASSWORD_REBIND = _password_generator(
     length=20, encapsulation_node="some_user_rebind"
 )
 
 # User data patch
 USER_DATA_EMAIL_PATCH = f"some_email_{CACHE_BUSTER}_patch@company.com"
-USER_DATA_NAME_PATCH = USER_DATA_EMAIL_PATCH.split("@")[0]
+USER_DATA_USERNAME_PATCH = USER_DATA_EMAIL_PATCH.split("@")[0]
 USER_DATA_PASSWORD_PATCH = _password_generator(
     length=20, encapsulation_node="some_user_patch"
 )
 
 # Admin data (test input)
 ADMIN_DATA_EMAIL = f"some_email_{CACHE_BUSTER_ADMIN}@company.example"
-ADMIN_DATA_NAME = ADMIN_DATA_EMAIL.split("@")[0]
+ADMIN_DATA_USERNAME = ADMIN_DATA_EMAIL.split("@")[0]
 ADMIN_DATA_PASSWORD = _password_generator(
     length=20, encapsulation_node="some_admin"
 )
@@ -280,14 +315,42 @@ ADMIN_DATA_TOKEN_LIFESPAN = 3600  # seconds
 # Admin data rebind
 ADMIN_DATA_EMAIL_REBIND = f"some_email_{CACHE_BUSTER_ADMIN}_"
 ADMIN_DATA_EMAIL_REBIND += "rebind@company.example"
-ADMIN_DATA_NAME_REBIND = ADMIN_DATA_EMAIL_REBIND.split("@")[0]
+ADMIN_DATA_USERNAME_REBIND = ADMIN_DATA_EMAIL_REBIND.split("@")[0]
 ADMIN_DATA_PASSWORD_REBIND = _password_generator(
     length=20, encapsulation_node="some_admin_rebind"
 )
 
 # Admin data patch
 ADMIN_DATA_EMAIL_PATCH = f"some_email_{CACHE_BUSTER_ADMIN}_patch@company.com"
-ADMIN_DATA_NAME_PATCH = ADMIN_DATA_EMAIL_PATCH.split("@")[0]
+ADMIN_DATA_USERNAME_PATCH = ADMIN_DATA_EMAIL_PATCH.split("@")[0]
 ADMIN_DATA_PASSWORD_PATCH = _password_generator(
     length=20, encapsulation_node="some_admin_patch"
 )
+
+
+# Pre-built response bodies for certain endpoints
+GET_HOME_RESPONSE_NOT_LOGGED_IN = {
+    'title': 'Home',
+    'msg': 'Welcome to the control server.',
+    'resp': '',
+    'logged in': False
+}
+POST_LOGIN = {
+    'title': 'Login',
+    'msg': 'Welcome {name}',
+    'resp': 'success',
+    'logged in': True,
+    'token': ''
+}
+POST_REGISTER = {
+    'title': 'Register',
+    "msg": "Account created successfully.",
+    'resp': 'success',
+    'logged_in': False
+}
+PUT_USER_RESPONSE = {
+    "title": "put_user",
+    "msg": "The account information has been updated.",
+    "resp": "success",
+    "logged in": True
+}

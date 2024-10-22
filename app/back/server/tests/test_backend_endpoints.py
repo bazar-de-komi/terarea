@@ -123,12 +123,56 @@ def setup_environment(request: pytest.FixtureRequest):
         },
         "accounts": {
             "lambda_user": {
-                "email": f"endpoint_{TCONST.USER_DATA_EMAIL}",
-                "password": f"endpoint_{TCONST.USER_DATA_PASSWORD}"
+                "normal": {
+                    "email": f"endpoint_{TCONST.USER_DATA_EMAIL}",
+                    "password": f"endpoint_{TCONST.USER_DATA_PASSWORD}",
+                    "username": f"endpoint_{TCONST.USER_DATA_USERNAME}",
+                    "method": f"{TCONST.USER_DATA_METHOD}",
+                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
+                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                },
+                "put": {
+                    "email": f"endpoint_{TCONST.USER_DATA_EMAIL_REBIND}",
+                    "password": f"endpoint_{TCONST.USER_DATA_PASSWORD_REBIND}",
+                    "username": f"endpoint_{TCONST.USER_DATA_USERNAME_REBIND}",
+                    "method": f"{TCONST.USER_DATA_METHOD}",
+                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
+                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                },
+                "patch": {
+                    "email": f"endpoint_{TCONST.USER_DATA_EMAIL_PATCH}",
+                    "password": f"endpoint_{TCONST.USER_DATA_PASSWORD_PATCH}",
+                    "username": f"endpoint_{TCONST.USER_DATA_USERNAME_PATCH}",
+                    "method": f"{TCONST.USER_DATA_METHOD}",
+                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
+                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                }
             },
             "admin_user": {
-                "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL}",
-                "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD}"
+                "normal": {
+                    "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL}",
+                    "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD}",
+                    "username": f"endpoint_{TCONST.ADMIN_DATA_USERNAME}",
+                    "method": f"{TCONST.USER_DATA_METHOD}",
+                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
+                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                },
+                "put": {
+                    "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL_REBIND}",
+                    "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_REBIND}",
+                    "username": f"endpoint_{TCONST.ADMIN_DATA_USERNAME_REBIND}",
+                    "method": f"{TCONST.USER_DATA_METHOD}",
+                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
+                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                },
+                "patch": {
+                    "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL_PATCH}",
+                    "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_PATCH}",
+                    "username": f"endpoint_{TCONST.ADMIN_DATA_USERNAME_PATCH}",
+                    "method": f"{TCONST.USER_DATA_METHOD}",
+                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
+                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                }
             }
         },
         "critical_failed": False,
@@ -158,14 +202,11 @@ class TestServer:
         status: QueryStatus = setup_environment["status"]
         response = query.get_endpoint(TCONST.GET_HOME)
         assert status.success(response) is True
-        assert json.dumps(response.json()) == json.dumps(
-            {
-                'title': 'Home',
-                'msg': 'Welcome to the control server.',
-                'resp': '',
-                'logged in': False
-            }
-        )
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.GET_HOME_RESPONSE_NOT_LOGGED_IN,
+            "test_home"
+        ) is True
 
     @pytest.mark.critical
     def test_post_register_lambda(self, setup_environment):
@@ -178,7 +219,9 @@ class TestServer:
         path = TCONST.PUT_REGISTER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        accounts: Dict[str, any] = setup_environment["accounts"]["lambda_user"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["lambda_user"]["normal"]
         body = {
             "email": accounts["email"],
             "password": accounts["password"]
@@ -187,6 +230,11 @@ class TestServer:
         response = query.post_endpoint(path, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
         assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.POST_REGISTER,
+            "test_post_register_lambda"
+        ) is True
 
     @pytest.mark.critical
     def test_post_login_lambda(self, setup_environment):
@@ -200,7 +248,9 @@ class TestServer:
         token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        accounts: Dict[str, any] = setup_environment["accounts"]["lambda_user"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["lambda_user"]["normal"]
         body = {
             "email": accounts["email"],
             "password": accounts["password"]
@@ -213,7 +263,15 @@ class TestServer:
             token[TCONST.LAMBDA_USER_TOKEN_KEY] = msg
         else:
             setup_environment["critical_failed"] = True
+        correct_node = TCONST.POST_LOGIN
+        correct_node['msg'] = f"Welcome {accounts['username']}"
+        correct_node["token"] = token[TCONST.LAMBDA_USER_TOKEN_KEY]
         assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            correct_node,
+            "test_post_login_lambda"
+        ) is True
 
     @pytest.mark.critical
     def test_post_register_admin(self, setup_environment):
@@ -227,7 +285,9 @@ class TestServer:
         path = TCONST.PUT_REGISTER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        accounts: Dict[str, any] = setup_environment["accounts"]["admin_user"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["admin_user"]["normal"]
         body = {
             "email": accounts["email"],
             "password": accounts["password"]
@@ -265,6 +325,11 @@ class TestServer:
             )
             assert command_status == server.success
         assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.POST_REGISTER,
+            "test_post_register_admin"
+        ) is True
 
     @pytest.mark.critical
     def test_post_login_admin(self, setup_environment):
@@ -278,7 +343,9 @@ class TestServer:
         token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        accounts: Dict[str, any] = setup_environment["accounts"]["admin_user"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["admin_user"]["normal"]
         body = {
             "email": accounts["email"],
             "password": accounts["password"]
@@ -291,7 +358,73 @@ class TestServer:
             token[TCONST.ADMIN_USER_TOKEN_KEY] = msg
         else:
             setup_environment["critical_failed"] = True
+        correct_node = TCONST.POST_LOGIN
+        correct_node['msg'] = f"Welcome {accounts['username']}"
+        correct_node["token"] = token[TCONST.ADMIN_USER_TOKEN_KEY]
         assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            correct_node,
+            "test_post_login_admin"
+        ) is True
+
+    def test_put_user_lambda(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PUT_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["lambda_user"]["put"]
+        body = {
+            "username": accounts["username"],
+            "email": accounts["email"],
+            "password": accounts["password"]
+        }
+        response = query.put_endpoint(
+            path, content=body, token=token[TCONST.LAMBDA_USER_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.PUT_USER_RESPONSE,
+            "test_put_user_lambda"
+        ) is True
+
+    def test_put_user_admin(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PUT_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["admin_user"]["put"]
+        body = {
+            "username": accounts["username"],
+            "email": accounts["email"],
+            "password": accounts["password"]
+        }
+        response = query.put_endpoint(
+            path, content=body, token=token[TCONST.LAMBDA_USER_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.PUT_USER_RESPONSE,
+            "test_put_user_admin"
+        ) is True
 
     # @pytest.mark.last
     # def test_post_stop_server(self, setup_environment):
