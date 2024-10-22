@@ -175,11 +175,11 @@ class OAuthAuthentication:
                 user_info["email"] = None
         return user_info
 
-    def _insert_if_user_not_exist_in_database(self, user_info: Dict, provider: str) -> int:
+    def _oauth_user_logger(self, user_info: Dict, provider: str) -> Response:
         """
         The function to insert or update the user information in the database
         """
-        title: str = "insert_if_user_not_exist_in_database"
+        title: str = "oauth_user_logger"
         email: str = user_info["email"]
         table: str = "Users"
         retrieved_user = self.runtime_data_initialised.database_link.get_data_from_table(table, "email", f"email='{email}'")
@@ -187,11 +187,11 @@ class OAuthAuthentication:
         if isinstance(retrieved_user, int) is False:
             data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
             if data["status"] == self.error:
-                return self.error
-            return self.success
+                return HCI.internal_server_error({"error": "Internal server error."})
+            return HCI.accepted({"token": data["token"]})
         columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
         if isinstance(columns, int):
-            return self.error
+            return HCI.internal_server_error({"error": "Internal server error."})
         columns.pop(0)
         self.disp.log_debug(f"Columns list = {columns}", title)
         username: str = email.split('@')[0]
@@ -204,8 +204,11 @@ class OAuthAuthentication:
         data.append(str(int(False)))
         self.disp.log_debug(f"Data list = {data}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
-            return self.error
-        return self.success
+            return HCI.internal_server_error({"error": "Internal server error."})
+        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
+        if data["status"] == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.accepted({"token": data["token"]})
 
     def oauth_callback(self, request: Request) -> Response:
         """
@@ -236,9 +239,7 @@ class OAuthAuthentication:
         self.disp.log_debug(f"User info: {user_info}", title)
         if "error" in user_info:
             return HCI.internal_server_error({"error": user_info["error"]})
-        if self._insert_if_user_not_exist_in_database(user_info, provider) == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.accepted({"user_info": user_info})
+        return self._oauth_user_logger(user_info, provider)
 
     async def oauth_login(self, request: Request) -> Response:
         """
