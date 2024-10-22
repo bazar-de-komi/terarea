@@ -93,7 +93,13 @@ class OAuthAuthentication:
             }
         else:
             self.disp.log_error("Unknown or Unsupported Oauth provider", title)
-            return {"error": "Unsupported OAuth provider."}
+            return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                    "exchange_code_for_token",
+                    "Unsupported OAuth provider.",
+                    "Unsupported OAuth provider.",
+                    None,
+                    True
+                )
         self.disp.log_debug(f"data = {data}", title)
         headers = {"Accept": "application/json"}
         try:
@@ -169,7 +175,7 @@ class OAuthAuthentication:
         table: str = "Users"
         retrieved_user = self.runtime_data_initialised.database_link.get_data_from_table(table, "email", f"email='{email}'")
         self.disp.log_debug(f"Retrieved user: {retrieved_user}", title)
-        if isinstance(retrieved_user, int) or retrieved_user[0]["method"] == provider:
+        if isinstance(retrieved_user, int) is False:
             data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
             if data["status"] == self.error:
                 return self.error
@@ -198,11 +204,18 @@ class OAuthAuthentication:
         """
         title = "oauth_callback"
         query_params = request.query_params
+        self.disp.log_debug(f"Query params: {query_params}", title)
         code = query_params.get("code")
+        self.disp.log_debug(f"Code: {code}", title)
         state = query_params.get("state")
+        self.disp.log_debug(f"State: {state}", title)
         if not code or not state:
             return HCI.bad_request({"error": "Authorization code or state not provided."})
-        provider, _ = state.split(":")
+        uuid_gotten, provider = state.split(":")
+        if not uuid_gotten or not provider:
+            return HCI.bad_request({"error": "The state is in bad format."})
+        #Add the check of the uuid
+        self.disp.log_debug(f"Provider: {provider}", title)
         token_response = self._exchange_code_for_token(provider, code)
         self.disp.log_debug(f"Token response: {token_response}", title)
         if "error" in token_response:
