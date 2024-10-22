@@ -125,7 +125,7 @@ class Endpoints:
             "/api/v1/oauth/login", self.oauth.oauth_login, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/oauth/callback", self.oauth.oauth_callback, "POST"
+            "/api/v1/oauth/callback", self.oauth.oauth_callback, "GET"
         )
 
         # Users routes
