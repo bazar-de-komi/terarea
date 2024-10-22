@@ -33,27 +33,6 @@ class OAuthAuthentication:
             logger=self.__class__.__name__
         )
 
-    # def _generate_oauth_authorization_url(self, provider: str) -> Union[int, str]:
-    #     """_summary_
-    #     """
-    #     title = "generate_oauth_authorization_url"
-    #     if provider == "google":
-    #         base_url = "https://accounts.google.com/o/oauth2/v2/auth"
-    #         client_id = CONST.GOOGLE_CLIENT_ID
-    #         scope = "email"
-    #     elif provider == "github":
-    #         base_url = "https://github.com/login/oauth/authorize"
-    #         client_id = CONST.GITHUB_CLIENT_ID
-    #         scope = "user:email"
-    #     else:
-    #         self.disp.log_error("Unknown or Unsupported Oauth provider", title)
-    #         return self.error
-    #     redirect_uri = CONST.REDIRECT_URI
-    #     url = base_url
-    #     url += f"?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}"
-    #     self.disp.log_debug(f"url = {url}", title)
-    #     return url
-
     def _generate_oauth_authorization_url(self, provider: str) -> Union[int, str]:
         """
         Generate an OAuth authorization url depends on the given provider
@@ -84,11 +63,6 @@ class OAuthAuthentication:
         redirect_uri = CONST.REDIRECT_URI
 
         url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}"
-        url = url.replace(" ", "%20")
-        url = url.replace(":", "%3A")
-        url = url.replace("/", "%2F")
-        url = url.replace("?", "%3F")
-        url = url.replace("&", "%26")
         self.disp.log_debug(f"url = {url}", title)
         return url
 
@@ -243,7 +217,7 @@ class OAuthAuthentication:
         title = "oauth_login"
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         self.disp.log_debug(f"Request body: {request_body}", title)
-        if not request_body or not all(key in request_body for key in ("provider")):
+        if not request_body or "provider" not in request_body:
             return HCI.bad_request({"error": "Bad request."})
         provider = request_body["provider"]
         authorization_url = self._generate_oauth_authorization_url(provider)
