@@ -312,6 +312,8 @@ class BoilerplateNonHTTP:
         columns: List[str] = self.runtime_data_initialised.database_link.get_table_column_names(
             CONST.TAB_ACCOUNTS
         )
+        self.disp.log_debug(f"Removing id from columns: {columns}.", title)
+        columns.pop(0)
         status = self.runtime_data_initialised.database_link.update_data_in_table(
             table=CONST.TAB_ACCOUNTS,
             data=line_content,
