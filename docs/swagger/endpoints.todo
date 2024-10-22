@@ -24,7 +24,8 @@ Swagger | Implementation | postman present | Functional tests | Description
 [ ][ ][x][ ] DELETE /delete_user_favicon // Remove user favicon
 [ ][ ][x][ ] POST /logout // Sign out an user
 [ ][ ][x][ ] DELETE /delete_user // Delete an user
-(Google and github Oauth)
+[ ][ ][x][ ] GET /oauth/login/({provider_name}) //Get the authorisation url based on the sso provider.
+[ ][ ][x][ ] POST /oauth/callback //The callback endpoint for sso auths.
 
 // Applets
 [ ][ ][x][ ] PUT /add_applet/{name}/({trigger}, {tags})  //Add a trigger to an applet
