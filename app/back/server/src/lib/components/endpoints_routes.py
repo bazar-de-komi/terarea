@@ -5,7 +5,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
 # , Github_check#, IFTTT_Manager
-from .endpoints import Bonus, UserEndpoints, Services
+from .endpoints import Bonus, UserEndpoints, Services, OAuthAuthentication
 
 
 class Endpoints:
@@ -52,6 +52,12 @@ class Endpoints:
             debug=self.debug
         )
         self.user_endpoints: UserEndpoints = UserEndpoints(
+            runtime_data=runtime_data,
+            success=success,
+            error=error,
+            debug=debug
+        )
+        self.oauth: OAuthAuthentication = OAuthAuthentication(
             runtime_data=runtime_data,
             success=success,
             error=error,
@@ -114,6 +120,12 @@ class Endpoints:
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/reset_password", self.user_endpoints.put_reset_password, "PATCH"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/login", self.oauth.oauth_login, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/callback", self.oauth.oauth_callback, "POST"
         )
 
         # Users routes
