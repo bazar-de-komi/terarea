@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions} from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions, Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
@@ -8,18 +8,49 @@ import SocialButton from '../../../components/SocialAuthButton/socialAuthButton'
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
+import { queries } from "../../../../back-endConnection/querier";
+
 const SignUp = () => {
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { height } = useWindowDimensions();
 
     const navigation = useNavigation();
 
-    const SignInPressed = () => {
-        navigation.navigate('Home');
+    const SignInPressed =  () => {
+        // if (password !== repeatPassword) {
+        //     Alert.alert("Wrong password");
+        //     return;
+        // }
+        // setIsSubmitting(true);
+
+        // const newUser = {
+        //     email: email,
+        //     password: password,
+        //     // email: 'test@test.com',
+        //     // password: '123test',
+        // };
+        // try {
+        //     console.log("Hello");
+        //     const response = await queries.put("/register", newUser);
+        //     console.log("Response", response);
+        //     if (response && response.detail) {
+        //         await AsyncStorage.setItem('token', response.detail);
+        //         Alert.alert("Sign up sucessful");
+                navigation.navigate('Home');
+        //     } else {
+        //         setError("Try again");
+        //     }
+        // } catch (err) {
+        //     console.error("Sign up error: ", err);
+        //     setError("Error during sign up, try again");
+        // } finally {
+        //     setIsSubmitting(false);
+        // }
     }
 
     const loginPressed = () => {
@@ -36,12 +67,6 @@ const SignUp = () => {
             />
                 <View style={styles.SignUpContainer}>
                     <Text style={styles.SignUpTitle}>Sign Up</Text>
-                    <CustomerInput
-                    placeholder="Username"
-                    value={username}
-                    setValue={setUsername}
-                    secureTextEntry={false}
-                    />
                     <CustomerInput
                     placeholder="Email"
                     value={email}

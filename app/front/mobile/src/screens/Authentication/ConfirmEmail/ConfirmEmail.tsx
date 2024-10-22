@@ -15,7 +15,7 @@ const ConfirmEmail = () => {
 
     const resendPressed = () => {
         console.warn("Resend code");
-    }
+    }   
 
     const loginPressed = () => {
         console.warn("Log in");
