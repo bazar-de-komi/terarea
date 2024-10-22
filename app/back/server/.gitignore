@@ -7,6 +7,7 @@ coverage_data/**
 
 # Docker cache
 .core
+.config/**
 .lesshst
 .bash_history
 .mysql_history
