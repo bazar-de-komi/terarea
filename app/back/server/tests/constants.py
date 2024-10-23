@@ -269,6 +269,7 @@ PATH_POST_LOGIN = "/api/v1/login"
 PATH_PATCH_USER = "/api/v1/user"
 PATH_PUT_USER = "/api/v1/user"
 PATH_DELETE_USER = "/api/v1/user"
+PATH_GET_USER = "/api/v1/user"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
@@ -377,4 +378,10 @@ RESPONSE_PATCH_USER = {
     "msg": "The account information has been updated.",
     "resp": "success",
     "logged in": True
+}
+RESPONSE_DELETE_USER = {
+    "title": "Delete user",
+    "msg": "The account has successfully been deleted.",
+    "resp": "success",
+    "logged in": False
 }

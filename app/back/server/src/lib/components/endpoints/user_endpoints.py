@@ -444,6 +444,7 @@ class UserEndpoints:
         usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
             title, token
         )
+        self.disp.log_debug(f"user_id = {usr_id}", title)
         if isinstance(usr_id, Response) is True:
             return usr_id
         user_profile: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
@@ -459,7 +460,7 @@ class UserEndpoints:
             CONST.TAB_CONNECTIONS, CONST.TAB_ACTIVE_OAUTHS
         ]
         removal_status = self.runtime_data_initialised.boilerplate_non_http_initialised.remove_user_from_tables(
-            f"usr_id={usr_id}", tables_of_interest
+            f"user_id={usr_id}", tables_of_interest
         )
         if isinstance(removal_status, int) or self.error in list(removal_status.values()):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
