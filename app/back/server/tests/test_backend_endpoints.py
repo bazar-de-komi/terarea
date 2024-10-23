@@ -255,15 +255,12 @@ class TestServer:
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_NORMAL_MODE]
-        print(f"Account data = {accounts}")
         body = {
             "email": accounts[TCONST.UNODE_EMAIL_KEY],
             "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         TCONST.IDISP.log_info(f"body = {body}")
-        print(f"Before response, body = {body}, path = {path}")
         response = query.post_endpoint(path, content=body)
-        print(f"response = {response}")
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
         if status.success(response) is True:
             token_node = f"{response.json()['token']}"
@@ -272,11 +269,9 @@ class TestServer:
             token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.RAW_TOKEN_KEY] = token_node
         else:
             setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
-        print("Creating correct response")
         correct_node = TCONST.RESPONSE_POST_LOGIN
         correct_node['msg'] = f"Welcome {accounts['username']}"
         correct_node["token"] = token_node
-        print("Going to check statuses")
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),

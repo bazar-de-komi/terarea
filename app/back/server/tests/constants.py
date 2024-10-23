@@ -195,11 +195,6 @@ def are_json_responses_identical(json_response1: Dict[str, Any], json_response2:
     Returns:
         bool: _description_: Returns True if they are identical, False otherwise.
     """
-    msg = ""
-    msg += f"test_name = {test_name}\n"
-    msg += f"json_response1 = {json_response1}\n"
-    msg += f"json_response2 = {json_response2}"
-    print(msg)
     try:
         json_response1_str = json.dumps(json_response1)
     except TypeError:
@@ -372,13 +367,13 @@ RESPONSE_POST_REGISTER = {
     'logged in': False
 }
 RESPONSE_PUT_USER = {
-    "title": "put_user",
+    "title": "Put user",
     "msg": "The account information has been updated.",
     "resp": "success",
     "logged in": True
 }
 RESPONSE_PATCH_USER = {
-    "title": "patch_user",
+    "title": "Patch user",
     "msg": "The account information has been updated.",
     "resp": "success",
     "logged in": True
