@@ -215,3 +215,23 @@ class BoilerplateResponses:
             error=True
         )
         return HCI.bad_request(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    def user_not_found(self, title: str, token: Union[str, None] = None) -> Response:
+        """_summary_
+            Function that will return a user not found error.
+
+        Args:
+            title (str): _description_: The title of the endpoint
+            token (Union[str, None], optional): _description_. Defaults to None.: The token if present.
+
+        Returns:
+            Response: _description_: The pre-compiled response (ready to go)
+        """
+        body = self.build_response_body(
+            title=title,
+            message="The current user was not found.",
+            resp="Not found",
+            token=token,
+            error=True
+        )
+        return HCI.not_found(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)

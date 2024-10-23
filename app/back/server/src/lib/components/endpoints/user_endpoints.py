@@ -2,6 +2,7 @@
     File in charge of tracking the encpoints meant to manage the user.
 """
 
+from typing import List, Dict, Any, Union
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from ..http_codes import HCI
@@ -268,6 +269,65 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
+        title = "put_user"
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if not request_body or not all(key in request_body for key in ("username", "email", "password")):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
+        body_username: str = request_body["username"]
+        body_email: str = request_body["email"]
+        body_password: str = request_body["password"]
+        current_user: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_CONNECTIONS,
+            column="*",
+            where=f"token='{token}'",
+            beautify=True
+        )
+        if current_user == self.error or len(current_user) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        usr_id: str = str(current_user[0]["usr_id"])
+        user_profile: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{usr_id}'",
+        )
+        self.disp.log_debug(f"User profile = {user_profile}", title)
+        if user_profile == self.error or len(user_profile) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        data: List[str] = [
+            body_username,
+            body_email,
+            self.password_handling_initialised.hash_password(body_password),
+            user_profile[0]["method"],
+            user_profile[0]["admin"]
+        ]
+        self.disp.log_debug(f"Compile data: {data}.", title)
+        columns: List[str] = self.runtime_data_initialised.database_link.get_table_column_names(
+            CONST.TAB_ACCOUNTS
+        )
+        self.runtime_data_initialised.database_link.update_data_in_table(
+            table=CONST.TAB_ACCOUNTS,
+            data=data,
+            column=columns,
+            where=f"id='{usr_id}'"
+        )
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The account information has been updated.",
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def patch_user(self, request: Request) -> Response:
         """_summary_

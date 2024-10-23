@@ -101,10 +101,12 @@ REDIRECT_URI = _get_environement_variable(ENV, "REDIRECT_URI")
 # |- Github
 GITHUB_CLIENT_ID = _get_environement_variable(ENV, "GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = _get_environement_variable(ENV, "GITHUB_CLIENT_SECRET")
+GITHUB_SCOPE = _get_environement_variable(ENV, "GITHUB_SCOPE")
 
 # |- Google
 GOOGLE_CLIENT_ID = _get_environement_variable(ENV, "GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = _get_environement_variable(ENV, "GOOGLE_CLIENT_SECRET")
+GOOGLE_SCOPE = _get_environement_variable(ENV, "GOOGLE_SCOPE")
 
 # Database management
 DB_HOST = _get_environement_variable(ENV, "DB_HOST")
