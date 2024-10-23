@@ -299,6 +299,28 @@ class OAuthAuthentication:
         if not provider:
             return HCI.bad_request({"error": "The provider is not provided."})
         self.disp.log_debug(f"Provider: {provider}", title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        user_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        if isinstance(user_id, Response) is True:
+            return user_id
+        user_profile = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{user_id}'",
+        )
+        self.disp.log_debug(f"User profile: {user_profile}", title)
+        admin = int(user_profile[0]["admin"])
+        if admin == 0:
+            return HCI.unauthorized({"error": "This ressource cannot be accessed."})
         table: str = "UserOauthConnection"
         retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"provider_name='{provider}'")
         if isinstance(retrived_data, int) is False:
