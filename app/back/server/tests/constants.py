@@ -377,3 +377,9 @@ RESPONSE_PUT_USER = {
     "resp": "success",
     "logged in": True
 }
+RESPONSE_PATCH_USER = {
+    "title": "patch_user",
+    "msg": "The account information has been updated.",
+    "resp": "success",
+    "logged in": True
+}

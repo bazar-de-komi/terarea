@@ -440,6 +440,168 @@ class TestServer:
             "test_put_user_admin"
         ) is True
 
+    def test_patch_user_lambda_username(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_PATCH_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "username": accounts[TCONST.UNODE_USERNAME_KEY]
+        }
+        response = query.patch_endpoint(
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_PATCH_USER,
+            "test_patch_user_lambda_username"
+        ) is True
+
+    def test_patch_user_lambda_email(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_PATCH_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "email": accounts[TCONST.UNODE_EMAIL_KEY]
+        }
+        response = query.patch_endpoint(
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_PATCH_USER,
+            "test_path_user_lambda_email"
+        ) is True
+
+    def test_patch_user_lambda_password(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_PATCH_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
+        }
+        response = query.patch_endpoint(
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_PATCH_USER,
+            "test_patch_user_lambda_password"
+        ) is True
+
+    def test_patch_user_admin_username(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_PATCH_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "username": accounts[TCONST.UNODE_USERNAME_KEY]
+        }
+        response = query.patch_endpoint(
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_PATCH_USER,
+            "test_patch_user_admin_username"
+        ) is True
+
+    def test_patch_user_admin_email(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_PATCH_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "email": accounts[TCONST.UNODE_EMAIL_KEY]
+        }
+        response = query.patch_endpoint(
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_PATCH_USER,
+            "test_path_user_admin_email"
+        ) is True
+
+    def test_patch_user_admin_password(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_PATCH_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
+        }
+        response = query.patch_endpoint(
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_PATCH_USER,
+            "test_patch_user_admin_password"
+        ) is True
+
     # @pytest.mark.last
     # def test_post_stop_server(self, setup_environment):
     #     """ Test the /stop endpoint of the server. """
