@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity} from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -18,6 +18,11 @@ const AppletsScreen = () => {
         Navigation.navigate('Applets')
     }
 
+    // const openDrawer = () => {
+    //     Navigation.openDrawer();
+    // }
+
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
@@ -25,10 +30,12 @@ const AppletsScreen = () => {
                     source={AreaLogo}
                     style={styles.areaLogo}
                 />
-                <Image
-                    source={ProfilLogo}
-                    style={styles.profilLogo}
-                />
+                {/* <TouchableOpacity onPress={openDrawer}> */}
+                    <Image
+                        source={ProfilLogo}
+                        style={styles.profilLogo}
+                    />
+                {/* </TouchableOpacity> */}
                 <View style={styles.backStyle}>
                     <CustomerButton
                     text='<'
@@ -101,6 +108,9 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         width: '180%',
         alignSelf: 'center',
+        fontWeight: 'bold',
+        fontSize: 35,
+        color: "green",
     },
 })
 
