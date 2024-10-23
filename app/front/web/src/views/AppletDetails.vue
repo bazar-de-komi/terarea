@@ -1,14 +1,6 @@
 <template>
   <div>
-    <header class="header">
-      <img src="@/assets/logo.png"/>
-      <nav class="nav">
-        <router-link to="/explore" class="nav-item">Explore</router-link>
-        <router-link to="/my-applets" class="nav-item">MyApplets</router-link>
-        <router-link to="/create" class="nav-item create-btn">Create</router-link>
-        <img src="@/assets/profile-icon.svg" alt="Profile" class="profile-icon" />
-      </nav>
-    </header>
+    <AppHeader />
 
     <div class="applet-details" :style="{ backgroundColor: applet.color }">
       <h1 class="applet-title">{{ applet.title }}</h1>
@@ -26,6 +18,7 @@
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRoute } from 'vue-router';
+import AppHeader from '@/components/AppHeader.vue';
 
 interface Applet {
   title: string;
@@ -36,6 +29,9 @@ interface Applet {
 }
 
 export default defineComponent({
+  components: {
+    AppHeader,
+  },
   setup() {
     const route = useRoute();
     const store = useStore();
@@ -53,51 +49,7 @@ export default defineComponent({
 });
 </script>
 
-
 <style scoped>
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1000;
-}
-
-.logo {
-  width: 80px;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-}
-
-.nav-item {
-  margin: 0 15px;
-  text-decoration: none;
-  color: white;
-  font-weight: bold;
-}
-
-.create-btn {
-  background-color: white;
-  color: black;
-  padding: 10px 15px;
-  border-radius: 20px;
-  font-size: 14px;
-}
-
-.profile-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
 .applet-details {
   padding: 120px 20px;
   text-align: center;

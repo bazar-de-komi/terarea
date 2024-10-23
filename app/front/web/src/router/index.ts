@@ -7,6 +7,7 @@ import AreaPageAll from '../views/board/AreaPage-All.vue';
 import AreaPageApplet from '../views/board/AreaPage-Applet.vue';
 import AreaPageService from '../views/board/AreaPage-Service.vue';
 import AppletDetails from '../views/AppletDetails.vue';
+import CreateApplet from '@/views/CreateApplet.vue';
 
 const routes = [
   { path: '/', name: '', component: SignInView },
@@ -18,6 +19,7 @@ const routes = [
   { path: '/explore/applets', name: 'AreaExploreApplet', component: AreaPageApplet },
   { path: '/explore/services', name: 'AreaExploreService', component: AreaPageService },
   { path: '/applet/:title', name: 'AppletDetails', component: AppletDetails },
+  { path: '/create', name: 'CreateApplet', component: CreateApplet },
 ];
 
 const router = createRouter({
