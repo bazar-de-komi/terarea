@@ -454,10 +454,14 @@ class UserEndpoints:
         self.disp.log_debug(f"User profile = {user_profile}", title)
         if user_profile == self.error or len(user_profile) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
-        user_logins = self.runtime_data_initialised.database_link.remove_data_from_table(
-            CONST.TAB_CONNECTIONS, f"usr_id='{usr_id}'"
+        tables_of_interest = [
+            CONST.TAB_USER_SERVICES, CONST.TAB_ACTIONS,
+            CONST.TAB_CONNECTIONS, CONST.TAB_ACTIVE_OAUTHS
+        ]
+        removal_status = self.runtime_data_initialised.boilerplate_non_http_initialised.remove_user_from_tables(
+            f"usr_id={usr_id}", tables_of_interest
         )
-        if user_logins == self.error:
+        if isinstance(removal_status, int) or self.error in list(removal_status.values()):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         status = self.runtime_data_initialised.database_link.remove_data_from_table(
             CONST.TAB_ACCOUNTS, f"id={usr_id}"

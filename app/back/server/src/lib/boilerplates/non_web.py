@@ -323,3 +323,40 @@ class BoilerplateNonHTTP:
         if status == self.error:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, usr_id)
         return self.success
+
+    def remove_user_from_tables(self, where: str, tables: List[str]) -> Union[int, Dict[str, int]]:
+        """_summary_
+            Remove the user from the provided tables.
+
+        Args:
+            where (str): _description_: The id of the user to remove
+            tables (List[str]): _description_: The tables to remove the user from
+
+        Returns:
+            int: _description_: The status of the operation
+        """
+        title = "remove_user_from_tables"
+        if isinstance(tables, (List, tuple, str)) is False:
+            self.disp.log_error(
+                f"Expected tables to be of type list but got {type(tables)}",
+                title
+            )
+            return self.error
+        if isinstance(tables, str) is True:
+            self.disp.log_warning(
+                "Tables is of type str, converting to list[str].", title
+            )
+            tables = [tables]
+        deletion_status = {}
+        for table in tables:
+            status = self.runtime_data_initialised.database_link.remove_data_from_table(
+                table=table,
+                where=where
+            )
+            deletion_status[str(table)] = status
+            if status == self.error:
+                self.disp.log_warning(
+                    f"Failed to remove data from table: {table}",
+                    title
+                )
+        return deletion_status
