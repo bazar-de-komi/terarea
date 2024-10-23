@@ -9,7 +9,7 @@ import AppletBox from "../../components/AppletsBox/appletBox";
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import ProfilLogo from '../../../assets/profilLogo.png';
 
-const Home = () => {
+const All = () => {
     const Navigation = useNavigation();
     const loginPressed = () => {
         Navigation.navigate("Sign In");
@@ -21,8 +21,12 @@ const Home = () => {
         Navigation.navigate("Applets");
     }
 
-    const servicesScreens = () => {
+    const servicesSreens = () => {
         Navigation.navigate("Services");
+    }
+
+    const goHome = () => {
+        Navigation.navigate('Home');
     }
 
     return (
@@ -55,7 +59,7 @@ const Home = () => {
                 />
                 <CustomerButton
                 text="Services"
-                onPress={servicesScreens}
+                onPress={servicesSreens}
                 type="TERTIARY"
                 bgColor={""}
                 fgColor={""}
@@ -66,18 +70,20 @@ const Home = () => {
                 placeholder="Search Applets or Services"
                 />
             </View>
-                <AppletBox
-                title="How we automate tiktok"
-                description="Learn how to use"
-                bgColor="#f54242"
-                />
-            <CustomerButton
-            text="Back to Sign in"
-            onPress={loginPressed}
-            type="TERTIARY"
-            bgColor={""}
-            fgColor={""}
+            <AppletBox
+            title="How we automate tiktok"
+            description="Learn how to use"
+            bgColor="#f54242"
             />
+            <View style={styles.back}>
+                <CustomerButton
+                text="Back home"
+                onPress={goHome}
+                type="PRIMARY"
+                bgColor={""}
+                fgColor={""}
+                />
+            </View>
         </ScrollView>
     )
 }
@@ -126,6 +132,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 5,
     },
+    back: {
+        alignItems: 'center',
+        marginBottom: 40,
+        width: '130%',
+        alignSelf: 'center',
+    },
 })
 
-export default Home
+export default All

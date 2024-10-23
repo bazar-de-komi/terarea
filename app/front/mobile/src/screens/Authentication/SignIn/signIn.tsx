@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView } from "react-native";
+import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import axios from 'axios';
+import { queries } from "../../../../back-endConnection/querier";
 
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
@@ -11,12 +13,34 @@ import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 const SignIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { height } = useWindowDimensions() ;
     const navigation = useNavigation();
 
     const SignInPressed = () => {
-        navigation.navigate("Home");
+        navigation.navigate('Home', { page: 'Home'});
+        // setIsSubmitting(true);
+        // const account = {
+        //     email: email,
+        //     password: password,
+        // };
+        // try {
+        //     const result = await queries.post("/login", account);
+
+        //     if (result && result.detail) {
+        //         localStorage.setItem('token', result.detail);
+        //         navigation.navigate("Home");
+        //     } else {
+        //         setError("Identifiant or password incorrect");
+        //     }
+        // } catch (error) {
+        //     console.error("Sign error: ", error);
+        //     setError("Error to connecte. Please check your id or your password");
+        // } finally {
+        //     setIsSubmitting(false);
+        // }
     }
 
     const forgotPasswordPressed = () => {
