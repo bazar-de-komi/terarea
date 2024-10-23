@@ -3,7 +3,6 @@
 """
 
 from typing import Union, Dict, Any
-from datetime import datetime
 from fastapi import Request, UploadFile
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -103,7 +102,7 @@ class BoilerplateIncoming:
         status = self.runtime_data_initialised.database_link.insert_or_update_data_into_table(
             table="Connections",
             data=user_data,
-            column=table_columns
+            columns=table_columns
         )
         if status != self.success:
             self.disp.log_error(
