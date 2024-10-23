@@ -283,17 +283,33 @@ class BoilerplateNonHTTP:
         Returns:
             Union[str, Response]: _description_: Returns as string id if success, otherwise, a pre-made response for the endpoint.
         """
-        usr_id_node: str = "usr_id"
+        function_title = "get_user_id_from_token"
+        usr_id_node: str = "user_id"
+        self.disp.log_debug(
+            f"Getting user id based on {token}", function_title
+        )
         current_user: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
             table=CONST.TAB_CONNECTIONS,
             column="*",
             where=f"token='{token}'",
             beautify=True
         )
-        if current_user == self.error or len(current_user) == 0 or len(current_user) > 1:
+        self.disp.log_debug(f"current_user = {current_user}", function_title)
+        if current_user == self.error:
             return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        self.disp.log_debug(
+            f"user_length = {len(current_user)}", function_title
+        )
+        if len(current_user) == 0 or len(current_user) > 1:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        self.disp.log_debug(
+            f"current_user[0] = {current_user[0]}", function_title
+        )
         if usr_id_node not in current_user[0]:
             return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        msg = "str(current_user[0]["
+        msg += f"{usr_id_node}]) = {str(current_user[0][usr_id_node])}"
+        self.disp.log_debug(msg, function_title)
         return str(current_user[0][usr_id_node])
 
     def update_user_data(self, title: str, usr_id: str, line_content: List[str]) -> Union[int, Response]:
