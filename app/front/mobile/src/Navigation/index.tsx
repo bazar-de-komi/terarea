@@ -1,6 +1,7 @@
 import  React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import SignIn from '../screens/Authentication/SignIn/signIn';
 import SignUp from '../screens/Authentication/SignUp';
@@ -13,8 +14,12 @@ import Applets from '../screens/Home/applets';
 import Services from '../screens/Home/services';
 import Start from '../screens/Start/start';
 import AppletsScreen from '../screens/AppletsScreen/AppletsScreen';
+import ServicesScreen from '../screens/AppletsScreen/ServicesScreen';
+import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 
 const Stack = createStackNavigator();
+
+// const Drawer = createDrawerNavigator();
 
 const Navigation = () => {
     return (
@@ -32,7 +37,11 @@ const Navigation = () => {
                 <Stack.Screen name="Applets" component={Applets} />
                 <Stack.Screen name="Services" component={Services} />
 
-                <Stack.Screen name="Applets screen" component={AppletsScreen} />
+                <Stack.Screen name="Applet screen" component={AppletsScreen} />
+                <Stack.Screen name="Service screen" component={ServicesScreen} />
+                <Stack.Screen name="Service details" component={ServicesDetails} />
+
+                {/* <Drawer.Screen name="Profile" component={NewPassword} /> */}
             </Stack.Navigator>
         </NavigationContainer>
     )
