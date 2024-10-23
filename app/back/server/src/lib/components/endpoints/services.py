@@ -36,13 +36,8 @@ class Services:
         )
 
     def get_services(self, request: Request) -> Response:
-        """_summary_
-
-        Args:
-            request (Request): _description_
-
-        Returns:
-            Response: _description_
+        """
+        The method to get every services contained in the db
         """
         title = "get_services"
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
@@ -52,11 +47,13 @@ class Services:
             return HCI.unauthorized({"error": "Authorisation required."})
 
         services_data = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_SERVICES)
-        if services_data is None:
+            CONST.TAB_SERVICES,
+            "*"
+        )
+        if services_data is None or isinstance(services_data, int):
             return HCI.not_found({"error": "Services not found."}, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         self.disp.log_debug(f"received in {title}", services_data)
-        return HCI.success({"msg": services_data})
+        return HCI.success({"services": services_data})
 
     def get_service(self, name, request: Request) -> Response:
         """_summary_
