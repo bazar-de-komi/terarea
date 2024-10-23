@@ -420,6 +420,44 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
+        title = "Get user"
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        self.disp.log_debug(f"user_id = {usr_id}", title)
+        if isinstance(usr_id, Response) is True:
+            return usr_id
+        user_profile: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{usr_id}'",
+        )
+        self.disp.log_debug(f"User profile = {user_profile}", title)
+        if user_profile == self.error or len(user_profile) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        new_profile = user_profile[0]
+        for i in ["password", "method", "favicon"]:
+            if i in new_profile:
+                new_profile.pop(i)
+        if "admin" in new_profile:
+            new_profile["admin"] = bool(new_profile["admin"])
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=new_profile,
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def delete_user(self, request: Request) -> Response:
         """_summary_
