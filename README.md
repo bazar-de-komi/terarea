@@ -130,6 +130,17 @@ If this is the case (i.e. non-root linux user), you can add the `sudo` in front 
   SENDER_HOST=smtp.gmail.com                           # If you are using a gmail account
   SENDER_PORT=465                                      # If you are using a gmail account
 
+  # Server Oauth variables
+  REDIRECT_URI=[the-redirect-url-once-the-user-is-connected]
+  # |- Github
+  GITHUB_CLIENT_ID=[the-github-cloud-id]
+  GITHUB_CLIENT_SECRET=[the-github-cloud-secret]
+  GITHUB_SCOPE=[the-github-data-scope-accepted-to-be-send]
+  # |- Google
+  GOOGLE_CLIENT_ID=[the-google-client-id]
+  GOOGLE_CLIENT_SECRET=[the-google-client-secret]
+  GOOGLE_SCOPE=[the-google-data-scope-accepted-to-be-send]
+
   # Databse login details
   DB_HOST=maria-db
   DB_PORT=3306
