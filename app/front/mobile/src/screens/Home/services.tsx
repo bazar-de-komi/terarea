@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, ScrollView} from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -17,9 +17,9 @@ const Services = () => {
         Navigation.navigate("Applets");
     }
 
-    const appletsBox = () => {
-        Navigation.navigate("Applets screen");
-    };
+    const ServicesDetails = () => {
+        Navigation.navigate('Service details')
+    }
 
     const services = () => {
         Navigation.navigate("Services");
@@ -71,7 +71,7 @@ const Services = () => {
             title="5-Minute Crafts"
             description=""
             bgColor="green"
-            onPress={appletsBox}
+            onPress={ServicesDetails}
             />
         </ScrollView>
     );
