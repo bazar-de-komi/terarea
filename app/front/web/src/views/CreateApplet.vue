@@ -1,7 +1,7 @@
 <template>
   <div class="create-applet-page">
     <header>
-      <AppHeader /> <!-- Composant pour le header -->
+      <AppHeader />
       <div class="cancel-button-container">
         <CancelButton @click="goBack" />
       </div>
@@ -72,7 +72,7 @@ export default defineComponent({
     });
 
     const goBack = () => {
-      router.push('/explore/all');  // Redirection vers une autre page
+      router.push('/explore/all');
     };
 
     const updateIfBlock = (service: any) => {

@@ -35,13 +35,11 @@ export default defineComponent({
     }
   },
   computed: {
-    // Détermine la couleur en fonction du service
     serviceColor(): string {
       return this.condition && this.condition.color ? this.condition.color : 'default-gray';
     }
   },
   methods: {
-    // Simulation de la sélection d'un service
     addService() {
       this.$emit('service-selected', {
         name: 'Service XYZ',
@@ -50,13 +48,11 @@ export default defineComponent({
         color: 'service-blue'
       });
     },
-    // Édition du service sélectionné
     editService() {
       alert('Edit service');
     },
-    // Suppression du service sélectionné
     deleteService() {
-      this.$emit('service-selected', null); // Réinitialise le service
+      this.$emit('service-selected', null);
     }
   }
 });
@@ -64,14 +60,14 @@ export default defineComponent({
 
 <style scoped>
 .if-block {
-  background-color: #ccc; /* Gris par défaut */
+  background-color: #ccc;
   color: black;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
   position: relative;
-  height: 120px; /* Ajustement de la hauteur */
-  width: 300px; /* Ajustement de la largeur */
+  height: 120px;
+  width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -50,7 +50,7 @@ export default defineComponent({
       alert('Edit service');
     },
     deleteService() {
-      this.$emit('service-selected', null); // Réinitialise le service
+      this.$emit('service-selected', null);
     }
   }
 });
@@ -58,14 +58,14 @@ export default defineComponent({
 
 <style scoped>
 .then-block {
-  background-color: #ccc; /* Gris par défaut */
+  background-color: #ccc;
   color: black;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
   position: relative;
-  height: 120px; /* Ajustement de la hauteur */
-  width: 300px; /* Ajustement de la largeur */
+  height: 120px;
+  width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: center;
