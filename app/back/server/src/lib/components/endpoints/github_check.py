@@ -28,7 +28,7 @@ class Github_check:
             return "Invalide signature", 403
         return hmac_
 
-    @app.post("/github_check")
+    @app.post("/github_check") # put this in endpoints routes
     async def check_github(self, request: Request):
         """_summary_
             The endpoint allowing a user to check if there was a push in the selected repositorie.
