@@ -1,19 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const AppletBox = ({title, description, bgColor}) => {
+const AppletBox = ({title, description, bgColor, onPress}) => {
     return (
-        <View style={[styles.boxContainer, { backgroundColor: bgColor}]}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{description}</Text>
-            {/* <View style={styles.tagsContainer}>
-                {tags.map((tag, index) => (
-                    <View key={index} style={styles.tag}>
-                        <Text style={styles.tagText}>{tag}</Text>
-                    </View> */}
-                {/* ))} */}
-            {/* </View> */}
-        </View>
+        <TouchableOpacity onPress={onPress}>
+            <View style={[styles.boxContainer, { backgroundColor: bgColor}]}>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.description}>{description}</Text>
+            </View>
+        </TouchableOpacity>
     );
 }
 const styles = StyleSheet.create({
