@@ -25,6 +25,10 @@ class QueryEndpoint:
         Returns:
             requests.Response: _description_: The response from the server.
         """
+        if isinstance(path, str) is False:
+            raise ValueError(
+                f"Expected an input of type string but got {type(path)}"
+            )
         if path[0] == "/":
             path = path[1:]
         if content is not None and header is None:
@@ -45,6 +49,10 @@ class QueryEndpoint:
         Returns:
             requests.Response: _description_: The response from the server.
         """
+        if isinstance(path, str) is False:
+            raise ValueError(
+                f"Expected an input of type string but got {type(path)}"
+            )
         if path[0] == "/":
             path = path[1:]
         if content is not None and header is None:
@@ -65,6 +73,10 @@ class QueryEndpoint:
         Returns:
             requests.Response: _description_: The response from the server.
         """
+        if isinstance(path, str) is False:
+            raise ValueError(
+                f"Expected an input of type string but got {type(path)}"
+            )
         if path[0] == "/":
             path = path[1:]
         if content is not None and header is None:
@@ -74,6 +86,30 @@ class QueryEndpoint:
         if content is not None and header is not None:
             return requests.put(f"{self._host}:{self._port}/{path}", json=content, headers=header, timeout=self._delay)
         return requests.put(f"{self._host}:{self._port}/{path}", timeout=self._delay)
+
+    def patch_endpoint(self, path: str, content: Union[Dict[str, Any], None] = None, header: Union[Mapping[str, str], None] = None) -> requests.Response:
+        """_summary_
+            This function is in charge of sending a PATCH request to the server.
+        Args:
+            path (str): _description_: The path of the endpoint.
+            content (Union[Dict[str, Any], None], optional): _description_: The content to be sent to the server.
+            header (Union[Mapping[str, str], None], optional): _description_: The header to be sent to the server. Defaults to None.
+        Returns:
+            requests.Response: _description_: The response from the server.
+        """
+        if isinstance(path, str) is False:
+            raise ValueError(
+                f"Expected an input of type string but got {type(path)}"
+            )
+        if path[0] == "/":
+            path = path[1:]
+        if content is not None and header is None:
+            return requests.patch(f"{self._host}:{self._port}/{path}", json=content, timeout=self._delay)
+        if content is None and header is not None:
+            return requests.patch(f"{self._host}:{self._port}/{path}", headers=header, timeout=self._delay)
+        if content is not None and header is not None:
+            return requests.patch(f"{self._host}:{self._port}/{path}", json=content, headers=header, timeout=self._delay)
+        return requests.patch(f"{self._host}:{self._port}/{path}", timeout=self._delay)
 
     def delete_endpoint(self, path: str, content: Union[Dict[str, Any], None] = None, header: Union[Mapping[str, str], None] = None) -> requests.Response:
         """_summary_
@@ -85,6 +121,10 @@ class QueryEndpoint:
         Returns:
             requests.Response: _description_: The response from the server.
         """
+        if isinstance(path, str) is False:
+            raise ValueError(
+                f"Expected an input of type string but got {type(path)}"
+            )
         if path[0] == "/":
             path = path[1:]
         if content is not None and header is None:

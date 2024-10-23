@@ -4,39 +4,33 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import Header from '../../components/Header/header.tsx';
 import AppletBox from "../../components/AppletsBox/appletBox";
 
-import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-import ProfilLogo from '../../../assets/profilLogo.png';
-
-const Home = () => {
+const Applets = () => {
     const Navigation = useNavigation();
-    const loginPressed = () => {
-        Navigation.navigate("Sign In");
-    }
     const allScreens = () => {
         Navigation.navigate("All");
     }
-    const appletsScreens = () => {
+    const applets = () => {
         Navigation.navigate("Applets");
     }
 
-    const servicesScreens = () => {
+    const services = () => {
         Navigation.navigate("Services");
+    }
+
+    const appletsBox = () => {
+        Navigation.navigate("Applet screen");
+    };
+
+    const goHome = () => {
+        Navigation.navigate('Home');
     }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.headerContainer}>
-                <Image
-                    source={AreaLogo}
-                    style={styles.areaLogo}
-                />
-                <Image
-                    source={ProfilLogo}
-                    style={styles.profilLogo}
-                />
-            </View>
+            <Header/>
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
                 <CustomerButton
@@ -48,14 +42,14 @@ const Home = () => {
                 />
                 <CustomerButton
                 text="Applets"
-                onPress={appletsScreens}
+                onPress={applets}
                 type="TERTIARY"
                 bgColor={""}
                 fgColor={""}
                 />
                 <CustomerButton
                 text="Services"
-                onPress={servicesScreens}
+                onPress={services}
                 type="TERTIARY"
                 bgColor={""}
                 fgColor={""}
@@ -66,40 +60,17 @@ const Home = () => {
                 placeholder="Search Applets or Services"
                 />
             </View>
-                <AppletBox
-                title="How we automate tiktok"
-                description="Learn how to use"
-                bgColor="#f54242"
-                />
-            <CustomerButton
-            text="Back to Sign in"
-            onPress={loginPressed}
-            type="TERTIARY"
-            bgColor={""}
-            fgColor={""}
+            <AppletBox
+            title="Get the weather forecast every dat at 7:00 AM"
+            description="Weather Underground"
+            bgColor="orange"
+            onPress={appletsBox}
             />
-        </ScrollView>
+    </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        marginTop: 30,
-        backgroundColor: '#e0d8d7',
-        borderRadius: 10,
-        alignItems: 'center',
-        padding: 5,
-    },
-    areaLogo: {
-        maxHeight: 50,
-        marginTop: 10,
-        marginLeft: -250,
-    },
-    profilLogo: {
-        maxHeight: 50,
-        marginTop: -50,
-        marginLeft: 300,
-    },
     homeTitle: {
         fontSize: 28,
         fontWeight: 'bold',
@@ -126,6 +97,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 5,
     },
+    back: {
+        alignItems: 'center',
+        marginBottom: 40,
+        width: '130%',
+        alignSelf: 'center',
+    },
 })
 
-export default Home
+export default Applets

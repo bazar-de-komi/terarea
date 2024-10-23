@@ -96,16 +96,16 @@ class Endpoints:
 
         # Services routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/get_services", self.services.get_services, "GET"
+            "/api/v1/services", self.services.get_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/get_service/{name}", self.services.get_service, "GET"
+            "/api/v1/service/{name}", self.services.get_service, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/get_services_by_tag/{tag}", self.services.get_services_by_tag, "GET"
+            "/api/v1/services_by_tag/{tag}", self.services.get_services_by_tag, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/get_recent_services", self.services.get_recent_services, "GET"
+            "/api/v1/recent_services", self.services.get_recent_services, "GET"
         )
 
         # Authentication routes
