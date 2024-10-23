@@ -597,6 +597,116 @@ class TestServer:
             "test_patch_user_admin_password"
         ) is True
 
+    def test_get_user_lambda(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        server: Server = setup_environment["server"]
+        path = TCONST.PATH_GET_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        accounts: Dict[str, any] = setup_environment["accounts"]["lambda_user"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        response = query.get_endpoint(
+            path, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        response_node = TCONST.RESPONSE_GET_USER
+        if status.success(response) is True:
+            column = server.runtime_data_initialised.database_link.get_table_column_names(
+                CONST.TAB_ACCOUNTS
+            )
+            if column == server.error or len(column) == 0:
+                setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+                assert column == server.success
+            compiled_where = "email='"
+            compiled_where += f"{accounts[TCONST.USER_NORMAL_MODE]['email']}"
+            compiled_where += "' OR email='"
+            compiled_where += f"{accounts[TCONST.USER_PATCH_MODE]['email']}"
+            compiled_where += "' OR email='"
+            compiled_where += f"{accounts[TCONST.USER_PUT_MODE]['email']}'"
+            user_node = server.runtime_data_initialised.database_link.get_data_from_table(
+                CONST.TAB_ACCOUNTS,
+                column,
+                compiled_where,
+                beautify=True
+            )
+            print(f"user_node = {user_node}")
+            if user_node == server.error or len(user_node) == 0:
+                assert user_node == server.success
+            new_profile = user_node[0]
+            for i in CONST.USER_INFO_BANNED:
+                if i in new_profile:
+                    new_profile.pop(i)
+            if CONST.USER_INFO_ADMIN_NODE in new_profile:
+                new_profile[CONST.USER_INFO_ADMIN_NODE] = bool(
+                    new_profile[CONST.USER_INFO_ADMIN_NODE]
+                )
+            response_node["msg"] = new_profile
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            response_node,
+            "test_get_user_lambda"
+        ) is True
+
+    def test_get_user_admin(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        server: Server = setup_environment["server"]
+        path = TCONST.PATH_GET_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        accounts: Dict[str, any] = setup_environment["accounts"]["admin_user"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        response = query.get_endpoint(
+            path, header=token[TCONST.ADMIN_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        response_node = TCONST.RESPONSE_GET_USER
+        if status.success(response) is True:
+            column = server.runtime_data_initialised.database_link.get_table_column_names(
+                CONST.TAB_ACCOUNTS
+            )
+            if column == server.error or len(column) == 0:
+                setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+                assert column == server.success
+            compiled_where = "email='"
+            compiled_where += f"{accounts[TCONST.USER_NORMAL_MODE]['email']}"
+            compiled_where += "' OR email='"
+            compiled_where += f"{accounts[TCONST.USER_PATCH_MODE]['email']}"
+            compiled_where += "' OR email='"
+            compiled_where += f"{accounts[TCONST.USER_PUT_MODE]['email']}'"
+            user_node = server.runtime_data_initialised.database_link.get_data_from_table(
+                CONST.TAB_ACCOUNTS,
+                column,
+                compiled_where,
+                beautify=True
+            )
+            print(f"user_node = {user_node}")
+            if user_node == server.error or len(user_node) == 0:
+                assert user_node == server.success
+            new_profile = user_node[0]
+            for i in CONST.USER_INFO_BANNED:
+                if i in new_profile:
+                    new_profile.pop(i)
+            if CONST.USER_INFO_ADMIN_NODE in new_profile:
+                new_profile[CONST.USER_INFO_ADMIN_NODE] = bool(
+                    new_profile[CONST.USER_INFO_ADMIN_NODE]
+                )
+            response_node["msg"] = new_profile
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            response_node,
+            "test_get_user_admin"
+        ) is True
+
     @pytest.mark.last
     def test_delete_user_lambda(self, setup_environment):
         """_summary_
