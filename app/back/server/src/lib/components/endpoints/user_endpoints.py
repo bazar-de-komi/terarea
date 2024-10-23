@@ -445,11 +445,13 @@ class UserEndpoints:
         if user_profile == self.error or len(user_profile) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
         new_profile = user_profile[0]
-        for i in ["password", "method", "favicon"]:
+        for i in CONST.USER_INFO_BANNED:
             if i in new_profile:
                 new_profile.pop(i)
-        if "admin" in new_profile:
-            new_profile["admin"] = bool(new_profile["admin"])
+        if CONST.USER_INFO_ADMIN_NODE in new_profile:
+            new_profile[CONST.USER_INFO_ADMIN_NODE] = bool(
+                new_profile[CONST.USER_INFO_ADMIN_NODE]
+            )
         data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message=new_profile,
