@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import AppletBox from "../../components/AppletsBox/appletBox";
+import BackButton from "../../components/BackButton/backButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import ProfilLogo from '../../../assets/profilLogo.png';
@@ -23,6 +24,10 @@ const ServicesDetails = () => {
         Navigation.navigate("Service screen");
     };
 
+    const create = () => {
+        Navigation.navigate('Create');
+    };
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
@@ -34,15 +39,10 @@ const ServicesDetails = () => {
                     source={ProfilLogo}
                     style={styles.profilLogo}
                 />
-                <View style={styles.backStyle}>
-                    <CustomerButton
-                    text='<'
-                    onPress={callServices}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                    />
-                </View>
+                <BackButton
+                text="<"
+                onPress={callServices}
+                />
                 <Text style={styles.homeTitle}>5-Minute Crafts integrations</Text>
                 <View style={styles.homeNavigation}>
                 </View>
@@ -50,7 +50,7 @@ const ServicesDetails = () => {
             <View style={styles.createStyle}>
                     <CustomerButton
                     text="Create"
-                    onPress={signUp}
+                    onPress={create}
                     type="PRIMARY"
                     bgColor={""}
                     fgColor={""}
@@ -107,11 +107,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 40,
         width: '130%',
-        alignSelf: 'center',
-    },
-    backStyle: {
-        marginBottom: 40,
-        width: '180%',
         alignSelf: 'center',
     },
 })

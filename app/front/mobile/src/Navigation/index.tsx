@@ -16,6 +16,8 @@ import Start from '../screens/Start/start';
 import AppletsScreen from '../screens/AppletsScreen/AppletsScreen';
 import ServicesScreen from '../screens/AppletsScreen/ServicesScreen';
 import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
+import Create from '../screens/Create/create';
+import BackButton from '../components/BackButton/backButton';
 
 const Stack = createStackNavigator();
 
@@ -40,6 +42,10 @@ const Navigation = () => {
                 <Stack.Screen name="Applet screen" component={AppletsScreen} />
                 <Stack.Screen name="Service screen" component={ServicesScreen} />
                 <Stack.Screen name="Service details" component={ServicesDetails} />
+                
+                <Stack.Screen name="Back button" component={BackButton} />
+
+                <Stack.Screen name="Create" component={Create} />
 
                 {/* <Drawer.Screen name="Profile" component={NewPassword} /> */}
             </Stack.Navigator>
