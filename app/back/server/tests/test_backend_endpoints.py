@@ -12,9 +12,7 @@ This file is in charge of testing the endpoints of the character server.
 import os
 import sys
 import time
-import json
 import asyncio
-from random import randint
 from typing import Dict
 from threading import Thread
 
@@ -118,64 +116,70 @@ def setup_environment(request: pytest.FixtureRequest):
         "error": TCONST.ERROR,
         "thread": active_thread,
         "tokens": {
-            TCONST.LAMBDA_USER_TOKEN_KEY: "",
-            TCONST.ADMIN_USER_TOKEN_KEY: ""
+            TCONST.LAMBDA_USER_TOKEN_KEY: {
+                TCONST.PRETTY_TOKEN_KEY: {TCONST.TOKEN_AUTH_ID_STR: ""},
+                TCONST.RAW_TOKEN_KEY: ""
+            },
+            TCONST.ADMIN_USER_TOKEN_KEY: {
+                TCONST.PRETTY_TOKEN_KEY: {TCONST.TOKEN_AUTH_ID_STR: ""},
+                TCONST.RAW_TOKEN_KEY: ""
+            },
         },
         "accounts": {
             "lambda_user": {
-                "normal": {
-                    "email": f"endpoint_{TCONST.USER_DATA_EMAIL}",
-                    "password": f"endpoint_{TCONST.USER_DATA_PASSWORD}",
-                    "username": f"endpoint_{TCONST.USER_DATA_USERNAME}",
-                    "method": f"{TCONST.USER_DATA_METHOD}",
-                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
-                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                TCONST.USER_NORMAL_MODE: {
+                    TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.USER_DATA_EMAIL}",
+                    TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.USER_DATA_PASSWORD}",
+                    TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.USER_DATA_USERNAME}",
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
                 },
-                "put": {
-                    "email": f"endpoint_{TCONST.USER_DATA_EMAIL_REBIND}",
-                    "password": f"endpoint_{TCONST.USER_DATA_PASSWORD_REBIND}",
-                    "username": f"endpoint_{TCONST.USER_DATA_USERNAME_REBIND}",
-                    "method": f"{TCONST.USER_DATA_METHOD}",
-                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
-                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                TCONST.USER_PUT_MODE: {
+                    TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.USER_DATA_EMAIL_REBIND}",
+                    TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.USER_DATA_PASSWORD_REBIND}",
+                    TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.USER_DATA_USERNAME_REBIND}",
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
                 },
-                "patch": {
-                    "email": f"endpoint_{TCONST.USER_DATA_EMAIL_PATCH}",
-                    "password": f"endpoint_{TCONST.USER_DATA_PASSWORD_PATCH}",
-                    "username": f"endpoint_{TCONST.USER_DATA_USERNAME_PATCH}",
-                    "method": f"{TCONST.USER_DATA_METHOD}",
-                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
-                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                TCONST.USER_PATCH_MODE: {
+                    TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.USER_DATA_EMAIL_PATCH}",
+                    TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.USER_DATA_PASSWORD_PATCH}",
+                    TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.USER_DATA_USERNAME_PATCH}",
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
                 }
             },
             "admin_user": {
-                "normal": {
-                    "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL}",
-                    "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD}",
-                    "username": f"endpoint_{TCONST.ADMIN_DATA_USERNAME}",
-                    "method": f"{TCONST.USER_DATA_METHOD}",
-                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
-                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                TCONST.USER_NORMAL_MODE: {
+                    TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.ADMIN_DATA_EMAIL}",
+                    TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.ADMIN_DATA_PASSWORD}",
+                    TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.ADMIN_DATA_USERNAME}",
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
                 },
-                "put": {
-                    "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL_REBIND}",
-                    "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_REBIND}",
-                    "username": f"endpoint_{TCONST.ADMIN_DATA_USERNAME_REBIND}",
-                    "method": f"{TCONST.USER_DATA_METHOD}",
-                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
-                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                TCONST.USER_PUT_MODE: {
+                    TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.ADMIN_DATA_EMAIL_REBIND}",
+                    TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_REBIND}",
+                    TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.ADMIN_DATA_USERNAME_REBIND}",
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
                 },
-                "patch": {
-                    "email": f"endpoint_{TCONST.ADMIN_DATA_EMAIL_PATCH}",
-                    "password": f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_PATCH}",
-                    "username": f"endpoint_{TCONST.ADMIN_DATA_USERNAME_PATCH}",
-                    "method": f"{TCONST.USER_DATA_METHOD}",
-                    "favicon": f"{TCONST.USER_DATA_FAVICON}",
-                    "admin": f"{TCONST.USER_DATA_ADMIN}"
+                TCONST.USER_PATCH_MODE: {
+                    TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.ADMIN_DATA_EMAIL_PATCH}",
+                    TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_PATCH}",
+                    TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.ADMIN_DATA_USERNAME_PATCH}",
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
                 }
             }
         },
-        "critical_failed": False,
+        TCONST.RUNTIME_NODE_CRITICAL_KEY: False,
         "teardown_func": teardown_sync
     }
 
@@ -187,9 +191,9 @@ class TestServer:
     def check_server(self, setup_environment, critical: bool = False):
         """Helper function to check if the server is still running."""
         server: Server = setup_environment["server"]
-        if server is None or setup_environment["critical_failed"] is True:
+        if server is None or setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] is True:
             if critical is True:
-                setup_environment["critical_failed"] = True
+                setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
             pytest.skip(
                 "(test_server) Server is not running, skipping the test."
             )
@@ -200,11 +204,11 @@ class TestServer:
 
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        response = query.get_endpoint(TCONST.GET_HOME)
+        response = query.get_endpoint(TCONST.PATH_GET_HOME)
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
-            TCONST.GET_HOME_RESPONSE_NOT_LOGGED_IN,
+            TCONST.RESPONSE_GET_HOME_RESPONSE_NOT_LOGGED_IN,
             "test_home"
         ) is True
 
@@ -216,15 +220,15 @@ class TestServer:
             setup_environment (_type_): _description_
         """
         self.check_server(setup_environment, True)
-        path = TCONST.PUT_REGISTER
+        path: str = TCONST.PATH_PUT_REGISTER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
         accounts: Dict[
             str, any
-        ] = setup_environment["accounts"]["lambda_user"]["normal"]
+        ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_NORMAL_MODE]
         body = {
-            "email": accounts["email"],
-            "password": accounts["password"]
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         TCONST.IDISP.log_info(f"body = {body}")
         response = query.post_endpoint(path, content=body)
@@ -232,7 +236,7 @@ class TestServer:
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
-            TCONST.POST_REGISTER,
+            TCONST.RESPONSE_POST_REGISTER,
             "test_post_register_lambda"
         ) is True
 
@@ -244,28 +248,35 @@ class TestServer:
             setup_environment (_type_): _description_
         """
         self.check_server(setup_environment, True)
-        path = TCONST.POST_LOGIN
+        path: str = TCONST.PATH_POST_LOGIN
         token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
         accounts: Dict[
             str, any
-        ] = setup_environment["accounts"]["lambda_user"]["normal"]
+        ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_NORMAL_MODE]
+        print(f"Account data = {accounts}")
         body = {
-            "email": accounts["email"],
-            "password": accounts["password"]
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         TCONST.IDISP.log_info(f"body = {body}")
+        print(f"Before response, body = {body}, path = {path}")
         response = query.post_endpoint(path, content=body)
+        print(f"response = {response}")
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
         if status.success(response) is True:
-            msg = f"Bearer {response.json()['token']}"
-            token[TCONST.LAMBDA_USER_TOKEN_KEY] = msg
+            token_node = f"{response.json()['token']}"
+            msg = f"Bearer {token_node}"
+            token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY][TCONST.TOKEN_AUTH_ID_STR] = msg
+            token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.RAW_TOKEN_KEY] = token_node
         else:
-            setup_environment["critical_failed"] = True
-        correct_node = TCONST.POST_LOGIN
+            setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+        print("Creating correct response")
+        correct_node = TCONST.RESPONSE_POST_LOGIN
         correct_node['msg'] = f"Welcome {accounts['username']}"
-        correct_node["token"] = token[TCONST.LAMBDA_USER_TOKEN_KEY]
+        correct_node["token"] = token_node
+        print("Going to check statuses")
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
@@ -282,15 +293,15 @@ class TestServer:
         """
         self.check_server(setup_environment, True)
         server: Server = setup_environment["server"]
-        path = TCONST.PUT_REGISTER
+        path = TCONST.PATH_PUT_REGISTER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
         accounts: Dict[
             str, any
-        ] = setup_environment["accounts"]["admin_user"]["normal"]
+        ] = setup_environment["accounts"]["admin_user"][TCONST.USER_NORMAL_MODE]
         body = {
-            "email": accounts["email"],
-            "password": accounts["password"]
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         TCONST.IDISP.log_info(f"body = {body}")
         response = query.post_endpoint(path, content=body)
@@ -300,7 +311,7 @@ class TestServer:
                 CONST.TAB_ACCOUNTS
             )
             if column == server.error or len(column) == 0:
-                setup_environment["critical_failed"] = True
+                setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
                 assert column == server.success
             user_node = server.runtime_data_initialised.database_link.get_data_from_table(
                 CONST.TAB_ACCOUNTS,
@@ -308,7 +319,7 @@ class TestServer:
                 f"email='{accounts['email']}'"
             )
             if user_node == server.error:
-                setup_environment["critical_failed"] = True
+                setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
                 assert user_node == server.success
             column.pop(0)
             user_node[0].pop("id")
@@ -327,7 +338,7 @@ class TestServer:
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
-            TCONST.POST_REGISTER,
+            TCONST.RESPONSE_POST_REGISTER,
             "test_post_register_admin"
         ) is True
 
@@ -339,28 +350,30 @@ class TestServer:
             setup_environment (_type_): _description_
         """
         self.check_server(setup_environment, True)
-        path = TCONST.POST_LOGIN
+        path = TCONST.PATH_POST_LOGIN
         token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
         accounts: Dict[
             str, any
-        ] = setup_environment["accounts"]["admin_user"]["normal"]
+        ] = setup_environment["accounts"]["admin_user"][TCONST.USER_NORMAL_MODE]
         body = {
-            "email": accounts["email"],
-            "password": accounts["password"]
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         TCONST.IDISP.log_info(f"body = {body}")
         response = query.post_endpoint(path, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
         if status.success(response) is True:
-            msg = f"Bearer {response.json()['token']}"
-            token[TCONST.ADMIN_USER_TOKEN_KEY] = msg
+            token_node = f"{response.json()['token']}"
+            msg = f"Bearer {token_node}"
+            token[TCONST.ADMIN_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY][TCONST.TOKEN_AUTH_ID_STR] = msg
+            token[TCONST.ADMIN_USER_TOKEN_KEY][TCONST.RAW_TOKEN_KEY] = token_node
         else:
-            setup_environment["critical_failed"] = True
-        correct_node = TCONST.POST_LOGIN
+            setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+        correct_node = TCONST.RESPONSE_POST_LOGIN
         correct_node['msg'] = f"Welcome {accounts['username']}"
-        correct_node["token"] = token[TCONST.ADMIN_USER_TOKEN_KEY]
+        correct_node["token"] = token_node
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
@@ -375,25 +388,26 @@ class TestServer:
             setup_environment (_type_): _description_
         """
         self.check_server(setup_environment)
-        path = TCONST.PUT_USER
+        path = TCONST.PATH_PUT_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
         token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
         accounts: Dict[
             str, any
-        ] = setup_environment["accounts"]["lambda_user"]["put"]
+        ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PUT_MODE]
         body = {
-            "username": accounts["username"],
-            "email": accounts["email"],
-            "password": accounts["password"]
+            "username": accounts[TCONST.UNODE_USERNAME_KEY],
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
+
         response = query.put_endpoint(
-            path, content=body, token=token[TCONST.LAMBDA_USER_TOKEN_KEY]
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
-            TCONST.PUT_USER_RESPONSE,
+            TCONST.RESPONSE_PUT_USER,
             "test_put_user_lambda"
         ) is True
 
@@ -404,25 +418,25 @@ class TestServer:
             setup_environment (_type_): _description_
         """
         self.check_server(setup_environment)
-        path = TCONST.PUT_USER
+        path = TCONST.PATH_PUT_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
         token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
         accounts: Dict[
             str, any
-        ] = setup_environment["accounts"]["admin_user"]["put"]
+        ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PUT_MODE]
         body = {
-            "username": accounts["username"],
-            "email": accounts["email"],
-            "password": accounts["password"]
+            "username": accounts[TCONST.UNODE_USERNAME_KEY],
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         response = query.put_endpoint(
-            path, content=body, token=token[TCONST.LAMBDA_USER_TOKEN_KEY]
+            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
-            TCONST.PUT_USER_RESPONSE,
+            TCONST.RESPONSE_PUT_USER,
             "test_put_user_admin"
         ) is True
 

@@ -23,7 +23,7 @@ from display_tty import IDISP
 
 
 # Variable that will enable/disable the debug logging of the functions
-DEBUG = True
+DEBUG = False
 IDISP.debug = DEBUG
 
 IDISP.logger.name = "Constants_tests"
@@ -195,6 +195,11 @@ def are_json_responses_identical(json_response1: Dict[str, Any], json_response2:
     Returns:
         bool: _description_: Returns True if they are identical, False otherwise.
     """
+    msg = ""
+    msg += f"test_name = {test_name}\n"
+    msg += f"json_response1 = {json_response1}\n"
+    msg += f"json_response2 = {json_response2}"
+    print(msg)
     try:
         json_response1_str = json.dumps(json_response1)
     except TypeError:
@@ -263,16 +268,19 @@ PORT = int(_get_toml_variable(
 ))
 
 # Endpoints to test the server
-GET_HOME = "/"
-PUT_REGISTER = "/api/v1/register"
-POST_LOGIN = "/api/v1/login"
-PATCH_USER = "/api/v1/user"
-PUT_USER = "/api/v1/user"
-DELETE_USER = "/api/v1/user"
+PATH_GET_HOME = "/"
+PATH_PUT_REGISTER = "/api/v1/register"
+PATH_POST_LOGIN = "/api/v1/login"
+PATH_PATCH_USER = "/api/v1/user"
+PATH_PUT_USER = "/api/v1/user"
+PATH_DELETE_USER = "/api/v1/user"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
 ADMIN_USER_TOKEN_KEY: str = "admin_user"
+TOKEN_AUTH_ID_STR: str = "Authorization"
+PRETTY_TOKEN_KEY: str = "token_header"
+RAW_TOKEN_KEY: str = "token_key"
 
 # User data (test input)
 USER_DATA_EMAIL = f"some_email_{CACHE_BUSTER}@company.example"
@@ -327,28 +335,43 @@ ADMIN_DATA_PASSWORD_PATCH = _password_generator(
     length=20, encapsulation_node="some_admin_patch"
 )
 
+# User dictionnary keys
+UNODE_EMAIL_KEY = "email"
+UNODE_PASSWORD_KEY = "password"
+UNODE_USERNAME_KEY = "username"
+UNODE_METHOD_KEY = "method"
+UNODE_FAVICON_KEY = "favicon"
+UNODE_ADMIN_KEY = "admin"
+
+# Sets of info per users
+USER_NORMAL_MODE = "normal"
+USER_PUT_MODE = "put"
+USER_PATCH_MODE = "patch"
+
+# Critical node (tracking)
+RUNTIME_NODE_CRITICAL_KEY = "critical"
 
 # Pre-built response bodies for certain endpoints
-GET_HOME_RESPONSE_NOT_LOGGED_IN = {
+RESPONSE_GET_HOME_RESPONSE_NOT_LOGGED_IN = {
     'title': 'Home',
     'msg': 'Welcome to the control server.',
     'resp': '',
     'logged in': False
 }
-POST_LOGIN = {
+RESPONSE_POST_LOGIN = {
     'title': 'Login',
     'msg': 'Welcome {name}',
     'resp': 'success',
     'logged in': True,
     'token': ''
 }
-POST_REGISTER = {
+RESPONSE_POST_REGISTER = {
     'title': 'Register',
     "msg": "Account created successfully.",
     'resp': 'success',
-    'logged_in': False
+    'logged in': False
 }
-PUT_USER_RESPONSE = {
+RESPONSE_PUT_USER = {
     "title": "put_user",
     "msg": "The account information has been updated.",
     "resp": "success",
