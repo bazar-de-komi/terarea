@@ -283,7 +283,7 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
-        title = "put_user"
+        title = "Put user"
         token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
@@ -345,7 +345,7 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
-        title = "patch_user"
+        title = "Patch user"
         token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
@@ -432,24 +432,46 @@ class UserEndpoints:
             Response: _description_
         """
         title = "Delete user"
-        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
-        self.disp.log_debug(f"Request body: {request_body}", title)
-        if not request_body or not all(key in request_body for key in ("email", "password")):
-            return HCI.bad_request({"error": "Bad request."})
-        email: str = request_body["email"]
-        password: str = request_body["password"]
-        user_info = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
-        self.disp.log_debug(f"Retrived data: {user_info}", title)
-        if isinstance(user_info, int):
-            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
-        if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        if isinstance(usr_id, Response) is True:
+            return usr_id
+        user_profile: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{usr_id}'",
+        )
+        self.disp.log_debug(f"User profile = {user_profile}", title)
+        if user_profile == self.error or len(user_profile) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        user_logins = self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_CONNECTIONS, f"usr_id='{usr_id}'"
+        )
+        if user_logins == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         status = self.runtime_data_initialised.database_link.remove_data_from_table(
-            CONST.TAB_ACCOUNTS, f"email='{email}'")
+            CONST.TAB_ACCOUNTS, f"id={usr_id}"
+        )
         if status == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "Account deleted successfully."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The account has successfully been deleted.",
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def put_user_favicon(self, request: Request) -> Response:
         """_summary_
