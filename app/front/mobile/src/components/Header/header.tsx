@@ -24,7 +24,6 @@ const Header = () => {
 const styles = StyleSheet.create({
     headerContainer: {
         marginTop: 30,
-        backgroundColor: '#e0d8d7',
         borderRadius: 10,
         alignItems: 'center',
         padding: 5,
