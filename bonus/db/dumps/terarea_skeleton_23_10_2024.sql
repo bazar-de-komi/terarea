@@ -25,6 +25,37 @@ CREATE DATABASE IF NOT EXISTS `terarea` DEFAULT CHARACTER SET utf8mb4 COLLATE ut
 USE `terarea`;
 
 --
+-- Table structure for table `ActionLoging`
+--
+
+DROP TABLE IF EXISTS `ActionLoging`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ActionLoging` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `time` datetime NOT NULL DEFAULT current_timestamp() COMMENT '''This is the time at which the workflow occurred''',
+  `type` mediumtext NOT NULL DEFAULT 'API' COMMENT '''The type of action concerned''',
+  `action_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the item that is being logged''',
+  `message` mediumtext DEFAULT NULL COMMENT '''The error messag''',
+  `error_code` bigint(20) DEFAULT NULL COMMENT '''The error code linked to the action''',
+  `error_level` mediumtext DEFAULT NULL COMMENT '''The level of the impotency for the error''',
+  `resolved` tinyint(1) DEFAULT NULL COMMENT '''Inform if the current error is solved''',
+  PRIMARY KEY (`id`),
+  KEY `WorkflowLoging_Actions_FK` (`action_id`),
+  CONSTRAINT `WorkflowLoging_Actions_FK` FOREIGN KEY (`action_id`) REFERENCES `Actions` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The new loggin table.';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ActionLoging`
+--
+
+LOCK TABLES `ActionLoging` WRITE;
+/*!40000 ALTER TABLE `ActionLoging` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ActionLoging` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Actions`
 --
 
@@ -36,7 +67,7 @@ CREATE TABLE `Actions` (
   `name` varchar(400) NOT NULL DEFAULT 'zero two, darling, darling... DARLING !!!',
   `trigger` mediumtext NOT NULL DEFAULT 'Elle est où la pierre ?',
   `consequences` mediumtext NOT NULL DEFAULT 'DANS LA POCHE !!!',
-  `author` bigint(20) unsigned NOT NULL,
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '''The author of the current action''',
   `tags` longtext DEFAULT NULL COMMENT '''The tags used to find the the actions the user created.''',
   `running` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'L''information sur si le l''action est en fonctionnement',
   `description` varchar(2000) NOT NULL DEFAULT 'Some description' COMMENT 'The description of the workflow.',
@@ -44,8 +75,8 @@ CREATE TABLE `Actions` (
   `favicon` mediumtext DEFAULT NULL COMMENT 'The link to the icon of the workflow.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Actions_UNIQUE` (`name`),
-  KEY `Actions_Users_FK` (`author`),
-  CONSTRAINT `Actions_Users_FK` FOREIGN KEY (`author`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
+  KEY `Actions_Users_FK` (`user_id`),
+  CONSTRAINT `Actions_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='triggers and actions of ifttt\nexample: if bad_guy then nuts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -72,12 +103,12 @@ CREATE TABLE `ActiveOauths` (
   `token_lifespan` bigint(20) unsigned DEFAULT NULL COMMENT '''The time for which a token is alive before being invalidated''',
   `refresh_link` varchar(2048) DEFAULT NULL COMMENT '''The link to be used to refresh the login token''',
   `service_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the service that is concerned''',
-  `usr_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the user to which this token belongs to''',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the user to which this token belongs to''',
   PRIMARY KEY (`id`),
   KEY `ActiveOauths_Services_FK` (`service_id`),
-  KEY `ActiveOauths_Users_FK` (`usr_id`),
+  KEY `ActiveOauths_Users_FK` (`user_id`),
   CONSTRAINT `ActiveOauths_Services_FK` FOREIGN KEY (`service_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `ActiveOauths_Users_FK` FOREIGN KEY (`usr_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `ActiveOauths_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The current oauths that are still valid.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -100,11 +131,11 @@ DROP TABLE IF EXISTS `Connections`;
 CREATE TABLE `Connections` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` varchar(900) DEFAULT NULL COMMENT 'The token of the user.',
-  `usr_id` bigint(20) unsigned DEFAULT NULL COMMENT 'The e-mail of the user.',
+  `user_id` bigint(20) unsigned DEFAULT NULL COMMENT 'The e-mail of the user.',
   `expiration_date` datetime DEFAULT NULL COMMENT 'The date at which the token is invalidated.',
   PRIMARY KEY (`id`),
-  KEY `Connections_Users_FK` (`usr_id`),
-  CONSTRAINT `Connections_Users_FK` FOREIGN KEY (`usr_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
+  KEY `Connections_Users_FK` (`user_id`),
+  CONSTRAINT `Connections_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -266,37 +297,6 @@ LOCK TABLES `Verification` WRITE;
 /*!40000 ALTER TABLE `Verification` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Verification` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `WorkflowLoging`
---
-
-DROP TABLE IF EXISTS `WorkflowLoging`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `WorkflowLoging` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `time` datetime NOT NULL DEFAULT current_timestamp() COMMENT '''This is the time at which the workflow occurred''',
-  `type` mediumtext NOT NULL DEFAULT 'API' COMMENT '''The type of action concerned''',
-  `workflow_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the item that is being logged''',
-  `message` mediumtext DEFAULT NULL COMMENT '''The error messag''',
-  `error_code` bigint(20) DEFAULT NULL COMMENT '''The error code linked to the action''',
-  `error_level` mediumtext DEFAULT NULL COMMENT '''The level of the impotency for the error''',
-  `resolved` tinyint(1) DEFAULT NULL COMMENT '''Inform if the current error is solved''',
-  PRIMARY KEY (`id`),
-  KEY `WorkflowLoging_Actions_FK` (`workflow_id`),
-  CONSTRAINT `WorkflowLoging_Actions_FK` FOREIGN KEY (`workflow_id`) REFERENCES `Actions` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The new loggin table.';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `WorkflowLoging`
---
-
-LOCK TABLES `WorkflowLoging` WRITE;
-/*!40000 ALTER TABLE `WorkflowLoging` DISABLE KEYS */;
-/*!40000 ALTER TABLE `WorkflowLoging` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -307,4 +307,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-23 16:26:19
+-- Dump completed on 2024-10-23 20:14:52
