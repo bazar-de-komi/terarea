@@ -10,6 +10,7 @@ Raises:
 Returns:
     _type_: _description_
 """
+import json
 from os import getpid
 from uuid import uuid4
 from random import randint
@@ -22,7 +23,7 @@ from display_tty import IDISP
 
 
 # Variable that will enable/disable the debug logging of the functions
-DEBUG = True
+DEBUG = False
 IDISP.debug = DEBUG
 
 IDISP.logger.name = "Constants_tests"
@@ -154,7 +155,76 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
         return default
 
 
+def _password_generator(length: int = 20, encapsulation_node: str = "password") -> str:
+    """_summary_
+        This is a function in charge of generating a password for on the fly accounts.
+
+    Args:
+        length (int, optional): _description_. Defaults to 20.
+
+    Returns:
+        str: _description_
+    """
+    password = ""
+
+    password += str(encapsulation_node)
+    password += "_"
+
+    iterations = 0
+    while iterations < length:
+        password += SAFE_STRING[
+            randint(
+                0,
+                SAFE_STRING_LENGTH - 1
+            )
+        ]
+        iterations += 1
+    password += "_"
+    password += str(encapsulation_node)
+    return password
+
+
+def are_json_responses_identical(json_response1: Dict[str, Any], json_response2: Dict[str, Any], test_name: str = "are_json_responses_identical") -> bool:
+    """_summary_
+        This function is in charge of comparing two json responses to see if they are identical.
+
+    Args:
+        json_response1 (Dict[str,Any]): _description_: The first json response you wish to compare
+        json_response2 (Dict[str,Any]): _description_: The json response that the first response will be compared against
+
+    Returns:
+        bool: _description_: Returns True if they are identical, False otherwise.
+    """
+    msg = ""
+    msg += f"test_name = {test_name}\n"
+    msg += f"json_response1 = {json_response1}\n"
+    msg += f"json_response2 = {json_response2}"
+    print(msg)
+    try:
+        json_response1_str = json.dumps(json_response1)
+    except TypeError:
+        IDISP.log_warning(
+            "Failed to convert json_response1 to json format", test_name
+        )
+        return False
+    try:
+        json_response2_str = json.dumps(json_response2)
+    except TypeError:
+        IDISP.log_warning(
+            "Failed to convert json_response2 to json format", test_name
+        )
+        return False
+    if json_response1_str == json_response2_str:
+        return True
+    msg = "The content of json_response1 is different from json_response2:\n"
+    msg += f"- json_response1_str = {json_response1_str}\n"
+    msg += f"- json_response2_str = {json_response2_str}\n"
+    IDISP.log_warning(msg, test_name)
+    return False
+
+
 CACHE_BUSTER = get_cache_busting()
+CACHE_BUSTER_ADMIN = f"admin_{get_cache_busting()}_admin"
 
 TEST_ENV = ".env"
 try:
@@ -198,20 +268,118 @@ PORT = int(_get_toml_variable(
 ))
 
 # Endpoints to test the server
-GET_HOME = "/"
-PUT_REGISTER = "/api/v1/register"
-POST_LOGIN = "/api/v1/login"
+PATH_GET_HOME = "/"
+PATH_PUT_REGISTER = "/api/v1/register"
+PATH_POST_LOGIN = "/api/v1/login"
+PATH_PATCH_USER = "/api/v1/user"
+PATH_PUT_USER = "/api/v1/user"
+PATH_DELETE_USER = "/api/v1/user"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
 ADMIN_USER_TOKEN_KEY: str = "admin_user"
+TOKEN_AUTH_ID_STR: str = "Authorization"
+PRETTY_TOKEN_KEY: str = "token_header"
+RAW_TOKEN_KEY: str = "token_key"
 
 # User data (test input)
 USER_DATA_EMAIL = f"some_email_{CACHE_BUSTER}@company.example"
-USER_DATA_NAME = USER_DATA_EMAIL.split("@")[0]
-USER_DATA_PASSWORD = f"some_password_{CACHE_BUSTER}"
+USER_DATA_USERNAME = USER_DATA_EMAIL.split("@")[0]
+USER_DATA_PASSWORD = _password_generator(
+    length=20, encapsulation_node="some_user"
+)
 USER_DATA_METHOD = "local"
 USER_DATA_FAVICON = "NULL"
 USER_DATA_ADMIN = "0"
 USER_DATA_TOKEN = f"some_token_{CACHE_BUSTER}_some_token"
 USER_DATA_TOKEN_LIFESPAN = 3600  # seconds
+
+# User data rebind
+USER_DATA_EMAIL_REBIND = f"some_email_{CACHE_BUSTER}_rebind@company.example"
+USER_DATA_USERNAME_REBIND = USER_DATA_EMAIL_REBIND.split("@")[0]
+USER_DATA_PASSWORD_REBIND = _password_generator(
+    length=20, encapsulation_node="some_user_rebind"
+)
+
+# User data patch
+USER_DATA_EMAIL_PATCH = f"some_email_{CACHE_BUSTER}_patch@company.com"
+USER_DATA_USERNAME_PATCH = USER_DATA_EMAIL_PATCH.split("@")[0]
+USER_DATA_PASSWORD_PATCH = _password_generator(
+    length=20, encapsulation_node="some_user_patch"
+)
+
+# Admin data (test input)
+ADMIN_DATA_EMAIL = f"some_email_{CACHE_BUSTER_ADMIN}@company.example"
+ADMIN_DATA_USERNAME = ADMIN_DATA_EMAIL.split("@")[0]
+ADMIN_DATA_PASSWORD = _password_generator(
+    length=20, encapsulation_node="some_admin"
+)
+ADMIN_DATA_METHOD = "local"
+ADMIN_DATA_FAVICON = "NULL"
+ADMIN_DATA_ADMIN = "1"
+ADMIN_DATA_TOKEN = f"some_token_{CACHE_BUSTER_ADMIN}_some_token"
+ADMIN_DATA_TOKEN_LIFESPAN = 3600  # seconds
+
+# Admin data rebind
+ADMIN_DATA_EMAIL_REBIND = f"some_email_{CACHE_BUSTER_ADMIN}_"
+ADMIN_DATA_EMAIL_REBIND += "rebind@company.example"
+ADMIN_DATA_USERNAME_REBIND = ADMIN_DATA_EMAIL_REBIND.split("@")[0]
+ADMIN_DATA_PASSWORD_REBIND = _password_generator(
+    length=20, encapsulation_node="some_admin_rebind"
+)
+
+# Admin data patch
+ADMIN_DATA_EMAIL_PATCH = f"some_email_{CACHE_BUSTER_ADMIN}_patch@company.com"
+ADMIN_DATA_USERNAME_PATCH = ADMIN_DATA_EMAIL_PATCH.split("@")[0]
+ADMIN_DATA_PASSWORD_PATCH = _password_generator(
+    length=20, encapsulation_node="some_admin_patch"
+)
+
+# User dictionnary keys
+UNODE_EMAIL_KEY = "email"
+UNODE_PASSWORD_KEY = "password"
+UNODE_USERNAME_KEY = "username"
+UNODE_METHOD_KEY = "method"
+UNODE_FAVICON_KEY = "favicon"
+UNODE_ADMIN_KEY = "admin"
+
+# Sets of info per users
+USER_NORMAL_MODE = "normal"
+USER_PUT_MODE = "put"
+USER_PATCH_MODE = "patch"
+
+# Critical node (tracking)
+RUNTIME_NODE_CRITICAL_KEY = "critical"
+
+# Pre-built response bodies for certain endpoints
+RESPONSE_GET_HOME_RESPONSE_NOT_LOGGED_IN = {
+    'title': 'Home',
+    'msg': 'Welcome to the control server.',
+    'resp': '',
+    'logged in': False
+}
+RESPONSE_POST_LOGIN = {
+    'title': 'Login',
+    'msg': 'Welcome {name}',
+    'resp': 'success',
+    'logged in': True,
+    'token': ''
+}
+RESPONSE_POST_REGISTER = {
+    'title': 'Register',
+    "msg": "Account created successfully.",
+    'resp': 'success',
+    'logged in': False
+}
+RESPONSE_PUT_USER = {
+    "title": "put_user",
+    "msg": "The account information has been updated.",
+    "resp": "success",
+    "logged in": True
+}
+RESPONSE_PATCH_USER = {
+    "title": "patch_user",
+    "msg": "The account information has been updated.",
+    "resp": "success",
+    "logged in": True
+}
