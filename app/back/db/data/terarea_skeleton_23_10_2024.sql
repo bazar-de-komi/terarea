@@ -151,6 +151,40 @@ LOCK TABLES `Services` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `UserOauthConnection`
+--
+
+DROP TABLE IF EXISTS `UserOauthConnection`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `UserOauthConnection` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `provider_name` mediumtext NOT NULL COMMENT '''The name of the service provider''',
+  `client_id` mediumtext NOT NULL COMMENT '''The id of the initial account that allows us to start the oauth process, here noreply-terarea@gmail.com''',
+  `client_secret` mediumtext NOT NULL COMMENT '''The secret of the initial account that allows us to start the oauth process, here noreply-terarea@gmail.com''',
+  `provider_scope` mediumtext NOT NULL COMMENT '''The information that is queried from the provider''',
+  `authorisation_base_url` varchar(2048) NOT NULL COMMENT '''The url that allows the front-end to spawn a login page with the provider''',
+  `token_grabber_base_url` varchar(2048) NOT NULL COMMENT '''The link allowing the backend to get the information returned by the provider during the login''',
+  `user_info_base_url` varchar(2048) NOT NULL COMMENT '''Get the user info''',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UserOauthConnection_UNIQUE_1` (`provider_name`) USING HASH,
+  UNIQUE KEY `UserOauthConnection_UNIQUE_2` (`client_id`) USING HASH,
+  UNIQUE KEY `UserOauthConnection_UNIQUE` (`client_secret`) USING HASH,
+  UNIQUE KEY `UserOauthConnection_UNIQUE_3` (`token_grabber_base_url`) USING HASH,
+  UNIQUE KEY `UserOauthConnection_UNIQUE_4` (`user_info_base_url`) USING HASH
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='''The table containing the information for the oauths that will be used to allow users to log into their accounts''';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `UserOauthConnection`
+--
+
+LOCK TABLES `UserOauthConnection` WRITE;
+/*!40000 ALTER TABLE `UserOauthConnection` DISABLE KEYS */;
+/*!40000 ALTER TABLE `UserOauthConnection` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `UserServices`
 --
 
@@ -273,4 +307,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-23 15:52:50
+-- Dump completed on 2024-10-23 16:26:19
