@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """_summary_
     File containing boilerplate functions that could be used by the server in it's endpoints_initialised for checking incoming data.
 """
@@ -7,14 +8,24 @@ import logging
 
 app = FastAPI()
 
-logging.basicConfig(level=logging.INFO)
+class Webhook:
+    data = []
 
-@app.post("/webhook")
-async def receive_webhook(request: Request):
-    payload = await request.json()
-    
-    logging.info(f"Received webhook data: {payload}")
-    
-    # process the data or trigger some action here
-    
-    return {"message": "Webhook received", "data": payload}
+    logging.basicConfig(level=logging.INFO)
+
+    @app.post("/webhook") # put this in endpoints routes
+    async def receive_webhook(request: Request):
+        payload = await request.json()
+
+        logging.info(f"Received webhook data: {payload}")
+        print(f"payload: {payload}")
+        return {"message": "Webhook received", "data": payload}
+
+    @app.get("/")
+    async def test():
+        return "test"
+
+# test
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
