@@ -69,7 +69,7 @@ def _register_fake_user() -> None:
         Function in charge of registering a fake user.
     """
     input_data = [
-        TCONST.USER_DATA_NAME,
+        TCONST.USER_DATA_USERNAME,
         TCONST.USER_DATA_EMAIL,
         PHI.hash_password(str(TCONST.USER_DATA_PASSWORD)),
         TCONST.USER_DATA_METHOD,
@@ -81,7 +81,7 @@ def _register_fake_user() -> None:
     RDI.database_link.insert_or_update_data_into_table(
         table=CONST.TAB_ACCOUNTS,
         data=input_data,
-        column=column_names
+        columns=column_names
     )
 
 
@@ -122,7 +122,7 @@ def _sing_fake_user_in() -> None:
     RDI.database_link.insert_or_update_data_into_table(
         table=CONST.TAB_CONNECTIONS,
         data=input_data,
-        column=table_columns
+        columns=table_columns
     )
 
 

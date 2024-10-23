@@ -5,7 +5,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
 # , Github_check#, IFTTT_Manager
-from .endpoints import Bonus, UserEndpoints, Services
+from .endpoints import Bonus, UserEndpoints, Services, OAuthAuthentication
 
 
 class Endpoints:
@@ -57,6 +57,12 @@ class Endpoints:
             error=error,
             debug=debug
         )
+        self.oauth: OAuthAuthentication = OAuthAuthentication(
+            runtime_data=runtime_data,
+            success=success,
+            error=error,
+            debug=debug
+        )
 
     def inject_routes(self) -> None:
         """_summary_
@@ -76,28 +82,30 @@ class Endpoints:
             "/api/v1/", self.bonus.get_welcome, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/test", self.bonus.my_test_component, "GET"
+            "/api/v1/test", self.bonus.my_test_component, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/bucket_names", self.bonus.get_s3_bucket_names, "GET"
+            "/api/v1/bucket_names", self.bonus.get_s3_bucket_names, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/get_table", self.bonus.get_table, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/get_services", self.services.get_services, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/get_service/{name}", self.services.get_service, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/get_services_by_tag/{tag}", self.services.get_services_by_tag, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/get_recent_services", self.services.get_recent_services, "GET"
+            "/api/v1/get_table", self.bonus.get_table, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/stop", self.bonus.post_stop_server, "PUT"
+        )
+
+        # Services routes
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/get_services", self.services.get_services, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/get_service/{name}", self.services.get_service, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/get_services_by_tag/{tag}", self.services.get_services_by_tag, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/get_recent_services", self.services.get_recent_services, "GET"
         )
 
         # Authentication routes
@@ -113,6 +121,14 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/reset_password", self.user_endpoints.put_reset_password, "PATCH"
         )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/login", self.oauth.oauth_login, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/callback", self.oauth.oauth_callback, "GET"
+        )
+
+        # Users routes
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/user", self.user_endpoints.patch_user, "PATCH"
         )
