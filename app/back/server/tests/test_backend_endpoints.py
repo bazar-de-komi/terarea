@@ -255,15 +255,12 @@ class TestServer:
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_NORMAL_MODE]
-        print(f"Account data = {accounts}")
         body = {
             "email": accounts[TCONST.UNODE_EMAIL_KEY],
             "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         TCONST.IDISP.log_info(f"body = {body}")
-        print(f"Before response, body = {body}, path = {path}")
         response = query.post_endpoint(path, content=body)
-        print(f"response = {response}")
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
         if status.success(response) is True:
             token_node = f"{response.json()['token']}"
@@ -272,11 +269,9 @@ class TestServer:
             token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.RAW_TOKEN_KEY] = token_node
         else:
             setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
-        print("Creating correct response")
         correct_node = TCONST.RESPONSE_POST_LOGIN
         correct_node['msg'] = f"Welcome {accounts['username']}"
         correct_node["token"] = token_node
-        print("Going to check statuses")
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
@@ -600,6 +595,50 @@ class TestServer:
             response.json(),
             TCONST.RESPONSE_PATCH_USER,
             "test_patch_user_admin_password"
+        ) is True
+
+    @pytest.mark.last
+    def test_delete_user_lambda(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_DELETE_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        response = query.delete_endpoint(
+            path, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_DELETE_USER,
+            "test_delete_user_lambda"
+        ) is True
+
+    @pytest.mark.last
+    def test_delete_user_admin(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_DELETE_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        response = query.delete_endpoint(
+            path, header=token[TCONST.ADMIN_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_DELETE_USER,
+            "test_delete_user_admin"
         ) is True
 
     # @pytest.mark.last

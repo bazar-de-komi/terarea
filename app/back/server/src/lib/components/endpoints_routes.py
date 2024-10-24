@@ -121,11 +121,16 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/reset_password", self.user_endpoints.put_reset_password, "PATCH"
         )
+        
+        # Oauth routes
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/oauth/login", self.oauth.oauth_login, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/oauth/callback", self.oauth.oauth_callback, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/{provider}", self.oauth.add_oauth_provider, "POST"
         )
 
         # Users routes

@@ -79,11 +79,11 @@ class OAuthAuthentication:
         state += ":"
         state += provider
         url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}&state={state}"
-        url = url.replace(" ", "%20")
-        url = url.replace(":", "%3A")
-        url = url.replace("/", "%2F")
-        url = url.replace("?", "%3F")
-        url = url.replace("&", "%26")
+        # url = url.replace(" ", "%20")
+        # url = url.replace(":", "%3A")
+        # url = url.replace("/", "%2F")
+        # url = url.replace("?", "%3F")
+        # url = url.replace("&", "%26")
         self.disp.log_debug(f"url = {url}", title)
         return url
 
@@ -100,7 +100,6 @@ class OAuthAuthentication:
                 "client_secret": CONST.GOOGLE_CLIENT_SECRET,
                 "code": code,
                 "redirect_uri": CONST.REDIRECT_URI,
-                "grant_type": "authorization_code"
             }
         elif provider == "github":
             token_url = "https://github.com/login/oauth/access_token"
@@ -123,7 +122,7 @@ class OAuthAuthentication:
         headers = {"Accept": "application/json"}
         try:
             response = requests.post(token_url, data=data, headers=headers, timeout=10)
-            self.disp.log_debug(f"Response = {response}", title)
+            self.disp.log_debug(f"Exchange response = {response}", title)
             response.raise_for_status()
             token_response = response.json()
             if "error" in token_response:
@@ -291,3 +290,65 @@ class OAuthAuthentication:
         if isinstance(authorization_url, int):
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"authorization_url": authorization_url})
+
+    async def add_oauth_provider(self, request: Request, provider: str) -> Response:
+        """
+        Add a new oauth provider to the database (only for admin)
+        """
+        title: str = "add_oauth_provider"
+        if not provider:
+            return HCI.bad_request({"error": "The provider is not provided."})
+        self.disp.log_debug(f"Provider: {provider}", title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        user_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        if isinstance(user_id, Response) is True:
+            return user_id
+        user_profile = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{user_id}'",
+        )
+        self.disp.log_debug(f"User profile: {user_profile}", title)
+        admin = int(user_profile[0]["admin"])
+        if admin == 0:
+            return HCI.unauthorized({"error": "This ressource cannot be accessed."})
+        table: str = "UserOauthConnection"
+        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"provider_name='{provider}'")
+        if isinstance(retrived_data, int) is False:
+            return HCI.conflict({"error": "The provider already exist in the database."})
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        if not request_body or not all(key in request_body for key in ("client_id", "client_secret", "provider_scope", "authorisation_base_url", "token_grabber_base_url", "user_info_base_url")):
+            return HCI.bad_request({"error": "A variable is missing in the body."})
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        client_id = request_body["client_id"]
+        client_secret = request_body["client_secret"]
+        provider_scope = request_body["provider_scope"]
+        authorisation_base_url = request_body["authorisation_base_url"]
+        token_grabber_base_url = request_body["token_grabber_base_url"]
+        user_info_base_url = request_body["user_info_base_url"]
+        data: list = [
+            provider,
+            client_id,
+            client_secret,
+            provider_scope,
+            authorisation_base_url,
+            token_grabber_base_url,
+            user_info_base_url
+        ]
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        if isinstance(columns, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        columns.pop(0)
+        self.disp.log_debug(f"Columns: {columns}", title)
+        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.success({"msg": "The provider is successfully added."})
