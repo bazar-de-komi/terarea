@@ -51,9 +51,8 @@ class OAuthAuthentication:
         #         "scope": CONST.GITHUB_SCOPE,
         #     }
         # }
-        table: str = CONST.TAB_USER_OAUTH_CONNECTION
         retrived_provider = self.runtime_data_initialised.database_link.get_data_from_table(
-            table,
+            CONST.TAB_USER_OAUTH_CONNECTION,
             "*",
             f"provider_name='{provider}'"
         )
@@ -70,8 +69,7 @@ class OAuthAuthentication:
         scope = retrived_provider[0]["provider_scope"]
         redirect_uri = CONST.REDIRECT_URI
         state = str(uuid.uuid4())
-        table = CONST.TAB_VERIFICATION
-        columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_VERIFICATION)
         self.disp.log_debug(f"Columns list: {columns}", title)
         if isinstance(columns, int):
             return self.error
@@ -83,7 +81,7 @@ class OAuthAuthentication:
         data.append("state")
         data.append(state)
         data.append(et_str)
-        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+        if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_VERIFICATION, data, columns) == self.error:
             return self.error
         state += ":"
         state += provider
@@ -102,34 +100,50 @@ class OAuthAuthentication:
         """
         title = "exchange_code_for_token"
 
-        if provider == "google":
-            token_url = "https://oauth2.googleapis.com/token"
-            data = {
-                "client_id": CONST.GOOGLE_CLIENT_ID,
-                "client_secret": CONST.GOOGLE_CLIENT_SECRET,
-                "code": code,
-                "redirect_uri": CONST.REDIRECT_URI,
-                "grant_type": "authorization_code"
-            }
-        elif provider == "github":
-            token_url = "https://github.com/login/oauth/access_token"
-            data = {
-                "client_id": CONST.GITHUB_CLIENT_ID,
-                "client_secret": CONST.GITHUB_CLIENT_SECRET,
-                "code": code,
-                "redirect_uri": CONST.REDIRECT_URI
-            }
-        else:
-            self.disp.log_error("Unknown or Unsupported Oauth provider", title)
+        retrieved_provider = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'"
+        )
+        if isinstance(retrieved_provider, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                    "exchange_code_for_token",
-                    "Unsupported OAuth provider.",
-                    "Unsupported OAuth provider.",
-                    None,
-                    True
-                )
-        self.disp.log_debug(f"data = {data}", title)
+                "exchange_code_for_token",
+                "Internal server error.",
+                "Internal server error.",
+                None,
+                True
+            )
+        # if provider == "google":
+        #     token_url = "https://oauth2.googleapis.com/token"
+        #     data = {
+        #         "client_id": CONST.GOOGLE_CLIENT_ID,
+        #         "client_secret": CONST.GOOGLE_CLIENT_SECRET,
+        #         "code": code,
+        #         "redirect_uri": CONST.REDIRECT_URI,
+        #         "grant_type": "authorization_code"
+        #     }
+        # elif provider == "github":
+        #     token_url = "https://github.com/login/oauth/access_token"
+        #     data = {
+        #         "client_id": CONST.GITHUB_CLIENT_ID,
+        #         "client_secret": CONST.GITHUB_CLIENT_SECRET,
+        #         "code": code,
+        #         "redirect_uri": CONST.REDIRECT_URI
+        #     }
+        # else:
+        #     self.disp.log_error("Unknown or Unsupported Oauth provider", title)
+            
+        # self.disp.log_debug(f"data = {data}", title)
         headers = {"Accept": "application/json"}
+        token_url = retrieved_provider[0]["token_grabber_base_url"]
+        
+        data: dict = {}
+        data["client_id"] = retrieved_provider[0]["client_id"]
+        data["client_secret"] = retrieved_provider[0]["client_secret"]
+        data["code"] = code
+        data["redirect_uri"] = CONST.REDIRECT_URI
+        if provider == "google":
+            data["grant_type"] = "authorization_code"
         try:
             response = requests.post(token_url, data=data, headers=headers, timeout=10)
             self.disp.log_debug(f"Exchange response = {response}", title)
@@ -183,7 +197,7 @@ class OAuthAuthentication:
         headers = {
             "Authorization": f"Bearer {access_token}"
         }
-        response = requests.get(user_info_url, headers=headers)
+        response = requests.get(user_info_url, headers=headers, timeout=10)
         if response.status_code != 200:
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 "get_user_info",
@@ -194,7 +208,7 @@ class OAuthAuthentication:
             )
         user_info = response.json()
         if provider == "github":
-            emails_response = requests.get("https://api.github.com/user/emails", headers=headers)
+            emails_response = requests.get("https://api.github.com/user/emails", headers=headers, timeout=10)
             if emails_response.status_code == 200:
                 emails = emails_response.json()
                 primary_email = next((email["email"] for email in emails if email["primary"]), None)
@@ -258,9 +272,8 @@ class OAuthAuthentication:
             return HCI.bad_request({"error": "The state is in bad format."})
         self.disp.log_debug(f"Uuid gotten: {uuid_gotten}", title)
         self.disp.log_debug(f"Provider: {provider}", title)
-        table = "Verification"
         data = self.runtime_data_initialised.database_link.get_data_from_table(
-            table,
+            CONST.TAB_VERIFICATION,
             "*",
             f"definition='{uuid_gotten}'"
         )
@@ -268,9 +281,9 @@ class OAuthAuthentication:
         if isinstance(data, int):
             return HCI.internal_server_error({"error": "Internal server error."})
         if self.runtime_data_initialised.database_link.drop_data_from_table(
-            table,
+            CONST.TAB_VERIFICATION,
             f"definition='{uuid_gotten}'"
-        ):
+        ) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         token_response = self._exchange_code_for_token(provider, code)
         self.disp.log_debug(f"Token response: {token_response}", title)
