@@ -390,7 +390,7 @@ RESPONSE_GET_USER = {
 RESPONSE_GET_USER_ID = {
     "title": "Get user id",
     "msg": "The user information has been retrieved.",
-    "resp": "success",
+    "resp": 0,
     "logged in": True
 }
 RESPONSE_DELETE_USER = {
