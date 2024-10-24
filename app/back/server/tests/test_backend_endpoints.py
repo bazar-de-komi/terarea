@@ -721,6 +721,80 @@ class TestServer:
             title
         ) is True
 
+    def test_get_user_id_lambda(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        title = "test_get_user_id_lambda"
+        self.check_server(setup_environment)
+        server: Server = setup_environment["server"]
+        path = TCONST.PATH_GET_USER_ID
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.LAMBDA_USER_TOKEN_KEY]
+        response = query.get_endpoint(
+            path, header=token[TCONST.PRETTY_TOKEN_KEY]
+        )
+        response_node = TCONST.RESPONSE_GET_USER_ID
+        if status.success(response) is True:
+            usr_id = server.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+                title, token[TCONST.RAW_TOKEN_KEY]
+            )
+            TCONST.IDISP.log_debug(f"usr_id={usr_id}", title)
+            if isinstance(usr_id, str) is False:
+                TCONST.IDISP.log_error(f"Failed to find user: {usr_id}", title)
+                assert usr_id == server.error
+            response_node["msg"] = f"Your id is {usr_id}"
+            response_node["resp"] = usr_id
+            TCONST.IDISP.log_debug(f"final node = {response_node}", title)
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            response_node,
+            title
+        ) is True
+
+    def test_get_user_id_admin(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        title = "test_get_user_id_admin"
+        self.check_server(setup_environment)
+        server: Server = setup_environment["server"]
+        path = TCONST.PATH_GET_USER_ID
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.ADMIN_USER_TOKEN_KEY]
+        response = query.get_endpoint(
+            path, header=token[TCONST.PRETTY_TOKEN_KEY]
+        )
+        response_node = TCONST.RESPONSE_GET_USER_ID
+        if status.success(response) is True:
+            usr_id = server.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+                title, token[TCONST.RAW_TOKEN_KEY]
+            )
+            TCONST.IDISP.log_debug(f"usr_id={usr_id}", title)
+            if isinstance(usr_id, str) is False:
+                TCONST.IDISP.log_error(f"Failed to find user: {usr_id}", title)
+                assert usr_id == server.error
+            response_node["msg"] = f"Your id is {usr_id}"
+            response_node["resp"] = usr_id
+            TCONST.IDISP.log_debug(f"final node = {response_node}", title)
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            response_node,
+            title
+        ) is True
+
     @pytest.mark.last
     def test_delete_user_lambda(self, setup_environment):
         """_summary_
