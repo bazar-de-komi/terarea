@@ -557,12 +557,12 @@ class UserEndpoints:
         self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
         if token_valid is False:
             return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
-        usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
-            title, token
+        response = self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            f"token='{token}'"
         )
-        self.disp.log_debug(f"user_id = {usr_id}", title)
-        if isinstance(usr_id, Response) is True:
-            return usr_id
+        if response == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message="You have successfully logged out...",
