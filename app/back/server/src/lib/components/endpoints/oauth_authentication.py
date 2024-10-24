@@ -39,29 +39,38 @@ class OAuthAuthentication:
         Generate an OAuth authorization url depends on the given provider
         """
         title = "generate_oauth_authorization_url"
-        provider_info = {
-            "google": {
-                "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
-                "client_id": CONST.GOOGLE_CLIENT_ID,
-                "scope": CONST.GOOGLE_SCOPE,
-            },
-            "github": {
-                "base_url": "https://github.com/login/oauth/authorize",
-                "client_id": CONST.GITHUB_CLIENT_ID,
-                "scope": CONST.GITHUB_SCOPE,
-            }
-        }
-
-        if provider not in provider_info:
+        # provider_info = {
+        #     "google": {
+        #         "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
+        #         "client_id": CONST.GOOGLE_CLIENT_ID,
+        #         "scope": CONST.GOOGLE_SCOPE,
+        #     },
+        #     "github": {
+        #         "base_url": "https://github.com/login/oauth/authorize",
+        #         "client_id": CONST.GITHUB_CLIENT_ID,
+        #         "scope": CONST.GITHUB_SCOPE,
+        #     }
+        # }
+        table: str = CONST.TAB_USER_OAUTH_CONNECTION
+        retrived_provider = self.runtime_data_initialised.database_link.get_data_from_table(
+            table,
+            "*",
+            f"provider_name='{provider}'"
+        )
+        self.disp.log_debug(f"Retrived provider: {retrived_provider}", title)
+        if isinstance(retrived_provider, int):
             self.disp.log_error("Unknown or Unsupported OAuth provider", title)
             return self.error
+        # if provider not in provider_info:
+        #     self.disp.log_error("Unknown or Unsupported OAuth provider", title)
+        #     return self.error
 
-        base_url = provider_info[provider]["base_url"]
-        client_id = provider_info[provider]["client_id"]
-        scope = provider_info[provider]["scope"]
+        base_url = retrived_provider[0]["authorisation_base_url"]
+        client_id = retrived_provider[0]["client_id"]
+        scope = retrived_provider[0]["provider_scope"]
         redirect_uri = CONST.REDIRECT_URI
         state = str(uuid.uuid4())
-        table: str = "Verification"
+        table = CONST.TAB_VERIFICATION
         columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
         self.disp.log_debug(f"Columns list: {columns}", title)
         if isinstance(columns, int):
@@ -100,6 +109,7 @@ class OAuthAuthentication:
                 "client_secret": CONST.GOOGLE_CLIENT_SECRET,
                 "code": code,
                 "redirect_uri": CONST.REDIRECT_URI,
+                "grant_type": "authorization_code"
             }
         elif provider == "github":
             token_url = "https://github.com/login/oauth/access_token"
@@ -285,6 +295,7 @@ class OAuthAuthentication:
         if not request_body or "provider" not in request_body:
             return HCI.bad_request({"error": "Bad request."})
         provider = request_body["provider"]
+        self.disp.log_debug(f"Oauth login provider: {provider}", title)
         authorization_url = self._generate_oauth_authorization_url(provider)
         self.disp.log_debug(f"Authorization url: {authorization_url}", title)
         if isinstance(authorization_url, int):
@@ -321,7 +332,7 @@ class OAuthAuthentication:
         admin = int(user_profile[0]["admin"])
         if admin == 0:
             return HCI.unauthorized({"error": "This ressource cannot be accessed."})
-        table: str = "UserOauthConnection"
+        table: str = CONST.TAB_USER_OAUTH_CONNECTION
         retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"provider_name='{provider}'")
         if isinstance(retrived_data, int) is False:
             return HCI.conflict({"error": "The provider already exist in the database."})
