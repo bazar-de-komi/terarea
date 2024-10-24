@@ -157,25 +157,25 @@ def setup_environment(request: pytest.FixtureRequest):
                     TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.ADMIN_DATA_EMAIL}",
                     TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.ADMIN_DATA_PASSWORD}",
                     TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.ADMIN_DATA_USERNAME}",
-                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
-                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
-                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.ADMIN_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.ADMIN_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.ADMIN_DATA_ADMIN}"
                 },
                 TCONST.USER_PUT_MODE: {
                     TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.ADMIN_DATA_EMAIL_REBIND}",
                     TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_REBIND}",
                     TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.ADMIN_DATA_USERNAME_REBIND}",
-                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
-                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
-                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.ADMIN_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.ADMIN_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.ADMIN_DATA_ADMIN}"
                 },
                 TCONST.USER_PATCH_MODE: {
                     TCONST.UNODE_EMAIL_KEY: f"endpoint_{TCONST.ADMIN_DATA_EMAIL_PATCH}",
                     TCONST.UNODE_PASSWORD_KEY: f"endpoint_{TCONST.ADMIN_DATA_PASSWORD_PATCH}",
                     TCONST.UNODE_USERNAME_KEY: f"endpoint_{TCONST.ADMIN_DATA_USERNAME_PATCH}",
-                    TCONST.UNODE_METHOD_KEY: f"{TCONST.USER_DATA_METHOD}",
-                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.USER_DATA_FAVICON}",
-                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.USER_DATA_ADMIN}"
+                    TCONST.UNODE_METHOD_KEY: f"{TCONST.ADMIN_DATA_METHOD}",
+                    TCONST.UNODE_FAVICON_KEY: f"{TCONST.ADMIN_DATA_FAVICON}",
+                    TCONST.UNODE_ADMIN_KEY: f"{TCONST.ADMIN_DATA_ADMIN}"
                 }
             }
         },
@@ -317,7 +317,7 @@ class TestServer:
                 setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
                 assert user_node == server.success
             column.pop(0)
-            user_node[0].pop("id")
+            uid = user_node[0].pop("id")
             user_node[0]['admin'] = str(TCONST.ADMIN_DATA_ADMIN)
             user_node_list = list(user_node[0].values())
             msg = f"user_node_list = {user_node_list}\n"
@@ -327,7 +327,7 @@ class TestServer:
                 CONST.TAB_ACCOUNTS,
                 user_node_list,
                 column,
-                f"email='{accounts['email']}'"
+                f"id='{uid}'"
             )
             assert command_status == server.success
         assert status.success(response) is True
@@ -386,7 +386,9 @@ class TestServer:
         path = TCONST.PATH_PUT_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.LAMBDA_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PUT_MODE]
@@ -397,7 +399,7 @@ class TestServer:
         }
 
         response = query.put_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -416,7 +418,9 @@ class TestServer:
         path = TCONST.PATH_PUT_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.ADMIN_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PUT_MODE]
@@ -426,7 +430,7 @@ class TestServer:
             "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         response = query.put_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -595,6 +599,126 @@ class TestServer:
             response.json(),
             TCONST.RESPONSE_PATCH_USER,
             "test_patch_user_admin_password"
+        ) is True
+
+    def test_get_user_lambda(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        title = "test_get_user_lambda"
+        self.check_server(setup_environment)
+        server: Server = setup_environment["server"]
+        path = TCONST.PATH_GET_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.LAMBDA_USER_TOKEN_KEY]
+        response = query.get_endpoint(
+            path, header=token[TCONST.PRETTY_TOKEN_KEY]
+        )
+        response_node = TCONST.RESPONSE_GET_USER
+        if status.success(response) is True:
+            usr_id = server.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+                title, token[TCONST.RAW_TOKEN_KEY]
+            )
+            TCONST.IDISP.log_debug(f"usr_id={usr_id}", title)
+            if isinstance(usr_id, str) is False:
+                TCONST.IDISP.log_error(f"Failed to find user: {usr_id}", title)
+                assert usr_id == server.error
+            column = server.runtime_data_initialised.database_link.get_table_column_names(
+                CONST.TAB_ACCOUNTS
+            )
+            TCONST.IDISP.log_debug(f"column = {column}", title)
+            if column == server.error or len(column) == 0:
+                setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+                assert column == server.success
+            user_node = server.runtime_data_initialised.database_link.get_data_from_table(
+                CONST.TAB_ACCOUNTS,
+                column,
+                f"id={usr_id}",
+                beautify=True
+            )
+            TCONST.IDISP.log_debug(f"user_node={user_node}", title)
+            if user_node == server.error or len(user_node) == 0:
+                assert user_node == server.success
+            new_profile = user_node[0]
+            for i in CONST.USER_INFO_BANNED:
+                if i in new_profile:
+                    new_profile.pop(i)
+            if CONST.USER_INFO_ADMIN_NODE in new_profile:
+                new_profile[CONST.USER_INFO_ADMIN_NODE] = bool(
+                    new_profile[CONST.USER_INFO_ADMIN_NODE]
+                )
+            response_node["msg"] = new_profile
+            TCONST.IDISP.log_debug(f"final node = {response_node}", title)
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            response_node,
+            title
+        ) is True
+
+    def test_get_user_admin(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        title = "test_get_user_admin"
+        self.check_server(setup_environment)
+        server: Server = setup_environment["server"]
+        path = TCONST.PATH_GET_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.ADMIN_USER_TOKEN_KEY]
+        response = query.get_endpoint(
+            path, header=token[TCONST.PRETTY_TOKEN_KEY]
+        )
+        response_node = TCONST.RESPONSE_GET_USER
+        if status.success(response) is True:
+            usr_id = server.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+                title, token[TCONST.RAW_TOKEN_KEY]
+            )
+            TCONST.IDISP.log_debug(f"usr_id={usr_id}", title)
+            if isinstance(usr_id, str) is False:
+                TCONST.IDISP.log_error(f"Failed to find user: {usr_id}", title)
+                assert usr_id == server.error
+            column = server.runtime_data_initialised.database_link.get_table_column_names(
+                CONST.TAB_ACCOUNTS
+            )
+            TCONST.IDISP.log_debug(f"column = {column}", title)
+            if column == server.error or len(column) == 0:
+                setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+                assert column == server.success
+            user_node = server.runtime_data_initialised.database_link.get_data_from_table(
+                CONST.TAB_ACCOUNTS,
+                column,
+                f"id={usr_id}",
+                beautify=True
+            )
+            TCONST.IDISP.log_debug(f"user_node={user_node}", title)
+            if user_node == server.error or len(user_node) == 0:
+                assert user_node == server.success
+            new_profile = user_node[0]
+            for i in CONST.USER_INFO_BANNED:
+                if i in new_profile:
+                    new_profile.pop(i)
+            if CONST.USER_INFO_ADMIN_NODE in new_profile:
+                new_profile[CONST.USER_INFO_ADMIN_NODE] = bool(
+                    new_profile[CONST.USER_INFO_ADMIN_NODE]
+                )
+            response_node["msg"] = new_profile
+            TCONST.IDISP.log_debug(f"final node = {response_node}", title)
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            response_node,
+            title
         ) is True
 
     @pytest.mark.last

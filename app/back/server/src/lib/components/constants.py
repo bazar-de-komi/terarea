@@ -5,7 +5,6 @@
 from typing import List, Any
 
 import toml
-import json
 import dotenv
 from display_tty import IDISP
 IDISP.logger.name = "Constants"
@@ -323,3 +322,7 @@ THREAD_CACHE_REFRESH_DELAY = 10
 UA_TOKEN_LIFESPAN: int = 7200
 UA_EMAIL_KEY: str = "email"
 UA_LIFESPAN_KEY: str = "lifespan"
+
+# Get user info banned columns (filtered out columns)
+USER_INFO_BANNED: List[str] = ["password", "method", "favicon"]
+USER_INFO_ADMIN_NODE: str = "admin"

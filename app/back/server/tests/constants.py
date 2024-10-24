@@ -24,6 +24,7 @@ from display_tty import IDISP
 
 # Variable that will enable/disable the debug logging of the functions
 DEBUG = False
+DEBUG = True
 IDISP.debug = DEBUG
 
 IDISP.logger.name = "Constants_tests"
@@ -270,6 +271,7 @@ PATH_PATCH_USER = "/api/v1/user"
 PATH_PUT_USER = "/api/v1/user"
 PATH_DELETE_USER = "/api/v1/user"
 PATH_GET_USER = "/api/v1/user"
+PATH_GET_USER_ID = "/api/v1/user_id"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
@@ -376,6 +378,18 @@ RESPONSE_PUT_USER = {
 RESPONSE_PATCH_USER = {
     "title": "Patch user",
     "msg": "The account information has been updated.",
+    "resp": "success",
+    "logged in": True
+}
+RESPONSE_GET_USER = {
+    "title": "Get user",
+    "msg": "The user information has been retrieved.",
+    "resp": "success",
+    "logged in": True
+}
+RESPONSE_GET_USER_ID = {
+    "title": "Get user id",
+    "msg": "The user information has been retrieved.",
     "resp": "success",
     "logged in": True
 }
