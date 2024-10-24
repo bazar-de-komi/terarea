@@ -548,15 +548,29 @@ class UserEndpoints:
             Response: _description_: The data to send back to the user as a response.
         """
         title = "Logout"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-            request)
-        if token is None:
-            return HCI.unauthorized({"error": "Authorization required."})
-        status = self.runtime_data_initialised.database_link.remove_data_from_table(
-            CONST.TAB_CONNECTIONS, f"token='{token}'")
-        if status == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "Logout successful."})
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        self.disp.log_debug(f"user_id = {usr_id}", title)
+        if isinstance(usr_id, Response) is True:
+            return usr_id
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="You have successfully logged out...",
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def get_user_id(self, request: Request) -> Response:
         """_summary_
