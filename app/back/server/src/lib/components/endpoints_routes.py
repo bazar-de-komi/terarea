@@ -107,6 +107,9 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/recent_services", self.services.get_recent_services, "GET"
         )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service/{name}", self.services.create_service, "POST"
+        )
 
         # Authentication routes
         self.runtime_data_initialised.paths_initialised.add_path(

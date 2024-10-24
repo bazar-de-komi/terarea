@@ -263,7 +263,7 @@ class OAuthAuthentication:
             return HCI.internal_server_error({"error": user_info["error"]})
         return self._oauth_user_logger(user_info, provider)
 
-    def oauth_callback(self, request: Request) -> Response:
+    async def oauth_callback(self, request: Request) -> Response:
         """
         Callback of the OAuth login
         """
@@ -291,10 +291,10 @@ class OAuthAuthentication:
         self.disp.log_debug(f"Data gotten: {data}", title)
         if isinstance(data, int):
             return HCI.internal_server_error({"error": "Internal server error."})
-        if self.runtime_data_initialised.database_link.drop_data_from_table(
+        if isinstance(self.runtime_data_initialised.database_link.drop_data_from_table(
             CONST.TAB_VERIFICATION,
             f"definition='{uuid_gotten}'"
-        ) == self.error:
+        ), int) is False:
             return HCI.internal_server_error({"error": "Internal server error."})
         token_response = self._exchange_code_for_token(provider, code)
         self.disp.log_debug(f"Token response: {token_response}", title)
@@ -346,11 +346,12 @@ class OAuthAuthentication:
             where=f"id='{user_id}'",
         )
         self.disp.log_debug(f"User profile: {user_profile}", title)
-        admin = int(user_profile[0]["admin"])
-        if admin == 0:
+        if int(user_profile[0]["admin"]) == 0:
             return HCI.unauthorized({"error": "This ressource cannot be accessed."})
-        table: str = CONST.TAB_USER_OAUTH_CONNECTION
-        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"provider_name='{provider}'")
+        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'")
         if isinstance(retrived_data, int) is False:
             return HCI.conflict({"error": "The provider already exist in the database."})
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
@@ -372,11 +373,11 @@ class OAuthAuthentication:
             token_grabber_base_url,
             user_info_base_url
         ]
-        columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_USER_OAUTH_CONNECTION)
         if isinstance(columns, int):
             return HCI.internal_server_error({"error": "Internal server error."})
         columns.pop(0)
         self.disp.log_debug(f"Columns: {columns}", title)
-        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+        if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_USER_OAUTH_CONNECTION, data, columns) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "The provider is successfully added."})
