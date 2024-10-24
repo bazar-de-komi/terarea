@@ -5,7 +5,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
 # , Github_check#, IFTTT_Manager
-from .endpoints import Bonus, UserEndpoints, Services, OAuthAuthentication
+from .endpoints import Bonus, UserEndpoints, Services, OAuthAuthentication, Applets
 
 
 class Endpoints:
@@ -46,6 +46,12 @@ class Endpoints:
             debug=debug
         )
         self.services: Services = Services(
+            runtime_data=self.runtime_data_initialised,
+            success=self.success,
+            error=self.error,
+            debug=self.debug
+        )
+        self.applets: Applets = Applets(
             runtime_data=self.runtime_data_initialised,
             success=self.success,
             error=self.error,
@@ -153,3 +159,9 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/user_id", self.user_endpoints.get_user_id, "GET"
         )
+
+        # Applets routes
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/applet_name", self.applets.get_applet_name, "GET"
+        )
+
