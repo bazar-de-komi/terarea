@@ -270,7 +270,10 @@ TAB_ACTIONS = "Actions"
 TAB_SERVICES = "Services"
 TAB_CONNECTIONS = "Connections"
 TAB_VERIFICATION = "Verification"
-TAB_USER_SERVICES = "User Services"
+TAB_USER_SERVICES = "UserServices"
+TAB_ACTIVE_OAUTHS = "ActiveOauths"
+TAB_ACTION_LOGGING = "ActionLogging"
+TAB_USER_OAUTH_CONNECTION = "UserOauthConnection"
 
 # Character info config
 CHAR_NODE_KEY: str = "node"

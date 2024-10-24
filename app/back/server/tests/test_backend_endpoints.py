@@ -597,6 +597,50 @@ class TestServer:
             "test_patch_user_admin_password"
         ) is True
 
+    @pytest.mark.last
+    def test_delete_user_lambda(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_DELETE_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        response = query.delete_endpoint(
+            path, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_DELETE_USER,
+            "test_delete_user_lambda"
+        ) is True
+
+    @pytest.mark.last
+    def test_delete_user_admin(self, setup_environment):
+        """_summary_
+            Test the /user endpoint of the server.
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment)
+        path = TCONST.PATH_DELETE_USER
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        response = query.delete_endpoint(
+            path, header=token[TCONST.ADMIN_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+        )
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_DELETE_USER,
+            "test_delete_user_admin"
+        ) is True
+
     # @pytest.mark.last
     # def test_post_stop_server(self, setup_environment):
     #     """ Test the /stop endpoint of the server. """
