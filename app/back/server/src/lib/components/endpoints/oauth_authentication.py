@@ -39,30 +39,37 @@ class OAuthAuthentication:
         Generate an OAuth authorization url depends on the given provider
         """
         title = "generate_oauth_authorization_url"
-        provider_info = {
-            "google": {
-                "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
-                "client_id": CONST.GOOGLE_CLIENT_ID,
-                "scope": CONST.GOOGLE_SCOPE,
-            },
-            "github": {
-                "base_url": "https://github.com/login/oauth/authorize",
-                "client_id": CONST.GITHUB_CLIENT_ID,
-                "scope": CONST.GITHUB_SCOPE,
-            }
-        }
-
-        if provider not in provider_info:
+        # provider_info = {
+        #     "google": {
+        #         "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
+        #         "client_id": CONST.GOOGLE_CLIENT_ID,
+        #         "scope": CONST.GOOGLE_SCOPE,
+        #     },
+        #     "github": {
+        #         "base_url": "https://github.com/login/oauth/authorize",
+        #         "client_id": CONST.GITHUB_CLIENT_ID,
+        #         "scope": CONST.GITHUB_SCOPE,
+        #     }
+        # }
+        retrived_provider = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'"
+        )
+        self.disp.log_debug(f"Retrived provider: {retrived_provider}", title)
+        if isinstance(retrived_provider, int):
             self.disp.log_error("Unknown or Unsupported OAuth provider", title)
             return self.error
+        # if provider not in provider_info:
+        #     self.disp.log_error("Unknown or Unsupported OAuth provider", title)
+        #     return self.error
 
-        base_url = provider_info[provider]["base_url"]
-        client_id = provider_info[provider]["client_id"]
-        scope = provider_info[provider]["scope"]
+        base_url = retrived_provider[0]["authorisation_base_url"]
+        client_id = retrived_provider[0]["client_id"]
+        scope = retrived_provider[0]["provider_scope"]
         redirect_uri = CONST.REDIRECT_URI
         state = str(uuid.uuid4())
-        table: str = "Verification"
-        columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_VERIFICATION)
         self.disp.log_debug(f"Columns list: {columns}", title)
         if isinstance(columns, int):
             return self.error
@@ -74,7 +81,7 @@ class OAuthAuthentication:
         data.append("state")
         data.append(state)
         data.append(et_str)
-        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+        if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_VERIFICATION, data, columns) == self.error:
             return self.error
         state += ":"
         state += provider
@@ -93,33 +100,50 @@ class OAuthAuthentication:
         """
         title = "exchange_code_for_token"
 
-        if provider == "google":
-            token_url = "https://oauth2.googleapis.com/token"
-            data = {
-                "client_id": CONST.GOOGLE_CLIENT_ID,
-                "client_secret": CONST.GOOGLE_CLIENT_SECRET,
-                "code": code,
-                "redirect_uri": CONST.REDIRECT_URI,
-            }
-        elif provider == "github":
-            token_url = "https://github.com/login/oauth/access_token"
-            data = {
-                "client_id": CONST.GITHUB_CLIENT_ID,
-                "client_secret": CONST.GITHUB_CLIENT_SECRET,
-                "code": code,
-                "redirect_uri": CONST.REDIRECT_URI
-            }
-        else:
-            self.disp.log_error("Unknown or Unsupported Oauth provider", title)
+        retrieved_provider = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'"
+        )
+        if isinstance(retrieved_provider, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                    "exchange_code_for_token",
-                    "Unsupported OAuth provider.",
-                    "Unsupported OAuth provider.",
-                    None,
-                    True
-                )
-        self.disp.log_debug(f"data = {data}", title)
+                "exchange_code_for_token",
+                "Internal server error.",
+                "Internal server error.",
+                None,
+                True
+            )
+        # if provider == "google":
+        #     token_url = "https://oauth2.googleapis.com/token"
+        #     data = {
+        #         "client_id": CONST.GOOGLE_CLIENT_ID,
+        #         "client_secret": CONST.GOOGLE_CLIENT_SECRET,
+        #         "code": code,
+        #         "redirect_uri": CONST.REDIRECT_URI,
+        #         "grant_type": "authorization_code"
+        #     }
+        # elif provider == "github":
+        #     token_url = "https://github.com/login/oauth/access_token"
+        #     data = {
+        #         "client_id": CONST.GITHUB_CLIENT_ID,
+        #         "client_secret": CONST.GITHUB_CLIENT_SECRET,
+        #         "code": code,
+        #         "redirect_uri": CONST.REDIRECT_URI
+        #     }
+        # else:
+        #     self.disp.log_error("Unknown or Unsupported Oauth provider", title)
+            
+        # self.disp.log_debug(f"data = {data}", title)
         headers = {"Accept": "application/json"}
+        token_url = retrieved_provider[0]["token_grabber_base_url"]
+        
+        data: dict = {}
+        data["client_id"] = retrieved_provider[0]["client_id"]
+        data["client_secret"] = retrieved_provider[0]["client_secret"]
+        data["code"] = code
+        data["redirect_uri"] = CONST.REDIRECT_URI
+        if provider == "google":
+            data["grant_type"] = "authorization_code"
         try:
             response = requests.post(token_url, data=data, headers=headers, timeout=10)
             self.disp.log_debug(f"Exchange response = {response}", title)
@@ -173,7 +197,7 @@ class OAuthAuthentication:
         headers = {
             "Authorization": f"Bearer {access_token}"
         }
-        response = requests.get(user_info_url, headers=headers)
+        response = requests.get(user_info_url, headers=headers, timeout=10)
         if response.status_code != 200:
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 "get_user_info",
@@ -184,7 +208,7 @@ class OAuthAuthentication:
             )
         user_info = response.json()
         if provider == "github":
-            emails_response = requests.get("https://api.github.com/user/emails", headers=headers)
+            emails_response = requests.get("https://api.github.com/user/emails", headers=headers, timeout=10)
             if emails_response.status_code == 200:
                 emails = emails_response.json()
                 primary_email = next((email["email"] for email in emails if email["primary"]), None)
@@ -228,7 +252,18 @@ class OAuthAuthentication:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.accepted({"token": data["token"]})
 
-    def oauth_callback(self, request: Request) -> Response:
+    def _handle_token_response(self, token_response: Dict, provider: str) -> Response:
+        title = "handle_token_response"
+        access_token = token_response.get("access_token")
+        if not access_token:
+            return HCI.bad_request({"error": "Access token not found."})
+        user_info = self._get_user_info(provider, access_token)
+        self.disp.log_debug(f"User info: {user_info}", title)
+        if "error" in user_info:
+            return HCI.internal_server_error({"error": user_info["error"]})
+        return self._oauth_user_logger(user_info, provider)
+
+    async def oauth_callback(self, request: Request) -> Response:
         """
         Callback of the OAuth login
         """
@@ -248,32 +283,24 @@ class OAuthAuthentication:
             return HCI.bad_request({"error": "The state is in bad format."})
         self.disp.log_debug(f"Uuid gotten: {uuid_gotten}", title)
         self.disp.log_debug(f"Provider: {provider}", title)
-        table = "Verification"
         data = self.runtime_data_initialised.database_link.get_data_from_table(
-            table,
+            CONST.TAB_VERIFICATION,
             "*",
             f"definition='{uuid_gotten}'"
         )
         self.disp.log_debug(f"Data gotten: {data}", title)
         if isinstance(data, int):
             return HCI.internal_server_error({"error": "Internal server error."})
-        if self.runtime_data_initialised.database_link.drop_data_from_table(
-            table,
+        if isinstance(self.runtime_data_initialised.database_link.drop_data_from_table(
+            CONST.TAB_VERIFICATION,
             f"definition='{uuid_gotten}'"
-        ):
+        ), int) is False:
             return HCI.internal_server_error({"error": "Internal server error."})
         token_response = self._exchange_code_for_token(provider, code)
         self.disp.log_debug(f"Token response: {token_response}", title)
         if "error" in token_response:
             return HCI.bad_request({"error": token_response["error"]})
-        access_token = token_response.get("access_token")
-        if not access_token:
-            return HCI.bad_request({"error": "Access token not found."})
-        user_info = self._get_user_info(provider, access_token)
-        self.disp.log_debug(f"User info: {user_info}", title)
-        if "error" in user_info:
-            return HCI.internal_server_error({"error": user_info["error"]})
-        return self._oauth_user_logger(user_info, provider)
+        return self._handle_token_response(token_response, provider)
 
     async def oauth_login(self, request: Request) -> Response:
         """
@@ -285,6 +312,7 @@ class OAuthAuthentication:
         if not request_body or "provider" not in request_body:
             return HCI.bad_request({"error": "Bad request."})
         provider = request_body["provider"]
+        self.disp.log_debug(f"Oauth login provider: {provider}", title)
         authorization_url = self._generate_oauth_authorization_url(provider)
         self.disp.log_debug(f"Authorization url: {authorization_url}", title)
         if isinstance(authorization_url, int):
@@ -318,11 +346,12 @@ class OAuthAuthentication:
             where=f"id='{user_id}'",
         )
         self.disp.log_debug(f"User profile: {user_profile}", title)
-        admin = int(user_profile[0]["admin"])
-        if admin == 0:
+        if int(user_profile[0]["admin"]) == 0:
             return HCI.unauthorized({"error": "This ressource cannot be accessed."})
-        table: str = "UserOauthConnection"
-        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(table, "*", f"provider_name='{provider}'")
+        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'")
         if isinstance(retrived_data, int) is False:
             return HCI.conflict({"error": "The provider already exist in the database."})
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
@@ -344,11 +373,11 @@ class OAuthAuthentication:
             token_grabber_base_url,
             user_info_base_url
         ]
-        columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_USER_OAUTH_CONNECTION)
         if isinstance(columns, int):
             return HCI.internal_server_error({"error": "Internal server error."})
         columns.pop(0)
         self.disp.log_debug(f"Columns: {columns}", title)
-        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+        if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_USER_OAUTH_CONNECTION, data, columns) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "The provider is successfully added."})
