@@ -40,18 +40,6 @@ class OAuthAuthentication:
         Generate an OAuth authorization url depends on the given provider
         """
         title = "generate_oauth_authorization_url"
-        # provider_info = {
-        #     "google": {
-        #         "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
-        #         "client_id": CONST.GOOGLE_CLIENT_ID,
-        #         "scope": CONST.GOOGLE_SCOPE,
-        #     },
-        #     "github": {
-        #         "base_url": "https://github.com/login/oauth/authorize",
-        #         "client_id": CONST.GITHUB_CLIENT_ID,
-        #         "scope": CONST.GITHUB_SCOPE,
-        #     }
-        # }
         retrived_provider = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_USER_OAUTH_CONNECTION,
             "*",
@@ -61,10 +49,6 @@ class OAuthAuthentication:
         if isinstance(retrived_provider, int):
             self.disp.log_error("Unknown or Unsupported OAuth provider", title)
             return self.error
-        # if provider not in provider_info:
-        #     self.disp.log_error("Unknown or Unsupported OAuth provider", title)
-        #     return self.error
-
         base_url = retrived_provider[0]["authorisation_base_url"]
         client_id = retrived_provider[0]["client_id"]
         scope = retrived_provider[0]["provider_scope"]
@@ -87,11 +71,11 @@ class OAuthAuthentication:
         state += ":"
         state += provider
         url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}&state={state}"
-        # url = url.replace(" ", "%20")
-        # url = url.replace(":", "%3A")
-        # url = url.replace("/", "%2F")
-        # url = url.replace("?", "%3F")
-        # url = url.replace("&", "%26")
+        url = url.replace(" ", "%20")
+        url = url.replace(":", "%3A")
+        url = url.replace("/", "%2F")
+        url = url.replace("?", "%3F")
+        url = url.replace("&", "%26")
         self.disp.log_debug(f"url = {url}", title)
         return url
 
@@ -114,27 +98,6 @@ class OAuthAuthentication:
                 None,
                 True
             )
-        # if provider == "google":
-        #     token_url = "https://oauth2.googleapis.com/token"
-        #     data = {
-        #         "client_id": CONST.GOOGLE_CLIENT_ID,
-        #         "client_secret": CONST.GOOGLE_CLIENT_SECRET,
-        #         "code": code,
-        #         "redirect_uri": CONST.REDIRECT_URI,
-        #         "grant_type": "authorization_code"
-        #     }
-        # elif provider == "github":
-        #     token_url = "https://github.com/login/oauth/access_token"
-        #     data = {
-        #         "client_id": CONST.GITHUB_CLIENT_ID,
-        #         "client_secret": CONST.GITHUB_CLIENT_SECRET,
-        #         "code": code,
-        #         "redirect_uri": CONST.REDIRECT_URI
-        #     }
-        # else:
-        #     self.disp.log_error("Unknown or Unsupported Oauth provider", title)
-            
-        # self.disp.log_debug(f"data = {data}", title)
         headers = {"Accept": "application/json"}
         token_url = retrieved_provider[0]["token_grabber_base_url"]
         
@@ -184,18 +147,6 @@ class OAuthAuthentication:
         Get a user information depending
         """
         title: str = "get_user_info"
-        # if provider == "google":
-        #     user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-        # elif provider == "github":
-        #     user_info_url = "https://api.github.com/user"
-        # else:
-        #     return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-        #         "get_user_info",
-        #         "The provider you chose is not supported.",
-        #         "Unsupported provider.",
-        #         None,
-        #         True
-        #     )
         retrieved_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_USER_OAUTH_CONNECTION,
             "*",
@@ -231,8 +182,6 @@ class OAuthAuthentication:
                     email: dict = {}
                     email["email"] = info["email"]
                     return email
-            # primary_email = next((email["email"] for email in user_info if email["primary"]), None)
-            # user_info["email"] = primary_email
         return user_info
 
     def _oauth_user_logger(self, user_info: Dict, provider: str, connection_data: list) -> Response:
