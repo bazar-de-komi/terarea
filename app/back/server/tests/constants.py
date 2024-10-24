@@ -272,6 +272,7 @@ PATH_PUT_USER = "/api/v1/user"
 PATH_DELETE_USER = "/api/v1/user"
 PATH_GET_USER = "/api/v1/user"
 PATH_GET_USER_ID = "/api/v1/user_id"
+PATH_POST_LOGOUT = "/api/v1/logout"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
@@ -390,8 +391,14 @@ RESPONSE_GET_USER = {
 RESPONSE_GET_USER_ID = {
     "title": "Get user id",
     "msg": "The user information has been retrieved.",
-    "resp": "success",
+    "resp": 0,
     "logged in": True
+}
+RESPONSE_POST_LOGOUT = {
+    "title": "Logout",
+    "msg": "You have successfully logged out...",
+    "resp": "success",
+    "logged in": False
 }
 RESPONSE_DELETE_USER = {
     "title": "Delete user",
