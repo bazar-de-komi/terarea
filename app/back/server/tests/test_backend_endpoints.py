@@ -449,7 +449,9 @@ class TestServer:
         path = TCONST.PATH_PATCH_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.LAMBDA_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PATCH_MODE]
@@ -457,7 +459,7 @@ class TestServer:
             "username": accounts[TCONST.UNODE_USERNAME_KEY]
         }
         response = query.patch_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -476,7 +478,9 @@ class TestServer:
         path = TCONST.PATH_PATCH_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.LAMBDA_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PATCH_MODE]
@@ -484,7 +488,7 @@ class TestServer:
             "email": accounts[TCONST.UNODE_EMAIL_KEY]
         }
         response = query.patch_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -503,7 +507,9 @@ class TestServer:
         path = TCONST.PATH_PATCH_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.LAMBDA_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PATCH_MODE]
@@ -511,7 +517,7 @@ class TestServer:
             "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         response = query.patch_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -530,7 +536,9 @@ class TestServer:
         path = TCONST.PATH_PATCH_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.ADMIN_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PATCH_MODE]
@@ -538,7 +546,7 @@ class TestServer:
             "username": accounts[TCONST.UNODE_USERNAME_KEY]
         }
         response = query.patch_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -557,7 +565,9 @@ class TestServer:
         path = TCONST.PATH_PATCH_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.ADMIN_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PATCH_MODE]
@@ -565,7 +575,7 @@ class TestServer:
             "email": accounts[TCONST.UNODE_EMAIL_KEY]
         }
         response = query.patch_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -584,7 +594,9 @@ class TestServer:
         path = TCONST.PATH_PATCH_USER
         query: QueryEndpoint = setup_environment["query"]
         status: QueryStatus = setup_environment["status"]
-        token: Dict[str, Dict[str, str]] = setup_environment["tokens"]
+        token: Dict[
+            str, Dict[str, str]
+        ] = setup_environment["tokens"][TCONST.ADMIN_USER_TOKEN_KEY]
         accounts: Dict[
             str, any
         ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PATCH_MODE]
@@ -592,7 +604,7 @@ class TestServer:
             "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         response = query.patch_endpoint(
-            path, content=body, header=token[TCONST.LAMBDA_USER_TOKEN_KEY][TCONST.PRETTY_TOKEN_KEY]
+            path, content=body, header=token[TCONST.PRETTY_TOKEN_KEY]
         )
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
@@ -793,6 +805,81 @@ class TestServer:
             response.json(),
             response_node,
             title
+        ) is True
+
+    def test_logout_user_lambda(self, setup_environment):
+        """_summary_
+            Test the /logout endpoint of the server.
+
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment, True)
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["lambda_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
+        }
+        TCONST.IDISP.log_info(f"body = {body}")
+        response = query.post_endpoint(TCONST.PATH_POST_LOGIN, content=body)
+        TCONST.IDISP.log_info(f"response.json() = {response.json()}")
+        active_token = ""
+        if status.success(response) is True:
+            token_node = f"{response.json()['token']}"
+            active_token = f"Bearer {token_node}"
+            pretty_token = {TCONST.TOKEN_AUTH_ID_STR: active_token}
+        else:
+            assert status.success(response) is True
+        logout_response = query.post_endpoint(
+            TCONST.PATH_POST_LOGOUT, header=pretty_token
+        )
+        correct_node = TCONST.RESPONSE_POST_LOGOUT
+        assert status.success(response) is True
+        assert status.success(logout_response) is True
+        assert TCONST.are_json_responses_identical(
+            logout_response.json(),
+            correct_node,
+            "test_post_logout_lambda"
+        ) is True
+
+    def test_logout_user_admin(self, setup_environment):
+        """_summary_
+            Test the /logout endpoint of the server.
+
+        Args:
+            setup_environment (_type_): _description_
+        """
+        self.check_server(setup_environment, True)
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        accounts: Dict[
+            str, any
+        ] = setup_environment["accounts"]["admin_user"][TCONST.USER_PATCH_MODE]
+        body = {
+            "email": accounts[TCONST.UNODE_EMAIL_KEY],
+            "password": accounts[TCONST.UNODE_PASSWORD_KEY]
+        }
+        response = query.post_endpoint(TCONST.PATH_POST_LOGIN, content=body)
+        active_token = ""
+        if status.success(response) is True:
+            token_node = f"{response.json()['token']}"
+            active_token = f"Bearer {token_node}"
+            pretty_token = {TCONST.TOKEN_AUTH_ID_STR: active_token}
+        else:
+            setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+        logout_response = query.post_endpoint(
+            TCONST.PATH_POST_LOGOUT, header=pretty_token
+        )
+        correct_node = TCONST.RESPONSE_POST_LOGOUT
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            logout_response.json(),
+            correct_node,
+            "test_post_logout_admin"
         ) is True
 
     @pytest.mark.last
