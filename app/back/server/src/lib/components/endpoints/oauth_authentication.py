@@ -252,6 +252,17 @@ class OAuthAuthentication:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.accepted({"token": data["token"]})
 
+    def _handle_token_response(self, token_response: Dict, provider: str) -> Response:
+        title = "handle_token_response"
+        access_token = token_response.get("access_token")
+        if not access_token:
+            return HCI.bad_request({"error": "Access token not found."})
+        user_info = self._get_user_info(provider, access_token)
+        self.disp.log_debug(f"User info: {user_info}", title)
+        if "error" in user_info:
+            return HCI.internal_server_error({"error": user_info["error"]})
+        return self._oauth_user_logger(user_info, provider)
+
     def oauth_callback(self, request: Request) -> Response:
         """
         Callback of the OAuth login
@@ -289,14 +300,7 @@ class OAuthAuthentication:
         self.disp.log_debug(f"Token response: {token_response}", title)
         if "error" in token_response:
             return HCI.bad_request({"error": token_response["error"]})
-        access_token = token_response.get("access_token")
-        if not access_token:
-            return HCI.bad_request({"error": "Access token not found."})
-        user_info = self._get_user_info(provider, access_token)
-        self.disp.log_debug(f"User info: {user_info}", title)
-        if "error" in user_info:
-            return HCI.internal_server_error({"error": user_info["error"]})
-        return self._oauth_user_logger(user_info, provider)
+        return self._handle_token_response(token_response, provider)
 
     async def oauth_login(self, request: Request) -> Response:
         """
