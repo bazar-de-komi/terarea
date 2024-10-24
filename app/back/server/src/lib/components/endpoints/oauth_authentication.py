@@ -71,11 +71,11 @@ class OAuthAuthentication:
         state += ":"
         state += provider
         url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}&response_type=code&scope={scope}&state={state}"
-        url = url.replace(" ", "%20")
-        url = url.replace(":", "%3A")
-        url = url.replace("/", "%2F")
-        url = url.replace("?", "%3F")
-        url = url.replace("&", "%26")
+        # url = url.replace(" ", "%20")
+        # url = url.replace(":", "%3A")
+        # url = url.replace("/", "%2F")
+        # url = url.replace("?", "%3F")
+        # url = url.replace("&", "%26")
         self.disp.log_debug(f"url = {url}", title)
         return url
 
