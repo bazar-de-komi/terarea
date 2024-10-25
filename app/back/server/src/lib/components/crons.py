@@ -283,11 +283,11 @@ class Crons:
             where="",
             beautify=True
         )
-        current_time = datetime.now()
+        current_time: datetime = datetime.now()
         for oath in oath_connections:
-            token_expiration = oath["token_expiration"]
+            node_id: str = oath['id']
+            token_expiration: datetime = oath["token_expiration"]
             if current_time > token_expiration:
-                node_id: str = oath['id']
                 renew_link: str = oath["refresh_link"]
                 lifespan: int = int(oath["token_lifespan"])
                 new_token: str = self.runtime_data.some_oath_class.some_renewal_function(
@@ -312,9 +312,15 @@ class Crons:
                         },
                         where=f"id='{node_id}'"
                     )
-                    self.disp.log_debug(f"token {new_token} updated for {id}")
+                    self.disp.log_debug(
+                        f"token {new_token} updated for {node_id}"
+                    )
                 else:
-                    self.disp.log_error(f"Could not renew token for {id}")
+                    self.disp.log_error(f"Could not renew token for {node_id}")
+            else:
+                self.disp.log_debug(
+                    f"Token for {node_id} does not need to be renewed.", title
+                )
         self.disp.log_debug("Checked for oath that need to be renewed", title)
 
     def check_actions(self) -> None:
