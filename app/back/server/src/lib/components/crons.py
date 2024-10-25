@@ -45,13 +45,12 @@ class Crons:
         Returns:
             int: _description_: The overall status of the injection.
         """
-        if False is True:
-            self.runtime_data.background_tasks_initialised.safe_add_task(
-                func=self.check_actions,
-                args=None,
-                trigger='interval',
-                seconds=CONST.CHECK_ACTIONS_INTERVAL
-            )
+        self.runtime_data.background_tasks_initialised.safe_add_task(
+            func=self.check_actions,
+            args=None,
+            trigger='interval',
+            seconds=CONST.CHECK_ACTIONS_INTERVAL
+        )
         if CONST.ENABLE_TEST_CRONS is True:
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._harass_database,
@@ -84,6 +83,13 @@ class Crons:
                 args=None,
                 trigger='interval',
                 seconds=CONST.CLEAN_VERIFICATION_INTERVAL
+            )
+        if CONST.RENEW_OATHS is True:
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self.renew_oaths,
+                args=None,
+                trigger='interval',
+                seconds=CONST.RENEW_OATHS_INTERVAL
             )
 
     def _test_hello_world(self) -> None:
@@ -262,6 +268,17 @@ class Crons:
                 )
                 self.disp.log_debug(f"Removed {i}.", title)
         self.disp.log_debug("Cleaned expired lines", title)
+
+    def renew_oaths(self) -> None:
+        """_summary_
+            Function in charge of renewing the oath tokens that are about to expire.
+        """
+        title = "renew_oaths"
+        self.disp.log_debug(
+            "Checking for oaths that need to be renewed", title
+        )
+        self.disp.log_critical("Implement oath renewing", title)
+        self.disp.log_debug("Checked for oath that need to be renewed", title)
 
     def check_actions(self) -> None:
         """_summary_
