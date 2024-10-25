@@ -8,7 +8,7 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .sql import SQL
 from .bucket import Bucket
-from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST, BackgroundTasks, Crons
+from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST, BackgroundTasks, Crons, OAuthAuthentication
 from .boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
 
@@ -113,6 +113,12 @@ class Server:
             error=self.error,
             success=self.success,
             debug=self.debug
+        )
+        self.runtime_data_initialised.oauth_authentication_initialised = OAuthAuthentication(
+            self.runtime_data_initialised,
+            success=success,
+            error=error,
+            debug=debug
         )
 
     def __del__(self) -> None:

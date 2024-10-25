@@ -8,10 +8,8 @@ from typing import Union, Dict
 import requests
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
-from .. import constants as CONST
-from ..runtime_data import RuntimeData
-from ..http_codes import HCI
-
+from . import constants as CONST
+from . import RuntimeData, HCI
 
 class OAuthAuthentication:
     """
@@ -316,6 +314,7 @@ class OAuthAuthentication:
             )
             self.disp.log_debug(f"Retrieved provider data: {retrieved_data}", title)
             if isinstance(retrieved_data, int):
+                self.disp.log_error("An error has been dectected when retrieving the provider data", title)
                 return None
             token_url: str = retrieved_data[0]["token_grabber_base_url"]
             generated_data: dict = {}
@@ -331,6 +330,7 @@ class OAuthAuthentication:
                 self.disp.log_debug(f"Google response to json: {token_response}", title)
                 if "access_token" in token_response:
                     return token_response["access_token"]
+        self.disp.log_error("The provider is not recognised", title)
         return None
 
     async def oauth_callback(self, request: Request) -> Response:
