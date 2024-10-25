@@ -2,9 +2,10 @@
 The file that contains all the methods for the OAuth authentication
 """
 
-import requests
 import uuid
+from datetime import datetime, timedelta
 from typing import Union, Dict
+import requests
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .. import constants as CONST
@@ -39,18 +40,6 @@ class OAuthAuthentication:
         Generate an OAuth authorization url depends on the given provider
         """
         title = "generate_oauth_authorization_url"
-        # provider_info = {
-        #     "google": {
-        #         "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
-        #         "client_id": CONST.GOOGLE_CLIENT_ID,
-        #         "scope": CONST.GOOGLE_SCOPE,
-        #     },
-        #     "github": {
-        #         "base_url": "https://github.com/login/oauth/authorize",
-        #         "client_id": CONST.GITHUB_CLIENT_ID,
-        #         "scope": CONST.GITHUB_SCOPE,
-        #     }
-        # }
         retrived_provider = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_USER_OAUTH_CONNECTION,
             "*",
@@ -60,10 +49,6 @@ class OAuthAuthentication:
         if isinstance(retrived_provider, int):
             self.disp.log_error("Unknown or Unsupported OAuth provider", title)
             return self.error
-        # if provider not in provider_info:
-        #     self.disp.log_error("Unknown or Unsupported OAuth provider", title)
-        #     return self.error
-
         base_url = retrived_provider[0]["authorisation_base_url"]
         client_id = retrived_provider[0]["client_id"]
         scope = retrived_provider[0]["provider_scope"]
@@ -113,27 +98,6 @@ class OAuthAuthentication:
                 None,
                 True
             )
-        # if provider == "google":
-        #     token_url = "https://oauth2.googleapis.com/token"
-        #     data = {
-        #         "client_id": CONST.GOOGLE_CLIENT_ID,
-        #         "client_secret": CONST.GOOGLE_CLIENT_SECRET,
-        #         "code": code,
-        #         "redirect_uri": CONST.REDIRECT_URI,
-        #         "grant_type": "authorization_code"
-        #     }
-        # elif provider == "github":
-        #     token_url = "https://github.com/login/oauth/access_token"
-        #     data = {
-        #         "client_id": CONST.GITHUB_CLIENT_ID,
-        #         "client_secret": CONST.GITHUB_CLIENT_SECRET,
-        #         "code": code,
-        #         "redirect_uri": CONST.REDIRECT_URI
-        #     }
-        # else:
-        #     self.disp.log_error("Unknown or Unsupported Oauth provider", title)
-            
-        # self.disp.log_debug(f"data = {data}", title)
         headers = {"Accept": "application/json"}
         token_url = retrieved_provider[0]["token_grabber_base_url"]
         
@@ -182,21 +146,25 @@ class OAuthAuthentication:
         """
         Get a user information depending
         """
-        if provider == "google":
-            user_info_url = "https://www.googleapis.com/oauth2/v2/userinfo"
-        elif provider == "github":
-            user_info_url = "https://api.github.com/user"
-        else:
+        title: str = "get_user_info"
+        retrieved_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'"
+        )
+        self.disp.log_debug(f"Retrieved data: {retrieved_data}", title)
+        if isinstance(retrieved_data, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 "get_user_info",
-                "The provider you chose is not supported.",
-                "Unsupported provider.",
+                "Failed to fetch the oauth provider information.",
+                "Failed to fetch the oauth provider information.",
                 None,
                 True
             )
         headers = {
             "Authorization": f"Bearer {access_token}"
         }
+        user_info_url = retrieved_data[0]["user_info_base_url"]
         response = requests.get(user_info_url, headers=headers, timeout=10)
         if response.status_code != 200:
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
@@ -207,61 +175,133 @@ class OAuthAuthentication:
                 True
             )
         user_info = response.json()
+        self.disp.log_debug(f"User info: {user_info}", title)
         if provider == "github":
-            emails_response = requests.get("https://api.github.com/user/emails", headers=headers, timeout=10)
-            if emails_response.status_code == 200:
-                emails = emails_response.json()
-                primary_email = next((email["email"] for email in emails if email["primary"]), None)
-                user_info["email"] = primary_email
-            else:
-                user_info["email"] = None
+            for _, info in enumerate(user_info):
+                if info["primary"]:
+                    email: dict = {}
+                    email["email"] = info["email"]
+                    return email
         return user_info
 
-    def _oauth_user_logger(self, user_info: Dict, provider: str) -> Response:
+    def _oauth_user_logger(self, user_info: Dict, provider: str, connection_data: list) -> Response:
         """
         The function to insert or update the user information in the database
         """
         title: str = "oauth_user_logger"
         email: str = user_info["email"]
-        table: str = "Users"
-        retrieved_user = self.runtime_data_initialised.database_link.get_data_from_table(table, "email", f"email='{email}'")
+        retrieved_user = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_ACCOUNTS,
+            "*",
+            f"email='{email}'"
+        )
         self.disp.log_debug(f"Retrieved user: {retrieved_user}", title)
         if isinstance(retrieved_user, int) is False:
-            data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
-            if data["status"] == self.error:
+            retrieved_provider = self.runtime_data_initialised.database_link.get_data_from_table(
+                CONST.TAB_SERVICES,
+                "*",
+                f"name='{provider}'"
+            )
+            self.disp.log_debug(f"Retrieved provider: {retrieved_provider}", title)
+            if isinstance(retrieved_user, int):
                 return HCI.internal_server_error({"error": "Internal server error."})
-            return HCI.accepted({"token": data["token"]})
-        columns = self.runtime_data_initialised.database_link.get_table_column_names(table)
+            connection_data.append(str(retrieved_provider[0]["id"]))
+            connection_data.append(str(retrieved_user[0]["id"]))
+            self.disp.log_debug(f"Connection data: {connection_data}", title)
+            columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_ACTIVE_OAUTHS)
+            if isinstance(columns, int):
+                return HCI.internal_server_error({"error": "Internal server error."})
+            columns.pop(0)
+            self.disp.log_debug(f"Columns list = {columns}", title)
+            if self.runtime_data_initialised.database_link.insert_data_into_table(
+                CONST.TAB_ACTIVE_OAUTHS,
+                connection_data,
+                columns
+            ) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+            user_data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
+            if user_data["status"] == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+            return HCI.accepted({"token": user_data["token"]})
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_ACCOUNTS)
         if isinstance(columns, int):
             return HCI.internal_server_error({"error": "Internal server error."})
         columns.pop(0)
         self.disp.log_debug(f"Columns list = {columns}", title)
         username: str = email.split('@')[0]
-        data: list = []
-        data.append(username)
-        data.append(email)
-        data.append(provider)
-        data.append(provider)
-        data.append("NULL")
-        data.append(str(int(False)))
-        self.disp.log_debug(f"Data list = {data}", title)
-        if self.runtime_data_initialised.database_link.insert_data_into_table(table, data, columns) == self.error:
+        user_data: list = []
+        user_data.append(username)
+        user_data.append(email)
+        user_data.append(provider)
+        user_data.append(provider)
+        user_data.append("NULL")
+        user_data.append(str(int(False)))
+        self.disp.log_debug(f"Data list = {user_data}", title)
+        if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_ACCOUNTS, user_data, columns) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
-        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
-        if data["status"] == self.error:
+        retrieved_user = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_ACCOUNTS,
+            "*",
+            f"email='{email}'"
+        )
+        self.disp.log_debug(f"Retrieved user: {retrieved_user}", title)
+        if isinstance(retrieved_user, int):
             return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.accepted({"token": data["token"]})
+        retrieved_provider = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "*",
+            f"name='{provider}'"
+        )
+        self.disp.log_debug(f"Retrieved provider: {retrieved_provider}", title)
+        if isinstance(retrieved_user, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        connection_data.append(str(retrieved_provider[0]["id"]))
+        connection_data.append(str(retrieved_user[0]["id"]))
+        self.disp.log_debug(f"Connection data: {connection_data}", title)
+        columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_ACTIVE_OAUTHS)
+        if isinstance(columns, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        columns.pop(0)
+        self.disp.log_debug(f"Columns list = {columns}", title)
+        if self.runtime_data_initialised.database_link.insert_data_into_table(
+            CONST.TAB_ACTIVE_OAUTHS,
+            connection_data,
+            columns
+        ) == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        user_data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(email)
+        if user_data["status"] == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.accepted({"token": user_data["token"]})
 
     def _handle_token_response(self, token_response: Dict, provider: str) -> Response:
-        title = "handle_token_response"
-        access_token = token_response.get("access_token")
+        title: str = "handle_token_response"
+        data: list = []
+        access_token: str = token_response["access_token"]
         if not access_token:
             return HCI.bad_request({"error": "Access token not found."})
+        data.append(access_token)
+        if provider == "google":
+            expires: int = token_response["expires_in"]
+            if not expires:
+                return HCI.bad_request({"error": "Expiration time not found."})
+            current_time = datetime.now()
+            new_time = current_time + timedelta(seconds=expires)
+            expiration_date = self.runtime_data_initialised.database_link.datetime_to_string(new_time)
+            data.append(expiration_date)
+            data.append(str(expires))
+            refresh_link = token_response["refresh_token"]
+            if not refresh_link:
+                return HCI.bad_request({"error": "Refresh link not found."})
+            data.append(refresh_link)
+        if provider == "github":
+            data.append(self.runtime_data_initialised.database_link.datetime_to_string(datetime.now()))
+            data.append("0")
+            data.append("NULL")
         user_info = self._get_user_info(provider, access_token)
-        self.disp.log_debug(f"User info: {user_info}", title)
         if "error" in user_info:
             return HCI.internal_server_error({"error": user_info["error"]})
-        return self._oauth_user_logger(user_info, provider)
+        return self._oauth_user_logger(user_info, provider, data)
 
     async def oauth_callback(self, request: Request) -> Response:
         """
@@ -379,5 +419,14 @@ class OAuthAuthentication:
         columns.pop(0)
         self.disp.log_debug(f"Columns: {columns}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_USER_OAUTH_CONNECTION, data, columns) == self.error:
+            return HCI.internal_server_error({"error": "Internal server error."})
+        oauth: list = ["1"]
+        column: list = ["oauth"]
+        if self.runtime_data_initialised.database_link.update_data_in_table(
+            CONST.TAB_SERVICES,
+            oauth,
+            column,
+            f"name='{provider}'"
+        ) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "The provider is successfully added."})
