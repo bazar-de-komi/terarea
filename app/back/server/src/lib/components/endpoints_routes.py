@@ -135,6 +135,9 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/oauth/{provider}", self.runtime_data_initialised.oauth_authentication_initialised.patch_oauth_provider_data, "PATCH"
         )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/{provider}", self.runtime_data_initialised.oauth_authentication_initialised.delete_oauth_provider, "DELETE"
+        )
 
         # Users routes
         self.runtime_data_initialised.paths_initialised.add_path(

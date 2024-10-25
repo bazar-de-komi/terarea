@@ -563,3 +563,9 @@ class OAuthAuthentication:
             if self._update_single_data(provider, "user_info_base_url", request_body) == self.error:
                 return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "The data is successfully updated."})
+
+    async def delete_oauth_provider(self, request: Request, provider: str) -> Response:
+        """
+        The function to delete an oauth provider from the database
+        """
+        return HCI.success({"msg": "Not implemented yet."})
