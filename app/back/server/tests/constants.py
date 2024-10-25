@@ -265,6 +265,7 @@ PORT = int(_get_toml_variable(
 
 # Endpoints to test the server
 PATH_GET_HOME = "/"
+PATH_GET_API_HOME = "/api/v1/"
 PATH_PUT_REGISTER = "/api/v1/register"
 PATH_POST_LOGIN = "/api/v1/login"
 PATH_PATCH_USER = "/api/v1/user"
@@ -352,6 +353,12 @@ RUNTIME_NODE_CRITICAL_KEY = "critical"
 
 # Pre-built response bodies for certain endpoints
 RESPONSE_GET_HOME_RESPONSE_NOT_LOGGED_IN = {
+    'title': 'Home',
+    'msg': 'Welcome to the control server.',
+    'resp': '',
+    'logged in': False
+}
+RESPONSE_GET_HOME_API_RESPONSE_NOT_LOGGED_IN = {
     'title': 'Home',
     'msg': 'Welcome to the control server.',
     'resp': '',

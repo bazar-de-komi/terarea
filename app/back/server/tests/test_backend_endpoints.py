@@ -212,6 +212,20 @@ class TestServer:
             "test_home"
         ) is True
 
+    def test_api_home(self, setup_environment):
+        """ Test the / endpoint of the server. """
+        self.check_server(setup_environment)
+
+        query: QueryEndpoint = setup_environment["query"]
+        status: QueryStatus = setup_environment["status"]
+        response = query.get_endpoint(TCONST.PATH_GET_API_HOME)
+        assert status.success(response) is True
+        assert TCONST.are_json_responses_identical(
+            response.json(),
+            TCONST.RESPONSE_GET_HOME_API_RESPONSE_NOT_LOGGED_IN,
+            "test_api_home"
+        ) is True
+
     @pytest.mark.critical
     def test_post_register_lambda(self, setup_environment):
         """_summary_
@@ -827,7 +841,7 @@ class TestServer:
         TCONST.IDISP.log_info(f"body = {body}")
         response = query.post_endpoint(TCONST.PATH_POST_LOGIN, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
-        active_token = ""
+        pretty_token = ""
         if status.success(response) is True:
             token_node = f"{response.json()['token']}"
             active_token = f"Bearer {token_node}"
@@ -864,7 +878,7 @@ class TestServer:
             "password": accounts[TCONST.UNODE_PASSWORD_KEY]
         }
         response = query.post_endpoint(TCONST.PATH_POST_LOGIN, content=body)
-        active_token = ""
+        pretty_token = ""
         if status.success(response) is True:
             token_node = f"{response.json()['token']}"
             active_token = f"Bearer {token_node}"
