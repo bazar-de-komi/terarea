@@ -12,6 +12,7 @@ from .password_handling import PasswordHandling
 from .mail_management import MailManagement
 from .background_tasks import BackgroundTasks
 from .crons import Crons
+from .oauth_authentication import OAuthAuthentication
 
 __all__ = [
     "HCI",
@@ -24,5 +25,6 @@ __all__ = [
     "MailManagement",
     "BackgroundTasks",
     "PasswordHandling",
-    "ServerManagement"
+    "ServerManagement",
+    "OAuthAuthentication"
 ]

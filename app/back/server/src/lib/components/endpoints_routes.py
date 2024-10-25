@@ -5,7 +5,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
 # , Github_check#, IFTTT_Manager
-from .endpoints import Bonus, UserEndpoints, Services, OAuthAuthentication
+from .endpoints import Bonus, UserEndpoints, Services
 
 
 class Endpoints:
@@ -52,12 +52,6 @@ class Endpoints:
             debug=self.debug
         )
         self.user_endpoints: UserEndpoints = UserEndpoints(
-            runtime_data=runtime_data,
-            success=success,
-            error=error,
-            debug=debug
-        )
-        self.oauth: OAuthAuthentication = OAuthAuthentication(
             runtime_data=runtime_data,
             success=success,
             error=error,
@@ -127,13 +121,13 @@ class Endpoints:
         
         # Oauth routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/oauth/login", self.oauth.oauth_login, "GET"
+            "/api/v1/oauth/login", self.runtime_data_initialised.oauth_authentication_initialised.oauth_login, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/oauth/callback", self.oauth.oauth_callback, "GET"
+            "/api/v1/oauth/callback", self.runtime_data_initialised.oauth_authentication_initialised.oauth_callback, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/oauth/{provider}", self.oauth.add_oauth_provider, "POST"
+            "/api/v1/oauth/{provider}", self.runtime_data_initialised.oauth_authentication_initialised.add_oauth_provider, "POST"
         )
 
         # Users routes
