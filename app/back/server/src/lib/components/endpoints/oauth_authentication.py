@@ -303,6 +303,36 @@ class OAuthAuthentication:
             return HCI.internal_server_error({"error": user_info["error"]})
         return self._oauth_user_logger(user_info, provider, data)
 
+    def refresh_token(self, provider_name: str, refresh_link: str) -> Union[str, None]:
+        """
+        The function that use the given provider name and refresh link to generate a new token for oauth authentication
+        """
+        title: str = "refresh_token"
+        if provider_name == "google":
+            retrieved_data = self.runtime_data_initialised.database_link.get_data_from_table(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "*",
+                f"provider_name='{provider_name}'"
+            )
+            self.disp.log_debug(f"Retrieved provider data: {retrieved_data}", title)
+            if isinstance(retrieved_data, int):
+                return None
+            token_url: str = retrieved_data[0]["token_grabber_base_url"]
+            generated_data: dict = {}
+            generated_data["client_id"] = retrieved_data[0]["token_grabber_base_url"]
+            generated_data["client_secret"] = retrieved_data[0]["client_secret"]
+            generated_data["refresh_token"] = refresh_link
+            generated_data["grant_type"] = "refresh_token"
+            self.disp.log_debug(f"Generated data: {generated_data}", title)
+            google_response: Response = requests.post(token_url, data=generated_data, timeout=10)
+            self.disp.log_debug(f"Google response: {google_response}", title)
+            if google_response.status_code == 200:
+                token_response = google_response.json()
+                self.disp.log_debug(f"Google response to json: {token_response}", title)
+                if "access_token" in token_response:
+                    return token_response["access_token"]
+        return None
+
     async def oauth_callback(self, request: Request) -> Response:
         """
         Callback of the OAuth login
