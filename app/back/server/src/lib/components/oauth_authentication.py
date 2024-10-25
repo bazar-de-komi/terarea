@@ -502,3 +502,64 @@ class OAuthAuthentication:
         ) == self.error:
             return HCI.internal_server_error({"error": "Internal server error."})
         return HCI.success({"msg": "The provider is successfully updated."})
+
+    def _update_single_data(self, provider: str, table: str, request_body) -> int:
+        """
+        The function in charge of updating the data in the database
+        """
+        if self.runtime_data_initialised.database_link.update_data_in_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            [request_body[table]],
+            [table],
+            f"provider_name='{provider}'"
+        ) == self.error:
+            return self.error
+        return self.success
+
+    async def patch_oauth_provider_data(self, request: Request, provider: str) -> Response:
+        """
+        The function that modify every value of an oauth provider
+        """
+        title: str = "update_oauth_provider_data"
+        if not provider:
+            return HCI.bad_request({"error": "The provider is not provided."})
+        self.disp.log_debug(f"Provider: {provider}", title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        self.disp.log_debug(f"Token gotten: {token}", title)
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(token) is False:
+            self.disp.log_error("You're not admin.", title)
+            return HCI.unauthorized({"error": "This ressource cannot be accessed."})
+        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'")
+        if isinstance(retrived_data, int):
+            return HCI.internal_server_error({"error": "Internal server error."})
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        if not request_body:
+            return HCI.bad_request({"error": "A variable is missing in the body."})
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if "provider_name" in request_body:
+            if self._update_single_data(provider, "provider_name", request_body) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+        if "client_id" in request_body:
+            if self._update_single_data(provider, "client_id", request_body) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+        if "client_secret" in request_body:
+            if self._update_single_data(provider, "client_secret", request_body) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+        if "provider_scope" in request_body:
+            if self._update_single_data(provider, "provider_scope", request_body) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+        if "authorisation_base_url" in request_body:
+            if self._update_single_data(provider, "authorisation_base_url", request_body) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+        if "token_grabber_base_url" in request_body:
+            if self._update_single_data(provider, "token_grabber_base_url", request_body) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+        if "user_info_base_url" in request_body:
+            if self._update_single_data(provider, "user_info_base_url", request_body) == self.error:
+                return HCI.internal_server_error({"error": "Internal server error."})
+        return HCI.success({"msg": "The data is successfully updated."})
