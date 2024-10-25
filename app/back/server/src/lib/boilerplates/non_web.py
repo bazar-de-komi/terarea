@@ -236,7 +236,7 @@ class BoilerplateNonHTTP:
             where=f"token='{token}'",
             beautify=False
         )
-        if isinstance(user_id, int) is True and user_id == self.error:
+        if isinstance(user_id, int) is True and user_id == self.error or not user_id:
             self.disp.log_error(
                 f"Failed to find token {token} in the database.", title
             )

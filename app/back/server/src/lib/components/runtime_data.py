@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from .endpoints_routes import Endpoints
     from .background_tasks import BackgroundTasks
     from .server_management import ServerManagement
+    from .oauth_authentication import OAuthAuthentication
     from ..boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
 
@@ -60,3 +61,4 @@ class RuntimeData:
         self.boilerplate_responses_initialised: 'BoilerplateResponses' = None
         self.boilerplate_incoming_initialised: 'BoilerplateIncoming' = None
         self.boilerplate_non_http_initialised: 'BoilerplateNonHTTP' = None
+        self.oauth_authentication_initialised: 'OAuthAuthentication' = None
