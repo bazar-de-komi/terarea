@@ -109,6 +109,15 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/service/{service_id}", self.services.patch_service, "PATCH"
         )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service_id/name/{name}", self.services.get_service_id_by_name, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service_id/url", self.services.get_service_id_by_url, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service/{service_id}", self.services.delete_service, "DELETE"
+        )
 
         # Authentication routes
         self.runtime_data_initialised.paths_initialised.add_path(

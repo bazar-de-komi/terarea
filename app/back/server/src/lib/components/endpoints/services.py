@@ -251,6 +251,100 @@ class Services:
             headers=self.runtime_data_initialised.json_header
         )
 
+    async def get_service_id_by_name(self, request: Request, name: str) -> Response:
+        """
+        The function to get a service id by the name
+        """
+        title = "get_service_id_by_name"
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        self.disp.log_debug(f"Token = {token}", title)
+        if not token:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
+                title
+            )
+        retrieved_id = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "id",
+            f"name='{name}'"
+        )
+        if isinstance(retrieved_id, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        service_id = str(retrieved_id[0]["id"])
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=service_id,
+            resp="success",
+            token=token
+        )
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def get_service_id_by_url(self, request: Request) -> Response:
+        """
+        The function to get a service id by the url
+        """
+        title = "get_service_id_by_url"
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        self.disp.log_debug(f"Token = {token}", title)
+        if not token:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
+                title
+            )
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
+        if not request_body or "url" not in request_body:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        url = request_body["url"]
+        retrieved_id = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "id",
+            f"url='{url}'"
+        )
+        if isinstance(retrieved_id, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        service_id = str(retrieved_id[0]["id"])
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=service_id,
+            resp="success",
+            token=token
+        )
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
     async def create_service(self, request: Request, name: str) -> Response:
         """
         Create a new service (Only for admin account)
@@ -509,6 +603,23 @@ class Services:
         )
         return HCI.success(
             content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def delete_service(self, request: Request, service_id: str) -> Response:
+        """
+        The function to delete a service from the database
+        """
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title="Delete service",
+            message="Not implemented yet.",
+            resp="comming soon",
+            token=None,
+            error=True
+        )
+        return HCI.not_implemented(
+            body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
