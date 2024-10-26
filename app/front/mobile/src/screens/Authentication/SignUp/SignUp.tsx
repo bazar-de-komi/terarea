@@ -88,7 +88,7 @@ const SignUp = () => {
                     <CustomerButton
                         text="Get started"
                         onPress={SignInPressed}
-                        bgColor={""}
+                        bgColor={"black"}
                         fgColor={""}
                     />
                     <SocialButton/>

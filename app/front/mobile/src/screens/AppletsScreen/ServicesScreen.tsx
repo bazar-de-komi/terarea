@@ -19,7 +19,7 @@ const ServicesScreen = () => {
         Navigation.navigate('Service details')
     }
 
-    return (    
+    return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
                 <Image
