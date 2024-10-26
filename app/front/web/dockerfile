@@ -6,7 +6,7 @@ ENV HOME=/web
 ENV LAUNCH_COMMAND="serve -s dist -l 3000"
 
 # Update the system
-RUN apt update -y && apt upgrade -y
+RUN apt update && apt upgrade -y
 
 # Install npm and nodejs
 RUN apt install -y \
@@ -20,10 +20,10 @@ RUN apt install -y \
 
 # Installing npm requirements
 RUN npm install -g \
+    axios \
     serve \
-    react-icons \
     recharts \
-    axios
+    react-icons
 
 
 # Create working folder
