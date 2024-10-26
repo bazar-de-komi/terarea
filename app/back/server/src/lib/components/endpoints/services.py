@@ -41,17 +41,15 @@ class Services:
         )
         self.disp.log_debug(f"Token = {token}", title)
         if not token:
-            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title=title,
-                message="Authorisation required.",
-                resp="Unauthorized",
-                token=token,
-                error=True
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
             )
-            return HCI.unauthorized(
-                content=body,
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
+                title
             )
         services_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
@@ -60,8 +58,8 @@ class Services:
         if not services_data or isinstance(services_data, int):
             body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 title=title,
-                message="Services not found.",
-                resp="Not found",
+                message="services not found.",
+                resp="not found",
                 token=token,
                 error=True
             )
@@ -76,7 +74,7 @@ class Services:
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 title=title,
                 message=services_data,
-                resp="Success",
+                resp="success",
                 token=token
             )
         return HCI.success(
@@ -95,21 +93,37 @@ class Services:
         )
         self.disp.log_debug(f"Token = {token}", title)
         if not token:
-            return HCI.unauthorized(
-                {"error": "Authorization required."},
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
+                title
             )
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
             "*",
             f"name='{name}'"
         )
+        if isinstance(service_data, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
         for i, service in enumerate(service_data):
             service_data[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(service["created_at"])
         self.disp.log_debug(f"Service found: {service_data}", title)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message=service_data,
+                resp="success",
+                token=token
+        )
         return HCI.success(
-            {"service": service_data},
+            content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
@@ -124,10 +138,15 @@ class Services:
         )
         self.disp.log_debug(f"Token = {token}", title)
         if not token:
-            return HCI.unauthorized(
-                {"error": "Authorization required."},
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
+                title
             )
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
@@ -137,8 +156,15 @@ class Services:
             srv for srv in service_data if tag in srv.get("tags", [])
         ]
         if not filtered_services:
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message=f"No services found for tag '{tag}'.",
+                resp="not found",
+                token=token,
+                error=True
+            )
             return HCI.not_found(
-                {"error": f"No services found for tag '{tag}'."},
+                content=body,
                 content_type=CONST.CONTENT_TYPE,
                 headers=self.runtime_data_initialised.json_header
             )
@@ -147,8 +173,14 @@ class Services:
         msg = f"Services with tag '{tag}': "
         msg += f"{filtered_services}"
         self.disp.log_debug(msg, title)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=filtered_services,
+            resp="success",
+            token=token
+        )
         return HCI.success(
-            {"services": filtered_services},
+            content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
@@ -163,10 +195,15 @@ class Services:
         )
         self.disp.log_debug(f"Token = {token}", title)
         if not token:
-            return HCI.unauthorized(
-                {"error": "Authorization required."},
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
+                title
             )
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
@@ -176,16 +213,29 @@ class Services:
             service_data, key=lambda x: x["created_at"], reverse=True
         )[:10]
         if not recent_services:
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="No recent services found.",
+                resp="not found",
+                token=token,
+                error=True
+            )
             return HCI.not_found(
-                {"error": "No recent services found."},
+                content=body,
                 content_type=CONST.CONTENT_TYPE,
                 headers=self.runtime_data_initialised.json_header
             )
         for i, service in enumerate(recent_services):
             recent_services[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(service["created_at"])
         self.disp.log_debug(f"Recent services: {recent_services}", title)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=recent_services,
+            resp="success",
+            token=token
+        )
         return HCI.success(
-            {"services": recent_services},
+            content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
@@ -195,21 +245,28 @@ class Services:
         Create a new service (Only for admin account)
         """
         title: str = "create_service"
-        if not name:
-            return HCI.bad_request({"error": "The service name is not provided."})
-        self.disp.log_debug(f"Service name: {name}", title)
         token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
-        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+        if not token:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(
             token
-        )
-        if token_valid is False:
+        ) is False:
             return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        if not name:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
+        self.disp.log_debug(f"Service name: {name}", title)
         user_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
             title, token
         )
-        if isinstance(user_id, Response) is True:
+        if isinstance(user_id, Response):
             return user_id
         user_profile = self.runtime_data_initialised.database_link.get_data_from_table(
             table=CONST.TAB_ACCOUNTS,
@@ -217,16 +274,20 @@ class Services:
             where=f"id='{user_id}'",
         )
         self.disp.log_debug(f"User profile: {user_profile}", title)
-        if int(user_profile[0]["admin"]) == 0:
-            return HCI.unauthorized({"error": "This ressource cannot be accessed."})
         if isinstance(self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
             "*",
             f"name='{name}'"), int) is False:
-            return HCI.internal_server_error({"error": "Internal server error."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
         if not request_body or not all(key in request_body for key in ("url", "api_key", "category", "type", "tags")):
-            return HCI.bad_request({"error": "A variable is missing in the body."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
         self.disp.log_debug(f"Request body: {request_body}", title)
         data: list = [
             name,
@@ -242,9 +303,25 @@ class Services:
         self.disp.log_debug(f"Generated data: {data}", title)
         columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_SERVICES)
         if isinstance(columns, int):
-            return HCI.internal_server_error({"error": "Internal server error."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
         columns.pop(0)
         self.disp.log_debug(f"Columns: {columns}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_SERVICES, data, columns) == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "The new service is created successfully."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The new service is created successfully.",
+            resp="success",
+            token=token
+        )
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
