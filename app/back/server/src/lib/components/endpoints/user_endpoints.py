@@ -497,7 +497,7 @@ class UserEndpoints:
             return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
         tables_of_interest = [
             CONST.TAB_USER_SERVICES, CONST.TAB_ACTIONS,
-            CONST.TAB_CONNECTIONS, CONST.TAB_ACTIVE_OATHS
+            CONST.TAB_CONNECTIONS, CONST.TAB_ACTIVE_OAUTHS
         ]
         removal_status = self.runtime_data_initialised.boilerplate_non_http_initialised.remove_user_from_tables(
             f"user_id={usr_id}", tables_of_interest
