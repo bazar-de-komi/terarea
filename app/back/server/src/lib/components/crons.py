@@ -278,7 +278,7 @@ class Crons:
             "Checking for oaths that need to be renewed", title
         )
         oath_connections: List[Dict[str]] = self.runtime_data.database_link.get_data_from_table(
-            table=CONST.TAB_ACTIVE_OATHS,
+            table=CONST.TAB_ACTIVE_OAUTHS,
             column="*",
             where="",
             beautify=True
@@ -319,7 +319,7 @@ class Crons:
                 )
                 if new_token != "":
                     self.runtime_data.database_link.update_data_in_table(
-                        table=CONST.TAB_ACTIVE_OATHS,
+                        table=CONST.TAB_ACTIVE_OAUTHS,
                         data={
                             "token": new_token,
                             "token_expiration": token_expiration

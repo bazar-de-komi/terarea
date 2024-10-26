@@ -91,13 +91,13 @@ LOCK TABLES `Actions` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ActiveOaths`
+-- Table structure for table `ActiveOauths`
 --
 
-DROP TABLE IF EXISTS `ActiveOaths`;
+DROP TABLE IF EXISTS `ActiveOauths`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ActiveOaths` (
+CREATE TABLE `ActiveOauths` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` mediumtext DEFAULT NULL COMMENT 'The token temporarily provided by the sso',
   `token_expiration` datetime DEFAULT current_timestamp() COMMENT 'The date when it expires',
@@ -106,20 +106,20 @@ CREATE TABLE `ActiveOaths` (
   `service_id` bigint(20) unsigned NOT NULL COMMENT 'The id of the service that is concerned',
   `user_id` bigint(20) unsigned NOT NULL COMMENT 'The id of the user to which this token belongs to',
   PRIMARY KEY (`id`),
-  KEY `ActiveOaths_Services_FK` (`service_id`),
-  KEY `ActiveOaths_Users_FK` (`user_id`),
-  CONSTRAINT `ActiveOaths_Services_FK` FOREIGN KEY (`service_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `ActiveOaths_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The current oaths that are still valid.';
+  KEY `ActiveOauths_Services_FK` (`service_id`),
+  KEY `ActiveOauths_Users_FK` (`user_id`),
+  CONSTRAINT `ActiveOauths_Services_FK` FOREIGN KEY (`service_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `ActiveOauths_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The current oauths that are still valid.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ActiveOaths`
+-- Dumping data for table `ActiveOauths`
 --
 
-LOCK TABLES `ActiveOaths` WRITE;
-/*!40000 ALTER TABLE `ActiveOaths` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ActiveOaths` ENABLE KEYS */;
+LOCK TABLES `ActiveOauths` WRITE;
+/*!40000 ALTER TABLE `ActiveOauths` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ActiveOauths` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
