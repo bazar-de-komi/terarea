@@ -92,7 +92,7 @@ class BoilerplateResponses:
         body = self.build_response_body(
             title=title,
             message="Access token not found.",
-            resp="no access token",
+            resp="No access token",
             token=token,
             error=True
         )
@@ -112,7 +112,7 @@ class BoilerplateResponses:
         body = self.build_response_body(
             title=title,
             message="The provider you are looking for was not found.",
-            resp="provider not found",
+            resp="Provider not found",
             token=token,
             error=True
         )
@@ -131,8 +131,8 @@ class BoilerplateResponses:
         """
         body = self.build_response_body(
             title=title,
-            message="You have not given a provider",
-            resp="provider missing",
+            message="You have not given a provider.",
+            resp="Provider missing",
             token=token,
             error=True
         )
