@@ -224,6 +224,12 @@ CLEAN_VERIFICATION = _get_toml_variable(
 CLEAN_VERIFICATION_INTERVAL = _get_toml_variable(
     TOML_CONF, "Crons", "clean_verification_interval", 900
 )
+RENEW_OATH_TOKENS = _get_toml_variable(
+    TOML_CONF, "Crons", "renew_oath_tokens", True
+)
+RENEW_OATH_TOKENS_INTERVAL = _get_toml_variable(
+    TOML_CONF, "Crons", "renew_oath_tokens_interval", 1800
+)
 
 # |- Verification
 EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
@@ -259,8 +265,8 @@ TAB_ACTIONS = "Actions"
 TAB_SERVICES = "Services"
 TAB_CONNECTIONS = "Connections"
 TAB_VERIFICATION = "Verification"
+TAB_ACTIVE_OATHS = "ActiveOauths"
 TAB_USER_SERVICES = "UserServices"
-TAB_ACTIVE_OAUTHS = "ActiveOauths"
 TAB_ACTION_LOGGING = "ActionLogging"
 TAB_USER_OAUTH_CONNECTION = "UserOauthConnection"
 

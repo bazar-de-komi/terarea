@@ -194,12 +194,24 @@ clean_tokens_interval = 1800 #seconds
 # default: true
 clean_verification = true
 
-# The interval in which the loop for removing the expried tokens is run
+# The interval in which the loop for removing the expired tokens is run
 # The clean_tokens needs to be true for this setting to have an impact
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 900 seconds (15 minutes)
 clean_verification_interval = 900 #seconds
+
+# Check if any oath token need renewing
+# type: boolean
+# options: true, false
+# default: true
+renew_oath_tokens = true
+
+# The interval in which the loop for renewing the oath tokens is run
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
+# default: 1800 seconds (30 minutes)
+renew_oath_tokens_interval = 1800 #seconds
 
 # Enable test cron functions
 # type: boolean

@@ -11,7 +11,7 @@ ENV DEBUG=False
 ENV LAUNCH_SERVER_ON_BOOT=True
 
 # Update de docker system
-RUN apt update -y && apt upgrade -y
+RUN apt update && apt upgrade -y
 
 # Install tzdata and set the timezone to Europe/Paris
 RUN apt-get update && \
