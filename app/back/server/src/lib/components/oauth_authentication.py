@@ -170,8 +170,8 @@ class OAuthAuthentication:
         if isinstance(retrieved_data, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 "get_user_info",
-                "Failed to fetch the oauth provider information.",
-                "Failed to fetch the oauth provider information.",
+                "Failed to fetch the OAuth provider information.",
+                "Failed to fetch the OAuth provider information.",
                 None,
                 True
             )
@@ -811,7 +811,7 @@ class OAuthAuthentication:
         The function to delete an oauth provider from the database
         """
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title="Delete oath provider",
+            title="Delete oauth provider",
             message="Not implemented yet.",
             resp="comming soon",
             token=None,
