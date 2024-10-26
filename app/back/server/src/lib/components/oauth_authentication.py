@@ -225,13 +225,13 @@ class OAuthAuthentication:
             connection_data.append(str(retrieved_user[0]["id"]))
             self.disp.log_debug(f"Connection data: {connection_data}", title)
             columns = self.runtime_data_initialised.database_link.get_table_column_names(
-                CONST.TAB_ACTIVE_OATHS)
+                CONST.TAB_ACTIVE_OAUTHS)
             if isinstance(columns, int):
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, None)
             columns.pop(0)
             self.disp.log_debug(f"Columns list = {columns}", title)
             if self.runtime_data_initialised.database_link.insert_data_into_table(
-                CONST.TAB_ACTIVE_OATHS,
+                CONST.TAB_ACTIVE_OAUTHS,
                 connection_data,
                 columns
             ) == self.error:
@@ -291,13 +291,13 @@ class OAuthAuthentication:
         connection_data.append(str(retrieved_user[0]["id"]))
         self.disp.log_debug(f"Connection data: {connection_data}", title)
         columns = self.runtime_data_initialised.database_link.get_table_column_names(
-            CONST.TAB_ACTIVE_OATHS)
+            CONST.TAB_ACTIVE_OAUTHS)
         if isinstance(columns, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, None)
         columns.pop(0)
         self.disp.log_debug(f"Columns list = {columns}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(
-            CONST.TAB_ACTIVE_OATHS,
+            CONST.TAB_ACTIVE_OAUTHS,
             connection_data,
             columns
         ) == self.error:
