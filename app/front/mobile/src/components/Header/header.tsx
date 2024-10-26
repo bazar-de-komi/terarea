@@ -1,17 +1,22 @@
 import React from "react";
-import { View, Image, StyleSheet, ScrollView} from 'react-native';
+import { View, Image, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png'
 import ProfilLogo from '../../../assets/profilLogo.png';
 
 const Header = () => {
+    const navigation = useNavigation();
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.headerContainer}>
-                <Image
-                    source={AreaLogo}
-                    style={styles.areaLogo}
-                />
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <Image
+                        source={AreaLogo}
+                        style={styles.areaLogo}
+                    />
+                </TouchableOpacity>
                 <Image
                     source={ProfilLogo}
                     style={styles.profilLogo}
@@ -31,7 +36,7 @@ const styles = StyleSheet.create({
     areaLogo: {
         maxHeight: 50,
         marginTop: 10,
-        marginLeft: -250,
+        marginLeft: -180,
     },
     profilLogo: {
         maxHeight: 50,
