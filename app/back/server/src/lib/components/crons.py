@@ -290,7 +290,21 @@ class Crons:
             if current_time > token_expiration:
                 renew_link: str = oath["refresh_link"]
                 lifespan: int = int(oath["token_lifespan"])
-                new_token: str = self.runtime_data.some_oath_class.some_renewal_function(
+                provider_name: List[
+                    Dict[str, Any]
+                ] = self.runtime_data.database_link.get_data_from_table(
+                    table=CONST.TAB_SERVICES,
+                    column="name",
+                    where=f"id='{oath['service_id']}'",
+                    beautify=True
+                )
+                if isinstance(provider_name, int) is True:
+                    self.disp.log_error(
+                        f"Could not find provider name for {node_id}", title
+                    )
+                    continue
+                new_token: str = self.runtime_data.oauth_authentication_initialised.refresh_token(
+                    provider_name[0]['name'],
                     renew_link
                 )
                 token_expiration: str = self.runtime_data.database_link.datetime_to_string(
