@@ -78,6 +78,66 @@ class BoilerplateResponses:
         )
         return HCI.invalid_token(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
+    def no_access_token(self, title: str, token: Union[str, None] = None) -> Response:
+        """_summary_
+            This is a function that will return a no access token response.
+
+        Args:
+            title (str): _description_: The name of the endpoint that is concerned
+            token (str): _description_: The token corresponding to the user being logged in
+
+        Returns:
+            Response: _description_: A pre-made http response ready to go.
+        """
+        body = self.build_response_body(
+            title=title,
+            message="Access token not found.",
+            resp="No access token",
+            token=token,
+            error=True
+        )
+        return HCI.bad_request(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    def provider_not_found(self, title: str, token: Union[str, None] = None) -> Response:
+        """_summary_
+            This is a function that will return a provider not found response.
+
+        Args:
+            title (str): _description_: The title of the called endpoint
+            token (Union[str, None], optional): _description_. Defaults to None.: The token provided by the user of the called endpoint
+
+        Returns:
+            Response: _description_: The response ready to be sent back to the user
+        """
+        body = self.build_response_body(
+            title=title,
+            message="The provider you are looking for was not found.",
+            resp="Provider not found",
+            token=token,
+            error=True
+        )
+        return HCI.not_found(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    def provider_not_given(self, title: str, token: Union[str, None] = None) -> Response:
+        """_summary_
+            This is a function that will return a provider not found response.
+
+        Args:
+            title (str): _description_: The title of the called endpoint
+            token (Union[str, None], optional): _description_. Defaults to None.: The token provided by the user of the called endpoint
+
+        Returns:
+            Response: _description_: The response ready to be sent back to the user
+        """
+        body = self.build_response_body(
+            title=title,
+            message="You have not given a provider.",
+            resp="Provider missing",
+            token=token,
+            error=True
+        )
+        return HCI.bad_request(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
     def not_logged_in(self, title: str) -> Response:
         """_summary_
             This is a function that will return a not logged in response.
@@ -235,3 +295,23 @@ class BoilerplateResponses:
             error=True
         )
         return HCI.not_found(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    def missing_variable_in_body(self, title: str, token: Union[str, None] = None) -> Response:
+        """_summary_
+            Function that will return a message saying that there is a missing variable in the provided body.
+
+        Args:
+            title (str): _description_: The name of the endpoint
+            token (Union[str, None], optional): _description_. Defaults to None.: The token of the account.
+
+        Returns:
+            Response: _description_: The pre-compiled response (ready to go)
+        """
+        body = self.build_response_body(
+            title=title,
+            message="A variable is missing in the body of the request.",
+            resp="Missing variable",
+            token=token,
+            error=True
+        )
+        return HCI.bad_request(body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)

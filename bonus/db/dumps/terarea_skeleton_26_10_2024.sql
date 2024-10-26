@@ -33,13 +33,13 @@ DROP TABLE IF EXISTS `ActionLoging`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ActionLoging` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `time` datetime NOT NULL DEFAULT current_timestamp() COMMENT '''This is the time at which the workflow occurred''',
-  `type` mediumtext NOT NULL DEFAULT 'API' COMMENT '''The type of action concerned''',
-  `action_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the item that is being logged''',
-  `message` mediumtext DEFAULT NULL COMMENT '''The error messag''',
-  `error_code` bigint(20) DEFAULT NULL COMMENT '''The error code linked to the action''',
-  `error_level` mediumtext DEFAULT NULL COMMENT '''The level of the impotency for the error''',
-  `resolved` tinyint(1) DEFAULT NULL COMMENT '''Inform if the current error is solved''',
+  `time` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'This is the time at which the workflow occurred',
+  `type` mediumtext NOT NULL DEFAULT 'API' COMMENT 'The type of action concerned',
+  `action_id` bigint(20) unsigned NOT NULL COMMENT 'The id of the item that is being logged',
+  `message` mediumtext DEFAULT NULL COMMENT 'The error messag',
+  `error_code` bigint(20) DEFAULT NULL COMMENT 'The error code linked to the action',
+  `error_level` mediumtext DEFAULT NULL COMMENT 'The level of the impotency for the error',
+  `resolved` tinyint(1) DEFAULT NULL COMMENT 'Inform if the current error is solved',
   PRIMARY KEY (`id`),
   KEY `WorkflowLoging_Actions_FK` (`action_id`),
   CONSTRAINT `WorkflowLoging_Actions_FK` FOREIGN KEY (`action_id`) REFERENCES `Actions` (`id`) ON UPDATE CASCADE
@@ -67,12 +67,13 @@ CREATE TABLE `Actions` (
   `name` varchar(400) NOT NULL DEFAULT 'zero two, darling, darling... DARLING !!!',
   `trigger` mediumtext NOT NULL DEFAULT 'Elle est où la pierre ?',
   `consequences` mediumtext NOT NULL DEFAULT 'DANS LA POCHE !!!',
-  `user_id` bigint(20) unsigned NOT NULL COMMENT '''The author of the current action''',
-  `tags` longtext DEFAULT NULL COMMENT '''The tags used to find the the actions the user created.''',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'The author of the current action',
+  `tags` longtext DEFAULT NULL COMMENT 'The tags used to find the the actions the user created.',
   `running` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'L''information sur si le l''action est en fonctionnement',
   `description` varchar(2000) NOT NULL DEFAULT 'Some description' COMMENT 'The description of the workflow.',
   `colour` varchar(100) NOT NULL DEFAULT '#f1f1f1' COMMENT 'The colour of the workflow.',
   `favicon` mediumtext DEFAULT NULL COMMENT 'The link to the icon of the workflow.',
+  `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT 'The amount of times the action is used',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Actions_UNIQUE` (`name`),
   KEY `Actions_Users_FK` (`user_id`),
@@ -90,35 +91,35 @@ LOCK TABLES `Actions` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `ActiveOauths`
+-- Table structure for table `ActiveOaths`
 --
 
-DROP TABLE IF EXISTS `ActiveOauths`;
+DROP TABLE IF EXISTS `ActiveOaths`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ActiveOauths` (
+CREATE TABLE `ActiveOaths` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `token` mediumtext DEFAULT NULL COMMENT '''The token temporarily provided by the sso''',
-  `token_expiration` datetime DEFAULT current_timestamp() COMMENT '''The date when it expires''',
-  `token_lifespan` bigint(20) unsigned DEFAULT NULL COMMENT '''The time for which a token is alive before being invalidated''',
-  `refresh_link` varchar(2048) DEFAULT NULL COMMENT '''The link to be used to refresh the login token''',
-  `service_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the service that is concerned''',
-  `user_id` bigint(20) unsigned NOT NULL COMMENT '''The id of the user to which this token belongs to''',
+  `token` mediumtext DEFAULT NULL COMMENT 'The token temporarily provided by the sso',
+  `token_expiration` datetime DEFAULT current_timestamp() COMMENT 'The date when it expires',
+  `token_lifespan` bigint(20) unsigned DEFAULT NULL COMMENT 'The time for which a token is alive before being invalidated',
+  `refresh_link` varchar(2048) DEFAULT NULL COMMENT 'The link to be used to refresh the login token',
+  `service_id` bigint(20) unsigned NOT NULL COMMENT 'The id of the service that is concerned',
+  `user_id` bigint(20) unsigned NOT NULL COMMENT 'The id of the user to which this token belongs to',
   PRIMARY KEY (`id`),
-  KEY `ActiveOauths_Services_FK` (`service_id`),
-  KEY `ActiveOauths_Users_FK` (`user_id`),
-  CONSTRAINT `ActiveOauths_Services_FK` FOREIGN KEY (`service_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `ActiveOauths_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The current oauths that are still valid.';
+  KEY `ActiveOaths_Services_FK` (`service_id`),
+  KEY `ActiveOaths_Users_FK` (`user_id`),
+  CONSTRAINT `ActiveOaths_Services_FK` FOREIGN KEY (`service_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE,
+  CONSTRAINT `ActiveOaths_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The current oaths that are still valid.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `ActiveOauths`
+-- Dumping data for table `ActiveOaths`
 --
 
-LOCK TABLES `ActiveOauths` WRITE;
-/*!40000 ALTER TABLE `ActiveOauths` DISABLE KEYS */;
-/*!40000 ALTER TABLE `ActiveOauths` ENABLE KEYS */;
+LOCK TABLES `ActiveOaths` WRITE;
+/*!40000 ALTER TABLE `ActiveOaths` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ActiveOaths` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -161,11 +162,11 @@ CREATE TABLE `Services` (
   `url` varchar(2048) NOT NULL,
   `api_key` varchar(1024) NOT NULL COMMENT 'api token',
   `category` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api',
-  `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT '''The amount of times the service is used''',
+  `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT 'The amount of times the service is used',
   `type` varchar(200) NOT NULL DEFAULT 'service' COMMENT 'The type of the api.',
   `tags` longtext DEFAULT NULL COMMENT 'The keywords to search for the api',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `oauth` tinyint(1) DEFAULT NULL COMMENT '''Inform the code if the service is authenticated via oauth''',
+  `oauth` tinyint(1) DEFAULT NULL COMMENT 'Inform the code if the service is authenticated via oauth',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Services_UNIQUE_1` (`name`),
   UNIQUE KEY `Services_UNIQUE` (`url`) USING HASH
@@ -190,20 +191,20 @@ DROP TABLE IF EXISTS `UserOauthConnection`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `UserOauthConnection` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `provider_name` mediumtext NOT NULL COMMENT '''The name of the service provider''',
-  `client_id` mediumtext NOT NULL COMMENT '''The id of the initial account that allows us to start the oauth process, here noreply-terarea@gmail.com''',
-  `client_secret` mediumtext NOT NULL COMMENT '''The secret of the initial account that allows us to start the oauth process, here noreply-terarea@gmail.com''',
-  `provider_scope` mediumtext NOT NULL COMMENT '''The information that is queried from the provider''',
-  `authorisation_base_url` varchar(2048) NOT NULL COMMENT '''The url that allows the front-end to spawn a login page with the provider''',
-  `token_grabber_base_url` varchar(2048) NOT NULL COMMENT '''The link allowing the backend to get the information returned by the provider during the login''',
-  `user_info_base_url` varchar(2048) NOT NULL COMMENT '''Get the user info''',
+  `provider_name` mediumtext NOT NULL COMMENT 'The name of the service provider',
+  `client_id` mediumtext NOT NULL COMMENT 'The id of the initial account that allows us to start the oauth process, here noreply-terarea@gmail.com',
+  `client_secret` mediumtext NOT NULL COMMENT 'The secret of the initial account that allows us to start the oauth process, here noreply-terarea@gmail.com',
+  `provider_scope` mediumtext NOT NULL COMMENT 'The information that is queried from the provider',
+  `authorisation_base_url` varchar(2048) NOT NULL COMMENT 'The url that allows the front-end to spawn a login page with the provider',
+  `token_grabber_base_url` varchar(2048) NOT NULL COMMENT 'The link allowing the backend to get the information returned by the provider during the login',
+  `user_info_base_url` varchar(2048) NOT NULL COMMENT 'Get the user info',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UserOauthConnection_UNIQUE_1` (`provider_name`) USING HASH,
   UNIQUE KEY `UserOauthConnection_UNIQUE_2` (`client_id`) USING HASH,
   UNIQUE KEY `UserOauthConnection_UNIQUE` (`client_secret`) USING HASH,
   UNIQUE KEY `UserOauthConnection_UNIQUE_3` (`token_grabber_base_url`) USING HASH,
   UNIQUE KEY `UserOauthConnection_UNIQUE_4` (`user_info_base_url`) USING HASH
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='''The table containing the information for the oauths that will be used to allow users to log into their accounts''';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table containing the information for the oauths that will be used to allow users to log into their accounts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -307,4 +308,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-23 20:14:52
+-- Dump completed on 2024-10-26 18:27:00
