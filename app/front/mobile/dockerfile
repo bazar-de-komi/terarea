@@ -18,8 +18,15 @@ RUN apt install -y \
 # Installing latest version of npm
 # RUN npm install -g npm@latest
 
+# Cleaning any potential cache npm could have
+RUN npm cache clean --force
+
 # Installing npm requirements
-RUN npm install -g \
+RUN timeout 60s npm install -g \
+    serve \
+    react-icons \
+    recharts \
+    axios || timeout 60s npm install -g \
     serve \
     react-icons \
     recharts \
@@ -36,8 +43,11 @@ WORKDIR ${HOME}
 COPY . ${HOME}
 
 # Run the setup code
-# RUN npm install
+# RUN timeout 60s npm install || timeout 60s npm install 
 # RUN npm run build
+
+# Cleaning any potential cache npm could have
+RUN npm cache clean --force
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000
