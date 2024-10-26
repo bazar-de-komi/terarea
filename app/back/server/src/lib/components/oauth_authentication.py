@@ -737,19 +737,6 @@ class OAuthAuthentication:
             headers=self.runtime_data_initialised.json_header
         )
 
-    def _update_single_data(self, provider: str, table: str, request_body) -> int:
-        """
-        The function in charge of updating the data in the database
-        """
-        if self.runtime_data_initialised.database_link.update_data_in_table(
-            CONST.TAB_USER_OAUTH_CONNECTION,
-            [request_body[table]],
-            [table],
-            f"provider_name='{provider}'"
-        ) == self.error:
-            return self.error
-        return self.success
-
     async def patch_oauth_provider_data(self, request: Request, provider: str) -> Response:
         """
         The function that modify every value of an oauth provider
@@ -777,25 +764,67 @@ class OAuthAuthentication:
             return self.runtime_data_initialised.boilerplate_responses_initialised.missing_variable_in_body(title, token)
         self.disp.log_debug(f"Request body: {request_body}", title)
         if "provider_name" in request_body:
-            if self._update_single_data(provider, "provider_name", request_body) == self.error:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "provider_name",
+                "provider_name",
+                provider,
+                request_body
+            ) == self.error:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         if "client_id" in request_body:
-            if self._update_single_data(provider, "client_id", request_body) == self.error:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "provider_name",
+                "client_id",
+                provider,
+                request_body
+            ) == self.error:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         if "client_secret" in request_body:
-            if self._update_single_data(provider, "client_secret", request_body) == self.error:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "provider_name",
+                "client_secret",
+                provider,
+                request_body
+            ) == self.error:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         if "provider_scope" in request_body:
-            if self._update_single_data(provider, "provider_scope", request_body) == self.error:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "provider_name",
+                "provider_scope",
+                provider,
+                request_body
+            ) == self.error:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         if "authorisation_base_url" in request_body:
-            if self._update_single_data(provider, "authorisation_base_url", request_body) == self.error:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "provider_name",
+                "authorisation_base_url",
+                provider,
+                request_body
+            ) == self.error:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         if "token_grabber_base_url" in request_body:
-            if self._update_single_data(provider, "token_grabber_base_url", request_body) == self.error:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "provider_name",
+                "token_grabber_base_url",
+                provider,
+                request_body
+            ) == self.error:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         if "user_info_base_url" in request_body:
-            if self._update_single_data(provider, "user_info_base_url", request_body) == self.error:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                "provider_name",
+                "user_info_base_url",
+                provider,
+                request_body
+            ) == self.error:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,

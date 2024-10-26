@@ -376,3 +376,16 @@ class BoilerplateNonHTTP:
                     title
                 )
         return deletion_status
+
+    def update_single_data(self, table: str, column_finder: str, column_to_update: str, data_finder: str, request_body: dict) -> int:
+        """
+        The function in charge of updating the data in the database
+        """
+        if self.runtime_data_initialised.database_link.update_data_in_table(
+            table,
+            [request_body[column_to_update]],
+            [column_to_update],
+            f"{column_finder}='{data_finder}'"
+        ) == self.error:
+            return self.error
+        return self.success
