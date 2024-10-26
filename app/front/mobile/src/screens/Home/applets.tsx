@@ -89,20 +89,6 @@ const styles = StyleSheet.create({
         width: '130%',
         alignSelf: 'center',
     },
-    appletBox: {
-        width: '100%',
-        maxWidth: 400,
-        backgroundColor: '#e0d8d7',
-        borderRadius: 15,
-        alignItems: 'center',
-        padding: 5,
-    },
-    back: {
-        alignItems: 'center',
-        marginBottom: 40,
-        width: '130%',
-        alignSelf: 'center',
-    },
 })
 
 export default Applets
