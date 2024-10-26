@@ -8,7 +8,6 @@ from .. import constants as CONST
 from ..runtime_data import RuntimeData
 from ..http_codes import HCI
 
-
 class Services:
     """
     The class that contains every method about services
@@ -128,7 +127,7 @@ class Services:
             headers=self.runtime_data_initialised.json_header
         )
 
-    async def get_services_by_tag(self, tag, request: Request) -> Response:
+    async def get_services_by_tag(self, request: Request) -> Response:
         """
         The function to get and filter every services by specifics tag
         """
@@ -148,17 +147,29 @@ class Services:
             return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
                 title
             )
-        service_data = self.runtime_data_initialised.database_link.get_data_from_table(
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(
+            request
+        )
+        if "tags" not in request_body:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
+        tags: str = request_body["tags"]
+        tags_list = tags.split(" ")
+        services_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
             "*"
         )
-        filtered_services = [
-            srv for srv in service_data if tag in srv.get("tags", [])
-        ]
+        filtered_services: list[dict] = []
+        for i, service in enumerate(services_data):
+            for _, element in enumerate(tags_list):
+                if element in service["tags"]:
+                    filtered_services.append(service)
         if not filtered_services:
             body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 title=title,
-                message=f"No services found for tag '{tag}'.",
+                message=f"No services found with the given tags '{tags}'.",
                 resp="not found",
                 token=token,
                 error=True
@@ -170,7 +181,7 @@ class Services:
             )
         for i, service in enumerate(filtered_services):
             filtered_services[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(service["created_at"])
-        msg = f"Services with tag '{tag}': "
+        msg = f"Services with guven tags '{tags}': "
         msg += f"{filtered_services}"
         self.disp.log_debug(msg, title)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
@@ -263,17 +274,6 @@ class Services:
                 token
             )
         self.disp.log_debug(f"Service name: {name}", title)
-        user_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
-            title, token
-        )
-        if isinstance(user_id, Response):
-            return user_id
-        user_profile = self.runtime_data_initialised.database_link.get_data_from_table(
-            table=CONST.TAB_ACCOUNTS,
-            column="*",
-            where=f"id='{user_id}'",
-        )
-        self.disp.log_debug(f"User profile: {user_profile}", title)
         if isinstance(self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
             "*",
@@ -317,6 +317,193 @@ class Services:
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message="The new service is created successfully.",
+            resp="success",
+            token=token
+        )
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def update_service(self, request: Request, service_id: str) -> Response:
+        """
+        Update a service data (Only for admin account)
+        """
+        title: str = "update_service"
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        if not token:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        if not service_id:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
+        self.disp.log_debug(f"Service id: {service_id}", title)
+        if isinstance(self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "*",
+            f"id='{service_id}'"
+        ), int):
+            self.disp.log_error(f"Failed to retrieve data from '{CONST.TAB_SERVICES}' table.", title)
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(
+            request
+        )
+        if not request_body or not all(key in request_body for key in ("name", "url", "api_key", "category", "tags")):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        data: list = [
+            request_body["name"],
+            request_body["url"],
+            request_body["api_key"],
+            request_body["category"],
+            request_body["tags"]
+        ]
+        self.disp.log_debug(f"Generated data: {data}", title)
+        columns: list = self.runtime_data_initialised.database_link.get_table_column_names(
+            CONST.TAB_SERVICES
+        )
+        if isinstance(columns, int):
+            self.disp.log_error(f"Failed to retrieve columns from '{CONST.TAB_SERVICES}' table.", title)
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        columns.pop(0)
+        columns.pop()
+        columns.pop()
+        columns.pop(4)
+        columns.pop(4)
+        self.disp.log_debug(f"Columns: {columns}", title)
+        if self.runtime_data_initialised.database_link.update_data_in_table(
+            CONST.TAB_SERVICES,
+            data,
+            columns,
+            f"id='{service_id}'"
+        ) == self.error:
+            self.disp.log_error(f"Failed to update data in '{CONST.TAB_SERVICES}' table.", title)
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The service is updated successfully.",
+            resp="success",
+            token=token
+        )
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def patch_service(self, request: Request, service_id: str) -> Response:
+        """
+        Update a service value (Only for admin account)
+        """
+        title: str = "update_service"
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        if not token:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        if not service_id:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
+        self.disp.log_debug(f"Service id: {service_id}", title)
+        if isinstance(self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "*",
+            f"id='{service_id}'"
+        ), int):
+            self.disp.log_error(f"Failed to retrieve data from '{CONST.TAB_SERVICES}' table.", title)
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(
+            request
+        )
+        if not request_body:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
+                title,
+                token
+            )
+        self.disp.log_debug(f"Request body: {request_body}", title)
+        if "name" in request_body:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_SERVICES,
+                "id",
+                "name",
+                service_id,
+                request_body
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        if "url" in request_body:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_SERVICES,
+                "id",
+                "url",
+                service_id,
+                request_body
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        if "api_key" in request_body:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_SERVICES,
+                "id",
+                "api_key",
+                service_id,
+                request_body
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        if "category" in request_body:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_SERVICES,
+                "id",
+                "category",
+                service_id,
+                request_body
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        if "tags" in request_body:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_SERVICES,
+                "id",
+                "tags",
+                service_id,
+                request_body
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The service value is updated successfully.",
             resp="success",
             token=token
         )
