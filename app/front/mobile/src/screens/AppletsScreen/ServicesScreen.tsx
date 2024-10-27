@@ -12,7 +12,7 @@ const ServicesScreen = () => {
     const Navigation = useNavigation();
 
     const signUp = () => {
-        Navigation.navigate('Home');
+        Navigation.navigate('All');
     }
 
     const serviceDetails = () => {

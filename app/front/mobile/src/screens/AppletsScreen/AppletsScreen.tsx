@@ -18,11 +18,6 @@ const AppletsScreen = () => {
         Navigation.navigate('Applets')
     }
 
-    // const openDrawer = () => {
-    //     Navigation.openDrawer();
-    // }
-
-
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
@@ -30,12 +25,10 @@ const AppletsScreen = () => {
                     source={AreaLogo}
                     style={styles.areaLogo}
                 />
-                {/* <TouchableOpacity onPress={openDrawer}> */}
                     <Image
                         source={ProfilLogo}
                         style={styles.profilLogo}
                     />
-                {/* </TouchableOpacity> */}
                 <View style={styles.backStyle}>
                     <CustomerButton
                     text='<'

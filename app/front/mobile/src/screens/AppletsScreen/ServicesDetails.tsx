@@ -12,10 +12,6 @@ import ProfilLogo from '../../../assets/profilLogo.png';
 const ServicesDetails = () => {
     const Navigation = useNavigation();
 
-    const signUp = () => {
-        Navigation.navigate('Home');
-    }
-
     const callServices = () => {
         Navigation.navigate('Services')
     }
