@@ -1,7 +1,7 @@
 """_summary_
     File in charge of logging events into the logging database
 """
-from typing import List, Union
+from typing import List, Union, Dict, Any
 
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
@@ -60,7 +60,7 @@ class ActionLogger:
         columns: List[str] = self.runtime_data.database_link.get_table_column_names(
             CONST.TAB_ACTION_LOGGING
         )
-        if columns != self.success:
+        if isinstance(columns, int) is True and columns != self.success:
             self.disp.log_error("Failed to get the table columns.", title)
             return self.error
         columns.pop(0)
@@ -108,6 +108,7 @@ class ActionLogger:
             data=data,
             column=columns
         )
+        self.disp.log_info(f"status = {status}", title)
         if status != self.success:
             self.disp.log_error("Failed to log the event.", title)
             return self.error
@@ -123,14 +124,18 @@ class ActionLogger:
         Returns:
             bool: _description_: Returns True if it is present, False otherwise.
         """
+        title = "_check_if_action_id_in_table"
+        self.disp.log_debug(f"action_id = {action_id}", title)
         data = self.runtime_data.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
             column="id",
             where=f"id={action_id}",
             beautify=False
         )
-        if data != self.success:
+        self.disp.log_debug(f"data = {data}", title)
+        if isinstance(data, int) is True and data != self.success:
             return False
+        self.disp.log_debug(f"len(data) = {len(data)}", title)
         if len(data) == 1:
             return True
         return False
@@ -280,4 +285,194 @@ class ActionLogger:
             code=ACONST.CODE_FATAL,
             message=message,
             resolved=resolved
+        )
+
+    def log_unknown(self, log_type: str, action_id: int = 0, message: Union[str, None] = None, resolved: bool = False) -> int:
+        """_summary_
+            Log an unknown event into the logging database
+
+        Args:
+            log_type (str): _description_: The type of the event
+            action_id (int, optional): _description_: The id of the action that triggered the event, defaults to 0
+            message (Union[str, None], optional): _description_: The message of the event, defaults to None
+            resolved (bool, optional): _description_: The status of the event, defaults to False
+
+        Returns:
+            int: _description_: Returns self.success if it succeeds, self.error otherwise
+        """
+        return self.log_event(
+            log_type=log_type,
+            action_id=action_id,
+            code=ACONST.CODE_UNKNOWN,
+            message=message,
+            resolved=resolved
+        )
+
+    def get_logs(self, action_id: Union[int, None] = None, code: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            code (Union[int, None], optional): _description_: Specify a code to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        title = "get_logs"
+        where = []
+        if action_id is not None:
+            where.append(f"action_id='{action_id}'")
+        if code is not None:
+            where.append(f"code='{code}'")
+        if len(where) == 0:
+            where = None
+        self.disp.log_debug(f"where = {where}", title)
+        data = self.runtime_data.database_link.get_data_from_table(
+            table=CONST.TAB_ACTION_LOGGING,
+            column="*",
+            where=where,
+            beautify=beautify
+        )
+        self.disp.log_debug(f"data = {data}", title)
+        if isinstance(data, int) is True and data != self.success:
+            self.disp.log_error("Failed to get the logs.", title)
+            return self.error
+        return data
+
+    def get_logs_unknown(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the unknown logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_UNKNOWN,
+            beautify=beautify
+        )
+
+    def get_logs_info(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the info logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_INFO,
+            beautify=beautify
+        )
+
+    def get_logs_success(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the success logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_SUCCESS,
+            beautify=beautify
+        )
+
+    def get_logs_debug(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the debug logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_DEBUG,
+            beautify=beautify
+        )
+
+    def get_logs_warning(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the warning logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_WARNING,
+            beautify=beautify
+        )
+
+    def get_logs_error(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the error logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_ERROR,
+            beautify=beautify
+        )
+
+    def get_logs_critical(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the critical logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_CRITICAL,
+            beautify=beautify
+        )
+
+    def get_logs_fatal(self, action_id: Union[int, None] = None, beautify: bool = True) -> Union[List[Union[Dict[str, Any], List[Any]]], int]:
+        """_summary_
+            Get the fatal logs from the database
+
+        Args:
+            action_id (Union[int, None], optional): _description_: Specify an action id to narrow down the results.
+            beautify (bool, optional): _description_: Set to True if you wish to beautify the output
+
+        Returns:
+            Union[List[Dict[str, Any]], int]: _description_: Returns the logs if it succeeds, self.error otherwise
+        """
+        return self.get_logs(
+            action_id=action_id,
+            code=ACONST.CODE_FATAL,
+            beautify=beautify
         )
