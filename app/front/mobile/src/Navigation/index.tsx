@@ -1,7 +1,6 @@
 import  React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import SignIn from '../screens/Authentication/SignIn/signIn';
 import SignUp from '../screens/Authentication/SignUp';
@@ -21,8 +20,6 @@ import BackButton from '../components/BackButton/backButton';
 
 const Stack = createStackNavigator();
 
-// const Drawer = createDrawerNavigator();
-
 const Navigation = () => {
     return (
         <NavigationContainer>
@@ -34,7 +31,7 @@ const Navigation = () => {
                 <Stack.Screen name="Forgot password" component={ForgotPassword} />
                 <Stack.Screen name="New password" component={NewPassword} />
                 
-                <Stack.Screen name="Home" component={Home} />
+                {/* <Stack.Screen name="Home" component={Home} /> */}
                 <Stack.Screen name="All" component={All} />
                 <Stack.Screen name="Applets" component={Applets} />
                 <Stack.Screen name="Services" component={Services} />
@@ -47,7 +44,6 @@ const Navigation = () => {
 
                 <Stack.Screen name="Create" component={Create} />
 
-                {/* <Drawer.Screen name="Profile" component={NewPassword} /> */}
             </Stack.Navigator>
         </NavigationContainer>
     )
