@@ -29,6 +29,7 @@ def test_log_types() -> None:
     """_summary_
         Function in charge of testing the log types.
     """
+    assert ACONST.TYPE_UNKNOWN == "UNKNOWN LOGGING TYPE"
     assert ACONST.TYPE_API == "API"
     assert ACONST.TYPE_SERVICE == "SERVICE"
     assert ACONST.TYPE_ACTION == "ACTION"
@@ -47,6 +48,7 @@ def test_error_codes() -> None:
     """_summary_
         Function in charge of testing the error codes.
     """
+    assert ACONST.CODE_UNKNOWN == -1
     assert ACONST.CODE_INFO == 0
     assert ACONST.CODE_SUCCESS == 1
     assert ACONST.CODE_DEBUG == 2
@@ -60,6 +62,7 @@ def test_error_level() -> None:
     """_summary_
         Function in charge of testing the error levels.
     """
+    assert ACONST.LEVEL_UNKNOWN == "UNKNOWN"
     assert ACONST.LEVEL_INFO == "INFO"
     assert ACONST.LEVEL_SUCCESS == "SUCCESS"
     assert ACONST.LEVEL_DEBUG == "DEBUG"
@@ -73,6 +76,7 @@ def test_error_messages() -> None:
     """_summary_
         Function in charge of testing the error messages.
     """
+    assert ACONST.MSG_UNKNOWN == "Unknown: Operation executed with unknown status."
     assert ACONST.MSG_INFO == "Information: Operation executed without any issues."
     assert ACONST.MSG_SUCCESS == "Success: Operation completed successfully."
     assert ACONST.MSG_DEBUG == "Debug: Tracking detailed operational data for diagnostics."
@@ -87,6 +91,7 @@ def test_log_equivalence() -> None:
         Function in charge of testing the error equivalence.
     """
     assert ACONST.LOG_EQUIVALENCE == {
+        ACONST.CODE_UNKNOWN: ACONST.LEVEL_UNKNOWN,
         ACONST.CODE_INFO: ACONST.LEVEL_INFO,
         ACONST.CODE_SUCCESS: ACONST.LEVEL_SUCCESS,
         ACONST.CODE_DEBUG: ACONST.LEVEL_DEBUG,
@@ -102,6 +107,7 @@ def test_log_message_equivalence() -> None:
         Function in charge of testing the error message equivalence.
     """
     assert ACONST.LOG_MESSAGE_EQUIVALENCE == {
+        ACONST.CODE_UNKNOWN: ACONST.MSG_UNKNOWN,
         ACONST.CODE_INFO: ACONST.MSG_INFO,
         ACONST.CODE_SUCCESS: ACONST.MSG_SUCCESS,
         ACONST.CODE_DEBUG: ACONST.MSG_DEBUG,
@@ -117,6 +123,7 @@ def test_list_type_equivalence() -> None:
         Function in charge of testing the list type equivalence.
     """
     assert ACONST.LIST_TYPE == [
+        ACONST.TYPE_UNKNOWN,
         ACONST.TYPE_API,
         ACONST.TYPE_SERVICE,
         ACONST.TYPE_ACTION,
@@ -137,6 +144,7 @@ def test_list_code_equivalence() -> None:
         Function in charge of testing the list code equivalence.
     """
     assert ACONST.LIST_CODE == [
+        ACONST.CODE_UNKNOWN,
         ACONST.CODE_INFO,
         ACONST.CODE_SUCCESS,
         ACONST.CODE_DEBUG,
@@ -152,6 +160,7 @@ def test_list_info_equivalence() -> None:
         Function in charge of testing the list info equivalence.
     """
     assert ACONST.LIST_LEVEL_INFO == [
+        ACONST.LEVEL_UNKNOWN,
         ACONST.LEVEL_INFO,
         ACONST.LEVEL_SUCCESS,
         ACONST.LEVEL_DEBUG,
@@ -167,6 +176,7 @@ def test_list_msg_equivalence() -> None:
         Function in charge of testing the list message equivalence.
     """
     assert ACONST.LIST_MSG == [
+        ACONST.MSG_UNKNOWN,
         ACONST.MSG_INFO,
         ACONST.MSG_SUCCESS,
         ACONST.MSG_DEBUG,
