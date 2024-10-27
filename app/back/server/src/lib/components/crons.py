@@ -343,5 +343,5 @@ class Crons:
         """
         title = "check_actions"
         self.disp.log_debug("Checking for actions that need to be run.", title)
-        self.disp.log_critical("Implement action checking", title)
+        self.runtime_data.actions_main_initialised.execute_actions()
         self.disp.log_debug("Checked for actions that needed to be run", title)
