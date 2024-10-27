@@ -1,21 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
+import BackButton from "../../components/BackButton/backButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import ProfilLogo from '../../../assets/profilLogo.png';
 
-const AppletsScreen = () => {
+const ServicesScreen = () => {
     const Navigation = useNavigation();
 
-    const signUp = () => {
-        Navigation.navigate('All');
-    }
-
-    const callApplets = () => {
-        Navigation.navigate('Applets')
+    const serviceDetails = () => {
+        Navigation.navigate('Service details')
     }
 
     return (
@@ -25,34 +22,19 @@ const AppletsScreen = () => {
                     source={AreaLogo}
                     style={styles.areaLogo}
                 />
-                    <Image
-                        source={ProfilLogo}
-                        style={styles.profilLogo}
-                    />
-                <View style={styles.backStyle}>
-                    <CustomerButton
-                    text='<'
-                    onPress={callApplets}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                    />
-                </View>
-                <Text style={styles.homeTitle}>5-Minute Crafts integrations</Text>
+                <Image
+                    source={ProfilLogo}
+                    style={styles.profilLogo}
+                />
+                <BackButton
+                text="<"
+                onPress={serviceDetails}
+                />
+                <Text style={styles.homeTitle}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
                 <View style={styles.homeNavigation}>
                 </View>
-                <Text style={styles.description}>The 5-Minute Crafts Youtube channel is a</Text>
+                <Text style={styles.description}>5-Minute Crafts</Text>
             </View>
-            <View style={styles.connectStyle}>
-                    <CustomerButton
-                    text="Connect"
-                    onPress={signUp}
-                    type="PRIMARY"
-                    bgColor={""}
-                    fgColor={""}
-                    />
-                </View>
-            <Text style={styles.homeTitle}>Get appletsScreensed with any Applet</Text>
         </ScrollView>
     )
 }
@@ -60,7 +42,7 @@ const AppletsScreen = () => {
 const styles = StyleSheet.create({
     backContainer: {
         marginTop: 30,
-        backgroundColor: "orange",
+        backgroundColor: "green",
         borderRadius: 10,
         alignItems: 'center',
         padding: 5,
@@ -97,14 +79,6 @@ const styles = StyleSheet.create({
         width: '130%',
         alignSelf: 'center',
     },
-    backStyle: {
-        marginBottom: 40,
-        width: '180%',
-        alignSelf: 'center',
-        fontWeight: 'bold',
-        fontSize: 35,
-        color: "green",
-    },
 })
 
-export default AppletsScreen
+export default ServicesScreen
