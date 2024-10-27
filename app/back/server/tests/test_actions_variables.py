@@ -4,6 +4,8 @@
 import os
 import sys
 
+import pytest
+
 sys.path.append(os.path.join("..", os.getcwd()))
 sys.path.append(os.getcwd())
 
@@ -103,7 +105,8 @@ def test_get_variable() -> None:
         "test": {"data": "1", "type": str}
     }
     assert VI.get_variable("test") == "1"
-    assert VI.get_variable("test2") == ERROR
+    with pytest.raises(ValueError):
+        VI.get_variable("not_a_variable")
 
 
 def test_get_variables() -> None:
