@@ -839,14 +839,77 @@ class OAuthAuthentication:
         """
         The function to delete an oauth provider from the database
         """
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title="Delete oauth provider",
-            message="Not implemented yet.",
-            resp="comming soon",
-            token=None,
-            error=True
+        title: str = "delete_oauth_provider"
+        if not provider:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.provider_not_given(
+                title,
+                None
+            )
+        self.disp.log_debug(f"Provider: {provider}", title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
         )
-        return HCI.not_implemented(
+        self.disp.log_debug(f"Token gotten: {token}", title)
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(token) is False:
+            self.disp.log_error("You're not admin.", title)
+            return self.runtime_data_initialised.boilerplate_responses_initialised.insuffisant_rights(
+                title,
+                token
+            )
+        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'"
+        )
+        if isinstance(retrived_data, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        retrieved_service_id = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "id",
+            f"name='{provider}'"
+        )
+        if isinstance(retrieved_service_id, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        service_id = str(retrieved_service_id[0]["id"])
+        if self.runtime_data_initialised.database_link.drop_data_from_table(
+            CONST.TAB_ACTIVE_OAUTHS,
+            f"service_id='{service_id}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.database_link.update_data_in_table(
+            CONST.TAB_SERVICES,
+            "0",
+            "oauth",
+            f"id='{service_id}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.database_link.drop_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            f"provider_name='{provider}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The oauth provider has been deleted successfully.",
+            resp="success",
+            token=token,
+        )
+        return HCI.success(
             body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
