@@ -5,6 +5,21 @@
 
 import operator
 
+# ---------------------------------- log type ----------------------------------
+
+TYPE_API = "API"
+TYPE_SERVICE = "SERVICE"
+TYPE_ACTION = "ACTION"
+TYPE_UNDEFINED = "UNDEFINED"
+TYPE_MISMATCH = "MISMATCH"
+TYPE_BEFORE_ASSIGNEMENT = "REFERENCED BEFORE ASSIGNEMENT"
+TYPE_DIV_ZERO = "DIVISION BY ZERO"
+TYPE_SYNTAX_ERROR = "SYNTAX ERROR"
+TYPE_RUNTIME_ERROR = "RUNTIME ERROR"
+TYPE_INCOMPARABLE = "INCOMPARABLE TYPES"
+TYPE_OVERFLOW = "VALUE OVERFLOW"
+TYPE_UNDERFLOW = "VALUE UNDERFLOW"
+
 # -------------------------------- Error codes  --------------------------------
 
 CODE_INFO = 0

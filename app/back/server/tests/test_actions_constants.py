@@ -27,6 +27,24 @@ DEBUG = TCONST.DEBUG
 spaceship = ACONST._spaceship
 
 
+def test_log_types() -> None:
+    """_summary_
+        Function in charge of testing the log types.
+    """
+    assert ACONST.TYPE_API == "API"
+    assert ACONST.TYPE_SERVICE == "SERVICE"
+    assert ACONST.TYPE_ACTION == "ACTION"
+    assert ACONST.TYPE_UNDEFINED == "UNDEFINED"
+    assert ACONST.TYPE_MISMATCH == "MISMATCH"
+    assert ACONST.TYPE_BEFORE_ASSIGNEMENT == "REFERENCED BEFORE ASSIGNEMENT"
+    assert ACONST.TYPE_DIV_ZERO == "DIVISION BY ZERO"
+    assert ACONST.TYPE_SYNTAX_ERROR == "SYNTAX ERROR"
+    assert ACONST.TYPE_RUNTIME_ERROR == "RUNTIME ERROR"
+    assert ACONST.TYPE_INCOMPARABLE == "INCOMPARABLE TYPES"
+    assert ACONST.TYPE_OVERFLOW == "VALUE OVERFLOW"
+    assert ACONST.TYPE_UNDERFLOW == "VALUE UNDERFLOW"
+
+
 def test_error_codes() -> None:
     """_summary_
         Function in charge of testing the error codes.
