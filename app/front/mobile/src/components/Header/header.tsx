@@ -47,7 +47,16 @@ const Header = () => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
-                                // Ajoute ici la logique pour "Log Out"
+                                navigation.navigate('Services');
+                                closeSidebar();
+                            }}
+                            style={styles.menuItem}
+                        >
+                            <Text style={styles.menuText}>My Services</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('Sign In');
                                 closeSidebar();
                             }}
                             style={styles.menuItem}
