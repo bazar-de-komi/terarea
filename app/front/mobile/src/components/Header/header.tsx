@@ -15,7 +15,7 @@ const Header = () => {
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity onPress={() => navigation.navigate('All')}>
                     <Image
                         source={AreaLogo}
                         style={styles.areaLogo}
