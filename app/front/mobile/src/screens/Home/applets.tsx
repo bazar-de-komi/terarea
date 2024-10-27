@@ -24,13 +24,27 @@ const Applets = () => {
         Navigation.navigate("Applet screen");
     };
 
-    const goHome = () => {
-        Navigation.navigate('Home');
-    }
+    const appletsData = [
+        {
+            title: "Get the weather forecast every dat at 7:00 AM",
+            description: "Weather Underground",
+            bgColor: "orange",
+        },
+        {
+            title: "Quickly create events in Google Calendar",
+            description: "Google",
+            bgColor: "blue",
+        },
+        {
+            title: "Track your fitness goals daily",
+            description: "Fitbit",
+            bgColor: "green",
+        },
+    ];
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <Header/>
+        <Header/>
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
                 <CustomerButton
@@ -60,12 +74,15 @@ const Applets = () => {
                 placeholder="Search Applets or Services"
                 />
             </View>
-            <AppletBox
-            title="Get the weather forecast every dat at 7:00 AM"
-            description="Weather Underground"
-            bgColor="orange"
-            onPress={appletsBox}
-            />
+            {appletsData.map((applet, index) => (
+                <AppletBox
+                    key={index}
+                    title={applet.title}
+                    description={applet.description}
+                    bgColor={applet.bgColor}
+                    onPress={appletsBox}
+                />
+            ))}
     </ScrollView>
     )
 }
