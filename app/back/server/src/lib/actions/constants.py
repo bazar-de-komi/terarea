@@ -2,11 +2,12 @@
     This file contains the constants for the actions program.
     These are used to standardise error logging and other sections of the program.
 """
-
+# ---------------------------------- Imports  ----------------------------------
 import operator
 
 # ---------------------------------- log type ----------------------------------
 
+TYPE_UNKNOWN = "UNKNOWN LOGGING TYPE"
 TYPE_API = "API"
 TYPE_SERVICE = "SERVICE"
 TYPE_ACTION = "ACTION"
@@ -22,6 +23,7 @@ TYPE_UNDERFLOW = "VALUE UNDERFLOW"
 
 # -------------------------------- Error codes  --------------------------------
 
+CODE_UNKNOWN = -1
 CODE_INFO = 0
 CODE_SUCCESS = 1
 CODE_DEBUG = 2
@@ -32,6 +34,7 @@ CODE_FATAL = 6
 
 # -------------------------------- Error level  --------------------------------
 
+LEVEL_UNKNOWN = "UNKNOWN"
 LEVEL_INFO = "INFO"
 LEVEL_SUCCESS = "SUCCESS"
 LEVEL_DEBUG = "DEBUG"
@@ -42,6 +45,7 @@ LEVEL_FATAL = "FATAL"
 
 # ------------------------------- Error messages -------------------------------
 
+MSG_UNKNOWN = "Unknown: Operation executed with unknown status."
 MSG_INFO = "Information: Operation executed without any issues."
 MSG_SUCCESS = "Success: Operation completed successfully."
 MSG_DEBUG = "Debug: Tracking detailed operational data for diagnostics."
@@ -53,6 +57,7 @@ MSG_FATAL = "Fatal: System failure imminent. Immediate intervention necessary."
 # ----------------------------- Error equivalence  -----------------------------
 
 LOG_EQUIVALENCE = {
+    CODE_UNKNOWN: LEVEL_UNKNOWN,
     CODE_INFO: LEVEL_INFO,
     CODE_SUCCESS: LEVEL_SUCCESS,
     CODE_DEBUG: LEVEL_DEBUG,
@@ -63,6 +68,7 @@ LOG_EQUIVALENCE = {
 }
 
 LOG_MESSAGE_EQUIVALENCE = {
+    CODE_UNKNOWN: MSG_UNKNOWN,
     CODE_INFO: MSG_INFO,
     CODE_SUCCESS: MSG_SUCCESS,
     CODE_DEBUG: MSG_DEBUG,
@@ -75,6 +81,7 @@ LOG_MESSAGE_EQUIVALENCE = {
 # -------------------------------- List checks  --------------------------------
 
 LIST_TYPE = [
+    TYPE_UNKNOWN,
     TYPE_API,
     TYPE_SERVICE,
     TYPE_ACTION,
@@ -90,6 +97,7 @@ LIST_TYPE = [
 ]
 
 LIST_CODE = [
+    CODE_UNKNOWN,
     CODE_INFO,
     CODE_SUCCESS,
     CODE_DEBUG,
@@ -100,6 +108,7 @@ LIST_CODE = [
 ]
 
 LIST_LEVEL_INFO = [
+    LEVEL_UNKNOWN,
     LEVEL_INFO,
     LEVEL_SUCCESS,
     LEVEL_DEBUG,
@@ -110,6 +119,7 @@ LIST_LEVEL_INFO = [
 ]
 
 LIST_MSG = [
+    MSG_UNKNOWN,
     MSG_INFO,
     MSG_SUCCESS,
     MSG_DEBUG,
