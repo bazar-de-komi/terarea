@@ -1,7 +1,7 @@
 """_summary_
     File in charge of containing the functions that will be run in the background.
 """
-from typing import Any
+from typing import Any, List, Dict
 from datetime import datetime
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
@@ -45,13 +45,12 @@ class Crons:
         Returns:
             int: _description_: The overall status of the injection.
         """
-        if False is True:
-            self.runtime_data.background_tasks_initialised.safe_add_task(
-                func=self.check_actions,
-                args=None,
-                trigger='interval',
-                seconds=CONST.CHECK_ACTIONS_INTERVAL
-            )
+        self.runtime_data.background_tasks_initialised.safe_add_task(
+            func=self.check_actions,
+            args=None,
+            trigger='interval',
+            seconds=CONST.CHECK_ACTIONS_INTERVAL
+        )
         if CONST.ENABLE_TEST_CRONS is True:
             self.runtime_data.background_tasks_initialised.safe_add_task(
                 func=self._harass_database,
@@ -84,6 +83,13 @@ class Crons:
                 args=None,
                 trigger='interval',
                 seconds=CONST.CLEAN_VERIFICATION_INTERVAL
+            )
+        if CONST.RENEW_OATH_TOKENS is True:
+            self.runtime_data.background_tasks_initialised.safe_add_task(
+                func=self.renew_oaths,
+                args=None,
+                trigger='interval',
+                seconds=CONST.RENEW_OATH_TOKENS_INTERVAL
             )
 
     def _test_hello_world(self) -> None:
@@ -262,6 +268,74 @@ class Crons:
                 )
                 self.disp.log_debug(f"Removed {i}.", title)
         self.disp.log_debug("Cleaned expired lines", title)
+
+    def renew_oaths(self) -> None:
+        """_summary_
+            Function in charge of renewing the oath tokens that are about to expire.
+        """
+        title = "renew_oaths"
+        self.disp.log_debug(
+            "Checking for oaths that need to be renewed", title
+        )
+        oath_connections: List[Dict[str]] = self.runtime_data.database_link.get_data_from_table(
+            table=CONST.TAB_ACTIVE_OAUTHS,
+            column="*",
+            where="",
+            beautify=True
+        )
+        current_time: datetime = datetime.now()
+        for oath in oath_connections:
+            node_id: str = oath['id']
+            token_expiration: datetime = oath["token_expiration"]
+            if current_time > token_expiration:
+                renew_link: str = oath["refresh_link"]
+                lifespan: int = int(oath["token_lifespan"])
+                provider_name: List[
+                    Dict[str, Any]
+                ] = self.runtime_data.database_link.get_data_from_table(
+                    table=CONST.TAB_SERVICES,
+                    column="name",
+                    where=f"id='{oath['service_id']}'",
+                    beautify=True
+                )
+                if isinstance(provider_name, int) is True:
+                    self.disp.log_error(
+                        f"Could not find provider name for {node_id}", title
+                    )
+                    continue
+                new_token: str = self.runtime_data.oauth_authentication_initialised.refresh_token(
+                    provider_name[0]['name'],
+                    renew_link
+                )
+                token_expiration: str = self.runtime_data.database_link.datetime_to_string(
+                    datetime=self.runtime_data.boilerplate_non_http_initialised.set_lifespan(
+                        seconds=lifespan
+                    ),
+                    date_only=False,
+                    sql_mode=True
+                )
+                self.disp.log_debug(
+                    f"token expiration = {token_expiration}", title
+                )
+                if new_token != "":
+                    self.runtime_data.database_link.update_data_in_table(
+                        table=CONST.TAB_ACTIVE_OAUTHS,
+                        data={
+                            "token": new_token,
+                            "token_expiration": token_expiration
+                        },
+                        where=f"id='{node_id}'"
+                    )
+                    self.disp.log_debug(
+                        f"token {new_token} updated for {node_id}"
+                    )
+                else:
+                    self.disp.log_error(f"Could not renew token for {node_id}")
+            else:
+                self.disp.log_debug(
+                    f"Token for {node_id} does not need to be renewed.", title
+                )
+        self.disp.log_debug("Checked for oath that need to be renewed", title)
 
     def check_actions(self) -> None:
         """_summary_
