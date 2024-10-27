@@ -72,6 +72,53 @@ LOG_MESSAGE_EQUIVALENCE = {
     CODE_FATAL: MSG_FATAL,
 }
 
+# -------------------------------- List checks  --------------------------------
+
+LIST_TYPE = [
+    TYPE_API,
+    TYPE_SERVICE,
+    TYPE_ACTION,
+    TYPE_UNDEFINED,
+    TYPE_MISMATCH,
+    TYPE_BEFORE_ASSIGNEMENT,
+    TYPE_DIV_ZERO,
+    TYPE_SYNTAX_ERROR,
+    TYPE_RUNTIME_ERROR,
+    TYPE_INCOMPARABLE,
+    TYPE_OVERFLOW,
+    TYPE_UNDERFLOW
+]
+
+LIST_CODE = [
+    CODE_INFO,
+    CODE_SUCCESS,
+    CODE_DEBUG,
+    CODE_WARNING,
+    CODE_ERROR,
+    CODE_CRITICAL,
+    CODE_FATAL
+]
+
+LIST_LEVEL_INFO = [
+    LEVEL_INFO,
+    LEVEL_SUCCESS,
+    LEVEL_DEBUG,
+    LEVEL_WARNING,
+    LEVEL_ERROR,
+    LEVEL_CRITICAL,
+    LEVEL_FATAL
+]
+
+LIST_MSG = [
+    MSG_INFO,
+    MSG_SUCCESS,
+    MSG_DEBUG,
+    MSG_WARNING,
+    MSG_ERROR,
+    MSG_CRITICAL,
+    MSG_FATAL
+]
+
 # ---------------------------- Operator equivalence ----------------------------
 
 

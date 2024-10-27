@@ -4,8 +4,6 @@
 import os
 import sys
 
-import pytest
-
 sys.path.append(os.path.join("..", os.getcwd()))
 sys.path.append(os.getcwd())
 
@@ -112,6 +110,71 @@ def test_log_message_equivalence() -> None:
         ACONST.CODE_CRITICAL: ACONST.MSG_CRITICAL,
         ACONST.CODE_FATAL: ACONST.MSG_FATAL,
     }
+
+
+def test_list_type_equivalence() -> None:
+    """_summary_
+        Function in charge of testing the list type equivalence.
+    """
+    assert ACONST.LIST_TYPE == [
+        ACONST.TYPE_API,
+        ACONST.TYPE_SERVICE,
+        ACONST.TYPE_ACTION,
+        ACONST.TYPE_UNDEFINED,
+        ACONST.TYPE_MISMATCH,
+        ACONST.TYPE_BEFORE_ASSIGNEMENT,
+        ACONST.TYPE_DIV_ZERO,
+        ACONST.TYPE_SYNTAX_ERROR,
+        ACONST.TYPE_RUNTIME_ERROR,
+        ACONST.TYPE_INCOMPARABLE,
+        ACONST.TYPE_OVERFLOW,
+        ACONST.TYPE_UNDERFLOW,
+    ]
+
+
+def test_list_code_equivalence() -> None:
+    """_summary_
+        Function in charge of testing the list code equivalence.
+    """
+    assert ACONST.LIST_CODE == [
+        ACONST.CODE_INFO,
+        ACONST.CODE_SUCCESS,
+        ACONST.CODE_DEBUG,
+        ACONST.CODE_WARNING,
+        ACONST.CODE_ERROR,
+        ACONST.CODE_CRITICAL,
+        ACONST.CODE_FATAL,
+    ]
+
+
+def test_list_info_equivalence() -> None:
+    """_summary_
+        Function in charge of testing the list info equivalence.
+    """
+    assert ACONST.LIST_LEVEL_INFO == [
+        ACONST.LEVEL_INFO,
+        ACONST.LEVEL_SUCCESS,
+        ACONST.LEVEL_DEBUG,
+        ACONST.LEVEL_WARNING,
+        ACONST.LEVEL_ERROR,
+        ACONST.LEVEL_CRITICAL,
+        ACONST.LEVEL_FATAL,
+    ]
+
+
+def test_list_msg_equivalence() -> None:
+    """_summary_
+        Function in charge of testing the list message equivalence.
+    """
+    assert ACONST.LIST_MSG == [
+        ACONST.MSG_INFO,
+        ACONST.MSG_SUCCESS,
+        ACONST.MSG_DEBUG,
+        ACONST.MSG_WARNING,
+        ACONST.MSG_ERROR,
+        ACONST.MSG_CRITICAL,
+        ACONST.MSG_FATAL,
+    ]
 
 
 def test_spaceship_less_than() -> None:
