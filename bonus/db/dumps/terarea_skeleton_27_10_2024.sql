@@ -36,7 +36,7 @@ CREATE TABLE `ActionLoging` (
   `time` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'This is the time at which the workflow occurred',
   `type` mediumtext NOT NULL DEFAULT 'API' COMMENT 'The type of action concerned',
   `action_id` bigint(20) unsigned NOT NULL COMMENT 'The id of the item that is being logged',
-  `message` mediumtext DEFAULT NULL COMMENT 'The error message',
+  `message` longtext DEFAULT NULL COMMENT 'The error message',
   `code` bigint(20) DEFAULT NULL COMMENT 'The code linked to the action',
   `level` mediumtext DEFAULT NULL COMMENT 'The level of the importance for the code',
   `resolved` tinyint(1) DEFAULT NULL COMMENT 'Inform if the current error is solved',
