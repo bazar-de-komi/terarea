@@ -638,25 +638,34 @@ class Services:
                 title,
                 token
             )
-        if self.runtime_data_initialised.database_link.drop_data_from_table(
-            CONST.TAB_ACTIVE_OAUTHS,
-            f"service_id='{service_id}'"
-        ) == self.error:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
-                title,
-                token
-            )
         provider_name = retrived_data[0]["name"]
-        if self.runtime_data_initialised.database_link.drop_data_from_table(
-            CONST.TAB_USER_OAUTH_CONNECTION,
-            f"provider_name='{provider_name}'"
-        ) == self.error:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
-                title,
-                token
-            )
         # Add a code to delete every users actions with this service
         # Add a code to delete every applets with this service
+        if retrived_data[0]["oauth"] == 1:
+            if self.runtime_data_initialised.database_link.drop_data_from_table(
+                CONST.TAB_ACTIVE_OAUTHS,
+                f"service_id='{service_id}'"
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                    title,
+                    token
+                )
+            if self.runtime_data_initialised.database_link.drop_data_from_table(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                f"provider_name='{provider_name}'"
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                    title,
+                    token
+                )
+        if self.runtime_data_initialised.database_link.drop_data_from_table(
+            CONST.TAB_SERVICES,
+            f"id='{service_id}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message="The service has been deleted successfully.",
