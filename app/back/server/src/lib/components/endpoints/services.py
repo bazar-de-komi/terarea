@@ -611,14 +611,68 @@ class Services:
         """
         The function to delete a service from the database
         """
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title="Delete service",
-            message="Not implemented yet.",
-            resp="comming soon",
-            token=None,
-            error=True
+        title: str = "delete_oauth_provider"
+        if not service_id:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.provider_not_given(
+                title,
+                None
+            )
+        self.disp.log_debug(f"Service id: {service_id}", title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
         )
-        return HCI.not_implemented(
+        self.disp.log_debug(f"Token gotten: {token}", title)
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(token) is False:
+            self.disp.log_error("You're not admin.", title)
+            return self.runtime_data_initialised.boilerplate_responses_initialised.insuffisant_rights(
+                title,
+                token
+            )
+        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "*",
+            f"id='{service_id}'"
+        )
+        if isinstance(retrived_data, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        provider_name = retrived_data[0]["name"]
+        # Add a code to delete every users actions with this service
+        # Add a code to delete every applets with this service
+        if retrived_data[0]["oauth"] == 1:
+            if self.runtime_data_initialised.database_link.drop_data_from_table(
+                CONST.TAB_ACTIVE_OAUTHS,
+                f"service_id='{service_id}'"
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                    title,
+                    token
+                )
+            if self.runtime_data_initialised.database_link.drop_data_from_table(
+                CONST.TAB_USER_OAUTH_CONNECTION,
+                f"provider_name='{provider_name}'"
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                    title,
+                    token
+                )
+        if self.runtime_data_initialised.database_link.drop_data_from_table(
+            CONST.TAB_SERVICES,
+            f"id='{service_id}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The service has been deleted successfully.",
+            resp="success",
+            token=token,
+        )
+        return HCI.success(
             body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header

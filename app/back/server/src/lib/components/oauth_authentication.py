@@ -108,7 +108,9 @@ class OAuthAuthentication:
                 None,
                 True
             )
-        headers = {"Accept": "application/json"}
+        headers: dict = {}
+        headers["Accept"] = "application/json"
+        headers["Content-Type"] = "application/x-www-form-urlencoded"
         token_url = retrieved_provider[0]["token_grabber_base_url"]
 
         data: dict = {}
@@ -116,8 +118,7 @@ class OAuthAuthentication:
         data["client_secret"] = retrieved_provider[0]["client_secret"]
         data["code"] = code
         data["redirect_uri"] = CONST.REDIRECT_URI
-        if provider == "google":
-            data["grant_type"] = "authorization_code"
+        data["grant_type"] = "authorization_code"
         try:
             response = requests.post(
                 token_url, data=data, headers=headers, timeout=10
@@ -166,7 +167,7 @@ class OAuthAuthentication:
             "*",
             f"provider_name='{provider}'"
         )
-        self.disp.log_debug(f"Retrieved data: {retrieved_data}", title)
+        self.disp.log_debug(f"Retrieved oauth provider data: {retrieved_data}", title)
         if isinstance(retrieved_data, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 "get_user_info",
@@ -179,12 +180,14 @@ class OAuthAuthentication:
             "Authorization": f"Bearer {access_token}"
         }
         user_info_url = retrieved_data[0]["user_info_base_url"]
+        self.disp.log_debug(f"User info headers: {headers}", title)
+        self.disp.log_debug(f"User info url: {user_info_url}", title)
         response = requests.get(user_info_url, headers=headers, timeout=10)
         if response.status_code != 200:
             return self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
                 "get_user_info",
-                "Failed to fetch user info.",
-                "Fetching user info error.",
+                "Failed to retrieve the user email from the provider",
+                response,
                 None,
                 True
             )
@@ -224,18 +227,26 @@ class OAuthAuthentication:
             connection_data.append(str(retrieved_provider[0]["id"]))
             connection_data.append(str(retrieved_user[0]["id"]))
             self.disp.log_debug(f"Connection data: {connection_data}", title)
-            columns = self.runtime_data_initialised.database_link.get_table_column_names(
-                CONST.TAB_ACTIVE_OAUTHS)
-            if isinstance(columns, int):
-                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, None)
-            columns.pop(0)
-            self.disp.log_debug(f"Columns list = {columns}", title)
-            if self.runtime_data_initialised.database_link.insert_data_into_table(
+
+            provider_id = str(retrieved_provider[0]["id"])
+            user_id = str(retrieved_user[0]["id"])
+            if isinstance(self.runtime_data_initialised.database_link.get_data_from_table(
                 CONST.TAB_ACTIVE_OAUTHS,
-                connection_data,
-                columns
-            ) == self.error:
-                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, None)
+                "*",
+                f"service_id='{provider_id}' AND user_id='{user_id}'"
+            ), int):
+                columns = self.runtime_data_initialised.database_link.get_table_column_names(
+                    CONST.TAB_ACTIVE_OAUTHS)
+                if isinstance(columns, int):
+                    return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, None)
+                columns.pop(0)
+                self.disp.log_debug(f"Columns list = {columns}", title)
+                if self.runtime_data_initialised.database_link.insert_data_into_table(
+                    CONST.TAB_ACTIVE_OAUTHS,
+                    connection_data,
+                    columns
+                ) == self.error:
+                    return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, None)
             user_data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
                 email
             )
@@ -330,7 +341,17 @@ class OAuthAuthentication:
         if not access_token:
             return self.runtime_data_initialised.boilerplate_responses_initialised.no_access_token(title, None)
         data.append(access_token)
-        if provider == "google":
+        self.disp.log_debug(f"Gotten access token: {access_token}", title)
+        # if provider in ("google", "discord", "spotify"):
+        if provider == "github":
+            data.append(
+                self.runtime_data_initialised.database_link.datetime_to_string(
+                    datetime.now()
+                )
+            )
+            data.append("0")
+            data.append("NULL")
+        else:
             expires: int = token_response["expires_in"]
             if not expires:
                 body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
@@ -367,14 +388,7 @@ class OAuthAuthentication:
                     headers=self.runtime_data_initialised.json_header
                 )
             data.append(refresh_link)
-        if provider == "github":
-            data.append(
-                self.runtime_data_initialised.database_link.datetime_to_string(
-                    datetime.now()
-                )
-            )
-            data.append("0")
-            data.append("NULL")
+        self.disp.log_debug(f"Generated data for new oauth connexion user: {data}", title)
         user_info = self._get_user_info(provider, access_token)
         if "error" in user_info:
             body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
@@ -839,14 +853,77 @@ class OAuthAuthentication:
         """
         The function to delete an oauth provider from the database
         """
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title="Delete oauth provider",
-            message="Not implemented yet.",
-            resp="comming soon",
-            token=None,
-            error=True
+        title: str = "delete_oauth_provider"
+        if not provider:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.provider_not_given(
+                title,
+                None
+            )
+        self.disp.log_debug(f"Provider: {provider}", title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
         )
-        return HCI.not_implemented(
+        self.disp.log_debug(f"Token gotten: {token}", title)
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(token) is False:
+            self.disp.log_error("You're not admin.", title)
+            return self.runtime_data_initialised.boilerplate_responses_initialised.insuffisant_rights(
+                title,
+                token
+            )
+        retrived_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            "*",
+            f"provider_name='{provider}'"
+        )
+        if isinstance(retrived_data, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        retrieved_service_id = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "id",
+            f"name='{provider}'"
+        )
+        if isinstance(retrieved_service_id, int):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        service_id = str(retrieved_service_id[0]["id"])
+        if self.runtime_data_initialised.database_link.drop_data_from_table(
+            CONST.TAB_ACTIVE_OAUTHS,
+            f"service_id='{service_id}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.database_link.update_data_in_table(
+            CONST.TAB_SERVICES,
+            "0",
+            "oauth",
+            f"id='{service_id}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.database_link.drop_data_from_table(
+            CONST.TAB_USER_OAUTH_CONNECTION,
+            f"provider_name='{provider}'"
+        ) == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
+                title,
+                token
+            )
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The oauth provider has been deleted successfully.",
+            resp="success",
+            token=token,
+        )
+        return HCI.success(
             body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
