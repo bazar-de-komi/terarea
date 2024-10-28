@@ -31,13 +31,6 @@ async function query(
       payload.body = JSON.stringify(body);
     }
 
-    // if (port === -1) {
-    //   const final_url: string = `${url}${path}`;
-    // } else {
-    //   const final_url: string = `${url}:${port}${path}`;
-    // }
-    // const response: Response = await fetch(final_url, payload);
-
     let final_url: string;
 
     if (port === -1) {
