@@ -5,12 +5,13 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from '../../../components/CustomerButton/CustomerButton';
 import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
+import { storeValue} from '../../../components/Token/storeData';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 import { queries } from "../../../../back-endConnection/querier";
 
-const SignUp = () => {
+const SignUp = ()  => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
@@ -21,36 +22,32 @@ const SignUp = () => {
 
     const navigation = useNavigation();
 
-    const SignInPressed =  () => {
-        // if (password !== repeatPassword) {
-        //     Alert.alert("Wrong password");
-        //     return;
-        // }
-        // setIsSubmitting(true);
+    const SignInPressed = async () => {
+        if (password !== repeatPassword) {
+            Alert.alert("Wrong password");
+            return;
+        }
+        setIsSubmitting(true);
 
-        // const newUser = {
-        //     email: email,
-        //     password: password,
-        //     // email: 'test@test.com',
-        //     // password: '123test',
-        // };
-        // try {
-        //     console.log("Hello");
-        //     const response = await queries.put("/register", newUser);
-        //     console.log("Response", response);
-        //     if (response && response.detail) {
-        //         await AsyncStorage.setItem('token', response.detail);
-        //         Alert.alert("Sign up sucessful");
+        const newUser = {
+            email: email,
+            password: password,
+        };
+        try {
+            const response = await queries.post("/api/v1/register", newUser);
+            if (response.token) {
+                storeValue("token", response.token)
+                Alert.alert("Sign up sucessful");
                 navigation.navigate('All');
-        //     } else {
-        //         setError("Try again");
-        //     }
-        // } catch (err) {
-        //     console.error("Sign up error: ", err);
-        //     setError("Error during sign up, try again");
-        // } finally {
-        //     setIsSubmitting(false);
-        // }
+            } else {
+                setError("Try again");
+            }
+        } catch (err) {
+            console.error("Sign up error: ", err);
+            setError("Error during sign up, try again");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const loginPressed = () => {
