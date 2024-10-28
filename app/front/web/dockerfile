@@ -6,7 +6,7 @@ ENV HOME=/web
 ENV LAUNCH_COMMAND="serve -s dist -l 3000"
 
 # Update the system
-RUN apt update -y && apt upgrade -y
+RUN apt update && apt upgrade -y
 
 # Install npm and nodejs
 RUN apt install -y \
@@ -14,12 +14,18 @@ RUN apt install -y \
     nodejs \
     xsel
 
+# Cleaning any potential cache npm could have
+RUN npm cache clean --force
 
 # Installing latest version of npm
 # RUN npm install -g npm@latest
 
 # Installing npm requirements
-RUN npm install -g \
+RUN timeout 60s npm install -g \
+    serve \
+    react-icons \
+    recharts \
+    axios || timeout 60s npm install -g \
     serve \
     react-icons \
     recharts \
@@ -36,8 +42,12 @@ WORKDIR ${HOME}
 COPY . ${HOME}
 
 # Run the setup code
-RUN npm install
+RUN timeout 60s npm install || timeout 60s npm install 
 RUN npm run build
+
+
+# Cleaning any potential cache npm could have
+RUN npm cache clean --force
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000

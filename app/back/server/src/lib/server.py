@@ -8,7 +8,8 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .sql import SQL
 from .bucket import Bucket
-from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST, BackgroundTasks, Crons
+from .actions import ActionsMain
+from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST, BackgroundTasks, Crons, OAuthAuthentication
 from .boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
 
@@ -109,6 +110,18 @@ class Server:
             debug=self.debug
         )
         self.runtime_data_initialised.endpoints_initialised = Endpoints(
+            self.runtime_data_initialised,
+            error=self.error,
+            success=self.success,
+            debug=self.debug
+        )
+        self.runtime_data_initialised.oauth_authentication_initialised = OAuthAuthentication(
+            self.runtime_data_initialised,
+            success=success,
+            error=error,
+            debug=debug
+        )
+        self.runtime_data_initialised.actions_main_initialised = ActionsMain(
             self.runtime_data_initialised,
             error=self.error,
             success=self.success,

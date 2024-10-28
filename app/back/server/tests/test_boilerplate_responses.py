@@ -69,7 +69,7 @@ def _register_fake_user() -> None:
         Function in charge of registering a fake user.
     """
     input_data = [
-        TCONST.USER_DATA_NAME,
+        TCONST.USER_DATA_USERNAME,
         TCONST.USER_DATA_EMAIL,
         PHI.hash_password(str(TCONST.USER_DATA_PASSWORD)),
         TCONST.USER_DATA_METHOD,
@@ -81,7 +81,7 @@ def _register_fake_user() -> None:
     RDI.database_link.insert_or_update_data_into_table(
         table=CONST.TAB_ACCOUNTS,
         data=input_data,
-        column=column_names
+        columns=column_names
     )
 
 
@@ -122,7 +122,7 @@ def _sing_fake_user_in() -> None:
     RDI.database_link.insert_or_update_data_into_table(
         table=CONST.TAB_CONNECTIONS,
         data=input_data,
-        column=table_columns
+        columns=table_columns
     )
 
 
@@ -552,6 +552,182 @@ def test_user_not_found_valid_token() -> None:
     resp[CONST.JSON_ERROR] = "Not found"
     resp[CONST.JSON_LOGGED_IN] = True
     compiled_response = HCI.not_found(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    _sign_fake_user_out()
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_no_access_token_invalid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    title = "Hello World"
+    data = BRI.no_access_token(title, "not_a_token")
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "Access token not found."
+    resp[CONST.JSON_ERROR] = "No access token"
+    resp[CONST.JSON_LOGGED_IN] = False
+    compiled_response = HCI.bad_request(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_no_access_token_valid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    _sing_fake_user_in()
+    title = "Hello World"
+    data = BRI.no_access_token(title, TCONST.USER_DATA_TOKEN)
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "Access token not found."
+    resp[CONST.JSON_ERROR] = "No access token"
+    resp[CONST.JSON_LOGGED_IN] = True
+    compiled_response = HCI.bad_request(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    _sign_fake_user_out()
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_provider_not_found_invalid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    title = "Hello World"
+    data = BRI.provider_not_found(title, "not_a_token")
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "The provider you are looking for was not found."
+    resp[CONST.JSON_ERROR] = "Provider not found"
+    resp[CONST.JSON_LOGGED_IN] = False
+    compiled_response = HCI.not_found(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_provider_not_found_valid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    _sing_fake_user_in()
+    title = "Hello World"
+    data = BRI.provider_not_found(title, TCONST.USER_DATA_TOKEN)
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "The provider you are looking for was not found."
+    resp[CONST.JSON_ERROR] = "Provider not found"
+    resp[CONST.JSON_LOGGED_IN] = True
+    compiled_response = HCI.not_found(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    _sign_fake_user_out()
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_provider_not_given_invalid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    title = "Hello World"
+    data = BRI.provider_not_given(title, "not_a_token")
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "You have not given a provider."
+    resp[CONST.JSON_ERROR] = "Provider missing"
+    resp[CONST.JSON_LOGGED_IN] = False
+    compiled_response = HCI.bad_request(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_provider_not_given_valid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    _sing_fake_user_in()
+    title = "Hello World"
+    data = BRI.provider_not_given(title, TCONST.USER_DATA_TOKEN)
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "You have not given a provider."
+    resp[CONST.JSON_ERROR] = "Provider missing"
+    resp[CONST.JSON_LOGGED_IN] = True
+    compiled_response = HCI.bad_request(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    _sign_fake_user_out()
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_missing_variable_in_body_invalid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    title = "Hello World"
+    data = BRI.missing_variable_in_body(title, "not_a_token")
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "A variable is missing in the body of the request."
+    resp[CONST.JSON_ERROR] = "Missing variable"
+    resp[CONST.JSON_LOGGED_IN] = False
+    compiled_response = HCI.bad_request(
+        content=resp,
+        content_type=CONST.CONTENT_TYPE,
+        headers=RDI.json_header
+    )
+    assert data.status_code == compiled_response.status_code
+    assert data.headers == compiled_response.headers
+    assert data.body == compiled_response.body
+
+
+def test_missing_variable_in_body_valid_token() -> None:
+    """_summary_
+        Function in charge of testing the insuffisant rights function.
+    """
+    _sing_fake_user_in()
+    title = "Hello World"
+    data = BRI.missing_variable_in_body(title, TCONST.USER_DATA_TOKEN)
+    resp = {}
+    resp[CONST.JSON_TITLE] = title
+    resp[CONST.JSON_MESSAGE] = "A variable is missing in the body of the request."
+    resp[CONST.JSON_ERROR] = "Missing variable"
+    resp[CONST.JSON_LOGGED_IN] = True
+    compiled_response = HCI.bad_request(
         content=resp,
         content_type=CONST.CONTENT_TYPE,
         headers=RDI.json_header
