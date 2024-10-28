@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from '../../../components/CustomerButton/CustomerButton';
 import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
-import { storeValue} from '../../../components/Token/storeData';
+import { storeValue} from '../../../components/StoreData/storeData';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
