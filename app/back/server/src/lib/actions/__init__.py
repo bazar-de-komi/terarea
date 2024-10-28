@@ -3,7 +3,7 @@
 """
 
 from .main import ActionsMain
-from .variables import Variables
+from .variables import Variables, ScopeError, VariableNotFoundError
 from .action_management import ActionManagement
 from .trigger_management import TriggerManagement
 from .logger import ActionLogger
@@ -12,6 +12,8 @@ from . import constants as ACONST
 __all__ = [
     'ActionsMain',
     'Variables',
+    'ScopeError',
+    'VariableNotFoundError',
     'ActionManagement',
     'TriggerManagement',
     'ActionLogger',
