@@ -8,6 +8,8 @@ from typing import Any
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
 from .variables import Variables
+from . import constants as ACONST
+from .logger import ActionLogger
 from ..components.runtime_data import RuntimeData
 
 
@@ -15,7 +17,7 @@ class ActionManagement:
     """_summary_
     """
 
-    def __init__(self, variable: Variables, runtime_data: RuntimeData, scope: Any = "default_scope", error: int = 84, success: int = 0, debug: bool = False):
+    def __init__(self, variable: Variables, logger: ActionLogger, runtime_data: RuntimeData, scope: Any = "default_scope", error: int = 84, success: int = 0, debug: bool = False):
         """_summary_
             This is the class in charge of checking the actions to be run and storing variables if required.
 
@@ -28,11 +30,12 @@ class ActionManagement:
             debug (bool, optional): _description_. Defaults to False.: Set to True if you wish to activate debug mode.
         """
         # -------------------------- Inherited values --------------------------
-        self.variable: Variables = variable
         self.error: int = error
         self.scope: Any = scope
         self.debug: bool = debug
         self.success: int = success
+        self.logger: ActionLogger = logger
+        self.variable: Variables = variable
         self.runtime_data: RuntimeData = runtime_data
         # ---------------------- The visual logger class  ----------------------
         self.disp: Disp = Disp(
