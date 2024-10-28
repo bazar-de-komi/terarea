@@ -1,6 +1,8 @@
 """_summary_
     The main file of this section, in charge of the action processing
 """
+
+import os
 from typing import Dict, Union, List, Any
 from time import sleep
 from random import uniform
@@ -92,10 +94,10 @@ class ActionsMain:
             Function in charge of locking an action.
 
         Args:
-            node (int): _description_
+            node (int): _description_: The action to lock.
 
         Returns:
-            int: _description_
+            int: _description_: Returns self.success if it succeeded, self.error otherwise
         """
         title = "lock_action"
         self.disp.log_debug(f"Locking action {node}.", title)
@@ -109,8 +111,64 @@ class ActionsMain:
             condition=f"id={node}"
         )
         if locked == self.error:
+            msg = f"Failed to lock action {node} by process {os.getpid()}"
+            self.disp.log_debug(msg, title)
+            self.logger.log_success(
+                log_type=ACONST.TYPE_SERVICE,
+                action_id=node,
+                message=msg,
+                resolved=True
+            )
             return self.error
-        self.disp.log_debug(f"Action {node} locked.", title)
+        msg = f"Action {node} locked by process {os.getpid()}."
+        self.disp.log_debug(msg, title)
+        self.logger.log_success(
+            log_type=ACONST.TYPE_SERVICE,
+            action_id=node,
+            message=msg,
+            resolved=True
+        )
+        return self.success
+
+    def unlock_action(self, node: int) -> int:
+        """_summary_
+            Function in charge of unlocking an action.
+
+        Args:
+            node (int): _description_: The action to unlock.
+
+        Returns:
+            int: _description_: Returns self.success if it succeeded, self.error otherwise
+        """
+        title = "unlock_action"
+        self.disp.log_debug(f"Unlocking action {node}.", title)
+        if self.is_action_locked(node) is False:
+            self.disp.log_debug(f"Action {node} already unlocked.", title)
+            return self.error
+        locked = self.runtime_data.database_link.update_data_in_table(
+            table=CONST.TAB_ACTIONS,
+            columns=["running"],
+            values=[0],
+            condition=f"id={node}"
+        )
+        if locked == self.error:
+            msg = f"Failed to unlock action {node} by process {os.getpid()}"
+            self.disp.log_debug(msg, title)
+            self.logger.log_success(
+                log_type=ACONST.TYPE_SERVICE,
+                action_id=node,
+                message=msg,
+                resolved=True
+            )
+            return self.error
+        msg = f"Action {node} unlocked by process {os.getpid()}."
+        self.disp.log_debug(msg, title)
+        self.logger.log_success(
+            log_type=ACONST.TYPE_SERVICE,
+            action_id=node,
+            message=msg,
+            resolved=True
+        )
         return self.success
 
     def dump_scope(self, action_id: int, scope: Any, log_type: str = ACONST.TYPE_RUNTIME_ERROR) -> int:
@@ -136,7 +194,7 @@ class ActionsMain:
                 indent=None,
                 sort_keys=False,
             )
-        except Exception as e:
+        except Exception:
             data = f"{data}"
         self.logger.log_info(
             log_type=log_type,
@@ -186,21 +244,36 @@ class ActionsMain:
         )
         status = trigger_node.run()
         if status == self.error:
+            self.logger.log_fatal(
+                log_type=ACONST.TYPE_SERVICE_TRIGGER,
+                action_id=node,
+                message="Failed to run the trigger node.",
+                resolved=False
+            )
             self.dump_scope(
                 action_id=node,
                 scope=variable_scope,
                 log_type=ACONST.TYPE_SERVICE_TRIGGER
             )
             self.variables.clear_variables(scope=variable_scope)
+            self.unlock_action(node)
             return self.error
         status2 = action_node.run()
         if status2 == self.error:
+            self.logger.log_fatal(
+                log_type=ACONST.TYPE_SERVICE_ACTION,
+                action_id=node,
+                message="Failed to run the action node.",
+                resolved=False
+            )
             self.dump_scope(
                 action_id=node,
                 scope=variable_scope,
                 log_type=ACONST.TYPE_SERVICE_ACTION
             )
+            self.unlock_action(node)
             return self.error
+        self.unlock_action(node)
         return self.success
 
     def is_action_locked(self, node: int) -> bool:
