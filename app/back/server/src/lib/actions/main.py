@@ -218,14 +218,26 @@ class ActionsMain:
         variable_scope = f"action_{node}"
         action_detail = self.runtime_data.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
-            columns=["action"],
-            condition=f"id={node}",
+            column="*",
+            where=f"id={node}",
             beautify=False
         )
+        if action_detail == self.error:
+            msg = f"Failed to get the action {node} details"
+            msg += f"for process {os.getpid()}."
+            self.disp.log_critical(msg, title)
+            self.logger.log_fatal(
+                log_type=ACONST.TYPE_SERVICE,
+                action_id=node,
+                message=msg,
+                resolved=False
+            )
+            return self.error
         self.disp.log_debug(
             f"action_detail = {action_detail}",
             title
         )
+        self.variables.create_scope(scope_name=variable_scope)
         self.variables.clear_variables(scope=variable_scope)
         self.variables.add_variable(
             name="node_data",
@@ -295,8 +307,8 @@ class ActionsMain:
         self.disp.log_debug(f"Checking if action {node} is locked.", title)
         locked = self.runtime_data.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
-            columns=["running"],
-            condition=f"id={node}",
+            column=["running"],
+            where=f"id={node}",
             beautify=False
         )
         if locked == self.error:
