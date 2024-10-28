@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert} 
 import { useNavigation } from "@react-navigation/native";
 import axios from 'axios';
 import { queries } from "../../../../back-endConnection/querier";
+import { storeValue } from "../../../components/Token/storeData";
 
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
@@ -19,28 +20,28 @@ const SignIn = () => {
     const { height } = useWindowDimensions() ;
     const navigation = useNavigation();
 
-    const SignInPressed = () => {
-        navigation.navigate('All', { page: 'All'});
-        // setIsSubmitting(true);
-        // const account = {
-        //     email: email,
-        //     password: password,
-        // };
-        // try {
-        //     const result = await queries.post("/login", account);
+    const SignInPressed = async () => {
+        // navigation.navigate('All', { page: 'All'});
+        setIsSubmitting(true);
+        const account = {
+            email: email,
+            password: password,
+        };
+        try {
+            const result = await queries.post("/api/v1/login", account);
 
-        //     if (result && result.detail) {
-        //         localStorage.setItem('token', result.detail);
-        //         navigation.navigate("Home");
-        //     } else {
-        //         setError("Identifiant or password incorrect");
-        //     }
-        // } catch (error) {
-        //     console.error("Sign error: ", error);
-        //     setError("Error to connecte. Please check your id or your password");
-        // } finally {
-        //     setIsSubmitting(false);
-        // }
+            if (result.token) {
+                storeValue('token', result.token);
+                navigation.navigate("All");
+            } else {
+                setError("Identifiant or password incorrect");
+            }
+        } catch (error) {
+            console.error("Sign error: ", error);
+            setError("Error to connecte. Please check your id or your password");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const forgotPasswordPressed = () => {
