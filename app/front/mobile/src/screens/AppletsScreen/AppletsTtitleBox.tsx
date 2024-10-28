@@ -3,26 +3,17 @@ import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
-import AppletBox from "../../components/AppletsBox/appletBox";
 import BackButton from "../../components/BackButton/backButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import ProfilLogo from '../../../assets/profilLogo.png';
 
-const ServicesDetails = () => {
+const ServicesScreen = () => {
     const Navigation = useNavigation();
 
-    const callServices = () => {
-        Navigation.navigate('Services')
+    const serviceDetails = () => {
+        Navigation.navigate('Service details')
     }
-
-    const servicesScreen = () => {
-        Navigation.navigate("Service screen");
-    };
-
-    const create = () => {
-        Navigation.navigate('Create');
-    };
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -37,30 +28,13 @@ const ServicesDetails = () => {
                 />
                 <BackButton
                 text="<"
-                onPress={callServices}
+                onPress={serviceDetails}
                 />
-                <Text style={styles.homeTitle}>5-Minute Crafts integrations</Text>
+                <Text style={styles.homeTitle}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
                 <View style={styles.homeNavigation}>
                 </View>
-                <Text style={styles.description}>5-Minute Crafts Youtube channel is a</Text>
-            <View style={styles.createStyle}>
-                    <CustomerButton
-                    text="Create"
-                    onPress={create}
-                    type="PRIMARY"
-                    bgColor={""}
-                    fgColor={""}
-                    />
-                </View>
+                <Text style={styles.description}>5-Minute Crafts</Text>
             </View>
-            <Text style={styles.homeTitle}>Popular 5-Minute Crafts workflows & automations</Text>
-            <AppletBox
-            title="Reveive a weekly email digest of all new videos for the 5-Minute Crafts Youtub channel"
-            description={"5-Minute Crafts"}
-            bgColor={"green"}
-            onPress={servicesScreen}
-
-            />
         </ScrollView>
     )
 }
@@ -99,7 +73,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    createStyle: {
+    connectStyle: {
         alignItems: 'center',
         marginBottom: 40,
         width: '130%',
@@ -107,4 +81,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default ServicesDetails
+export default ServicesScreen

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 
-const CustomerButton = ({ onPress, text, type = "PRIMARY", bgColor, fgColor, icon}) => {
+const CustomerButton = ({ onPress, text, type, bgColor, fgColor, icon}) => {
     return (
         <Pressable
         onPress={onPress}
