@@ -212,9 +212,10 @@ class Bonus:
         data = self.runtime_data_initialised.actions_main_initialised.process_action_node(
             id
         )
+        content = {"action_data": node, "run_info": data}
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
-            message=data,
+            message=content,
             resp="success",
             token=token,
             error=False
