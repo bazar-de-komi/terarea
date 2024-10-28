@@ -3,6 +3,7 @@
 """
 
 from typing import Dict, Any, Type, Union
+import base64
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
 
@@ -49,7 +50,16 @@ class Variables:
             logger=self.__class__.__name__
         )
 
-    def add_variable(self, name: str, variable_data: Any, variable_type: Type = str, scope: str = "default_scope") -> int:
+    def __del__(self) -> None:
+        """_summary_
+            Destructor for the class.
+        """
+        title = "__del__"
+        self.disp.log_debug("Clearing content", title)
+        self.clear_scopes()
+        self.disp.log_debug("Scopes cleared", title)
+
+    def add_variable(self, name: str, variable_data: Any, variable_type: Type = str, scope: Any = "default_scope") -> int:
         """_summary_
             Add a variable to the current action.
 
@@ -87,7 +97,7 @@ class Variables:
         self.disp.log_debug(msg, title)
         return self.success
 
-    def update_variable(self, name: str, variable_data: Any, variable_type: Type = str, scope: str = "default_scope") -> int:
+    def update_variable(self, name: str, variable_data: Any, variable_type: Type = str, scope: Any = "default_scope") -> int:
         """_summary_
             Update the variable from the current action.
 
@@ -125,7 +135,7 @@ class Variables:
         self.disp.log_debug(msg, title)
         return self.success
 
-    def insert_or_update(self, name: str, variable_data: Any, variable_type: Type = str, scope: str = "default_scope") -> int:
+    def insert_or_update(self, name: str, variable_data: Any, variable_type: Type = str, scope: Any = "default_scope") -> int:
         """_summary_
             Insert or update the variable from the current action.
 
@@ -160,7 +170,7 @@ class Variables:
         )
         return self.add_variable(name, variable_data, variable_type, scope)
 
-    def has_variable(self, name: str, scope: str = "default_scope") -> bool:
+    def has_variable(self, name: str, scope: Any = "default_scope") -> bool:
         """_summary_
             Check if the variable exists in the current action.
 
@@ -197,7 +207,7 @@ class Variables:
         self.disp.log_debug(f"Variable {name} does not exist.", title)
         return True
 
-    def get_variable(self, name: str, scope: str = "default_scope") -> Any:
+    def get_variable(self, name: str, scope: Any = "default_scope") -> Any:
         """_summary_
             Get the variable from the current action.
 
@@ -224,7 +234,7 @@ class Variables:
         self.disp.log_debug(f"Variable {name} found.", title)
         return self.variables[scope][name]["data"]
 
-    def get_variables(self, scope: str = "default_scope") -> Dict[str, Any]:
+    def get_variables(self, scope: Any = "default_scope") -> Dict[str, Any]:
         """_summary_
             Get all the variables from the current action.
 
@@ -247,7 +257,24 @@ class Variables:
             raise ScopeError(msg)
         return self.variables[scope]
 
-    def get_variable_type(self, name: str, scope: str = "default_scope") -> Union[int, Type]:
+    def get_scope(self, scope: Any = "default_scope") -> Dict[str, Any]:
+        """_summary_
+            The function in charge of returning the content of a scope.
+            This function is just there for program logic.
+            This is function behaves the exact same way as the get_variables function.
+
+        Args:
+            scope (str, optional): _description_: The scope in which to get the variables. User '*' to return all the vairables from all the scopes. Defaults to "default_scope".
+
+        Raises:
+            ScopeError: _description_: If the scope is not found.
+
+        Returns:
+            Dict[str, Any]: _description_: Returns all the variables.
+        """
+        return self.get_variables(scope=scope)
+
+    def get_variable_type(self, name: str, scope: Any = "default_scope") -> Union[int, Type]:
         """_summary_
             Get the type of the variable from the current action.
 
@@ -274,7 +301,7 @@ class Variables:
         self.disp.log_debug(f"Retrieving type for {name}", title)
         return self.variables[scope][name]["type"]
 
-    def remove_variable(self, name: str, scope: str = "default_scope") -> int:
+    def remove_variable(self, name: str, scope: Any = "default_scope") -> int:
         """_summary_
             Remove the variable from the current action.
 
@@ -308,7 +335,7 @@ class Variables:
         del self.variables[scope][name]
         return self.success
 
-    def clear_variables(self, scope: str = "default_scope") -> int:
+    def clear_variables(self, scope: Any = "default_scope") -> int:
         """_summary_
             Clear all the variables from the current action.
 
@@ -365,3 +392,47 @@ class Variables:
             self.variables[i] = {}
         self.disp.log_debug("All the scopes have been cleared.", title)
         return self.success
+
+    def sanitize_for_json(self, data_or_scope: Any, use_scope: bool = False) -> Any:
+        """_summary_
+            Sanitize the data for json serialization.
+
+        Args:
+            data (Any): _description_: The data to sanitize.
+            use_scope (bool, optional): _description_: Specify if the data to process is to be queried in the variable scopes. Default: False
+
+        Raises:
+            ScopeError: _description_: If the scope is not found.
+
+        Returns:
+            Any: _description_: The sanitized data.
+        """
+        title = "sanitize_for_json"
+        if use_scope is True:
+            if data_or_scope not in self.variables:
+                msg = f"The provided scope {data_or_scope}"
+                msg += " was not found in the current dataset."
+                self.disp.log_debug(msg, title)
+                raise ScopeError(msg)
+            self.disp.log_debug(f"Sanitising scope {data_or_scope}", title)
+            return self.sanitize_for_json(self.variables[data_or_scope], False)
+        if isinstance(data_or_scope, dict):
+            for key, value in data_or_scope.items():
+                data_or_scope[key] = self.sanitize_for_json(value)
+        elif isinstance(data_or_scope, list):
+            for index, item in enumerate(data_or_scope):
+                data_or_scope[index] = self.sanitize_for_json(item)
+        elif isinstance(data_or_scope, set):
+            data_or_scope = list(data_or_scope)
+            for index, item in enumerate(data_or_scope):
+                data_or_scope[index] = self.sanitize_for_json(item)
+        elif isinstance(data_or_scope, tuple):
+            data_or_scope = list(data_or_scope)
+            for index, item in enumerate(data_or_scope):
+                data_or_scope[index] = self.sanitize_for_json(item)
+            data_or_scope = tuple(data_or_scope)
+        elif isinstance(data_or_scope, bytes):
+            data_or_scope = base64.b64encode(data_or_scope).decode('utf-8')
+        elif isinstance(data_or_scope, (int, float, str, bool)) is False:
+            data_or_scope = str(data_or_scope)
+        return data_or_scope

@@ -3,6 +3,7 @@
 """
 import os
 import sys
+import base64
 
 import pytest
 
@@ -357,3 +358,161 @@ def test_clear_scope_contents() -> None:
     assert SCOPE in VI.variables
     assert not VI.variables[SCOPE]
     assert not VI.variables["default_scope"]
+
+
+def test_sanitize_for_json() -> None:
+    """_summary_
+        Function in charge of testing the sanitize_for_json function.
+    """
+    def dummy() -> str:
+        return "dummy"
+
+    class SampleEmptyClass:
+        pass
+
+    class SampleFuncClass:
+        def __init__(self):
+            pass
+
+    class SampleMultyFuncClass:
+        def __init__(self):
+            pass
+
+        def dummy(self) -> str:
+            return "dummy"
+
+    scope_list = [
+        SCOPE,
+        "default_scope",
+        "not_a_scope",
+        "functions",
+        "classes",
+        "classes_initialised",
+        "file_handles",
+        "complex_numbers",
+        "example_set",
+        "example_bytes",
+        "example_generator"
+    ]
+
+    scopes = {
+        scope_list[0]: {
+            "test": {"data": "1", "type": str},
+            "test2": {"data": 1, "type": int},
+            "test3": {"data": 1.0, "type": float}
+        },
+        scope_list[1]: {
+            "test": {"data": "1", "type": str},
+            "test2": {"data": 1, "type": int},
+            "test3": {"data": 1.0, "type": float}
+        },
+        scope_list[2]: {
+            "test": {"data": "1", "type": str},
+            "test2": {"data": 1, "type": int},
+            "test3": {"data": 1.0, "type": float}
+        },
+        scope_list[3]: {
+            "test": lambda x: x,
+            "test2": lambda x: x,
+            "test3": lambda x: x,
+            "test4": dummy
+        },
+        scope_list[4]: {
+            "test": SampleEmptyClass,
+            "test2": SampleFuncClass,
+            "test3": SampleMultyFuncClass
+        },
+        scope_list[5]: {
+            "test": SampleEmptyClass(),
+            "test2": SampleFuncClass(),
+            "test3": SampleMultyFuncClass()
+        },
+        scope_list[6]: {
+            "test": open("test.tmp.txt", "w", encoding='utf-8'),
+            "test2": open("test2.tmp.txt", "w", encoding='utf-8'),
+            "test3": open("test3.tmp.txt", "w", encoding='utf-8')
+        },
+        scope_list[7]: {
+            "test": complex(1, 1),
+            "test2": complex(1, 1),
+            "test3": complex(1, 1)
+        },
+        scope_list[8]: {
+            "test": {1, 2, 3},
+            "test2": {1, 2, 3},
+            "test3": {1, 2, 3}
+        },
+        scope_list[9]: {
+            "test": b"test",
+            "test2": b"test",
+            "test3": b"test"
+        },
+        scope_list[10]: {
+            "test": (x for x in range(10)),
+            "test2": (x for x in range(10)),
+            "test3": (x for x in range(10))
+        }
+    }
+    VI.variables = scopes.copy()
+    scopes_cleaned = scopes.copy()
+    node = scope_list[1]
+    for i in scopes_cleaned[node]:
+        for b in scopes_cleaned[node][i]:
+            if b != "data":
+                scopes_cleaned[node][i][b] = str(
+                    scopes_cleaned[node][i][b])
+    node = scope_list[2]
+    for i in scopes_cleaned[node]:
+        for b in scopes_cleaned[node][i]:
+            if b != "data":
+                scopes_cleaned[node][i][b] = str(
+                    scopes_cleaned[node][i][b]
+                )
+    node = scope_list[3]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = str(
+            scopes_cleaned[node][i]
+        )
+    node = scope_list[4]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = str(
+            scopes_cleaned[node][i]
+        )
+    node = scope_list[5]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = str(
+            scopes_cleaned[node][i]
+        )
+    node = scope_list[6]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = str(
+            scopes_cleaned[node][i]
+        )
+    node = scope_list[7]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = str(
+            scopes_cleaned[node][i]
+        )
+    node = scope_list[8]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = list(
+            scopes_cleaned[node][i]
+        )
+    node = scope_list[9]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = base64.b64encode(
+            scopes_cleaned[node][i]
+        ).decode("utf-8")
+    node = scope_list[10]
+    for i in scopes_cleaned[node]:
+        scopes_cleaned[node][i] = str(
+            scopes_cleaned[node][i]
+        )
+
+    assert VI.sanitize_for_json(scopes) == scopes_cleaned
+    with pytest.raises(ScopeError):
+        VI.sanitize_for_json(data_or_scope="ThisIsNotAScope", use_scope=True)
+    for i in scope_list:
+        assert VI.sanitize_for_json(
+            data_or_scope=i, use_scope=True
+        ) == scopes_cleaned[i]
