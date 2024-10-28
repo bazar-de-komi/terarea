@@ -25,3 +25,4 @@ node_modules/**
 **/server_env/**
 **/wserver_env/**
 **/doc/**
+**/.cache/**
