@@ -52,7 +52,7 @@ const NewPassword = () => {
                     <CustomerButton
                     text="Set password"
                     onPress={SignSubmitPressed}
-                    bgColor={""}
+                    bgColor={"black"}
                     fgColor={""}
                     />
                     <CustomerButton
