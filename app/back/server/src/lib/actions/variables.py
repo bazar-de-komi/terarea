@@ -59,6 +59,26 @@ class Variables:
         self.clear_scopes()
         self.disp.log_debug("Scopes cleared", title)
 
+    def create_scope(self, scope_name: Any) -> int:
+        """_summary_
+            Create a new scope.
+
+        Args:
+            scope_name (Any): _description_: The name of the scope.
+
+        Returns:
+            int: _description_: Returns self.success if it succeeds, self.error otherwise.
+        """
+        title = "create_scope"
+        if scope_name in self.variables:
+            self.disp.log_warning(
+                f"Scope {scope_name} already present.", title
+            )
+            return self.error
+        self.variables[scope_name] = {}
+        self.disp.log_debug(f"Scope {scope_name} created.", title)
+        return self.success
+
     def add_variable(self, name: str, variable_data: Any, variable_type: Type = str, scope: Any = "default_scope") -> int:
         """_summary_
             Add a variable to the current action.
@@ -391,6 +411,29 @@ class Variables:
             self.disp.log_debug(f"Clearing content for scope {i}", title)
             self.variables[i] = {}
         self.disp.log_debug("All the scopes have been cleared.", title)
+        return self.success
+
+    def remove_scope(self, scope: Any) -> int:
+        """_summary_
+            Remove the scope from the current action.
+
+        Args:
+            scope (str): _description_: The scope to remove.
+
+        Raises:
+            ScopeError: _description_: If the scope is not found.
+
+        Returns:
+            int: _description_: Returns self.success if it succeeds, self.error otherwise.
+        """
+        title = "remove_scope"
+        self.disp.log_debug(f"Removing scope {scope}.", title)
+        if scope not in self.variables:
+            msg = f"Scope {scope} not found."
+            self.disp.log_error(msg, title)
+            raise ScopeError(msg)
+        del self.variables[scope]
+        self.disp.log_debug(f"Scope {scope} removed.", title)
         return self.success
 
     def sanitize_for_json(self, data_or_scope: Any, use_scope: bool = False) -> Any:

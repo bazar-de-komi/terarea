@@ -34,6 +34,16 @@ VI = Variables(
 )
 
 
+def test_create_scope() -> None:
+    """_summary_
+        Function in charge of testing the one that will create scopes in the variable class.
+    """
+    VI.variables = {}
+    assert VI.create_scope(SCOPE) == SUCCESS
+    assert SCOPE in VI.variables
+    assert VI.create_scope(SCOPE) == ERROR
+
+
 def test_add_variable() -> None:
     """_summary_
         Function in charge of testing the add_variable function.
@@ -358,6 +368,34 @@ def test_clear_scope_contents() -> None:
     assert SCOPE in VI.variables
     assert not VI.variables[SCOPE]
     assert not VI.variables["default_scope"]
+
+
+def test_remove_scope() -> None:
+    """_summary_
+        Function in charge of testing the remove_scope function.
+    """
+    VI.variables = {
+        SCOPE: {
+            "test": {"data": "1", "type": str},
+            "test2": {"data": 1, "type": int},
+            "test3": {"data": 1.0, "type": float}
+        },
+        "default_scope": {
+            "test": {"data": "1", "type": str},
+            "test2": {"data": 1, "type": int},
+            "test3": {"data": 1.0, "type": float}
+        }
+    }
+    assert VI.remove_scope(SCOPE) == SUCCESS
+    assert "default_scope" in VI.variables
+    assert SCOPE not in VI.variables
+    assert not VI.variables["default_scope"]
+    assert VI.remove_scope("default_scope") == SUCCESS
+    assert not VI.variables
+    assert "default_scope" not in VI.variables
+    assert SCOPE not in VI.variables
+    with pytest.raises(ScopeError):
+        VI.remove_scope("default_scope")
 
 
 def test_sanitize_for_json() -> None:
