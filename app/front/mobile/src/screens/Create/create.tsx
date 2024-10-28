@@ -12,6 +12,10 @@ const Create = () => {
         Navigation.navigate("Applets");
     }
 
+    const ChooseServices = () => {
+        Navigation.navigate("Choose services");
+    }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.homeTitle}>Create</Text>
@@ -34,7 +38,7 @@ const Create = () => {
                             type="PRIMARY"
                             bgColor={"white"}
                             fgColor={"black"}
-                            onPress={AppletsHome}
+                            onPress={ChooseServices}
                             style={styles.addButton}
                         />
                     </View>
