@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { queries } from "../../../../back-endConnection/querier";
-import { storeValue } from "../../../components/Token/storeData";
+import { storeValue } from "../../../components/StoreData/storeData";
 
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
