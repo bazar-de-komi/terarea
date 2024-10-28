@@ -214,12 +214,17 @@ class ActionsMain:
         Returns:
             int: _description_
         """
+        title = "process_action_node"
         variable_scope = f"action_{node}"
         action_detail = self.runtime_data.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
             columns=["action"],
             condition=f"id={node}",
             beautify=False
+        )
+        self.disp.log_debug(
+            f"action_detail = {action_detail}",
+            title
         )
         self.variables.clear_variables(scope=variable_scope)
         self.variables.add_variable(
