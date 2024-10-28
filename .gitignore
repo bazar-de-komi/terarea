@@ -23,4 +23,5 @@ node_modules/**
 **/menv/**
 **/wenv/**
 **/server_env/**
+**/wserver_env/**
 **/doc/**
