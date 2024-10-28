@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import axios from 'axios';
 import { queries } from "../../../../back-endConnection/querier";
 import { storeValue } from "../../../components/Token/storeData";
 
@@ -21,7 +20,6 @@ const SignIn = () => {
     const navigation = useNavigation();
 
     const SignInPressed = async () => {
-        // navigation.navigate('All', { page: 'All'});
         setIsSubmitting(true);
         const account = {
             email: email,
@@ -87,7 +85,8 @@ const SignIn = () => {
                     onPress={SignInPressed}
                     bgColor={"black"}
                     fgColor={"white"}
-                    icon=""
+                    icon={""}
+                    type={""}
                     />
                     <SocialLogo/>
                     <CustomerButton
