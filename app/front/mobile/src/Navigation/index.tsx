@@ -7,7 +7,6 @@ import SignUp from '../screens/Authentication/SignUp';
 import ConfirmEmail from '../screens/Authentication/ConfirmEmail/ConfirmEmail';
 import ForgotPassword from '../screens/Authentication/ForgotPassword';
 import NewPassword from '../screens/Authentication/ForgotPassword/newPassword';
-import Home from '../screens/Home/home';
 import All from '../screens/Home/all';
 import Applets from '../screens/Home/applets';
 import Services from '../screens/Home/services';
@@ -16,6 +15,7 @@ import AppletsScreen from '../screens/AppletsScreen/AppletsScreen';
 import ServicesScreen from '../screens/AppletsScreen/ServicesScreen';
 import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
+import ChooseServices from '../screens/Create/chooseServices';
 import BackButton from '../components/BackButton/backButton';
 
 const Stack = createStackNavigator();
@@ -43,6 +43,7 @@ const Navigation = () => {
                 <Stack.Screen name="Back button" component={BackButton} />
 
                 <Stack.Screen name="Create" component={Create} />
+                <Stack.Screen name="Choose services" component={ChooseServices} />
 
             </Stack.Navigator>
         </NavigationContainer>
