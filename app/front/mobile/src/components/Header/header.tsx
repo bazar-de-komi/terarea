@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, Text} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';4
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png'
 import ProfilLogo from '../../../assets/profilLogo.png';
@@ -36,6 +36,15 @@ const Header = () => {
                 >
                     <TouchableOpacity style={styles.modalOverlay} onPress={closeSidebar} />
                     <View style={styles.sidebar}>
+                    <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('Create');
+                                closeSidebar();
+                            }}
+                            style={styles.menuItem}
+                        >
+                            <Text style={styles.menuText}>Create</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
                                 navigation.navigate('Services');
