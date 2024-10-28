@@ -11,17 +11,12 @@ const AppletsScreen = () => {
     const Navigation = useNavigation();
 
     const signUp = () => {
-        Navigation.navigate('Home');
+        Navigation.navigate('All');
     }
 
     const callApplets = () => {
         Navigation.navigate('Applets')
     }
-
-    // const openDrawer = () => {
-    //     Navigation.openDrawer();
-    // }
-
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -30,12 +25,10 @@ const AppletsScreen = () => {
                     source={AreaLogo}
                     style={styles.areaLogo}
                 />
-                {/* <TouchableOpacity onPress={openDrawer}> */}
                     <Image
                         source={ProfilLogo}
                         style={styles.profilLogo}
                     />
-                {/* </TouchableOpacity> */}
                 <View style={styles.backStyle}>
                     <CustomerButton
                     text='<'

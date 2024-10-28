@@ -41,7 +41,7 @@ const SignUp = () => {
         //     if (response && response.detail) {
         //         await AsyncStorage.setItem('token', response.detail);
         //         Alert.alert("Sign up sucessful");
-                navigation.navigate('Home');
+                navigation.navigate('All');
         //     } else {
         //         setError("Try again");
         //     }
@@ -88,7 +88,7 @@ const SignUp = () => {
                     <CustomerButton
                         text="Get started"
                         onPress={SignInPressed}
-                        bgColor={""}
+                        bgColor={"black"}
                         fgColor={""}
                     />
                     <SocialButton/>

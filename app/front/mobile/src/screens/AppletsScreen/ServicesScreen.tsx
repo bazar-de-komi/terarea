@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
+import BackButton from "../../components/BackButton/backButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import ProfilLogo from '../../../assets/profilLogo.png';
@@ -11,14 +12,14 @@ const ServicesScreen = () => {
     const Navigation = useNavigation();
 
     const signUp = () => {
-        Navigation.navigate('Home');
+        Navigation.navigate('All');
     }
 
-    const callServices = () => {
+    const serviceDetails = () => {
         Navigation.navigate('Service details')
     }
 
-    return (    
+    return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
                 <Image
@@ -29,15 +30,10 @@ const ServicesScreen = () => {
                     source={ProfilLogo}
                     style={styles.profilLogo}
                 />
-                <View style={styles.backStyle}>
-                    <CustomerButton
-                    text='<'
-                    onPress={callServices}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                    />
-                </View>
+                <BackButton
+                text="<"
+                onPress={serviceDetails}
+                />
                 <Text style={styles.homeTitle}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
                 <View style={styles.homeNavigation}>
                 </View>
@@ -95,11 +91,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 40,
         width: '130%',
-        alignSelf: 'center',
-    },
-    backStyle: {
-        marginBottom: 40,
-        width: '180%',
         alignSelf: 'center',
     },
 })

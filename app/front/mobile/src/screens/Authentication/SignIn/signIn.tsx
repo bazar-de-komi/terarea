@@ -20,7 +20,7 @@ const SignIn = () => {
     const navigation = useNavigation();
 
     const SignInPressed = () => {
-        navigation.navigate('Home', { page: 'Home'});
+        navigation.navigate('All', { page: 'All'});
         // setIsSubmitting(true);
         // const account = {
         //     email: email,
