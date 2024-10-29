@@ -2,14 +2,11 @@
   <div class="create-applet-page">
     <header>
       <AppHeader />
-      <div class="cancel-button-container">
-        <CancelButton @click="goBack" />
-      </div>
+      <CancelButton @click="goBack" />
     </header>
 
     <div class="applet-creation">
       <h1>Create</h1>
-      <p class="applet-count">You're using {{ appletCount }} of 2 Applets</p>
 
       <!-- Bloc If -->
       <IfBlock
@@ -37,8 +34,8 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
-import IfBlock from '@/components/IfBlock.vue';
-import ThenBlock from '@/components/ThenBlock.vue';
+import IfBlock from '@/components/CreateApplet-Comp/IfBlock.vue';
+import ThenBlock from '@/components/CreateApplet-Comp/ThenBlock.vue';
 import CancelButton from '@/components/CancelButton.vue';
 
 export default defineComponent({
@@ -99,21 +96,6 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 10px 50px;
-  position: relative;
-}
-
-.cancel-button-container {
-  position: absolute;
-  top: 80px;
-  left: 60px;
 }
 
 .applet-creation {

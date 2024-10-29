@@ -1,50 +1,44 @@
 <template>
-  <button class="cancel-button" @click="handleClick">
+  <button @click="handleClick" class="cancel-button">
     Cancel
   </button>
 </template>
 
 <script lang="ts">
-export default {
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  name: 'CancelButton',
+  emits: ['cancel'],
   methods: {
     handleClick() {
       this.$emit('cancel');
     }
   }
-};
+});
 </script>
 
 <style scoped>
 .cancel-button {
   background-color: white;
   border: 2px solid black;
-  color: black;
-  font-weight: bold;
-  border-radius: 20px;
   padding: 10px 20px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  font-size: 18px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s ease;
+  position: absolute;
+  top: 120px;
+  left: 40px;
 }
 
 .cancel-button:hover {
-  background-color: transparent;
-}
-
-.cancel-button:active {
-  transform: scale(0.98);
-}
-
-.cancel-button-container button {
-  transition: background-color 0.3s, transform 0.2s ease;
-}
-
-.cancel-button-container button:hover {
   background-color: #ddd;
   transform: scale(1.05);
 }
 
-.cancel-button-container button:active {
+.cancel-button:active {
   transform: scale(0.95);
 }
-
 </style>
