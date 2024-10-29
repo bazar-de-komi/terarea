@@ -1,53 +1,70 @@
 FROM node:latest
 
+# Set the default environment variables
 ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
 ENV LAUNCH_COMMAND="serve -s build"
 
-# Update the system
-RUN apt update && apt upgrade -y
+# Update the system and install required packages
+RUN apt update && apt upgrade -y && \
+    apt install -y npm xsel wget unzip zip && \
+    npm cache clean --force && \
+    apt clean
 
-# Install npm and nodejs
-RUN apt install -y \
-    npm \
-    nodejs \
-    xsel
+# Install Amazon Corretto (OpenJDK 11)
+RUN file_name=amazon-corretto-21-x64-linux-jdk.deb && \
+    wget https://corretto.aws/downloads/latest/$file_name && \
+    apt install -y ./$file_name && \
+    rm $file_name
 
+# Install Gradle
+RUN gradle_name=gradle-8.11-rc-1-bin.zip && \
+    wget https://services.gradle.org/distributions/$gradle_name -P /tmp && \
+    unzip -d /opt/gradle /tmp/$gradle_name && \
+    rm /tmp/$gradle_name
 
-# Installing latest version of npm
-# RUN npm install -g npm@latest
+# Updating gradle path
+ENV GRADLE_HOME /opt/gradle/gradle-8.11-rc-1
+ENV PATH "${GRADLE_HOME}/bin:${PATH}"
 
-# Cleaning any potential cache npm could have
-RUN npm cache clean --force
+# Install Android SDK Command-Line Tools
+RUN mkdir -p /usr/local/android-sdk-linux/cmdline-tools && \
+    wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O /tmp/commandlinetools.zip && \
+    unzip /tmp/commandlinetools.zip -d /usr/local/android-sdk-linux/cmdline-tools && \
+    rm /tmp/commandlinetools.zip
 
-# Installing npm requirements
-RUN timeout 60s npm install -g \
-    serve \
-    react-icons \
-    recharts \
-    axios || timeout 60s npm install -g \
-    serve \
-    react-icons \
-    recharts \
-    axios
+# Updating environement paths
+ENV ANDROID_HOME /usr/local/android-sdk-linux
+ENV PATH "$ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
+
+# Installing sdk manager
+RUN  curl -s "https://get.sdkman.io" | bash
+
+# Accept licenses and install Android SDK packages
+# RUN yes | sdkmanager --licenses && sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
 
 # Create working folder
 RUN mkdir -p ${HOME}
 
-# Go to the working folder
+# Set the working directory
 WORKDIR ${HOME}
 
 # Copy the content of the backend into the container
 COPY . ${HOME}
 
-# Run the setup code
-# RUN timeout 60s npm install || timeout 60s npm install 
+# Install npm dependencies
+# RUN timeout 60s npm install || timeout 60s npm install
+
+# Build the project (optional, uncomment if you want to build here)
 # RUN npm run build
 
 # Cleaning any potential cache npm could have
 RUN npm cache clean --force
+
+# Build the project
+# RUN cd android && ./gradlew assembleRelease
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000
