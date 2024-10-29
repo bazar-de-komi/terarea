@@ -73,20 +73,18 @@ const styles = StyleSheet.create({
     },
     ifThisContainer: {
         flexDirection: 'row',
-        // alignItems: 'center',
-        position: 'relative',  // To contain the absolutely positioned add button
+        position: 'relative',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
     },
     ifThisButton: {
-        width: 250,   // Adjust the width for "If This" button
-        height: 50,   // Adjust the height for "If This" button
+        width: 250,
+        height: 50,
     },
     addButtonContainer: {
         position: 'absolute',
-        right: 10,    // Adjust this to place it within the "If This" button visually
-        // top: 1,      // Adjust to vertically align
+        right: 10,
         width: 60,
         borderRadius: 80,
     },

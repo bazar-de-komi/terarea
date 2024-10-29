@@ -16,6 +16,14 @@ const SocialAuthButton = () => {
         console.warn("Sign In Github");
     }
 
+    const SignInDiscord = () => {
+        console.warn("Sign In Discord");
+    }
+
+    const SignInSpotify = () => {
+        console.warn("Sign In Spotify");
+    }
+
     return (
         <View style={styles.container}>
             <OrLine/>
@@ -25,11 +33,26 @@ const SocialAuthButton = () => {
                 bgColor="white"
                 fgColor="black"
                 icon={<Image source={GoogleLogo} style={styles.logo} />}
+                type=""
             />
             <CustomerButton
                 text="Sign in with GitHub"
                 onPress={SignInGithub}
                 bgColor="#303030"
+                fgColor="white"
+                icon={<Image source={githubLogo} style={styles.logo} />}
+            />
+            <CustomerButton
+                text="Sign in with Discord"
+                onPress={SignInDiscord}
+                bgColor="purple"
+                fgColor="white"
+                icon={<Image source={githubLogo} style={styles.logo} />}
+            />
+            <CustomerButton
+                text="Sign in with Spotify"
+                onPress={SignInSpotify}
+                bgColor="green"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}
             />
