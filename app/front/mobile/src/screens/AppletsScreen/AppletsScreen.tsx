@@ -52,7 +52,7 @@ const AppletsScreen = () => {
                     fgColor={""}
                     />
                 </View>
-            <Text style={styles.homeTitle}>Get appletsScreensed with any Applet</Text>
+            <Text style={styles.descriptionAppletsAfterConnectButton}>Get appletsScreensed with any Applet</Text>
         </ScrollView>
     )
 }
@@ -81,6 +81,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 30,
         color: 'white',
+    },
+    descriptionAppletsAfterConnectButton: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
     },
     description: {
         fontSize: 20,
