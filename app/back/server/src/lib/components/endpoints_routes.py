@@ -5,8 +5,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
 # , Github_check#, IFTTT_Manager
-from .endpoints import Bonus, UserEndpoints, Services, OAuthAuthentication
-
+from .endpoints import Bonus, UserEndpoints, Services
 
 class Endpoints:
     """_summary_
@@ -57,12 +56,6 @@ class Endpoints:
             error=error,
             debug=debug
         )
-        self.oauth: OAuthAuthentication = OAuthAuthentication(
-            runtime_data=runtime_data,
-            success=success,
-            error=error,
-            debug=debug
-        )
 
     def inject_routes(self) -> None:
         """_summary_
@@ -82,9 +75,6 @@ class Endpoints:
             "/api/v1/", self.bonus.get_welcome, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/test", self.bonus.my_test_component, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/bucket_names", self.bonus.get_s3_bucket_names, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
@@ -92,6 +82,9 @@ class Endpoints:
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/stop", self.bonus.post_stop_server, "PUT"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/trigger_action/{id}", self.bonus.trigger_endpoint, "GET"
         )
 
         # Services routes
@@ -102,10 +95,28 @@ class Endpoints:
             "/api/v1/service/{name}", self.services.get_service, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/services_by_tag/{tag}", self.services.get_services_by_tag, "GET"
+            "/api/v1/services/tags", self.services.get_services_by_tag, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/recent_services", self.services.get_recent_services, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service/{name}", self.services.create_service, "POST"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service/{service_id}", self.services.update_service, "PUT"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service/{service_id}", self.services.patch_service, "PATCH"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service_id/name/{name}", self.services.get_service_id_by_name, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service_id/url", self.services.get_service_id_by_url, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service/{service_id}", self.services.delete_service, "DELETE"
         )
 
         # Authentication routes
@@ -121,11 +132,25 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/reset_password", self.user_endpoints.put_reset_password, "PATCH"
         )
+
+        # Oauth routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/oauth/login", self.oauth.oauth_login, "GET"
+            "/api/v1/oauth/login", self.runtime_data_initialised.oauth_authentication_initialised.oauth_login, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/oauth/callback", self.oauth.oauth_callback, "GET"
+            "/api/v1/oauth/callback", self.runtime_data_initialised.oauth_authentication_initialised.oauth_callback, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/{provider}", self.runtime_data_initialised.oauth_authentication_initialised.add_oauth_provider, "POST"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/{provider}", self.runtime_data_initialised.oauth_authentication_initialised.update_oauth_provider_data, "PUT"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/{provider}", self.runtime_data_initialised.oauth_authentication_initialised.patch_oauth_provider_data, "PATCH"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/oauth/{provider}", self.runtime_data_initialised.oauth_authentication_initialised.delete_oauth_provider, "DELETE"
         )
 
         # Users routes
