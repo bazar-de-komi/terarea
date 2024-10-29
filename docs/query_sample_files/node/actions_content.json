@@ -3,14 +3,18 @@
         {
             "action_id": 1,
             "action_name": "email-me",
-            "service_name": "send_me_an_email",
-            "url_extra": "",
-            "url_params": [
-                "some-email@example.com"
-            ],
-            "body": {
-                "subject": "Wake up !",
-                "body": "It is ${current_time} in ${location}"
+            "service": {
+                "name": "send_me_an_email",
+                "url_extra": "",
+                "url_params": [
+                    "some-email@example.com"
+                ],
+                "body": {
+                    "subject": "Wake up !",
+                    "body": "It is ${current_time} in ${location}"
+                },
+                "method": "GET",
+                "header": {}
             }
         }
     ]

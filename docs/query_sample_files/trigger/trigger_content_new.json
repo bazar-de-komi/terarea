@@ -3,12 +3,16 @@
         {
             "trigger_id": 1,
             "trigger_name": "get_the_time_new",
-            "service_name": "give_me_the_time",
-            "url_extra": "/api/time/current/zone",
-            "url_params": [
-                "timeZone=Europe/Paris"
-            ],
-            "body": {},
+            "service": {
+                "name": "give_me_the_time",
+                "url_extra": "/api/time/current/zone",
+                "url_params": [
+                    "timeZone=Europe/Paris"
+                ],
+                "body": {},
+                "method": "GET",
+                "header": {}
+            },
             "verification_operator": "==",
             "verification_value": "9:00",
             "vars": {
