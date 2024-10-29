@@ -81,12 +81,12 @@ const SignIn = () => {
                         icon=""
                     />
                     <CustomerButton
-                    text="Get started"
-                    onPress={SignInPressed}
-                    bgColor={"black"}
-                    fgColor={"white"}
-                    icon={""}
-                    type={""}
+                        text="Get started"
+                        onPress={SignInPressed}
+                        bgColor={"black"}
+                        fgColor={"white"}
+                        icon={""}
+                        type={""}
                     />
                     <SocialLogo/>
                     <CustomerButton
@@ -95,7 +95,7 @@ const SignIn = () => {
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
-                        icon=""
+                        icon={""}
                     />
                 </View>
             </View>
