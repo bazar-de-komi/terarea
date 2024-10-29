@@ -4,10 +4,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import Header from "../../components/Header/header";
 import AppletBox from "../../components/AppletsBox/appletBox";
-
-import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-import ProfilLogo from '../../../assets/profilLogo.png';
 
 const All = () => {
     const Navigation = useNavigation();
@@ -21,26 +19,13 @@ const All = () => {
         Navigation.navigate("Applets");
     }
 
-    const servicesSreens = () => {
+    const servicesScreens = () => {
         Navigation.navigate("Services");
-    }
-
-    const goHome = () => {
-        Navigation.navigate('Home');
     }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.headerContainer}>
-                <Image
-                    source={AreaLogo}
-                    style={styles.areaLogo}
-                />
-                <Image
-                    source={ProfilLogo}
-                    style={styles.profilLogo}
-                />
-            </View>
+            <Header/>
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
                 <CustomerButton
@@ -59,7 +44,7 @@ const All = () => {
                 />
                 <CustomerButton
                 text="Services"
-                onPress={servicesSreens}
+                onPress={servicesScreens}
                 type="TERTIARY"
                 bgColor={""}
                 fgColor={""}
@@ -70,20 +55,18 @@ const All = () => {
                 placeholder="Search Applets or Services"
                 />
             </View>
-            <AppletBox
-            title="How we automate tiktok"
-            description="Learn how to use"
-            bgColor="#f54242"
-            />
-            <View style={styles.back}>
-                <CustomerButton
-                text="Back home"
-                onPress={goHome}
-                type="PRIMARY"
-                bgColor={""}
-                fgColor={""}
+                <AppletBox
+                title="How we automate tiktok"
+                description="Learn how to use TEST"
+                bgColor="#f54242"
                 />
-            </View>
+            <CustomerButton
+            text="Back to Sign in"
+            onPress={loginPressed}
+            type="TERTIARY"
+            bgColor={""}
+            fgColor={""}
+            />
         </ScrollView>
     )
 }
@@ -131,12 +114,6 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         alignItems: 'center',
         padding: 5,
-    },
-    back: {
-        alignItems: 'center',
-        marginBottom: 40,
-        width: '130%',
-        alignSelf: 'center',
     },
 })
 

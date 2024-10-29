@@ -1,14 +1,12 @@
 import  React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import SignIn from '../screens/Authentication/SignIn/signIn';
 import SignUp from '../screens/Authentication/SignUp';
 import ConfirmEmail from '../screens/Authentication/ConfirmEmail/ConfirmEmail';
 import ForgotPassword from '../screens/Authentication/ForgotPassword';
 import NewPassword from '../screens/Authentication/ForgotPassword/newPassword';
-import Home from '../screens/Home/home';
 import All from '../screens/Home/all';
 import Applets from '../screens/Home/applets';
 import Services from '../screens/Home/services';
@@ -16,10 +14,11 @@ import Start from '../screens/Start/start';
 import AppletsScreen from '../screens/AppletsScreen/AppletsScreen';
 import ServicesScreen from '../screens/AppletsScreen/ServicesScreen';
 import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
+import Create from '../screens/Create/create';
+import ChooseServices from '../screens/Create/chooseServices';
+import BackButton from '../components/BackButton/backButton';
 
 const Stack = createStackNavigator();
-
-// const Drawer = createDrawerNavigator();
 
 const Navigation = () => {
     return (
@@ -32,7 +31,7 @@ const Navigation = () => {
                 <Stack.Screen name="Forgot password" component={ForgotPassword} />
                 <Stack.Screen name="New password" component={NewPassword} />
                 
-                <Stack.Screen name="Home" component={Home} />
+                {/* <Stack.Screen name="Home" component={Home} /> */}
                 <Stack.Screen name="All" component={All} />
                 <Stack.Screen name="Applets" component={Applets} />
                 <Stack.Screen name="Services" component={Services} />
@@ -40,8 +39,12 @@ const Navigation = () => {
                 <Stack.Screen name="Applet screen" component={AppletsScreen} />
                 <Stack.Screen name="Service screen" component={ServicesScreen} />
                 <Stack.Screen name="Service details" component={ServicesDetails} />
+                
+                <Stack.Screen name="Back button" component={BackButton} />
 
-                {/* <Drawer.Screen name="Profile" component={NewPassword} /> */}
+                <Stack.Screen name="Create" component={Create} />
+                <Stack.Screen name="Choose services" component={ChooseServices} />
+
             </Stack.Navigator>
         </NavigationContainer>
     )
