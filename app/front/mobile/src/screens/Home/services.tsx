@@ -25,10 +25,23 @@ const Services = () => {
         Navigation.navigate("Services");
     };
 
-    //clic in ifttt logo
-    const goHome = () => {
-        Navigation.navigate('Home');
-    };
+    const servicesData = [
+        {
+            title: "5-Minute Crafts",
+            description: "",
+            bgColor: "orange",
+        },
+        {
+            title: "The Verge on Youtube",
+            description: "",
+            bgColor: "red",
+        },
+        {
+            title: "2Smart Cloud",
+            description: "",
+            bgColor: "grey",
+        },
+    ];
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -67,12 +80,15 @@ const Services = () => {
                 placeholder="All services"
             />
             </View>
-            <AppletBox
-            title="5-Minute Crafts"
-            description=""
-            bgColor="green"
-            onPress={ServicesDetails}
-            />
+            {servicesData.map((services, index) => (
+                <AppletBox
+                key={index}
+                title={services.title}
+                description={services.description}
+                bgColor={services.bgColor}
+                onPress={ServicesDetails}
+                />
+            ))}
         </ScrollView>
     );
 };
