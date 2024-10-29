@@ -16,7 +16,7 @@ const SignIn = () => {
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { height } = useWindowDimensions() ;
+    const { height } = useWindowDimensions();
     const navigation = useNavigation();
 
     const SignInPressed = async () => {
@@ -27,12 +27,12 @@ const SignIn = () => {
         };
         try {
             const result = await queries.post("/api/v1/login", account);
-
             if (result.token) {
                 storeValue('token', result.token);
                 navigation.navigate("All");
             } else {
                 setError("Identifiant or password incorrect");
+                Alert.alert("ID or password incorrect");
             }
         } catch (error) {
             console.error("Sign error: ", error);
