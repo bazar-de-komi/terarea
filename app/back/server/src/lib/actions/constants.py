@@ -4,6 +4,7 @@
 """
 # ---------------------------------- Imports  ----------------------------------
 import operator
+import json
 
 # ---------------------------------- log type ----------------------------------
 
@@ -186,3 +187,13 @@ OPERATOR_EXCHANGE = {
     "less than or equal to": operator.le,
     "greater than or equal to": operator.ge,
 }
+
+def check_if_oauth_is_valid(oauth: json) -> bool:
+    from datetime import datetime
+
+    current_time = datetime.now().isoformat(sep="T", timespec="seconds")
+    expiration = datetime.fromisoformat(oauth.token_expiration)
+
+    if current_time >= expiration:
+        return False
+    return True
