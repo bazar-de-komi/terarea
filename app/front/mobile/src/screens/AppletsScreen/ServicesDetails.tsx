@@ -45,7 +45,7 @@ const ServicesDetails = () => {
                 <Text style={styles.description}>5-Minute Crafts Youtube channel is a</Text>
             <View style={styles.createStyle}>
                     <CustomerButton
-                    text="Create"
+                    text="Create"homeTitle
                     onPress={create}
                     type="PRIMARY"
                     bgColor={""}
@@ -53,7 +53,7 @@ const ServicesDetails = () => {
                     />
                 </View>
             </View>
-            <Text style={styles.homeTitle}>Popular 5-Minute Crafts workflows & automations</Text>
+            <Text style={styles.descriptionSericesAfterCreateButton}>Popular 5-Minute Crafts workflows & automations</Text>
             <AppletBox
             title="Reveive a weekly email digest of all new videos for the 5-Minute Crafts Youtub channel"
             description={"5-Minute Crafts"}
@@ -89,6 +89,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 30,
         color: 'white',
+    },
+    descriptionSericesAfterCreateButton: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
     },
     description: {
         fontSize: 20,
