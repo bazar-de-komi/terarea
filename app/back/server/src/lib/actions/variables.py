@@ -39,7 +39,7 @@ class Variables:
         self.error: int = error
         self.debug: bool = debug
         # -------------- The variable tracking runtime variables  --------------
-        self.variables: Dict[str, Any] = {}
+        self.variables: Dict[str, Dict[str, Any]] = {}
         # ---------------------- The visual logger class  ----------------------
         self.disp: Disp = Disp(
             TOML_CONF,

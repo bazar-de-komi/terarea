@@ -62,7 +62,7 @@ export default defineComponent({
   margin: 0;
   font-weight: bold;
   margin-bottom: 15px;
-  color: #000;
+  color: #fff;
   word-wrap: break-word;
   white-space: normal;
 }

@@ -197,6 +197,10 @@ class UserEndpoints:
         if tab_column == self.error or len(tab_column) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         tab_column.pop(0)
+        self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_VERIFICATION,
+            f"term='{email}'"
+        )
         status = self.runtime_data_initialised.database_link.insert_data_into_table(
             table=CONST.TAB_VERIFICATION,
             data=[
