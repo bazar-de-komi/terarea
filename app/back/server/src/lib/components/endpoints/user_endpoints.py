@@ -136,14 +136,30 @@ class UserEndpoints:
         self.disp.log_debug(f"Column after id pop = {column}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_ACCOUNTS, data, column) == self.error:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
-        node = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title=title,
-            message="Account created successfully.",
-            resp="success",
-            token=None,
-            error=False
+        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
+            email
         )
-        return HCI.success(node)
+        if data["status"] == self.error:
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="Login failed.",
+                resp="error",
+                token=data["token"],
+                error=True
+            )
+            return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=f"Welcome {email}",
+            resp="success",
+            token=data["token"]
+        )
+        body["token"] = data["token"]
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
 
     async def post_send_email_verification(self, request: Request) -> Response:
         """_summary_
@@ -181,6 +197,10 @@ class UserEndpoints:
         if tab_column == self.error or len(tab_column) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         tab_column.pop(0)
+        self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_VERIFICATION,
+            f"term='{email}'"
+        )
         status = self.runtime_data_initialised.database_link.insert_data_into_table(
             table=CONST.TAB_VERIFICATION,
             data=[

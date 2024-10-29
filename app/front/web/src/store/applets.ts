@@ -11,6 +11,7 @@ export interface Applet {
   description: string;
   color: string;
   tags: string[];
+  type: 'applet' | 'service';
 }
 
 const appletsModule: Module<AppletsState, AppState> = {
@@ -22,18 +23,42 @@ const appletsModule: Module<AppletsState, AppState> = {
         description: "Change your Android wallpaper daily with NASA's image.",
         color: "#8140DD",
         tags: ['NASA', 'wallpaper', 'image', 'applet'],
+        type: 'applet',
       },
       {
-        title: "Get the weather forecast every day at 7:00 am",
-        description: "Receive daily weather forecasts.",
-        color: "#FF6347",
-        tags: ['weather', 'forecast', 'daily', 'applet'],
+        title: "The Verge on YouTube integrations",
+        description: "The Verge is a popular technology news and media network that covers a wide range of topics including gadgets, science, entertainment, and culture. They have a YouTube channel where they upload videos related to their coverage, including product reviews, interviews, and news updates. You can find their YouTube channel by searching for The Verge on YouTube.",
+        color: '#003399',
+        tags: ['Verge', 'news', 'technology', 'service'],
+        type: 'service',
       },
       {
-        title: "on fait des teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest",
-        description: "Receive daily weather forecasts.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        color: "#FF6347",
-        tags: ['test', 'forecast', 'service'],
+        title: "Ask ChatGPT anything",
+        description: "Posez vos questions à ChatGPT pour obtenir des réponses instantanées et détaillées.",
+        color: "#64F58C",
+        tags: ['ChatGPT communication', 'questions', 'answers'],
+        type: 'applet',
+      },
+      {
+        title: "NASA's Astronomy Picture of the Day",
+        description: "Affichez l'image astronomique du jour de la NASA directement sur votre écran.",
+        color: "#8140DD",
+        tags: ['NASA', 'astronomy', 'image', 'daily'],
+        type: 'applet',
+      },
+      {
+        title: "NASA Space News Feed",
+        description: "Restez à jour avec les dernières nouvelles de la NASA concernant l'espace et l'astronomie.",
+        color: "#8140DD",
+        tags: ['NASA', 'news', 'space', 'science'],
+        type: 'applet',
+      },
+      {
+        title: "ChatGPT communication",
+        description: "Utilisez ChatGPT pour des réponses instantanées.",
+        color: "#64F58C",
+        tags: ['ChatGPT', 'prompt', 'service'],
+        type: 'service',
       },
     ],
     searchQuery: '',
@@ -44,11 +69,29 @@ const appletsModule: Module<AppletsState, AppState> = {
     },
   },
   getters: {
-    filteredApplets(state) {
+    filteredAllItems(state) {
       return state.applets.filter((applet) =>
         applet.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
         applet.description.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
         applet.tags.some(tag => tag.toLowerCase().includes(state.searchQuery.toLowerCase()))
+      );
+    },
+    filteredServices(state) {
+      return state.applets.filter((applet) =>
+        applet.type === 'service' && (
+          applet.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+          applet.description.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+          applet.tags.some(tag => tag.toLowerCase().includes(state.searchQuery.toLowerCase()))
+        )
+      );
+    },
+    filteredApplets(state) {
+      return state.applets.filter((applet) =>
+        applet.type === 'applet' && (
+          applet.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+          applet.description.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+          applet.tags.some(tag => tag.toLowerCase().includes(state.searchQuery.toLowerCase()))
+        )
       );
     },
   },
