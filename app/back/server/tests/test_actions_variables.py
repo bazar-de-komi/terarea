@@ -389,6 +389,7 @@ def test_remove_scope() -> None:
     assert VI.remove_scope(SCOPE) == SUCCESS
     assert "default_scope" in VI.variables
     assert SCOPE not in VI.variables
+    assert VI.clear_variables("default_scope") == SUCCESS
     assert not VI.variables["default_scope"]
     assert VI.remove_scope("default_scope") == SUCCESS
     assert not VI.variables

@@ -76,7 +76,7 @@ class ActionsMain:
         self.disp.log_debug("Getting the action ids", title)
         action_ids = self.runtime_data.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
-            columns=["id"],
+            column=["id"],
             beautify=False
         )
         self.disp.log_debug(f"action_ids = {action_ids}", title)
@@ -106,7 +106,7 @@ class ActionsMain:
             return self.error
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
-            columns=["running"],
+            column=["running"],
             values=[1],
             condition=f"id={node}"
         )
@@ -147,7 +147,7 @@ class ActionsMain:
             return self.error
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
-            columns=["running"],
+            column=["running"],
             values=[0],
             condition=f"id={node}"
         )
@@ -247,6 +247,7 @@ class ActionsMain:
         )
         trigger_node: TriggerManagement = TriggerManagement(
             variable=self.variables,
+            logger=self.logger,
             runtime_data=self.runtime_data,
             error=self.error,
             success=self.success,
@@ -254,6 +255,7 @@ class ActionsMain:
         )
         action_node: ActionManagement = ActionManagement(
             variable=self.variables,
+            logger=self.logger,
             runtime_data=self.runtime_data,
             error=self.error,
             success=self.success,
