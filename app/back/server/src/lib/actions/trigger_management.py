@@ -11,6 +11,7 @@ from .variables import Variables
 from . import constants as ACONST
 from .logger import ActionLogger
 from ..components.runtime_data import RuntimeData
+from ..components import constants as CONST
 
 
 class TriggerManagement:
@@ -85,7 +86,23 @@ class TriggerManagement:
             self.logger.log_warning(
                 ACONST.TYPE_SERVICE_TRIGGER,
                 action_id=action_id,
-                message="",
+                message=msg,
                 resolved=True
             )
+        oauth_token = self.runtime_data.database_link.get_data_from_table(
+            table=CONST.TAB_ACTIVE_OAUTHS,
+            column="token_expiration",
+            where=f"user_id={trigger[0]['user_id']}",
+            beautify=False
+        )
+        if ACONST.check_if_oauth_is_valid(oauth_token) is False:
+            msg = f"Oauth token has expired."
+            self.disp.log_error(msg, title)
+            self.logger.log_fatal(
+                ACONST.TYPE_SERVICE_TRIGGER,
+                action_id=action_id,
+                message=msg,
+                resolved=True
+            )
+            return self.error
         return self.success
