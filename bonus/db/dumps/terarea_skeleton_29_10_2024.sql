@@ -66,7 +66,7 @@ CREATE TABLE `Actions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(400) NOT NULL DEFAULT 'zero two, darling, darling... DARLING !!!',
   `trigger` mediumtext NOT NULL DEFAULT 'Elle est où la pierre ?',
-  `consequences` mediumtext NOT NULL DEFAULT 'DANS LA POCHE !!!',
+  `consequences` mediumtext NULL DEFAULT 'DANS LA POCHE !!!',
   `user_id` bigint(20) unsigned NOT NULL COMMENT 'The author of the current action',
   `tags` longtext DEFAULT NULL COMMENT 'The tags used to find the the actions the user created.',
   `running` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'L''information sur si le l''action est en fonctionnement',
@@ -308,4 +308,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-27 12:53:00
+-- Dump completed on 2024-10-29 12:06:00
