@@ -31,8 +31,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+// import { useRouter } from 'vue-router';
 import AuthButton from '../../components/AuthButton.vue';
 import AuthLayout from '../../components/AuthLayout.vue';
+import { queries } from '@/../lib/querier';
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
@@ -58,12 +60,28 @@ export default defineComponent({
     };
   },
   methods: {
-    submitSignUp() {
+    async submitSignUp() {
       if (this.password !== this.confirmPassword) {
         alert('Passwords do not match');
         return;
       }
       console.log('Sign up with', this.email, this.password);
+
+      try {
+        const response = await queries.put('/register', {
+          email: this.email,
+          password: this.password,
+        });
+        if (response.token) {
+          localStorage.setItem('authToken', response.token);
+          this.$router.push('/explore/all');
+        } else {
+          alert('Erreur lors de la création du compte. Veuillez réessayer.');
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'inscription:', error);
+        alert('Erreur lors de l\'inscription. Veuillez vérifier vos informations.');
+      }
     },
     togglePassword() {
       this.showPassword = !this.showPassword;
@@ -74,6 +92,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 <style scoped>
 .ifttt-logo {

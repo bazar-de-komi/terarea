@@ -24,11 +24,10 @@
       <div class="applets-container">
         <div class="applets-grid" ref="appletsGrid">
           <AppletTile
-            v-for="(applet, index) in filteredApplets"
+            v-for="(service, index) in filteredServices"
             :key="index"
-            :title="applet.title"
-            :description="applet.description"
-            :background-color="applet.color"
+            :title="service.title"
+            :background-color="service.color"
           />
         </div>
       </div>
@@ -40,7 +39,7 @@
 import { defineComponent, computed } from 'vue';
 import { useStore } from 'vuex';
 import Header from '@/components/AppHeader.vue';
-import AppletTile from '@/components/AppletTile.vue';
+import AppletTile from '@/components/ServiceBoardTile.vue';
 
 export default defineComponent({
   components: {
@@ -55,7 +54,7 @@ export default defineComponent({
       set: (value: string) => store.dispatch('applets/updateSearchQuery', value),
     });
 
-    const filteredApplets = computed(() => store.getters['applets/filteredApplets']);
+    const filteredServices = computed(() => store.getters['applets/filteredServices']);
 
     const updateSearchQuery = () => {
       store.dispatch('applets/updateSearchQuery', searchQuery.value);
@@ -67,7 +66,7 @@ export default defineComponent({
 
     return {
       searchQuery,
-      filteredApplets,
+      filteredServices,
       updateSearchQuery,
       clearSearchQuery,
     };
@@ -75,74 +74,22 @@ export default defineComponent({
 });
 </script>
 
-
 <style scoped>
-.filter-btn.active {
-  font-weight: bold;
-}
-
 .explore-page {
   font-family: 'Arial', sans-serif;
-  padding: 0 10px;
-  background-color: white;
-  padding-top: 100px;
+  padding: 0 2%;
+  background-color: transparent;
+  padding-top: 80px;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.logo {
-  width: 120px;
-  height: auto;
-}
-
-.nav {
-  display: flex;
-  align-items: center;
-}
-
-.nav-item {
-  margin: 0 15px;
-  text-decoration: none;
-  color: black;
+.filter-btn.active {
   font-weight: bold;
-}
-
-.create-btn {
-  background-color: black;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 20px;
-  font-size: 14px;
-}
-
-.profile-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.title-section {
-  text-align: center;
-  margin: 30px 0;
-}
-
-.section-title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 10px;
 }
 
 .filter-buttons {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   margin-bottom: 20px;
 }
 
@@ -150,8 +97,9 @@ export default defineComponent({
   background-color: transparent;
   border: none;
   color: black;
-  font-size: 18px;
-  margin: 0 10px;
+  font-size: 1rem;
+  margin: 0 5px;
+  padding: 8px 15px;
   cursor: pointer;
 }
 
@@ -167,11 +115,12 @@ export default defineComponent({
 }
 
 .search-bar {
-  width: 600px;
-  padding: 15px;
+  width: 90%;
+  max-width: 600px;
+  padding: 12px;
   border: 1px solid #ccc;
   border-radius: 25px;
-  font-size: 16px;
+  font-size: 1rem;
   text-align: center;
 }
 
@@ -195,25 +144,23 @@ export default defineComponent({
 
 .applets-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
-  scroll-behavior: smooth;
   padding: 20px 0;
-  max-width: 90%;
+  max-width: 100%;
 }
 
 .applet-tile {
-  width: 250px;
-  height: 300px;
-  background-color: var(--tile-background-color, #f1f1f1);
+  width: 100%;
+  max-width: 300px;
+  height: auto;
   padding: 20px;
   border-radius: 15px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  font-family: 'Arial', sans-serif;
 }
 
 .applet-title {
@@ -227,5 +174,53 @@ export default defineComponent({
   font-size: 16px;
   color: #666;
   line-height: 1.5;
+}
+
+.title-section {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+@media (min-width: 1200px) {
+  .applets-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .applets-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .applets-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .applets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .search-bar {
+    width: 80%;
+  }
+
+  .filter-btn {
+    font-size: 0.9rem;
+    padding: 5px 10px;
+  }
 }
 </style>
