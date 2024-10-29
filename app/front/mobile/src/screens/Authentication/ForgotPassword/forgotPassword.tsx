@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from "../../../components/CustomerButton";
+import { getValue, storeValue } from "../../../components/StoreData/storeData";
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 import { queries } from "../../../../back-endConnection/querier";
@@ -18,8 +19,8 @@ const ForgotPassword = () => {
         console.log("Hello")
         try {
             const response = await queries.post("/api/v1/send_email_verification", { email: email })
-            console.log("Response =",response)
             if (response) {
+                await storeValue("email", email)
                 navigation.navigate("New password");
             }
         } catch (error) {
