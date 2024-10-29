@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import SignIn from '../screens/Authentication/SignIn/signIn';
-import SignUp from '../screens/Authentication/SignUp';
+import SignUp from '../screens/Authentication/SignUp/signUp';
 import ConfirmEmail from '../screens/Authentication/ConfirmEmail/ConfirmEmail';
 import ForgotPassword from '../screens/Authentication/ForgotPassword';
 import NewPassword from '../screens/Authentication/ForgotPassword/newPassword';
@@ -30,8 +30,7 @@ const Navigation = () => {
                 <Stack.Screen name="Confirmation email" component={ConfirmEmail} />
                 <Stack.Screen name="Forgot password" component={ForgotPassword} />
                 <Stack.Screen name="New password" component={NewPassword} />
-                
-                {/* <Stack.Screen name="Home" component={Home} /> */}
+
                 <Stack.Screen name="All" component={All} />
                 <Stack.Screen name="Applets" component={Applets} />
                 <Stack.Screen name="Services" component={Services} />

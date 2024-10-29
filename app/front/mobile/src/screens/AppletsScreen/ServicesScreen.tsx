@@ -76,10 +76,12 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         margin: 30,
+        color: 'white',
     },
     description: {
         fontSize: 20,
         margin: 30,
+        color: 'white',
     },
     homeNavigation: {
         flexDirection: 'row',

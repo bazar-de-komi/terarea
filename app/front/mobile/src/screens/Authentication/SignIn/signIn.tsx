@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import axios from 'axios';
 import { queries } from "../../../../back-endConnection/querier";
+import { storeValue } from "../../../components/StoreData/storeData";
 
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
@@ -16,31 +16,30 @@ const SignIn = () => {
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { height } = useWindowDimensions() ;
+    const { height } = useWindowDimensions();
     const navigation = useNavigation();
 
-    const SignInPressed = () => {
-        navigation.navigate('All', { page: 'All'});
-        // setIsSubmitting(true);
-        // const account = {
-        //     email: email,
-        //     password: password,
-        // };
-        // try {
-        //     const result = await queries.post("/login", account);
-
-        //     if (result && result.detail) {
-        //         localStorage.setItem('token', result.detail);
-        //         navigation.navigate("Home");
-        //     } else {
-        //         setError("Identifiant or password incorrect");
-        //     }
-        // } catch (error) {
-        //     console.error("Sign error: ", error);
-        //     setError("Error to connecte. Please check your id or your password");
-        // } finally {
-        //     setIsSubmitting(false);
-        // }
+    const SignInPressed = async () => {
+        setIsSubmitting(true);
+        const account = {
+            email: email,
+            password: password,
+        };
+        try {
+            const result = await queries.post("/api/v1/login", account);
+            if (result.token) {
+                storeValue('token', result.token);
+                navigation.navigate("All");
+            } else {
+                setError("Identifiant or password incorrect");
+                Alert.alert("ID or password incorrect");
+            }
+        } catch (error) {
+            console.error("Sign error: ", error);
+            setError("Error to connecte. Please check your id or your password");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const forgotPasswordPressed = () => {
@@ -82,11 +81,12 @@ const SignIn = () => {
                         icon=""
                     />
                     <CustomerButton
-                    text="Get started"
-                    onPress={SignInPressed}
-                    bgColor={"black"}
-                    fgColor={"white"}
-                    icon=""
+                        text="Get started"
+                        onPress={SignInPressed}
+                        bgColor={"black"}
+                        fgColor={"white"}
+                        icon={""}
+                        type={""}
                     />
                     <SocialLogo/>
                     <CustomerButton
@@ -95,7 +95,7 @@ const SignIn = () => {
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
-                        icon=""
+                        icon={""}
                     />
                 </View>
             </View>

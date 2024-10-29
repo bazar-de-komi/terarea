@@ -11,10 +11,10 @@ const AppletBox = ({title, description, bgColor, onPress}) => {
         </TouchableOpacity>
     );
 }
+
 const styles = StyleSheet.create({
     boxContainer: {
         width: '90%',
-        // height: '50%',
         padding: 105,
         borderRadius: 20,
         marginBottom: 20,
@@ -26,12 +26,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 40,
         textAlign: 'left',
+        color: 'white',
     },
     description: {
         bottom: 80,
         fontSize: 14,
         color: 'black',
         marginBottom: 10,
+        color: 'white',
     },
     tagsContainer: {
         flexDirection: 'row',
