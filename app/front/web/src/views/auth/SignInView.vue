@@ -27,6 +27,7 @@
 import { defineComponent } from 'vue';
 import AuthButton from '../../components/AuthButton.vue';
 import AuthLayout from '../../components/AuthLayout.vue';
+import { queries } from '@/../lib/querier';
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
@@ -52,11 +53,26 @@ export default defineComponent({
     };
   },
   methods: {
-    submitSignIn() {
+    async submitSignIn() {
       if (this.email === 'user@example.com' && this.password === 'password123') {
         this.$router.push('/explore/all');
       } else {
         alert('Invalid email or password');
+      }
+      try {
+        const response = await queries.put('/login', {
+          email: this.email,
+          password: this.password,
+        });
+        if (response.token) {
+          localStorage.setItem('authToken', response.token);
+          this.$router.push('/explore/all');
+        } else {
+          alert('Erreur lors de la connection au compte. Veuillez réessayer.');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la connection:', error);
+        alert('Erreur lors de la connection. Veuillez vérifier vos informations.');
       }
     },
     togglePassword() {
