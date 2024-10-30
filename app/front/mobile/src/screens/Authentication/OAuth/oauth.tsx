@@ -6,7 +6,7 @@ import { queries } from '../../../../back-endConnection/querier';
 const OAuthScreen = async () => {
     const authUrl = await getValue("authUrl")
 
-    const onNavigationStateChange = async (event) => {
+    const onNavigationStateChange = async (event: any) => {
         if (event.url.startsWith("https://pringpal.news/callback")) {
             const urlParams = new URLSearchParams(event.url.split('?')[1]);
             const code = urlParams.get('code');

@@ -19,7 +19,7 @@ const SocialAuthButton = () => {
             const provider = {
                 provider: "google"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
+            const response = await queries.post("/api/v1/oauth/login", provider);
             await storeValue("authUrl", response.authorization_url);
             navigation.navigate("Oauth screen");
         } catch (error) {
@@ -34,7 +34,7 @@ const SocialAuthButton = () => {
             const provider = {
                 provider: "github"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
+            const response = await queries.post("/api/v1/oauth/login", provider);
             await storeValue("authUrl", response.authorization_url);
             navigation.navigate("Oauth screen");
         } catch (error) {
@@ -49,7 +49,7 @@ const SocialAuthButton = () => {
             const provider = {
                 provider: "discord"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
+            const response = await queries.post("/api/v1/oauth/login", provider);
             console.log("Response:", response);
             await storeValue("authUrl", response.authorization_url);
             navigation.navigate("Oauth screen");
@@ -65,7 +65,7 @@ const SocialAuthButton = () => {
             const provider = {
                 provider: "spotify"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
+            const response = await queries.post("/api/v1/oauth/login", provider);
             await storeValue("authUrl", response.authorization_url);
             navigation.navigate("Oauth screen");
         } catch (error) {
