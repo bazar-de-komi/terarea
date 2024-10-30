@@ -1,6 +1,6 @@
 <template>
   <button @click="handleClick" class="cancel-button">
-    Cancel
+    {{ buttonText }}
   </button>
 </template>
 
@@ -9,6 +9,12 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'CancelButton',
+  props: {
+    buttonText: {
+      type: String,
+      default: 'Cancel',
+    }
+  },
   emits: ['cancel'],
   methods: {
     handleClick() {

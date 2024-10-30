@@ -107,6 +107,8 @@ class UserEndpoints:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email: str = request_body["email"]
         password = request_body["password"]
+        if not email or email == "" or not password or password == "":
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
