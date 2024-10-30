@@ -24,6 +24,24 @@ const ServicesDetails = () => {
         Navigation.navigate('Create');
     };
 
+    const servicesDetailsData = [
+        {
+            title: "Receive a weekly email digest of all new videos",
+            description: "5-Minute Craft",
+            bgColor: "green",
+        },
+        {
+            title: "Reveive mobile notif",
+            description: "5-Minute Craft",
+            bgColor: "green",
+        },
+        {
+            title: "Add a now row to",
+            description: "5-Minute Craft",
+            bgColor: "green",
+        },
+    ];
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
@@ -54,13 +72,15 @@ const ServicesDetails = () => {
                 </View>
             </View>
             <Text style={styles.descriptionSericesAfterCreateButton}>Popular 5-Minute Crafts workflows & automations</Text>
-            <AppletBox
-            title="Reveive a weekly email digest of all new videos for the 5-Minute Crafts Youtub channel"
-            description={"5-Minute Crafts"}
-            bgColor={"green"}
-            onPress={servicesScreen}
-
+            {servicesDetailsData.map((servicesDetails, index) => (
+                <AppletBox
+                key={index}
+                title={servicesDetails.title}
+                description={servicesDetails.description}
+                bgColor={servicesDetails.bgColor}
+                onPress={servicesScreen}
             />
+        ))}
         </ScrollView>
     )
 }
