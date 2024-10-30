@@ -1,5 +1,4 @@
-/*!999999\- enable the sandbox mode */ 
--- MariaDB dump 10.19  Distrib 10.11.8-MariaDB, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: terarea
 -- ------------------------------------------------------
@@ -8,13 +7,14 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
 
 --
 -- Current Database: `terarea`
@@ -30,7 +30,7 @@ USE `terarea`;
 
 DROP TABLE IF EXISTS `ActionLoging`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ActionLoging` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `time` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'This is the time at which the workflow occurred',
@@ -56,17 +56,44 @@ LOCK TABLES `ActionLoging` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ActionTemplate`
+--
+
+DROP TABLE IF EXISTS `ActionTemplate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ActionTemplate` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `type` varchar(100) NOT NULL DEFAULT 'action' COMMENT 'The type of the template',
+  `json` longtext NOT NULL COMMENT 'The json content for the template.',
+  `action_id` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ActionTemplate_Actions_FK` (`action_id`),
+  CONSTRAINT `ActionTemplate_Actions_FK` FOREIGN KEY (`action_id`) REFERENCES `Actions` (`id`) ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table containing the templates for the action that the website has to offer.';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ActionTemplate`
+--
+
+LOCK TABLES `ActionTemplate` WRITE;
+/*!40000 ALTER TABLE `ActionTemplate` DISABLE KEYS */;
+/*!40000 ALTER TABLE `ActionTemplate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `Actions`
 --
 
 DROP TABLE IF EXISTS `Actions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Actions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(400) NOT NULL DEFAULT 'zero two, darling, darling... DARLING !!!',
   `trigger` mediumtext NOT NULL DEFAULT 'Elle est où la pierre ?',
-  `consequences` mediumtext NULL DEFAULT 'DANS LA POCHE !!!',
+  `consequences` mediumtext DEFAULT 'DANS LA POCHE !!!',
   `user_id` bigint(20) unsigned NOT NULL COMMENT 'The author of the current action',
   `tags` longtext DEFAULT NULL COMMENT 'The tags used to find the the actions the user created.',
   `running` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'L''information sur si le l''action est en fonctionnement',
@@ -96,7 +123,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `ActiveOauths`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ActiveOauths` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` mediumtext DEFAULT NULL COMMENT 'The token temporarily provided by the sso',
@@ -128,7 +155,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Connections`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Connections` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` varchar(900) DEFAULT NULL COMMENT 'The token of the user.',
@@ -155,7 +182,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Services`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Services` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL COMMENT 'The name of the service.',
@@ -188,7 +215,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `UserOauthConnection`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `UserOauthConnection` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `provider_name` mediumtext NOT NULL COMMENT 'The name of the service provider.',
@@ -222,7 +249,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `UserServices`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `UserServices` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL,
@@ -250,7 +277,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(200) NOT NULL COMMENT 'The user''s username.',
@@ -279,7 +306,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Verification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Verification` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `term` mediumtext DEFAULT NULL COMMENT 'This is the identification for the code reference.',
@@ -298,6 +325,10 @@ LOCK TABLES `Verification` WRITE;
 /*!40000 ALTER TABLE `Verification` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Verification` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'terarea'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -308,4 +339,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-29 12:06:00
+-- Dump completed on 2024-10-30 12:09:32

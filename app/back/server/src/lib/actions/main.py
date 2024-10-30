@@ -261,7 +261,23 @@ class ActionsMain:
             success=self.success,
             debug=self.debug
         )
-        status = trigger_node.run()
+        try:
+            status = trigger_node.run()
+        except Exception as e:
+            self.logger.log_fatal(
+                log_type=ACONST.TYPE_SERVICE_TRIGGER,
+                action_id=node,
+                message=f"Failed to run the trigger node: {e}",
+                resolved=False
+            )
+            self.dump_scope(
+                action_id=node,
+                scope=variable_scope,
+                log_type=ACONST.TYPE_SERVICE_TRIGGER
+            )
+            self.variables.clear_variables(scope=variable_scope)
+            self.unlock_action(node)
+            return self.error
         if status == self.error:
             self.logger.log_fatal(
                 log_type=ACONST.TYPE_SERVICE_TRIGGER,
@@ -277,8 +293,23 @@ class ActionsMain:
             self.variables.clear_variables(scope=variable_scope)
             self.unlock_action(node)
             return self.error
-        status2 = action_node.run()
-        if status2 == self.error:
+        try:
+            status = action_node.run()
+        except Exception as e:
+            self.logger.log_fatal(
+                log_type=ACONST.TYPE_SERVICE_ACTION,
+                action_id=node,
+                message=f"Failed to run the action node: {e}",
+                resolved=False
+            )
+            self.dump_scope(
+                action_id=node,
+                scope=variable_scope,
+                log_type=ACONST.TYPE_SERVICE_ACTION
+            )
+            self.unlock_action(node)
+            return self.error
+        if status == self.error:
             self.logger.log_fatal(
                 log_type=ACONST.TYPE_SERVICE_ACTION,
                 action_id=node,

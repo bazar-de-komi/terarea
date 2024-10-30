@@ -3,17 +3,27 @@
         {
             "trigger_id": 1,
             "trigger_name": "get_the_time",
-            "service_name": "give_me_the_time",
-            "url_extra": "/api/time/current/zone",
-            "url_params": [
-                "timeZone=Europe/Paris"
-            ],
-            "body": {},
-            "verification_operator": "==",
-            "verification_value": "9:00",
-            "vars": {
-                "current_time": "NOW",
-                "location": "where"
+            "service": {
+                "name": "give_me_the_time",
+                "url_extra": "/api/time/current/zone",
+                "url_params": [
+                    "timeZone=Europe/Paris"
+                ],
+                "body": {},
+                "method": "GET",
+                "header": {},
+                "response": {
+                    "code": 200,
+                    "body": "",
+                    "header": ""
+                },
+                "verification_operator": "==",
+                "verification_value": "9:00",
+                "vars": {
+                    "current_time": "NOW",
+                    "location": "where",
+                    "credits": "$ref:header.used.credits"
+                }
             }
         }
     ]
