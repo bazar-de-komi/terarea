@@ -84,6 +84,7 @@ services:
     tty: true
     environment:
       LAUNCH_COMMAND: /bin/bash
+      ANDROID_HOME: /usr/local/android-sdk-linux
     command: /bin/bash
     depends_on:
       - client_web
@@ -91,7 +92,7 @@ services:
       - t-network
     volumes:
       - t-volume:/shared_folder
-  
+      - ./app/front/mobile/android/app/build/outputs:/app/outputs
 
 networks:
   t-network:
