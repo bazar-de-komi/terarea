@@ -9,7 +9,7 @@ interface QueryOptions {
 }
 
 async function query(
-  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+  method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE" = "GET",
   path: string = "/",
   body: object = {},
   token: string = ""
