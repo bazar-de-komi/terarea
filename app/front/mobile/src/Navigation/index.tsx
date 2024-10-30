@@ -17,6 +17,7 @@ import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
 import ChooseServices from '../screens/Create/chooseServices';
 import BackButton from '../components/BackButton/backButton';
+import Profile from '../screens/profile';
 
 const Stack = createStackNavigator();
 
@@ -43,6 +44,8 @@ const Navigation = () => {
 
                 <Stack.Screen name="Create" component={Create} />
                 <Stack.Screen name="Choose services" component={ChooseServices} />
+
+                <Stack.Screen name="Profile" component={Profile} />
 
             </Stack.Navigator>
         </NavigationContainer>
