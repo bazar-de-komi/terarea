@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert} from "react-native";
+import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { queries } from "../../../../back-endConnection/querier";
 import { storeValue } from "../../../components/StoreData/storeData";
@@ -20,6 +20,24 @@ const SignIn = () => {
     const navigation = useNavigation();
 
     const SignInPressed = async () => {
+        if (email === '') {
+            Alert.alert("You must enter an email.");
+            return;
+        }
+        if (password === '') {
+            Alert.alert("You must enter a password.");
+            return;
+        }
+        const emailRegex: RegExp = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+
+        function isValidEmail(email: string): boolean {
+            return emailRegex.test(email);
+        }
+
+        if (isValidEmail(email) === false) {
+            Alert.alert("The email you entered is not a valid email.")
+            return;
+        }
         setIsSubmitting(true);
         const account = {
             email: email,
@@ -36,7 +54,7 @@ const SignIn = () => {
             }
         } catch (error) {
             console.error("Sign error: ", error);
-            setError("Error to connecte. Please check your id or your password");
+            setError("Error to connect. Please check your id or your password");
         } finally {
             setIsSubmitting(false);
         }
@@ -88,7 +106,7 @@ const SignIn = () => {
                         icon={""}
                         type={""}
                     />
-                    <SocialLogo/>
+                    <SocialLogo />
                     <CustomerButton
                         text="New to IFTTT ? Sign up here"
                         onPress={loginPressed}
