@@ -1,4 +1,4 @@
-import  React from 'react'
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -17,14 +17,14 @@ import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
 import ChooseServices from '../screens/Create/chooseServices';
 import BackButton from '../components/BackButton/backButton';
-import Profile from '../screens/profile';
+import OAuthScreen from '../screens/Authentication/OAuth';
 
 const Stack = createStackNavigator();
 
 const Navigation = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Start" component={Start} />
                 <Stack.Screen name="Sign Up" component={SignUp} />
                 <Stack.Screen name="Sign In" component={SignIn} />
@@ -39,11 +39,12 @@ const Navigation = () => {
                 <Stack.Screen name="Applet screen" component={AppletsScreen} />
                 <Stack.Screen name="Service screen" component={ServicesScreen} />
                 <Stack.Screen name="Service details" component={ServicesDetails} />
-                
+
                 <Stack.Screen name="Back button" component={BackButton} />
 
                 <Stack.Screen name="Create" component={Create} />
                 <Stack.Screen name="Choose services" component={ChooseServices} />
+                <Stack.Screen name="Oauth screen" component={OAuthScreen} />
 
                 <Stack.Screen name="Profile" component={Profile} />
 

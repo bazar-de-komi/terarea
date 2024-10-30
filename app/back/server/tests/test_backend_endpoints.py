@@ -247,10 +247,18 @@ class TestServer:
         TCONST.IDISP.log_info(f"body = {body}")
         response = query.post_endpoint(path, content=body)
         TCONST.IDISP.log_info(f"response.json() = {response.json()}")
+        token_node = ""
+        if status.success(response) is True:
+            token_node = f"{response.json()['token']}"
+        else:
+            setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+        correct_node = TCONST.RESPONSE_POST_REGISTER
+        correct_node['msg'] = f"Welcome {accounts['username']}"
+        correct_node['token'] = token_node
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
-            TCONST.RESPONSE_POST_REGISTER,
+            correct_node,
             "test_post_register_lambda"
         ) is True
 
@@ -344,10 +352,18 @@ class TestServer:
                 f"id='{uid}'"
             )
             assert command_status == server.success
+        token_node = ""
+        if status.success(response) is True:
+            token_node = f"{response.json()['token']}"
+        else:
+            setup_environment[TCONST.RUNTIME_NODE_CRITICAL_KEY] = True
+        correct_node = TCONST.RESPONSE_POST_REGISTER
+        correct_node['msg'] = f"Welcome {accounts['username']}"
+        correct_node['token'] = token_node
         assert status.success(response) is True
         assert TCONST.are_json_responses_identical(
             response.json(),
-            TCONST.RESPONSE_POST_REGISTER,
+            correct_node,
             "test_post_register_admin"
         ) is True
 

@@ -150,9 +150,10 @@ class UserEndpoints:
             return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
-            message=f"Welcome {email}",
+            message=f"Welcome {username}",
             resp="success",
-            token=data["token"]
+            token=data["token"],
+            error=False
         )
         body["token"] = data["token"]
         return HCI.success(
