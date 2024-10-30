@@ -50,6 +50,7 @@ const SocialAuthButton = () => {
                 provider: "discord"
             };
             const response = await queries.get("/api/v1/oauth/login", provider);
+            console.log("Response:", response);
             await storeValue("authUrl", response.authorization_url);
             navigation.navigate("Oauth screen");
         } catch (error) {
