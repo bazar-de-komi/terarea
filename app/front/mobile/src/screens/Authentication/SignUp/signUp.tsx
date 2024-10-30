@@ -23,6 +23,24 @@ const SignUp = ()  => {
     const navigation = useNavigation();
 
     const SignInPressed = async () => {
+        if (email === '') {
+            Alert.alert("You must enter an email.");
+            return;
+        }
+        if (password === '' || repeatPassword === '') {
+            Alert.alert("You must enter a password.");
+            return;
+        }
+        const emailRegex: RegExp = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+
+        function isValidEmail(email: string): boolean {
+            return emailRegex.test(email);
+        }
+
+        if (isValidEmail(email) === false) {
+            Alert.alert("The email you entered is not a valid email.")
+            return;
+        }
         if (password !== repeatPassword) {
             Alert.alert("Wrong password");
             return;
