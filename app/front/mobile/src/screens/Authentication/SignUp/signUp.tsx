@@ -6,6 +6,7 @@ import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from '../../../components/CustomerButton/CustomerButton';
 import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
 import { storeValue} from '../../../components/StoreData/storeData';
+import Or from '../../../components/SocialAuthButton/OrLine';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
@@ -106,7 +107,8 @@ const SignUp = ()  => {
                         bgColor={"black"}
                         fgColor={""}
                     />
-                    <SocialButton/>
+                    <Or />
+                    <SocialButton />
                     <CustomerButton
                         text="Already on IFTTT ? Sign in here"
                         onPress={loginPressed}
