@@ -4,7 +4,8 @@
 
 import re
 import uuid
-from typing import Union, List, Dict
+import json
+from typing import Union, List, Dict, Any
 from random import randint
 from fastapi import Response
 from datetime import datetime, timedelta
@@ -389,3 +390,78 @@ class BoilerplateNonHTTP:
         ) == self.error:
             return self.error
         return self.success
+
+    def get_actions(self, service_id: str) -> List[Dict[str, Any]]:
+        """_summary_
+            Get the actions that are available for the service
+
+        Args:
+            service_id (str): _description_
+
+        Returns:
+            List[Dict[str, Any]]: _description_
+        """
+        result = []
+        actions = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACTIONS,
+            column="*",
+            where=f"action_id='{service_id}' AND type='trigger'",
+            beautify=True
+        )
+        if actions == self.error:
+            return result
+        for item, index in enumerate(actions):
+            node = json.dumps(item)
+            result.append(
+                {
+                    "name": node["name"],
+                    "node": node
+                }
+            )
+        return actions
+
+    def get_reactions(self, service_id: str) -> List[Dict[str, Any]]:
+        """_summary_
+            Get the reactions that are available for the service
+
+        Args:
+            service_id (str): _description_
+
+        Returns:
+            List[Dict[str, Any]]: _description_
+        """
+        reactions = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACTIONS,
+            column="*",
+            where=f"action_id='{service_id}' and type='action'",
+            beautify=True
+        )
+        if reactions == self.error:
+            return []
+        return reactions
+
+    def get_services(self) -> List[Dict[str, Any]]:
+        """_summary_
+            Get the services that are available.
+
+        Returns:
+            List[Dict[str, Any]]: _description_
+        """
+        result = []
+        services = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_SERVICES,
+            column="*",
+            where="",
+            beautify=True
+        )
+        if services == self.error:
+            return result
+        for index, item in enumerate(services):
+            result.append(
+                {
+                    "name": item["name"],
+                    "actions": self.get_actions(services[index]["id"]),
+                    "reactions": self.get_reactions(services[index]["id"])
+                }
+            )
+        return services
