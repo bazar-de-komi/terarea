@@ -29,7 +29,7 @@ const Services = () => {
         {
             title: "5-Minute Crafts",
             description: "",
-            bgColor: "orange",
+            bgColor: "green",
         },
         {
             title: "The Verge on Youtube",
