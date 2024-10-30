@@ -15,15 +15,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
---
--- Current Database: `terarea`
---
-
-CREATE DATABASE IF NOT EXISTS `terarea` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
-
-USE `terarea`;
-
 --
 -- Table structure for table `ActionLoging`
 --
@@ -69,7 +60,7 @@ CREATE TABLE `ActionTemplate` (
   `action_id` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ActionTemplate_Actions_FK` (`action_id`),
-  CONSTRAINT `ActionTemplate_Actions_FK` FOREIGN KEY (`action_id`) REFERENCES `Actions` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `ActionTemplate_Services_FK` FOREIGN KEY (`action_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table containing the templates for the action that the website has to offer.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -339,4 +330,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-30 12:09:32
+-- Dump completed on 2024-10-31  0:16:24
