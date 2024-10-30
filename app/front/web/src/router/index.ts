@@ -9,9 +9,10 @@ import AreaPageService from '../views/board/AreaPage-Service.vue';
 import AppletDetails from '../views/tile-information/AppletDetails.vue';
 import ServiceDetails from '../views/tile-information/ServiceDetails.vue';
 import CreateApplet from '@/views/CreateApplet.vue';
+import MainPage from '@/views/main/MainPage.vue';
 
 const routes = [
-  { path: '/', name: '', component: SignInView },
+  { path: '/', name: 'MainPage', component: MainPage },
   { path: '/sign-in', name: 'SignIn', component: SignInView },
   { path: '/sign-up', name: 'SignUp', component: SignUpView },
   { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPasswordView },

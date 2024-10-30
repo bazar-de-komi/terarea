@@ -2,7 +2,7 @@
   <div>
     <header>
       <AppHeader />
-      <CancelButton @click="goBack" />
+      <CancelButton buttonText="Annuler" @click="goBack" />
     </header>
 
     <!-- Première boîte (applet-header) -->
@@ -26,8 +26,6 @@ import { useRoute } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
 import CancelButton from '@/components/CancelButton.vue';
 import CompTitle from '@/components/Details-Applet/CompTitle.vue';
-import CompSource from '@/components/Details-Applet/CompSource.vue';
-import CompStats from '@/components/Details-Applet/CompStats.vue';
 import CompConnectButton from '@/components/Details-Applet/CompConnectButton.vue';
 import CompDescription from '@/components/Details-Applet/CompDescription.vue';
 
