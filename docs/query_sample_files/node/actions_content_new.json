@@ -14,7 +14,10 @@
                     "body": "It is ${current_time} in ${location}"
                 },
                 "method": "GET",
-                "header": {}
+                "header": {},
+                "response": {
+                    "code": 200
+                }
             }
         }
     ]

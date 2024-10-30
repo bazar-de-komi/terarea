@@ -11,13 +11,19 @@
                 ],
                 "body": {},
                 "method": "GET",
-                "header": {}
-            },
-            "verification_operator": "==",
-            "verification_value": "9:00",
-            "vars": {
-                "current_time": "NOW",
-                "location": "where"
+                "header": {},
+                "response": {
+                    "code": 200,
+                    "body": "",
+                    "header": ""
+                },
+                "verification_operator": "==",
+                "verification_value": "9:00",
+                "vars": {
+                    "current_time": "NOW",
+                    "location": "where",
+                    "credits": "$ref:header.used.credits"
+                }
             }
         }
     ]
