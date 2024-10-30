@@ -12,12 +12,6 @@ import ProfileLogo from "../../assets/profilLogo.png";
 
 const Services = () => {
     const Navigation = useNavigation();
-    const [isSidebarVisible, setSidebarVisible] = useState(false);
-    const openSidebar = () => setSidebarVisible(true);
-    
-    const allScreens = () => {
-        Navigation.navigate("All");
-    };
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -25,15 +19,15 @@ const Services = () => {
             <Text style={styles.homeTitle}>Account Setting</Text>
             <BackButton
                 text={">"}
-                onPress={openSidebar}
+                onPress={""}
             />
             <Text style={styles.homeProfileTxt}>Profile</Text>
             <Image
                 source={ProfileLogo}
-                style={styles.profilLogo}
+                style={styles.profileLogo}
             />
             <Text style={styles.personalizeTxt}>Personalize your account by linking a profil from another service.</Text>
-            <Text style={styles.homeTitle}>Account</Text>
+            <Text style={styles.homeAccountTitle}>Account</Text>
             <Text style={styles.optionTitle}>Username</Text>
             <View style={styles.homeNavigation}>
             </View>
@@ -65,7 +59,14 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         margin: 10,
-        marginLeft: 50,
+        marginLeft: 90,
+        alignItems: 'center',
+    },
+    homeAccountTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 10,
+        marginLeft: 140,
         alignItems: 'center',
     },
     homeProfileTxt: {
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginLeft: 50,
     },
-    profilLogo: {
+    profileLogo: {
         maxHeight: 50,
         marginTop: 10,
         marginLeft: 60,
@@ -97,20 +98,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         width: '100%',
         left: 50,
-    },
-    searchServices: {
-        alignItems: 'center',
-        marginBottom: 40,
-        width: '100%',
-        alignSelf: 'center',
-    },
-    appletBox: {
-        width: '100%',
-        maxWidth: 400,
-        backgroundColor: '#e0d8d7',
-        borderRadius: 15,
-        alignItems: 'center',
-        padding: 5,
     },
     back: {
         alignItems: 'center',
