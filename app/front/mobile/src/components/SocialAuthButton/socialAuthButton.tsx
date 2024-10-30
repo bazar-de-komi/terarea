@@ -1,35 +1,107 @@
 import React from "react";
-import {View, Image, StyleSheet, Text} from 'react-native';
+import { View, Image, StyleSheet, Text, Alert } from 'react-native';
+import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../CustomerButton";
 import OrLine from "./OrLine";
 
 import GoogleLogo from '../../../assets/authenticationLogo/google.png';
 import githubLogo from '../../../assets/authenticationLogo/githubLogo.png';
+import { queries } from "../../../back-endConnection/querier";
+import { storeValue } from "../StoreData/storeData";
 
 const SocialAuthButton = () => {
-    const SignInGoogle = () => {
-        console.warn("Sign In Google");
-    }
+    const navigation = useNavigation();
 
-    const SignInGithub = () => {
+    const SignInGoogle = async () => {
+        console.warn("Sign In Google");
+        try {
+            const provider = {
+                provider: "google"
+            };
+            const response = await queries.get("/api/v1/oauth/login", provider);
+            await storeValue("authUrl", response.authorization_url);
+            navigation.navigate("Oauth screen");
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Failed to get the authorisation url.");
+        };
+    };
+
+    const SignInGithub = async () => {
         console.warn("Sign In Github");
-    }
+        try {
+            const provider = {
+                provider: "github"
+            };
+            const response = await queries.get("/api/v1/oauth/login", provider);
+            await storeValue("authUrl", response.authorization_url);
+            navigation.navigate("Oauth screen");
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Failed to get the authorisation url.");
+        };
+    };
+
+    const SignInDiscord = async () => {
+        console.warn("Sign In Discord");
+        try {
+            const provider = {
+                provider: "discord"
+            };
+            const response = await queries.get("/api/v1/oauth/login", provider);
+            await storeValue("authUrl", response.authorization_url);
+            navigation.navigate("Oauth screen");
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Failed to get the authorisation url.");
+        };
+    };
+
+    const SignInSpotify = async () => {
+        console.warn("Sign In Spotify");
+        try {
+            const provider = {
+                provider: "spotify"
+            };
+            const response = await queries.get("/api/v1/oauth/login", provider);
+            await storeValue("authUrl", response.authorization_url);
+            navigation.navigate("Oauth screen");
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Failed to get the authorisation url.");
+        };
+    };
 
     return (
         <View style={styles.container}>
-            <OrLine/>
+            <OrLine />
             <CustomerButton
                 text="Sign in with Google"
                 onPress={SignInGoogle}
                 bgColor="white"
                 fgColor="black"
                 icon={<Image source={GoogleLogo} style={styles.logo} />}
+                type=""
             />
             <CustomerButton
                 text="Sign in with GitHub"
                 onPress={SignInGithub}
                 bgColor="#303030"
+                fgColor="white"
+                icon={<Image source={githubLogo} style={styles.logo} />}
+            />
+            <CustomerButton
+                text="Sign in with Discord"
+                onPress={SignInDiscord}
+                bgColor="purple"
+                fgColor="white"
+                icon={<Image source={githubLogo} style={styles.logo} />}
+            />
+            <CustomerButton
+                text="Sign in with Spotify"
+                onPress={SignInSpotify}
+                bgColor="green"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}
             />

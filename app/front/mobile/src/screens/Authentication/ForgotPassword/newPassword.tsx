@@ -1,24 +1,50 @@
 import React, {useState} from "react";
-import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions} from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions, Alert} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from "../../../components/CustomerButton";
+import { getValue, deleteKey } from "../../../components/StoreData/storeData";
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
+import { queries } from "../../../../back-endConnection/querier";
 
 const NewPassword = () => {
     const [code, setCode] = useState('');
     const [newPassword, setNewPassword] = useState('');
+    const [confirm, setConfirm] = useState('');
     const { height } = useWindowDimensions();
     const Navigation = useNavigation();
-    
-    const SignSubmitPressed = () => {
-        Navigation.navigate("Sign In");
+
+    const SignSubmitPressed = async () => {
+        if (newPassword !== confirm) {
+            Alert.alert("The password and the confirm password must be the same.");
+            return;
+        }
+        const newPass = {
+            code: code,
+            email: await getValue("email"),
+            password: confirm,
+        };
+
+        try {
+            console.log("NewPass:", newPass);
+            const response = await queries.patch("/api/v1/reset_password", newPass);
+            console.log("Response:", response);
+            if (response.resp === "success") {
+                deleteKey("email");
+                Navigation.navigate("Sign In");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            Alert.alert("One of the value is incorrect. Please try again.");
+        }
     }
 
-    const SendEmail = () => {
-        console.warn("send email");
+    const SendEmail = async () => {
+        const email = await getValue("email")
+        await queries.post("/api/v1/send_email_verification", { email })
+        Alert.alert("A verification email was resend.");
     }
 
     return (
@@ -45,14 +71,14 @@ const NewPassword = () => {
                     />
                      <CustomerInput
                     placeholder="Confirmation password"
-                    value={newPassword}
-                    setValue={setNewPassword}
+                    value={confirm}
+                    setValue={setConfirm}
                     secureTextEntry={false}
                     />
                     <CustomerButton
                     text="Set password"
                     onPress={SignSubmitPressed}
-                    bgColor={""}
+                    bgColor={"black"}
                     fgColor={""}
                     />
                     <CustomerButton

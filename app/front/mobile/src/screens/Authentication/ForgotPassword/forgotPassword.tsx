@@ -4,16 +4,28 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from "../../../components/CustomerButton";
+import { getValue, storeValue } from "../../../components/StoreData/storeData";
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
+import { queries } from "../../../../back-endConnection/querier";
+import { setStatusBarNetworkActivityIndicatorVisible } from "expo-status-bar";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const { height } = useWindowDimensions();
     const navigation = useNavigation();
 
-    const SignSendPressed = () => {
-        navigation.navigate("New password");
+    const SignSendPressed = async () => {
+        console.log("Hello")
+        try {
+            const response = await queries.post("/api/v1/send_email_verification", { email: email })
+            if (response) {
+                await storeValue("email", email)
+                navigation.navigate("New password");
+            }
+        } catch (error) {
+            console.error("Forgot password error:", error);
+        }
     }
 
     const loginPressed = () => {
@@ -40,8 +52,10 @@ const ForgotPassword = () => {
                     <CustomerButton
                     text="Reset password"
                     onPress={SignSendPressed}
-                    bgColor={""}
+                    bgColor={"black"}
                     fgColor={""}
+                    icon={""}
+                    type={""}
                     />
                      <CustomerButton
                         text="Remember your password ? Sign in here"
