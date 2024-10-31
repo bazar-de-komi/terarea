@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, StyleSheet, Text, Alert } from 'react-native';
+import { View, Image, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../CustomerButton";
@@ -20,7 +20,9 @@ const SocialAuthButton = () => {
                 provider: "google"
             };
             const response = await queries.post("/api/v1/oauth/login", provider);
-            await storeValue("authUrl", response.authorization_url);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);
@@ -35,7 +37,9 @@ const SocialAuthButton = () => {
                 provider: "github"
             };
             const response = await queries.post("/api/v1/oauth/login", provider);
-            await storeValue("authUrl", response.authorization_url);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);
@@ -51,7 +55,9 @@ const SocialAuthButton = () => {
             };
             const response = await queries.post("/api/v1/oauth/login", provider);
             console.log("Response:", response);
-            await storeValue("authUrl", response.authorization_url);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);
@@ -66,7 +72,9 @@ const SocialAuthButton = () => {
                 provider: "spotify"
             };
             const response = await queries.post("/api/v1/oauth/login", provider);
-            await storeValue("authUrl", response.authorization_url);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);
