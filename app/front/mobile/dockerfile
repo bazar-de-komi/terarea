@@ -4,7 +4,7 @@ FROM ubuntu:latest
 ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
-ENV LAUNCH_COMMAND="serve -s build"
+# ENV LAUNCH_COMMAND="serve -s build"
 
 RUN apt-get update && \
     apt-get install -y \
@@ -31,14 +31,21 @@ RUN file_name=amazon-corretto-21-x64-linux-jdk.deb && \
 
 # Updating environement paths
 ENV ANDROID_HOME /usr/local/android-sdk-linux
-ENV PATH "$ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
+ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
-# Installing sdk manager
-RUN curl -s "https://get.sdkman.io" | bash \
-    && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install gradle"
+# Install Android SDK Command-Line Tools
+RUN mkdir -p ${ANDROID_HOME} && \
+    cd ${ANDROID_HOME} && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip && \
+    unzip commandlinetools-linux-7302050_latest.zip && \
+    rm commandlinetools-linux-7302050_latest.zip && \
+    mv cmdline-tools tools && \
+    mkdir cmdline-tools && \
+    mv tools cmdline-tools/latest
 
-# Create working folder
-RUN mkdir -p ${HOME}
+# Accept licenses and install platform tools and the SDK
+RUN yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses && \
+    sdkmanager --sdk_root=${ANDROID_HOME} "platform-tools" "platforms;android-30"
 
 # Set the working directory in the Docker container
 WORKDIR ${HOME}
@@ -48,14 +55,17 @@ COPY . ${HOME}
 
 # Source SDKMAN, ensure gradlew has execute permissions and use gradlew to build the project
 RUN if [ -f "./gradlew" ]; then chmod +x ./gradlew \
-    && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && ./gradlew assembleRelease" \
-    ; else echo "gradlew not found"; fi
+    && ./gradlew assembleRelease; \
+    else echo "gradlew not found"; fi
+
+# Copy APK from the build stage to the final image
+# COPY --from=build /mobile/app/build/outputs/apk/release/app-release.apk /output/app-release.apk
 
 # Install npm dependencies
 RUN timeout 60s npm install && npm cache clean --force || timeout 60s npm install && npm cache clean --force
 
-# # Build the project (optional, uncomment if you want to build here)
-# # RUN npm run build
+# Build the project (optional, uncomment if you want to build here)
+# RUN npm run build
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000
