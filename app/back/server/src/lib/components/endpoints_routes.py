@@ -4,8 +4,8 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
-# , Github_check#, IFTTT_Manager
-from .endpoints import Bonus, UserEndpoints, Services
+from .endpoints import Bonus, UserEndpoints, Services, Mandatory
+
 
 class Endpoints:
     """_summary_
@@ -51,6 +51,12 @@ class Endpoints:
             debug=self.debug
         )
         self.user_endpoints: UserEndpoints = UserEndpoints(
+            runtime_data=runtime_data,
+            success=success,
+            error=error,
+            debug=debug
+        )
+        self.mandatory: Mandatory = Mandatory(
             runtime_data=runtime_data,
             success=success,
             error=error,
@@ -174,4 +180,9 @@ class Endpoints:
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/user_id", self.user_endpoints.get_user_id, "GET"
+        )
+
+        # Mandatory routes
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/about.json", self.mandatory.get_about, "GET"
         )
