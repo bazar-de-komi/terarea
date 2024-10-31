@@ -1,10 +1,21 @@
-FROM node:latest
+FROM ubuntu:latest
 
 # Set the default environment variables
 ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
 ENV LAUNCH_COMMAND="serve -s build"
+
+RUN apt-get update && \
+    apt-get install -y \
+    build-essential \
+    curl \
+    wget \
+    git \
+    nano \
+    unzip \
+    software-properties-common \
+    sudo
 
 # Update the system and install required packages
 RUN apt update && apt upgrade -y && \
@@ -18,63 +29,33 @@ RUN file_name=amazon-corretto-21-x64-linux-jdk.deb && \
     apt install -y ./$file_name && \
     rm $file_name
 
-# Install Gradle
-RUN gradle_name=gradle-8.11-rc-1-bin.zip && \
-    wget https://services.gradle.org/distributions/$gradle_name -P /tmp && \
-    unzip -d /opt/gradle /tmp/$gradle_name && \
-    rm /tmp/$gradle_name
-
-# Updating gradle path
-ENV GRADLE_HOME /opt/gradle/gradle-8.11-rc-1
-ENV PATH "${GRADLE_HOME}/bin:${PATH}"
-
-# Install Android SDK Command-Line Tools
-RUN mkdir -p /usr/local/android-sdk-linux/cmdline-tools && \
-    wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O /tmp/commandlinetools.zip && \
-    unzip /tmp/commandlinetools.zip -d /usr/local/android-sdk-linux/cmdline-tools && \
-    rm /tmp/commandlinetools.zip
-
 # Updating environement paths
 ENV ANDROID_HOME /usr/local/android-sdk-linux
 ENV PATH "$ANDROID_HOME/cmdline-tools/tools/bin:$ANDROID_HOME/platform-tools:$PATH"
 
 # Installing sdk manager
-RUN  curl -s "https://get.sdkman.io" | bash
-
-# Set up Android SDK directories and environment variables
-ENV ANDROID_SDK_ROOT /usr/local/android-sdk-linux
-RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
-
-# Accept Adroid SDK licenses
-RUN wget https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip -O /tmp/commandlinetools.zip && \
-    unzip -o /tmp/commandlinetools.zip -d $ANDROID_SDK_ROOT/cmdline-tools && \
-    rm /tmp/commandlinetools.zip
-
-# Install Android SDK packages
-ENV PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin
-RUN yes | sdkmanager --licenses && \
-    sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+RUN curl -s "https://get.sdkman.io" | bash \
+    && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && sdk install gradle"
 
 # Create working folder
 RUN mkdir -p ${HOME}
 
-# Set the working directory
+# Set the working directory in the Docker container
 WORKDIR ${HOME}
 
-# Copy the content of the backend into the container
+# Copy your project files to the container
 COPY . ${HOME}
+
+# Source SDKMAN, ensure gradlew has execute permissions and use gradlew to build the project
+RUN if [ -f "./gradlew" ]; then chmod +x ./gradlew \
+    && bash -c "source $HOME/.sdkman/bin/sdkman-init.sh && ./gradlew assembleRelease" \
+    ; else echo "gradlew not found"; fi
 
 # Install npm dependencies
 RUN timeout 60s npm install && npm cache clean --force || timeout 60s npm install && npm cache clean --force
 
-# Build the project (optional, uncomment if you want to build here)
-# RUN npm run build
-
-# Cleaning any potential cache npm could have
-RUN npm cache clean --force
-
-# Build the project
-# RUN cd android && ./gradlew assembleRelease
+# # Build the project (optional, uncomment if you want to build here)
+# # RUN npm run build
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000
