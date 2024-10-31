@@ -1,78 +1,128 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView} from 'react-native'
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
 import Header from '../../components/Header/header.tsx';
-import AppletBox from "../../components/AppletsBox/appletBox";
+import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
+import { queries } from "../../../back-endConnection/querier";
+import { getValue, storeValue } from "../../components/StoreData/storeData";
 
 const Services = () => {
-    const Navigation = useNavigation();
-    const allScreens = () => {
-        Navigation.navigate("All");
+    const navigation = useNavigation();
+    const [services, setServices] = useState([]);
+    const [tags, setTags] = useState("");
+    const [loading, setLoading] = useState(true);
+
+    const handleAllButton = () => {
+        navigation.navigate("All");
     };
 
-    const applets = () => {
-        Navigation.navigate("Applets");
+    const handleAppletsButton = () => {
+        navigation.navigate("Applets");
     }
 
-    const ServicesDetails = () => {
-        Navigation.navigate('Service details')
+    const handleServicesDetailsButton = async (service: any) => {
+        await storeValue("service", service);
+        navigation.navigate('Service details');
     }
 
-    const services = () => {
-        Navigation.navigate("Services");
+    const handleServicesButton = () => {
+        navigation.navigate("Services");
     };
 
-    //clic in ifttt logo
-    const goHome = () => {
-        Navigation.navigate('Home');
-    };
+    useEffect(() => {
+        const getServices = async () => {
+            try {
+                const token = await getValue("token");
+                const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+                console.log("Response:", getServicesResponse);
+                setServices(getServicesResponse.msg);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        getServices();
+    }, []);
+
+    useEffect(() => {
+        const getServicesByTags = async () => {
+            try {
+                const token = await getValue("token");
+                if (tags === "") {
+                    const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+                    setServices(getServicesResponse.msg);
+                } else {
+                    const noSpaceTags = tags.replaceAll(" ", ":");
+                    console.log("NoSpaceTags", noSpaceTags);
+                    let path = "/api/v1/services/";
+                    path += noSpaceTags;
+                    const getServicesResponse = await queries.get(path, {}, token);
+                    setServices(getServicesResponse.msg);
+                }
+            } catch (error) {
+                console.error(error);
+                setServices([]);
+            }
+        }
+        getServicesByTags();
+    }, [tags]);
+
+    if (loading) {
+        return <ActivityIndicator size="large" color="#0000ff" />; // Affiche un indicateur de chargement
+    }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <Header/>   
+            <Header />
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
                 <CustomerButton
-                text="All"
-                onPress={allScreens}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="All"
+                    onPress={() => handleAllButton()}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
                 <CustomerButton
-                text="Applets"
-                onPress={applets}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Applets"
+                    onPress={() => handleAppletsButton()}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
                 <CustomerButton
-                text="Services"
-                onPress={services}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Services"
+                    onPress={() => handleServicesButton()}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={"blue"}
                 />
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
-                placeholder="Search Applets or Services"
+                    value={tags}
+                    setValue={setTags}
+                    placeholder="Search Applets or Services"
                 />
             </View>
-            <View style={styles.searchServices}>
+            {/* <View style={styles.searchServices}>
                 <CustomerInput
-                placeholder="All services"
-            />
-            </View>
-            <AppletBox
-            title="5-Minute Crafts"
-            description=""
-            bgColor="green"
-            onPress={ServicesDetails}
-            />
+                    placeholder="All services"
+                />
+            </View> */}
+            {
+                services.map((service) => (
+                    <AppletAndServiceBox
+                        title={service.name}
+                        bgColor={service.colour}
+                        onPress={async () => await handleServicesDetailsButton(service)}
+                    />
+                ))
+            }
         </ScrollView>
     );
 };
@@ -102,7 +152,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
     },
-    appletBox: {
+    AppletAndServiceBox: {
         width: '100%',
         maxWidth: 400,
         backgroundColor: '#e0d8d7',

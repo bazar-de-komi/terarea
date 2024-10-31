@@ -1,11 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
 import Header from '../../components/Header/header.tsx';
-import AppletBox from "../../components/AppletsBox/appletBox";
+import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 
 const Applets = () => {
     const Navigation = useNavigation();
@@ -20,7 +20,7 @@ const Applets = () => {
         Navigation.navigate("Services");
     }
 
-    const appletsBox = () => {
+    const handleAppletButton = () => {
         Navigation.navigate("Applet screen");
     };
 
@@ -44,46 +44,46 @@ const Applets = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-        <Header/>
+            <Header />
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
                 <CustomerButton
-                text="All"
-                onPress={allScreens}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="All"
+                    onPress={allScreens}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
                 <CustomerButton
-                text="Applets"
-                onPress={applets}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Applets"
+                    onPress={applets}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={"blue"}
                 />
                 <CustomerButton
-                text="Services"
-                onPress={services}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Services"
+                    onPress={services}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
-                placeholder="Search Applets or Services"
+                    placeholder="Search applets"
                 />
             </View>
             {appletsData.map((applet, index) => (
-                <AppletBox
+                <AppletAndServiceBox
                     key={index}
                     title={applet.title}
                     description={applet.description}
                     bgColor={applet.bgColor}
-                    onPress={appletsBox}
+                    onPress={handleAppletButton}
                 />
             ))}
-    </ScrollView>
+        </ScrollView>
     )
 }
 

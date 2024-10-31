@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native'; 4
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png'
 import ProfilLogo from '../../../assets/profilLogo.png';
 import { queries } from "../../../back-endConnection/querier";
-import { getValue } from "../StoreData/storeData";
+import { deleteKey, getValue } from "../StoreData/storeData";
 
 const Header = () => {
     const navigation = useNavigation();
@@ -17,12 +17,14 @@ const Header = () => {
     const handleLogOut = async () => {
         try {
             const token = await getValue("token");
-            await queries.post("/api/v1/");
+            await queries.post("/api/v1/logout", {}, token);
+            await deleteKey("token");
             navigation.navigate('Sign In');
             closeSidebar();
         } catch (error) {
             console.error(error);
-            Alert.alert("Failed to log out.");
+            await deleteKey("token");
+            navigation.navigate('Sign In');
         }
     }
 
