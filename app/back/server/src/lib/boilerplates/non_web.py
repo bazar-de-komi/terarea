@@ -406,7 +406,7 @@ class BoilerplateNonHTTP:
         result = []
         self.disp.log_debug("Gathering actions", title)
         actions = self.runtime_data_initialised.database_link.get_data_from_table(
-            table=CONST.TAB_ACTIONS,
+            table=CONST.TAB_ACTION_TEMPLATE,
             column="*",
             where=f"action_id='{service_id}' AND type='trigger'",
             beautify=True
@@ -415,10 +415,26 @@ class BoilerplateNonHTTP:
         if actions == self.error:
             self.disp.log_error("Failed to get actions", title)
             return result
-        for item, index in enumerate(actions):
+        for index, item in enumerate(actions):
             try:
-                node = json.dumps(item["json"])
+                if "json" not in item:
+                    self.disp.log_error(f"json not in item {index}", title)
+                    self.disp.log_warning("Skipping action", title)
+                    continue
+                if item["type"].lower() != "trigger":
+                    self.disp.log_debug(
+                        f"item {index} is not a trigger", title
+                    )
+                    self.disp.log_debug("Skipping action", title)
+                    continue
+                self.disp.log_debug(f"item = {item}", title)
+                self.disp.log_debug("Getting json node.", title)
+                node_str = item["json"]
+                node = json.loads(node_str)
+                self.disp.log_debug("data has been converted to json", title)
                 self.disp.log_debug(f"node = {node}", title)
+                self.disp.log_debug(f"node keys = {list(node)}", title)
+                self.disp.log_debug("Adding reaction to result", title)
                 result.append(
                     {
                         "name": node["ignore:name"],
@@ -447,19 +463,35 @@ class BoilerplateNonHTTP:
         self.disp.log_debug("Gathering reactions", title)
         result = []
         reactions = self.runtime_data_initialised.database_link.get_data_from_table(
-            table=CONST.TAB_ACTIONS,
+            table=CONST.TAB_ACTION_TEMPLATE,
             column="*",
-            where=f"action_id='{service_id}' and type='action'",
+            where=f"action_id='{service_id}' AND type='action'",
             beautify=True
         )
         self.disp.log_debug(f"reactions = {reactions}", title)
         if reactions == self.error:
             self.disp.log_error("Failed to get reactions", title)
             return result
-        for item, index in enumerate(reactions):
+        for index, item in enumerate(reactions):
             try:
-                node = json.dumps(item["json"])
+                if "json" not in item:
+                    self.disp.log_error(f"json not in item {index}", title)
+                    self.disp.log_warning("Skipping action", title)
+                    continue
+                if item["type"].lower() != "action":
+                    self.disp.log_debug(
+                        f"item {index} is not a action", title
+                    )
+                    self.disp.log_debug("Skipping trigger", title)
+                    continue
+                self.disp.log_debug(f"item = {item}", title)
+                self.disp.log_debug("Getting json node.", title)
+                node_str = item["json"]
+                node = json.loads(node_str)
+                self.disp.log_debug("data has been converted to json", title)
                 self.disp.log_debug(f"node = {node}", title)
+                self.disp.log_debug(f"node keys = {list(node)}", title)
+                self.disp.log_debug("Adding reaction to result", title)
                 result.append(
                     {
                         "name": node["ignore:name"],
