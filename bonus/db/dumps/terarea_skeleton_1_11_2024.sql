@@ -185,6 +185,7 @@ CREATE TABLE `Services` (
   `tags` longtext DEFAULT NULL COMMENT 'The keywords to search for the api',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `oauth` tinyint(1) DEFAULT NULL COMMENT 'Inform the code if the service is authenticated via OAuth.',
+  `colour` varchar(1024) NULL COMMENT 'The colour of the service.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Services_UNIQUE_1` (`name`),
   UNIQUE KEY `Services_UNIQUE` (`url`) USING HASH
@@ -330,4 +331,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-31  0:16:24
+-- Dump completed on 2024-11-1  0:00:00
