@@ -17,20 +17,21 @@ import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
 import ChooseServices from '../screens/Create/chooseServices';
 import BackButton from '../components/BackButton/backButton';
-import OAuthScreen from '../screens/Authentication/OAuth';
+import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
 
 const Stack = createStackNavigator();
 
 const Navigation = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Navigator screenOptions={{ headerShown: false }} detachInactiveScreens>
                 <Stack.Screen name="Start" component={Start} />
                 <Stack.Screen name="Sign Up" component={SignUp} />
                 <Stack.Screen name="Sign In" component={SignIn} />
                 <Stack.Screen name="Confirmation email" component={ConfirmEmail} />
                 <Stack.Screen name="Forgot password" component={ForgotPassword} />
                 <Stack.Screen name="New password" component={NewPassword} />
+                <Stack.Screen name="Oauth screen" component={OAuthScreen} />
 
                 <Stack.Screen name="All" component={All} />
                 <Stack.Screen name="Applets" component={Applets} />
@@ -44,7 +45,6 @@ const Navigation = () => {
 
                 <Stack.Screen name="Create" component={Create} />
                 <Stack.Screen name="Choose services" component={ChooseServices} />
-                <Stack.Screen name="Oauth screen" component={OAuthScreen} />
 
             </Stack.Navigator>
         </NavigationContainer>

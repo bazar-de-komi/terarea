@@ -14,7 +14,6 @@ const SocialAuthButton = () => {
     const navigation = useNavigation();
 
     const SignInGoogle = async () => {
-        console.warn("Sign In Google");
         try {
             const provider = {
                 provider: "google"
@@ -31,7 +30,6 @@ const SocialAuthButton = () => {
     };
 
     const SignInGithub = async () => {
-        console.warn("Sign In Github");
         try {
             const provider = {
                 provider: "github"
@@ -48,7 +46,6 @@ const SocialAuthButton = () => {
     };
 
     const SignInDiscord = async () => {
-        console.warn("Sign In Discord");
         try {
             const provider = {
                 provider: "discord"
@@ -66,7 +63,6 @@ const SocialAuthButton = () => {
     };
 
     const SignInSpotify = async () => {
-        console.warn("Sign In Spotify");
         try {
             const provider = {
                 provider: "spotify"

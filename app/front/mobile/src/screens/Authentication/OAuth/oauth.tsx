@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Button, Alert } from 'react-native';
+import { useNavigation } from "@react-navigation/native";
 import { WebView } from 'react-native-webview';
-import { getValue } from '../../../components/StoreData/storeData';
+// import * as AuthSession from 'expo-auth-session';
+import { deleteKey, storeValue, getValue } from '../../../components/StoreData/storeData';
 import { queries } from '../../../../back-endConnection/querier';
 
-const OAuthScreen = () => {
+export const OAuthScreen = () => {
     const [authUrl, setAuthUrl] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const navigation = useNavigation();
 
     useEffect(() => {
         const fetchAuthUrl = async () => {
             const url = await getValue("authUrl");
             setAuthUrl(url);
-            setLoading(false); // Terminez le chargement une fois que l'URL est récupérée
+            setLoading(false);
         };
 
         fetchAuthUrl();
@@ -25,13 +28,23 @@ const OAuthScreen = () => {
             if (code) {
                 let path: string = "/api/v1/oauth/callback?";
                 path += event.url.split('?')[1];
-                const response = await queries.post(path);
-                console.log("Response:", response)
-                // Fermez la WebView ou redirigez l'utilisateur selon vos besoins
-                // navigation.goBack();
-                // Envoyer le code au backend ou gérer l'authentification
+                try {
+                    setLoading(true);
+                    const response = await queries.post(path);
+                    storeValue('token', response.token);
+                    await deleteKey("authUrl");
+                    setAuthUrl(null);
+                    navigation.navigate("All");
+                } catch (error) {
+                    setLoading(true);
+                    console.error(error);
+                    Alert.alert("The oauth connexion have failed.");
+                    await deleteKey("authUrl");
+                    setAuthUrl(null);
+                    navigation.goBack();
+                };
             };
-        }
+        };
     };
 
     if (loading) {
@@ -49,12 +62,10 @@ const OAuthScreen = () => {
                     source={{ uri: authUrl }}
                     onNavigationStateChange={onNavigationStateChange}
                     startInLoadingState
-                    javaScriptEnabled={true}
-                    domStorageEnabled={true}
+                    // userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+                    userAgent="Mozilla/5.0"
                 />
             )}
         </View>
     );
 };
-
-export default OAuthScreen;
