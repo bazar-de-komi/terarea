@@ -5,10 +5,11 @@
 import re
 import uuid
 import json
-from typing import Union, List, Dict, Any
 from random import randint
-from fastapi import Response
 from datetime import datetime, timedelta
+from typing import Union, List, Dict, Any
+
+from fastapi import Response
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
 from ..components import RuntimeData, CONST
@@ -401,24 +402,36 @@ class BoilerplateNonHTTP:
         Returns:
             List[Dict[str, Any]]: _description_
         """
+        title = "get_actions"
         result = []
+        self.disp.log_debug("Gathering actions", title)
         actions = self.runtime_data_initialised.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
             column="*",
             where=f"action_id='{service_id}' AND type='trigger'",
             beautify=True
         )
+        self.disp.log_debug(f"actions = {actions}", title)
         if actions == self.error:
+            self.disp.log_error("Failed to get actions", title)
             return result
         for item, index in enumerate(actions):
-            node = json.dumps(item)
-            result.append(
-                {
-                    "name": node["name"],
-                    "node": node
-                }
-            )
-        return actions
+            try:
+                node = json.dumps(item["json"])
+                self.disp.log_debug(f"node = {node}", title)
+                result.append(
+                    {
+                        "name": node["ignore:name"],
+                        "description": node["ignore:description"],
+                    }
+                )
+                self.disp.log_debug("Reaction gathered.", title)
+            except Exception as e:
+                self.disp.log_error(f"Failed to parse reaction {index}", title)
+                self.disp.log_error(f"Error: {e}", title)
+                self.disp.log_info("Skipping reaction", title)
+        self.disp.log_debug(f"result = {result}", title)
+        return result
 
     def get_reactions(self, service_id: str) -> List[Dict[str, Any]]:
         """_summary_
@@ -430,15 +443,36 @@ class BoilerplateNonHTTP:
         Returns:
             List[Dict[str, Any]]: _description_
         """
+        title = "get_reactions"
+        self.disp.log_debug("Gathering reactions", title)
+        result = []
         reactions = self.runtime_data_initialised.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
             column="*",
             where=f"action_id='{service_id}' and type='action'",
             beautify=True
         )
+        self.disp.log_debug(f"reactions = {reactions}", title)
         if reactions == self.error:
-            return []
-        return reactions
+            self.disp.log_error("Failed to get reactions", title)
+            return result
+        for item, index in enumerate(reactions):
+            try:
+                node = json.dumps(item["json"])
+                self.disp.log_debug(f"node = {node}", title)
+                result.append(
+                    {
+                        "name": node["ignore:name"],
+                        "description": node["ignore:description"],
+                    }
+                )
+                self.disp.log_debug("Reaction gathered.", title)
+            except Exception as e:
+                self.disp.log_error(f"Failed to parse reaction {index}", title)
+                self.disp.log_error(f"Error: {e}", title)
+                self.disp.log_info("Skipping reaction", title)
+        self.disp.log_debug(f"result = {result}", title)
+        return result
 
     def get_services(self) -> List[Dict[str, Any]]:
         """_summary_
@@ -447,6 +481,8 @@ class BoilerplateNonHTTP:
         Returns:
             List[Dict[str, Any]]: _description_
         """
+        title = "get_services"
+        self.disp.log_debug("Gathering services", title)
         result = []
         services = self.runtime_data_initialised.database_link.get_data_from_table(
             table=CONST.TAB_SERVICES,
@@ -454,7 +490,9 @@ class BoilerplateNonHTTP:
             where="",
             beautify=True
         )
+        self.disp.log_debug(f"services = {services}", title)
         if services == self.error:
+            self.disp.log_error("Failed to get services", title)
             return result
         for index, item in enumerate(services):
             result.append(
@@ -464,4 +502,5 @@ class BoilerplateNonHTTP:
                     "reactions": self.get_reactions(services[index]["id"])
                 }
             )
-        return services
+        self.disp.log_debug(f"result = {result}", title)
+        return result

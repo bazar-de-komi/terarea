@@ -49,42 +49,25 @@ class Mandatory:
             Response: _description_: The data to send back to the user as a response.
         """
         title = "get_about"
+        self.disp.log_debug(title, "Gathering data")
         host = request.client.host
         current_time = int(time.time())
+        self.disp.log_debug(f"host = {host}", title)
+        self.disp.log_debug(f"current_time = {current_time}", title)
         json_body = {
             " client ": {
                 " host ": host
             },
             " server ": {
                 " current_time ": current_time,
-                " services ": self.runtime_data_initialised.boilerplate_non_http_initialised.get__services()
-                # [
-                #     {
-                #         " name ": " facebook ",
-                #         " actions ": [
-                #             {
-                #                 " name ": " new_message_in_group ",
-                #                 " description ": " A new message is posted in the group "
-                #             }, {
-                #                 " name ": " new_message_inbox ",
-                #                 " description ": " A new private message is received by the user "
-                #             }, {
-                #                 " name ": " new_like ",
-                #                 " description ": " The user gains a like from one of their messages "
-                #             }
-                #         ],
-                #         " reactions ": [
-                #             {
-                #                 " name ": " like_message ",
-                #                 " description ": " The user likes a message "
-                #             }
-                #         ]
-                #     }
-                # ]
+                " services ": self.runtime_data_initialised.boilerplate_non_http_initialised.get_services()
             }
         }
+        self.disp.log_debug(f"json_body = {json_body}", title)
         outgoing = HCI.success(
             json_body,
+            content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
+        self.disp.log_debug(f"ready_to_go: {outgoing}", title)
         return outgoing
