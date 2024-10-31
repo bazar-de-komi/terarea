@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { View, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, Text} from 'react-native';
-import { useNavigation } from '@react-navigation/native';4
+import { View, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, Text, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; 4
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png'
 import ProfilLogo from '../../../assets/profilLogo.png';
+import { queries } from "../../../back-endConnection/querier";
+import { getValue } from "../StoreData/storeData";
 
 const Header = () => {
     const navigation = useNavigation();
@@ -11,6 +13,18 @@ const Header = () => {
 
     const openSidebar = () => setSidebarVisible(true);
     const closeSidebar = () => setSidebarVisible(false);
+
+    const handleLogOut = async () => {
+        try {
+            const token = await getValue("token");
+            await queries.post("/api/v1/");
+            navigation.navigate('Sign In');
+            closeSidebar();
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Failed to log out.");
+        }
+    }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -30,13 +44,24 @@ const Header = () => {
 
                 <Modal
                     visible={isSidebarVisible}
-                    transparent
-                    animationType="slide"
+                    transparent={true}
+                    animationType="none"
                     onRequestClose={closeSidebar}
                 >
                     <TouchableOpacity style={styles.modalOverlay} onPress={closeSidebar} />
                     <View style={styles.sidebar}>
-                    <TouchableOpacity
+                        <TouchableOpacity style={styles.menuItem}>
+                            <Image
+                                source={ProfilLogo}
+                                style={styles.sideBarProfilLogo}
+                            />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.menuItem} onPress={closeSidebar}>
+                            <Text style={styles.closeSideBarButton}>
+                                X
+                            </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
                             onPress={() => {
                                 navigation.navigate('Create');
                                 closeSidebar();
@@ -52,22 +77,10 @@ const Header = () => {
                             }}
                             style={styles.menuItem}
                         >
-                            <Text style={styles.menuText}>Profile</Text>
+                            <Text style={styles.menuText}>My applets</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => {
-                                navigation.navigate('Services');
-                                closeSidebar();
-                            }}
-                            style={styles.menuItem}
-                        >
-                            <Text style={styles.menuText}>My Services</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => {
-                                navigation.navigate('Sign In');
-                                closeSidebar();
-                            }}
+                            onPress={handleLogOut}
                             style={styles.menuItem}
                         >
                             <Text style={styles.menuText}>Log Out</Text>
@@ -96,14 +109,23 @@ const styles = StyleSheet.create({
         marginTop: -50,
         marginLeft: 300,
     },
+    sideBarProfilLogo: {
+        marginLeft: 230,
+        marginTop: 30
+    },
     modalOverlay: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+    closeSideBarButton: {
+        marginTop: -65,
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
     sidebar: {
         position: 'absolute',
         right: 0,
-        top: 0,
+        top: -400,
         bottom: 0,
         width: 350,
         backgroundColor: 'white',
@@ -112,6 +134,8 @@ const styles = StyleSheet.create({
     },
     menuItem: {
         paddingVertical: 15,
+        marginLeft: 20,
+        paddingBottom: 20
     },
     menuText: {
         fontSize: 18,
