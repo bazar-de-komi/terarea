@@ -122,7 +122,7 @@ const Applets = () => {
                 applets.map((applet) => (
                     <AppletAndServiceBox
                         key={applet.id}
-                        title={applet.title}
+                        title={applet.name}
                         description={applet.description}
                         author={applet.author}
                         user_nb={applet.frequency}

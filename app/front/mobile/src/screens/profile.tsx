@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Image} from 'react-native'
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView, Image } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../components/CustomersInput/CustomerInput";
@@ -9,18 +9,38 @@ import SocialAuthButton from "../components/SocialAuthButton";
 import Header from "../components/Header/header";
 
 import ProfileLogo from "../../assets/profilLogo.png";
+import { getValue } from "../components/StoreData/storeData";
+import { queries } from "../../back-endConnection/querier";
 
 const Profile = () => {
-    const Navigation = useNavigation();
+    const [userInfo, setUserInfo] = useState([]);
+    const navigation = useNavigation();
+
+    const handleBackButton = () => {
+        navigation.goBack();
+    }
+
+    useEffect(() => {
+        const getUserInfo = async () => {
+            try {
+                const token = await getValue("token");
+                const response = await queries.get("/api/v1/user", {}, token);
+                setUserInfo(response.msg);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        getUserInfo();
+    }, []);
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <Header/>   
-            <Text style={styles.homeTitle}>Account Setting</Text>
+            <Header />
             <BackButton
-                text={">"}
-                onPress={""}
+                text={" < "}
+                onPress={handleBackButton}
             />
+            <Text style={styles.homeTitle}>Account Setting</Text>
             <Text style={styles.homeProfileTxt}>Profile</Text>
             <Image
                 source={ProfileLogo}
@@ -33,19 +53,19 @@ const Profile = () => {
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
-                placeholder="UsernameData"
+                    placeholder="UsernameData"
                 />
             </View>
             <Text style={styles.optionTitle}>Password</Text>
             <View style={styles.searchBar}>
                 <CustomerInput
-                placeholder="PasswordData"
+                    placeholder="PasswordData"
                 />
             </View>
             <Text style={styles.optionTitle}>Email</Text>
             <View style={styles.searchBar}>
                 <CustomerInput
-                placeholder="EmailData"
+                    placeholder="EmailData"
                 />
             </View>
             <Text style={styles.homeTitle}>Linked accounts</Text>
