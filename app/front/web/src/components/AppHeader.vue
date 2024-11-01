@@ -5,7 +5,7 @@
     </router-link>
     <nav class="nav">
       <router-link to="/explore/all" class="nav-item">Explore</router-link>
-      <router-link to="/create/add-action" class="nav-item create-btn">Create</router-link>
+      <router-link to="/create" class="nav-item create-btn">Create</router-link>
       <!-- Icône de profil avec le menu déroulant -->
       <div class="profile-container" @click="toggleProfileMenu">
         <img src="@/assets/profile-icon.svg" alt="Profile" class="profile-icon" />
