@@ -186,6 +186,7 @@ CREATE TABLE `Services` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `oauth` tinyint(1) DEFAULT NULL COMMENT 'Inform the code if the service is authenticated via OAuth.',
   `colour` varchar(1024) NULL COMMENT 'The colour of the service.',
+  `description` mediumtext NULL COMMENT 'The description for the service.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Services_UNIQUE_1` (`name`),
   UNIQUE KEY `Services_UNIQUE` (`url`) USING HASH
