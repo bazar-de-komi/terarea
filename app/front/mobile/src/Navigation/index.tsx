@@ -39,8 +39,6 @@ const Navigation = () => {
                 <Stack.Screen name="Service screen" component={ServicesScreen} />
                 <Stack.Screen name="Service details" component={ServicesDetails} />
 
-                <Stack.Screen name="Back button" component={BackButton} />
-
                 <Stack.Screen name="Create" component={Create} />
                 <Stack.Screen name="Choose services" component={ChooseServices} />
 
