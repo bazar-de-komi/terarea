@@ -7,6 +7,7 @@ import { storeValue } from "../../../components/StoreData/storeData";
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
 import SocialLogo from '../../../components/SocialAuthButton/socialAuthButton';
+import Or from '../../../components/SocialAuthButton/OrLine';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
@@ -106,6 +107,7 @@ const SignIn = () => {
                         icon={""}
                         type={""}
                     />
+                    <Or />
                     <SocialLogo />
                     <CustomerButton
                         text="New to IFTTT ? Sign up here"

@@ -109,6 +109,11 @@ const styles = StyleSheet.create({
         margin: 30,
         color: 'white',
     },
+    descriptionAppletsAfterConnectButton: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
+    },
     description: {
         fontSize: 20,
         margin: 30,

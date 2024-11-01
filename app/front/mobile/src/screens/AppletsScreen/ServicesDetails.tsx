@@ -59,27 +59,22 @@ const ServicesDetails = ({ route }) => {
                 </Text>
                 <View style={styles.createStyle}>
                     <CustomerButton
-                        text="Create"
-                        onPress={handleCreateButton}
-                        type="PRIMARY"
-                        bgColor={""}
-                        fgColor={""}
+                    text="Create"
+                    onPress={create}
+                    type="PRIMARY"
+                    bgColor={""}
+                    fgColor={""}
                     />
                 </View>
             </View>
-            {
-                applets.map((applet) => (
-                    <AppletAndServiceBox
-                        key={applet.id}
-                        title={applet.name}
-                        description={applet.description}
-                        author={applet.author}
-                        user_nb={applet.frequency}
-                        bgColor={applet.colour}
-                        onPress={() => handleAppletButton(applet)}
-                    />
-                ))
-            }
+            <Text style={styles.homeTitle}>Popular 5-Minute Crafts workflows & automations</Text>
+            <AppletBox
+            title="Reveive a weekly email digest of all new videos for the 5-Minute Crafts Youtub channel"
+            description={"5-Minute Crafts"}
+            bgColor={"green"}
+            onPress={servicesScreen}
+
+            />
         </ScrollView>
     )
 }
@@ -108,6 +103,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 30,
         color: 'white',
+    },
+    descriptionSericesAfterCreateButton: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
     },
     description: {
         fontSize: 20,

@@ -50,7 +50,10 @@ const Header = () => {
                     animationType="none"
                     onRequestClose={closeSidebar}
                 >
-                    <TouchableOpacity style={styles.modalOverlay} onPress={closeSidebar} />
+                    <TouchableOpacity
+                        style={styles.modalOverlay}
+                        onPress={closeSidebar}
+                    />
                     <View style={styles.sidebar}>
                         <TouchableOpacity style={styles.menuItem}>
                             <Image
@@ -81,8 +84,21 @@ const Header = () => {
                         >
                             <Text style={styles.menuText}>My applets</Text>
                         </TouchableOpacity>
+                        
                         <TouchableOpacity
-                            onPress={handleLogOut}
+                            onPress={() => {
+                                navigation.navigate('Services');
+                                closeSidebar();
+                            }}
+                            style={styles.menuItem}
+                        >
+                            <Text style={styles.menuText}>My Services</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('Sign In');
+                                closeSidebar();
+                            }}
                             style={styles.menuItem}
                         >
                             <Text style={styles.menuText}>Log Out</Text>

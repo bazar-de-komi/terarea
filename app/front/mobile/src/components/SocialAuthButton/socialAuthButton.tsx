@@ -80,7 +80,7 @@ const SocialAuthButton = () => {
 
     return (
         <View style={styles.container}>
-            <OrLine />
+            {/* <OrLine /> */}
             <CustomerButton
                 text="Sign in with Google"
                 onPress={SignInGoogle}
