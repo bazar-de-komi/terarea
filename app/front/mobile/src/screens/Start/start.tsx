@@ -32,7 +32,7 @@ const Start = () => {
                 <View style={styles.back}>
                     <CustomerButton
                         text="Start Today"
-                        onPress={() => handleStartButton()}
+                        onPress={handleStartButton}
                         type="PRIMARY"
                         bgColor={""}
                         fgColor={""}

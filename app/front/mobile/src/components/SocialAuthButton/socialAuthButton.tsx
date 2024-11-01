@@ -80,10 +80,10 @@ const SocialAuthButton = () => {
 
     return (
         <View style={styles.container}>
-            <OrLine />
+            {/* <OrLine /> */}
             <CustomerButton
                 text="Sign in with Google"
-                onPress={() => SignInGoogle()}
+                onPress={SignInGoogle}
                 bgColor="white"
                 fgColor="black"
                 icon={<Image source={GoogleLogo} style={styles.logo} />}
@@ -91,21 +91,21 @@ const SocialAuthButton = () => {
             />
             <CustomerButton
                 text="Sign in with GitHub"
-                onPress={() => SignInGithub()}
+                onPress={SignInGithub}
                 bgColor="#303030"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}
             />
             <CustomerButton
                 text="Sign in with Discord"
-                onPress={() => SignInDiscord()}
+                onPress={SignInDiscord}
                 bgColor="purple"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}
             />
             <CustomerButton
                 text="Sign in with Spotify"
-                onPress={() => SignInSpotify()}
+                onPress={SignInSpotify}
                 bgColor="green"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}

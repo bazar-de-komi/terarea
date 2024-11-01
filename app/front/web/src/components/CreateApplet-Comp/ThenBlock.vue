@@ -1,23 +1,7 @@
 <template>
-  <div :class="['then-block', serviceColor]">
-    <!-- État du bouton "Then" après sélection d'un service -->
-    <div v-if="action && action.name">
-      <img :src="action.logo" alt="Service logo" class="service-logo" />
-      <h3>{{ action.name }}</h3>
-      <p>{{ action.description }}</p>
-
-      <div class="actions">
-        <!-- Bouton Edit -->
-        <button @click="editService">Edit</button>
-        <!-- Bouton Delete -->
-        <button @click="deleteService">Delete</button>
-      </div>
-    </div>
-
-    <!-- État initial du bouton avec "Add" -->
-    <div v-else>
-      <h3>Then That</h3>
-      <button @click="addService">Add</button>
+  <div class="container">
+    <div class="ifThisBlock">
+      <span>If This</span>
     </div>
   </div>
 </template>
@@ -58,40 +42,30 @@ export default defineComponent({
 
 <style scoped>
 .then-block {
-  background-color: #ccc;
-  color: black;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  position: relative;
-  height: 120px;
-  width: 300px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.service-logo {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-}
-
-.actions button {
-  margin-right: 10px;
   background-color: black;
   color: white;
-  padding: 5px 10px;
+  padding: 10px 5vw;
+  border-radius: 75px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5vw;
+  max-width: 90%;
+  flex-wrap: wrap;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.then-block button {
+  background-color: white;
+  color: black;
+  border-radius: 20px;
+  padding: 1vw 1vw;
+  font-size: 20px;
+  font-weight: bold;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
 }
 
 .default-gray {
@@ -100,5 +74,22 @@ export default defineComponent({
 
 .service-green {
   background-color: #4caf50;
+}
+
+@media (max-width: 600px) {
+  .then-block {
+    padding: 8px 3vw;
+    gap: 1vw;
+  }
+
+  .then-block h3 {
+    font-size: 6vw;
+  }
+
+  .then-block button {
+    padding: 2vw 4vw;
+    font-size: 4vw;
+  }
+
 }
 </style>

@@ -50,7 +50,10 @@ const Header = () => {
                     animationType="none"
                     onRequestClose={closeSidebar}
                 >
-                    <TouchableOpacity style={styles.modalOverlay} onPress={closeSidebar} />
+                    <TouchableOpacity
+                        style={styles.modalOverlay}
+                        onPress={closeSidebar}
+                    />
                     <View style={styles.sidebar}>
                         <TouchableOpacity style={styles.menuItem}>
                             <Image
@@ -72,6 +75,27 @@ const Header = () => {
                         >
                             <Text style={styles.menuText}>Create</Text>
                         </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('Profile');
+                                closeSidebar();
+                            }}
+                            style={styles.menuItem}
+                        >
+                            <Text style={styles.menuText}>Profile</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('Applets');
+                                closeSidebar();
+                            }}
+                            style={styles.menuItem}
+                        >
+                            <Text style={styles.menuText}>My applets</Text>
+                        </TouchableOpacity>
+                        
                         <TouchableOpacity
                             onPress={() => {
                                 navigation.navigate('Services');
@@ -79,10 +103,13 @@ const Header = () => {
                             }}
                             style={styles.menuItem}
                         >
-                            <Text style={styles.menuText}>My applets</Text>
+                            <Text style={styles.menuText}>My Services</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={handleLogOut}
+                            onPress={() => {
+                                navigation.navigate('Start');
+                                closeSidebar();
+                            }}
                             style={styles.menuItem}
                         >
                             <Text style={styles.menuText}>Log Out</Text>

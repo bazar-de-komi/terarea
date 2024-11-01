@@ -77,13 +77,13 @@ const NewPassword = () => {
                     />
                     <CustomerButton
                         text="Set password"
-                        onPress={() => handleSignSubmitButton()}
+                        onPress={handleSignSubmitButton}
                         bgColor={"black"}
                         fgColor={""}
                     />
                     <CustomerButton
                         text="Resend verification email"
-                        onPress={() => handleSendEmail()}
+                        onPress={handleSendEmail}
                         bgColor={'#6c63ff'}
                         fgColor={""}
                     />

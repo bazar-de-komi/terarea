@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerButton from "../../components/CustomerButton";
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import BackButton from "../../components/BackButton/backButton";
-import Header from '../../components/Header/header.tsx';
+import Header from '../../components/Header/header';
 import { getValue } from "../../components/StoreData/storeData";
 import { queries } from "../../../back-endConnection/querier";
 
@@ -18,9 +18,9 @@ const ServicesDetails = ({ route }) => {
         navigation.goBack();
     }
 
-    // const servicesScreen = () => {
-    //     navigation.navigate("Service screen");
-    // };
+    const handleAppletButton = async (applet: any) => {
+        navigation.navigate("Applet screen", { applet: applet });
+    };
 
     const handleCreateButton = () => {
         navigation.navigate('Create');
@@ -30,7 +30,7 @@ const ServicesDetails = ({ route }) => {
         const getAppletsOfService = async () => {
             try {
                 const token = await getValue("token");
-                let path = "/api/v1/applets_by_tags/";
+                let path = "/api/v1/applets/";
                 path += service.name;
                 const getAppletsResponse = await queries.get(path, {}, token);
                 setApplets(getAppletsResponse.msg);
@@ -47,7 +47,7 @@ const ServicesDetails = ({ route }) => {
                 <Header />
                 <BackButton
                     text=" < "
-                    onPress={() => handleGoBackButton()}
+                    onPress={handleGoBackButton}
                 />
                 <Text style={styles.homeTitle}>
                     {service.name}
@@ -60,13 +60,14 @@ const ServicesDetails = ({ route }) => {
                 <View style={styles.createStyle}>
                     <CustomerButton
                         text="Create"
-                        onPress={() => handleCreateButton()}
+                        onPress={handleCreateButton}
                         type="PRIMARY"
                         bgColor={""}
                         fgColor={""}
                     />
                 </View>
             </View>
+            {/* <Text style={styles.homeTitle}>Popular 5-Minute Crafts workflows & automations</Text> */}
             {
                 applets.map((applet) => (
                     <AppletAndServiceBox
@@ -76,7 +77,7 @@ const ServicesDetails = ({ route }) => {
                         author={applet.author}
                         user_nb={applet.frequency}
                         bgColor={applet.colour}
-                    // onPress={servicesScreen}
+                        onPress={() => handleAppletButton(applet)}
                     />
                 ))
             }
@@ -108,6 +109,11 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         margin: 30,
         color: 'white',
+    },
+    descriptionSericesAfterCreateButton: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
     },
     description: {
         fontSize: 20,

@@ -26,11 +26,11 @@ const All = () => {
         navigation.navigate("Services");
     }
 
-    const handleAppletButton = async (applet: any) => {
+    const handleAppletButton = (applet: any) => {
         navigation.navigate("Applet screen", { applet: applet });
     }
 
-    const handleServiceButton = async (service: any) => {
+    const handleServiceButton = (service: any) => {
         navigation.navigate("Service details", { service: service });
     }
 
@@ -83,21 +83,21 @@ const All = () => {
             <View style={styles.homeNavigation}>
                 <CustomerButton
                     text="All"
-                    onPress={() => handleAllButton()}
+                    onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
                 />
                 <CustomerButton
                     text="Applets"
-                    onPress={() => handleAppletsButton()}
+                    onPress={handleAppletsButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
                 <CustomerButton
                     text="Services"
-                    onPress={() => handleServicesButton()}
+                    onPress={handleServicesButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
@@ -114,7 +114,7 @@ const All = () => {
                 applets.map((applet) => (
                     <AppletAndServiceBox
                         key={applet.id}
-                        title={applet.title}
+                        title={applet.name}
                         description={applet.description}
                         author={applet.author}
                         user_nb={applet.frequency}
@@ -127,7 +127,7 @@ const All = () => {
                 services.map((service) => (
                     <AppletAndServiceBox
                         key={service.id}
-                        title={service.title}
+                        title={service.name}
                         bgColor={service.colour}
                         onPress={() => handleServiceButton(service)}
                     />
