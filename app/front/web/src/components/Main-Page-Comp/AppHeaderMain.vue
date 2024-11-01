@@ -2,7 +2,7 @@
   <header class="header">
     <!-- Logo avec lien vers la page d'accueil -->
     <router-link to="/" class="logo-link">
-      <img src="@/assets/logo.png" alt="Logo" class="logo" />
+      <img src="@/assets/logo-white.png" alt="Logo" class="logo" />
     </router-link>
     <!-- Boutons de navigation -->
     <nav class="nav">
@@ -53,14 +53,14 @@ export default defineComponent({
 .nav-item {
   margin-right: 20px;
   text-decoration: none;
-  color: black;
+  color: white;
   font-weight: bold;
   font-size: 16px;
 }
 
 .get-started-btn {
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
   padding: 10px 20px;
   border-radius: 25px;
   font-size: 16px;
@@ -70,6 +70,6 @@ export default defineComponent({
 }
 
 .get-started-btn:hover {
-  background-color: #333;
+  background-color: #999;
 }
 </style>

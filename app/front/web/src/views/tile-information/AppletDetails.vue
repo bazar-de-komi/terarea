@@ -2,7 +2,7 @@
   <div>
     <header>
       <AppHeader />
-      <CancelButton buttonText="Annuler" @click="goBack" />
+      <CancelButton buttonText="Back" @click="goBack" />
     </header>
 
     <!-- Première boîte (applet-header) -->

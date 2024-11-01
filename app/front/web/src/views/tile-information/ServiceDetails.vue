@@ -2,7 +2,7 @@
   <div>
     <header>
       <AppHeader />
-      <CancelButton @click="goBack" />
+      <CancelButton buttonText="Back" @click="goBack" />
     </header>
 
     <!-- Première boîte (service-header) -->
@@ -197,7 +197,7 @@ html, body {
 
 .applets-section {
   text-align: center;
-  position: relative; /* Permet de s'aligner en dessous de service-header */
+  position: relative;
 }
 
 .applets-container {
