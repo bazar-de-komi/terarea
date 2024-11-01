@@ -114,7 +114,7 @@ const All = () => {
                 applets.map((applet) => (
                     <AppletAndServiceBox
                         key={applet.id}
-                        title={applet.title}
+                        title={applet.name}
                         description={applet.description}
                         author={applet.author}
                         user_nb={applet.frequency}
@@ -127,7 +127,7 @@ const All = () => {
                 services.map((service) => (
                     <AppletAndServiceBox
                         key={service.id}
-                        title={service.title}
+                        title={service.name}
                         bgColor={service.colour}
                         onPress={() => handleServiceButton(service)}
                     />

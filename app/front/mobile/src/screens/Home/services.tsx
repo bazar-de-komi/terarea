@@ -105,12 +105,16 @@ const Services = () => {
                 placeholder="All services"
             />
             </View>*/}
-            <AppletBox
-            title="5-Minute Crafts"
-            description=""
-            bgColor="green"
-            onPress={ServicesDetails}
-            />
+            {
+                services.map((service) => (
+                    <AppletAndServiceBox
+                        key={service.id}
+                        title={service.name}
+                        bgColor={service.colour}
+                        onPress={() => handleServicesDetailsButton(service)}
+                    />
+                ))
+            }
         </ScrollView>
     );
 };
