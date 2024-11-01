@@ -30,7 +30,7 @@ const ServicesDetails = ({ route }) => {
         const getAppletsOfService = async () => {
             try {
                 const token = await getValue("token");
-                let path = "/api/v1/applets_by_tags/";
+                let path = "/api/v1/applets/";
                 path += service.name;
                 const getAppletsResponse = await queries.get(path, {}, token);
                 setApplets(getAppletsResponse.msg);
@@ -47,7 +47,7 @@ const ServicesDetails = ({ route }) => {
                 <Header />
                 <BackButton
                     text=" < "
-                    onPress={() => handleGoBackButton()}
+                    onPress={handleGoBackButton}
                 />
                 <Text style={styles.homeTitle}>
                     {service.name}
@@ -60,7 +60,7 @@ const ServicesDetails = ({ route }) => {
                 <View style={styles.createStyle}>
                     <CustomerButton
                         text="Create"
-                        onPress={() => handleCreateButton()}
+                        onPress={handleCreateButton}
                         type="PRIMARY"
                         bgColor={""}
                         fgColor={""}

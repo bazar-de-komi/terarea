@@ -91,21 +91,21 @@ const Applets = () => {
             <View style={styles.homeNavigation}>
                 <CustomerButton
                     text="All"
-                    onPress={() => handleAllButton()}
+                    onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
                 <CustomerButton
                     text="Applets"
-                    onPress={() => handleAppletsButton()}
+                    onPress={handleAppletsButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
                 />
                 <CustomerButton
                     text="Services"
-                    onPress={() => handleServicesButton()}
+                    onPress={handleServicesButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
