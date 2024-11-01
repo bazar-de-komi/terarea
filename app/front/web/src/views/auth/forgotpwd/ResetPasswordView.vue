@@ -2,8 +2,8 @@
   <img src="@/assets/logo.png" class="ifttt-logo" />
   <AuthLayout title="Reset Password" link-text="" link-path="">
     <form @submit.prevent="submitPasswordReset" class="forgot-password-form">
-      <button @click.prevent="resendVerificationEmail" class="resend-email-btn">Resend verification email</button>
       <input v-model="verificationCode" type="text" placeholder="Verification code" required />
+      <button @click.prevent="resendVerificationEmail" class="resend-email-btn">Resend verification email</button>
       <div class="password-container">
         <input :type="showPassword ? 'text' : 'password'" v-model="newPassword" placeholder="New Password" required />
         <button type="button" class="toggle-password" @click="togglePassword">
