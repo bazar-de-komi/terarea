@@ -11,7 +11,8 @@
         </button>
       </div>
       <div class="password-container">
-        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="passwordConfirmation" placeholder="Password confirmation" required />
+        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="passwordConfirmation"
+          placeholder="Password confirmation" required />
         <button type="button" class="toggle-password" @click="toggleConfirmPassword">
           <img :src="showConfirmPassword ? showIcon : hideIcon" alt="toggle password visibility" />
         </button>
@@ -26,6 +27,7 @@ import { defineComponent } from 'vue';
 import AuthButton from '../../../components/AuthButton.vue';
 import AuthLayout from '../../../components/AuthLayout.vue';
 import { useRoute } from 'vue-router';
+import { queries } from '@/../lib/querier';
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
@@ -55,18 +57,32 @@ export default defineComponent({
     };
   },
   methods: {
-    submitPasswordReset() {
+    async submitPasswordReset() {
       if (this.newPassword !== this.passwordConfirmation) {
         alert('Passwords do not match!');
         return;
       }
-
+      try {
+        await queries.patch("/api/v1/reset_password", {
+          code: this.verificationCode,
+          email: this.email,
+          password: this.newPassword
+        })
+        this.$router.push('/sign-in');
+      } catch (error) {
+        console.error(error);
+        alert("Failed to reset the password.");
+      }
       console.log('Resetting password for', this.email);
       console.log('Verification Code:', this.verificationCode);
       console.log('New Password:', this.newPassword);
     },
-    resendVerificationEmail() {
-      console.log('Resending verification email to', this.email);
+    async resendVerificationEmail() {
+      await queries.post("/api/v1/send_email_verification", {
+        email: this.email
+      })
+      // alert("A verification email was resend.");
+      // console.log('Resending verification email to', this.email);
     },
     togglePassword() {
       this.showPassword = !this.showPassword;

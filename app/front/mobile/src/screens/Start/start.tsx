@@ -11,7 +11,7 @@ const Start = () => {
     const navigation = useNavigation();
 
     const handleStartButton = () => {
-        navigation.navigate('Sign In');
+        navigation.navigate('Sign Up');
     }
 
     return (

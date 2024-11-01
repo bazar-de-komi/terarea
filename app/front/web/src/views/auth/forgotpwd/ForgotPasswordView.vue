@@ -13,6 +13,7 @@ import { defineComponent } from 'vue';
 import AuthButton from '../../../components/AuthButton.vue';
 import AuthLayout from '../../../components/AuthLayout.vue';
 import { useRouter } from 'vue-router';
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   components: {
@@ -32,13 +33,22 @@ export default defineComponent({
     };
   },
   methods: {
-    submitForgotPassword() {
+    async submitForgotPassword() {
       if (this.email) {
-        console.log('Reset password for', this.email);
-        this.router.push({
-          name: 'ResetPassword',
-          query: { email: this.email }
-        });
+        try {
+          const response = await queries.post('/api/v1/send_email_verification', {
+            email: this.email
+          });
+          this.router.push({
+            name: 'ResetPassword',
+            query: { email: this.email }
+          });
+        } catch (error) {
+          console.error('Error while sending email verification:', error);
+          alert('Failed to send email verification.');
+        }
+      } else {
+        alert('Please enter an email before continuing.');
       }
     },
   },

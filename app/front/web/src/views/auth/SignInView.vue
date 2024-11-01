@@ -60,13 +60,13 @@ export default defineComponent({
   },
   methods: {
     async submitSignIn() {
-      if (this.email === 'user@example.com' && this.password === 'password123') {
-        this.$router.push('/explore/all');
-      } else {
-        alert('Invalid email or password');
-      }
+      // if (this.email === 'user@example.com' && this.password === 'password123') {
+      //   this.$router.push('/explore/all');
+      // } else {
+      //   alert('Invalid email or password');
+      // }
       try {
-        const response = await queries.put('/login', {
+        const response = await queries.post('/api/v1/login', {
           email: this.email,
           password: this.password,
         });
@@ -135,7 +135,8 @@ export default defineComponent({
   position: relative;
 }
 
-.separator::before, .separator::after {
+.separator::before,
+.separator::after {
   content: '';
   position: absolute;
   top: 50%;
