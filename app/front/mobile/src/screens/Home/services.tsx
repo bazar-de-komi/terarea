@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
-import Header from '../../components/Header/header.tsx';
+import Header from '../../components/Header/header';
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import { queries } from "../../../back-endConnection/querier";
 import { getValue } from "../../components/StoreData/storeData";
@@ -26,7 +26,7 @@ const Services = () => {
         navigation.navigate("Services");
     };
 
-    const handleServicesDetailsButton = async (service: any) => {
+    const handleServicesDetailsButton = (service: any) => {
         navigation.navigate('Service details', { service: service });
     };
 
@@ -73,21 +73,21 @@ const Services = () => {
             <View style={styles.homeNavigation}>
                 <CustomerButton
                     text="All"
-                    onPress={() => handleAllButton()}
+                    onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
                 <CustomerButton
                     text="Applets"
-                    onPress={() => handleAppletsButton()}
+                    onPress={handleAppletsButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
                 <CustomerButton
                     text="Services"
-                    onPress={() => handleServicesButton()}
+                    onPress={handleServicesButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
@@ -111,7 +111,7 @@ const Services = () => {
                         key={service.id}
                         title={service.name}
                         bgColor={service.colour}
-                        onPress={async () => await handleServicesDetailsButton(service)}
+                        onPress={() => handleServicesDetailsButton(service)}
                     />
                 ))
             }

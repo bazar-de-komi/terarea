@@ -79,7 +79,10 @@ class OAuthAuthentication:
             return self.error
         state += ":"
         state += provider
-        url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}"
+        if provider == "google":
+            url = f"{base_url}?access_type=offline&client_id={client_id}&redirect_uri={redirect_uri}&prompt=consent"
+        else:
+            url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}"
         url += f"&response_type=code&scope={scope}&state={state}"
         url = url.replace(" ", "%20")
         url = url.replace(":", "%3A")

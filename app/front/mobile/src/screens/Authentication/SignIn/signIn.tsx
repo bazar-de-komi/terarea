@@ -92,7 +92,7 @@ const SignIn = () => {
                     />
                     <CustomerButton
                         text="Forgot your password ?"
-                        onPress={() => handleForgotPasswordButton()}
+                        onPress={handleForgotPasswordButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
@@ -100,7 +100,7 @@ const SignIn = () => {
                     />
                     <CustomerButton
                         text="Get started"
-                        onPress={() => handleSignInButton()}
+                        onPress={handleSignInButton}
                         bgColor={"black"}
                         fgColor={"white"}
                         icon={""}
@@ -109,7 +109,7 @@ const SignIn = () => {
                     <SocialLogo />
                     <CustomerButton
                         text="New to IFTTT ? Sign up here"
-                        onPress={() => handleSignUpButton()}
+                        onPress={handleSignUpButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"

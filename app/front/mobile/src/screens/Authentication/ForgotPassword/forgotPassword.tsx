@@ -49,7 +49,7 @@ const ForgotPassword = () => {
                     <Text>We will send you a link to reset your password</Text>
                     <CustomerButton
                         text="Reset password"
-                        onPress={() => handleSendEmailButton()}
+                        onPress={handleSendEmailButton}
                         bgColor={"black"}
                         fgColor={""}
                         icon={""}
@@ -57,7 +57,7 @@ const ForgotPassword = () => {
                     />
                     <CustomerButton
                         text="Remember your password ? Sign in here"
-                        onPress={() => handleLoginButton()}
+                        onPress={handleLoginButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"

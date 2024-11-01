@@ -102,14 +102,14 @@ const SignUp = () => {
                     />
                     <CustomerButton
                         text="Get started"
-                        onPress={() => handleSignInButton()}
+                        onPress={handleSignInButton}
                         bgColor={"black"}
                         fgColor={""}
                     />
                     <SocialButton />
                     <CustomerButton
                         text="Already on IFTTT ? Sign in here"
-                        onPress={() => handleGoToSignInButton()}
+                        onPress={handleGoToSignInButton}
                         type="TERTIARY"
                         bgColor={""}
                         fgColor={""}

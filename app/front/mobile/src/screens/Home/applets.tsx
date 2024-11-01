@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
-import Header from '../../components/Header/header.tsx';
+import Header from '../../components/Header/header';
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import { queries } from "../../../back-endConnection/querier";
 import { getValue } from "../../components/StoreData/storeData";
@@ -91,21 +91,21 @@ const Applets = () => {
             <View style={styles.homeNavigation}>
                 <CustomerButton
                     text="All"
-                    onPress={() => handleAllButton()}
+                    onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
                 <CustomerButton
                     text="Applets"
-                    onPress={() => handleAppletsButton()}
+                    onPress={handleAppletsButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
                 />
                 <CustomerButton
                     text="Services"
-                    onPress={() => handleServicesButton()}
+                    onPress={handleServicesButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
