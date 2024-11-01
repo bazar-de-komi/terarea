@@ -1,6 +1,6 @@
 <template>
   <AppHeader />
-  <BackButton ButtonText="Back" @click="goBack" />
+  <CancelButton ButtonText="Back" @click="goBack" />
   <AuthLayout title="Change Password" link-text="" link-path="">
     <form @submit.prevent="submitPasswordReset" class="forgot-password-form">
       <input v-model="verificationCode" type="text" placeholder="Verification code" required />
@@ -28,7 +28,7 @@ import { useRoute, useRouter } from 'vue-router';
 import AuthButton from '@/components/AuthButton.vue';
 import AuthLayout from '@/views/profil/ChangeLayout.vue';
 import AppHeader from '@/components/AppHeader.vue';
-import BackButton from '@/components/CancelButton.vue'
+import CancelButton from '@/components/CancelButton.vue'
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
@@ -38,7 +38,7 @@ export default defineComponent({
     AuthButton,
     AuthLayout,
     AppHeader,
-    BackButton,
+    CancelButton,
   },
   data() {
     return {

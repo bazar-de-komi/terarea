@@ -1,6 +1,6 @@
 <template>
     <AppHeader />
-    <BackButton ButtonText="Back" @click="goBack" />
+    <CancelButton buttonText="Back" @click="goBack" />
   <div class="account-settings">
 
     <h1>Account Settings</h1>
@@ -32,14 +32,14 @@
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
-import BackButton from '@/components/CancelButton.vue';
+import CancelButton from '@/components/CancelButton.vue';
 import Button from '@/components/AuthButton.vue'
 import PasswordField from '@/views/profil/PasswordField.vue';
 
 export default defineComponent({
   components: {
     AppHeader,
-    BackButton,
+    CancelButton,
     PasswordField,
     Button,
   },
@@ -64,7 +64,7 @@ export default defineComponent({
 <style scoped>
 .account-settings {
   max-width: 600px;
-  margin: 60px auto;
+  margin: 200px auto 40px auto;
   padding: 40px;
   background-color: #f5f5f5;
   border-radius: 20px;
