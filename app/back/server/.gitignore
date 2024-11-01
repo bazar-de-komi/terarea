@@ -12,6 +12,8 @@ coverage_data/**
 .bash_history
 .mysql_history
 .python_history
+log/**
+*my_docker_bash_launcher.sh*
 
 # Ignore all the sql files in the server
 *.sql
