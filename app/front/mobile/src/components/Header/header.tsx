@@ -75,9 +75,20 @@ const Header = () => {
                         >
                             <Text style={styles.menuText}>Create</Text>
                         </TouchableOpacity>
+
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('Services');
+                                navigation.navigate('Profile');
+                                closeSidebar();
+                            }}
+                            style={styles.menuItem}
+                        >
+                            <Text style={styles.menuText}>Profile</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.navigate('Applets');
                                 closeSidebar();
                             }}
                             style={styles.menuItem}
@@ -96,7 +107,7 @@ const Header = () => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('Sign In');
+                                navigation.navigate('Start');
                                 closeSidebar();
                             }}
                             style={styles.menuItem}
