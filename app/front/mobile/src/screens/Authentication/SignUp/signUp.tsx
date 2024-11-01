@@ -1,17 +1,17 @@
-import React, {useState} from "react";
-import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions, Alert} from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from '../../../components/CustomerButton/CustomerButton';
 import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
-import { storeValue} from '../../../components/StoreData/storeData';
+import { storeValue } from '../../../components/StoreData/storeData';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 import { queries } from "../../../../back-endConnection/querier";
 
-const SignUp = ()  => {
+const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
@@ -22,7 +22,7 @@ const SignUp = ()  => {
 
     const navigation = useNavigation();
 
-    const SignInPressed = async () => {
+    const handleSignInButton = async () => {
         if (email === '') {
             Alert.alert("You must enter an email.");
             return;
@@ -68,55 +68,55 @@ const SignUp = ()  => {
         }
     }
 
-    const loginPressed = () => {
+    const handleGoToSignInButton = () => {
         navigation.navigate("Sign In");
     }
 
     return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.bgSignUpContainer}>
-            <Image 
-                source={AreaLogo}
-                style={[styles.areaLogo, { height: height * 0.1}]}
-                resizeMode="contain"
-            />
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.bgSignUpContainer}>
+                <Image
+                    source={AreaLogo}
+                    style={[styles.areaLogo, { height: height * 0.1 }]}
+                    resizeMode="contain"
+                />
                 <View style={styles.SignUpContainer}>
                     <Text style={styles.SignUpTitle}>Sign Up</Text>
                     <CustomerInput
-                    placeholder="Email"
-                    value={email}
-                    setValue={setEmail}
-                    secureTextEntry={false}
+                        placeholder="Email"
+                        value={email}
+                        setValue={setEmail}
+                        secureTextEntry={false}
                     />
                     <CustomerInput
-                    placeholder="Password"
-                    value={password}
-                    setValue={setPassword}
-                    secureTextEntry={true}
+                        placeholder="Password"
+                        value={password}
+                        setValue={setPassword}
+                        secureTextEntry={true}
                     />
                     <CustomerInput
-                    placeholder="Confirmation Password"
-                    value={repeatPassword}
-                    setValue={setRepeatPassword}
-                    secureTextEntry={true}
+                        placeholder="Confirmation Password"
+                        value={repeatPassword}
+                        setValue={setRepeatPassword}
+                        secureTextEntry={true}
                     />
                     <CustomerButton
                         text="Get started"
-                        onPress={SignInPressed}
+                        onPress={() => handleSignInButton()}
                         bgColor={"black"}
                         fgColor={""}
                     />
-                    <SocialButton/>
+                    <SocialButton />
                     <CustomerButton
                         text="Already on IFTTT ? Sign in here"
-                        onPress={loginPressed}
+                        onPress={() => handleGoToSignInButton()}
                         type="TERTIARY"
                         bgColor={""}
                         fgColor={""}
                     />
                 </View>
-        </View>
-    </ScrollView>
+            </View>
+        </ScrollView>
     );
 };
 

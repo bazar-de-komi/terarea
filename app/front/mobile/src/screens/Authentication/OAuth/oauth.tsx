@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Button, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { WebView } from 'react-native-webview';
-// import * as AuthSession from 'expo-auth-session';
 import { deleteKey, storeValue, getValue } from '../../../components/StoreData/storeData';
 import { queries } from '../../../../back-endConnection/querier';
 
@@ -61,8 +60,6 @@ export const OAuthScreen = () => {
                 <WebView
                     source={{ uri: authUrl }}
                     onNavigationStateChange={onNavigationStateChange}
-                    startInLoadingState
-                    // userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
                     userAgent="Mozilla/5.0"
                 />
             )}
