@@ -8,7 +8,7 @@ import AreaPageApplet from '../views/board/AreaPage-Applet.vue';
 import AreaPageService from '../views/board/AreaPage-Service.vue';
 import AppletDetails from '../views/tile-information/AppletDetails.vue';
 import ServiceDetails from '../views/tile-information/ServiceDetails.vue';
-import CreateApplet from '@/views/CreateApplet.vue';
+import CreateApplet from '@/views/create/CreateApplet.vue';
 import MainPage from '@/views/main/MainPage.vue';
 import ProfilePage from '@/views/profil/AccountSetting.vue';
 import ChangePassword from '@/views/profil/ChangePassword.vue'

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="ifThisContainer">
     <div class="ifThisBlock">
       <span>If This</span>
       <button class="add-button" @click="addService">Add</button>
@@ -20,7 +20,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.container {
+
+.ifThisContainer {
   display: flex;
   align-items: center;
   justify-content: center;
