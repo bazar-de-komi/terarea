@@ -10,7 +10,7 @@ import Header from "../components/Header/header";
 
 import ProfileLogo from "../../assets/profilLogo.png";
 
-const Services = () => {
+const Profile = () => {
     const Navigation = useNavigation();
 
     return (
@@ -107,4 +107,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Services;
+export default Profile;
