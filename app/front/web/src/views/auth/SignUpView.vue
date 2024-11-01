@@ -12,7 +12,8 @@
       </div>
 
       <div class="password-container">
-        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword" placeholder="Confirm Password" required />
+        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword"
+          placeholder="Confirm Password" required />
         <button type="button" class="toggle-password" @click="toggleConfirmPassword">
           <img :src="showConfirmPassword ? showIcon : hideIcon" alt="toggle confirm password visibility" />
         </button>
@@ -74,7 +75,7 @@ export default defineComponent({
       console.log('Sign up with', this.email, this.password);
 
       try {
-        const response = await queries.put('/register', {
+        const response = await queries.post('/api/v1/register', {
           email: this.email,
           password: this.password,
         });
@@ -147,7 +148,8 @@ export default defineComponent({
   position: relative;
 }
 
-.separator::before, .separator::after {
+.separator::before,
+.separator::after {
   content: '';
   position: absolute;
   top: 50%;

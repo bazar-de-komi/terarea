@@ -1,13 +1,6 @@
 const url: string = "https://ifttt-back.pingpal.news";
 const port: number = -1;
 
-interface QueryOptions {
-  method?: string;
-  path?: string;
-  body?: object;
-  token?: string;
-}
-
 async function query(
   method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE" = "GET",
   path: string = "/",

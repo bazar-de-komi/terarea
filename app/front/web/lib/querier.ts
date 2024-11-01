@@ -69,11 +69,12 @@
 
 // export { queries };
 
-const url = "http://127.0.0.1";
-const port = 8081;
+// const url = "http://127.0.0.1";
+const url = "https://ifttt-back.pingpal.news";
+const port = -1;
 
 async function query(
-  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE" = "GET",
   path = "/",
   body = {},
   token = ""
@@ -97,7 +98,13 @@ async function query(
       payload.body = JSON.stringify(body);
     }
 
-    const final_url = port ? `${url}:${port}${path}` : `${url}${path}`;
+    let final_url: string;
+
+    if (port === -1) {
+      final_url = `${url}${path}`;
+    } else {
+      final_url = `${url}:${port}${path}`;
+    }
     console.log(final_url);
     console.log(payload);
     const response: Response = await fetch(final_url, payload);
@@ -126,7 +133,11 @@ async function post(path = "/", body: object = {}, token = ""): Promise<any> {
   return await query("POST", path, body, token);
 }
 
-async function delete_query(path = "/", body: object = {}, token = ""): Promise<any> {
+async function patch(path = "/", body = {}, token = ""): Promise<any> {
+  return await query("PATCH", path, body, token);
+}
+
+async function delete_query(path = "/", body = {}, token = ""): Promise<any> {
   return await query("DELETE", path, body, token);
 }
 
@@ -135,6 +146,7 @@ const queries = {
   get,
   put,
   post,
+  patch,
   delete_query
 };
 
