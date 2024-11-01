@@ -6,13 +6,12 @@ import CustomerButton from "../../components/CustomerButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import MenuIcon from '../../../assets/menuIcon.png';
-import SignIn from "../Authentication/SignIn";
 
 const Start = () => {
-    const Navigation = useNavigation();
+    const navigation = useNavigation();
 
-    const signIn = () => {
-        Navigation.navigate('Sign In');
+    const handleStartButton = () => {
+        navigation.navigate('Sign In');
     }
 
     return (
@@ -33,7 +32,7 @@ const Start = () => {
                 <View style={styles.back}>
                     <CustomerButton
                         text="Start Today"
-                        onPress={signIn}
+                        onPress={() => handleStartButton()}
                         type="PRIMARY"
                         bgColor={""}
                         fgColor={""}

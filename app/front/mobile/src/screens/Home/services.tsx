@@ -7,13 +7,12 @@ import CustomerInput from "../../components/CustomersInput/CustomerInput";
 import Header from '../../components/Header/header.tsx';
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import { queries } from "../../../back-endConnection/querier";
-import { getValue, storeValue } from "../../components/StoreData/storeData";
+import { getValue } from "../../components/StoreData/storeData";
 
 const Services = () => {
     const navigation = useNavigation();
     const [services, setServices] = useState([]);
     const [tags, setTags] = useState("");
-    const [loading, setLoading] = useState(true);
 
     const handleAllButton = () => {
         navigation.navigate("All");
@@ -21,15 +20,14 @@ const Services = () => {
 
     const handleAppletsButton = () => {
         navigation.navigate("Applets");
-    }
-
-    const handleServicesDetailsButton = async (service: any) => {
-        await storeValue("service", service);
-        navigation.navigate('Service details');
-    }
+    };
 
     const handleServicesButton = () => {
         navigation.navigate("Services");
+    };
+
+    const handleServicesDetailsButton = async (service: any) => {
+        navigation.navigate('Service details', { service: service });
     };
 
     useEffect(() => {
@@ -37,12 +35,9 @@ const Services = () => {
             try {
                 const token = await getValue("token");
                 const getServicesResponse = await queries.get("/api/v1/services", {}, token);
-                console.log("Response:", getServicesResponse);
                 setServices(getServicesResponse.msg);
             } catch (error) {
                 console.error(error);
-            } finally {
-                setLoading(false);
             }
         };
         getServices();
@@ -70,10 +65,6 @@ const Services = () => {
         }
         getServicesByTags();
     }, [tags]);
-
-    if (loading) {
-        return <ActivityIndicator size="large" color="#0000ff" />; // Affiche un indicateur de chargement
-    }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -117,6 +108,7 @@ const Services = () => {
             {
                 services.map((service) => (
                     <AppletAndServiceBox
+                        key={service.id}
                         title={service.name}
                         bgColor={service.colour}
                         onPress={async () => await handleServicesDetailsButton(service)}

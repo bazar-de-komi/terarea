@@ -15,20 +15,23 @@ const All = () => {
     const [services, setServices] = useState([]);
     const [tags, setTags] = useState("");
 
-    const allScreens = () => {
+    const handleAllButton = () => {
         navigation.navigate("All");
     }
-    const appletsScreens = () => {
+    const handleAppletsButton = () => {
         navigation.navigate("Applets");
     }
 
-    const servicesScreens = () => {
+    const handleServicesButton = () => {
         navigation.navigate("Services");
     }
 
-    const handleAppletPress = async (applet: any) => {
-        await storeValue("applet", applet);
-        navigation.navigate("Applet screen");
+    const handleAppletButton = async (applet: any) => {
+        navigation.navigate("Applet screen", { applet: applet });
+    }
+
+    const handleServiceButton = async (service: any) => {
+        navigation.navigate("Service details", { service: service });
     }
 
     useEffect(() => {
@@ -57,7 +60,7 @@ const All = () => {
                     setServices(getServicesResponse);
                 } else {
                     const noSpaceTags = tags.replaceAll(" ", ":");
-                    let path = "/api/v1/applets_by_tag/";
+                    let path = "/api/v1/applets/";
                     path += noSpaceTags;
                     const getAppletsResponse = await queries.get(path, {}, token);
                     setApplets(getAppletsResponse.msg);
@@ -80,21 +83,21 @@ const All = () => {
             <View style={styles.homeNavigation}>
                 <CustomerButton
                     text="All"
-                    onPress={allScreens}
+                    onPress={() => handleAllButton()}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
                 />
                 <CustomerButton
                     text="Applets"
-                    onPress={appletsScreens}
+                    onPress={() => handleAppletsButton()}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
                 <CustomerButton
                     text="Services"
-                    onPress={servicesScreens}
+                    onPress={() => handleServicesButton()}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
@@ -108,25 +111,25 @@ const All = () => {
                 />
             </View>
             {
-                applets.map((applet, index) => (
+                applets.map((applet) => (
                     <AppletAndServiceBox
-                        key={index}
+                        key={applet.id}
                         title={applet.title}
                         description={applet.description}
                         author={applet.author}
                         user_nb={applet.frequency}
-                        bgColor={applet.color}
-                    // onPress={}
+                        bgColor={applet.colour}
+                        onPress={() => handleAppletButton(applet)}
                     />
                 ))
             }
             {
-                services.map((service, index) => (
+                services.map((service) => (
                     <AppletAndServiceBox
-                        key={index}
+                        key={service.id}
                         title={service.title}
-                        bgColor={service.color}
-                    // onPress={}
+                        bgColor={service.colour}
+                        onPress={() => handleServiceButton(service)}
                     />
                 ))
             }
