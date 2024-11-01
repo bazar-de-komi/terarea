@@ -1,94 +1,116 @@
-import React from "react";
-import { View, Text, StyleSheet, ScrollView} from 'react-native'
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
-import Header from '../../components/Header/header.tsx';
-import AppletBox from "../../components/AppletsBox/appletBox";
+import Header from '../../components/Header/header';
+import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
+import { queries } from "../../../back-endConnection/querier";
+import { getValue } from "../../components/StoreData/storeData";
 
 const Services = () => {
-    const Navigation = useNavigation();
-    const allScreens = () => {
-        Navigation.navigate("All");
+    const navigation = useNavigation();
+    const [services, setServices] = useState([]);
+    const [tags, setTags] = useState("");
+
+    const handleAllButton = () => {
+        navigation.navigate("All");
     };
 
-    const applets = () => {
-        Navigation.navigate("Applets");
-    }
-
-    const ServicesDetails = () => {
-        Navigation.navigate('Service details')
-    }
-
-    const services = () => {
-        Navigation.navigate("Services");
+    const handleAppletsButton = () => {
+        navigation.navigate("Applets");
     };
 
-    const servicesData = [
-        {
-            title: "5-Minute Crafts",
-            description: "",
-            bgColor: "green",
-        },
-        {
-            title: "The Verge on Youtube",
-            description: "",
-            bgColor: "red",
-        },
-        {
-            title: "2Smart Cloud",
-            description: "",
-            bgColor: "grey",
-        },
-    ];
+    const handleServicesButton = () => {
+        navigation.navigate("Services");
+    };
+
+    const handleServicesDetailsButton = (service: any) => {
+        navigation.navigate('Service details', { service: service });
+    };
+
+    useEffect(() => {
+        const getServices = async () => {
+            try {
+                const token = await getValue("token");
+                const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+                setServices(getServicesResponse.msg);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        getServices();
+    }, []);
+
+    useEffect(() => {
+        const getServicesByTags = async () => {
+            try {
+                const token = await getValue("token");
+                if (tags === "") {
+                    const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+                    setServices(getServicesResponse.msg);
+                } else {
+                    const noSpaceTags = tags.replaceAll(" ", ":");
+                    console.log("NoSpaceTags", noSpaceTags);
+                    let path = "/api/v1/services/";
+                    path += noSpaceTags;
+                    const getServicesResponse = await queries.get(path, {}, token);
+                    setServices(getServicesResponse.msg);
+                }
+            } catch (error) {
+                console.error(error);
+                setServices([]);
+            }
+        }
+        getServicesByTags();
+    }, [tags]);
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <Header/>   
+            <Header />
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
                 <CustomerButton
-                text="All"
-                onPress={allScreens}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="All"
+                    onPress={handleAllButton}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
                 <CustomerButton
-                text="Applets"
-                onPress={applets}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Applets"
+                    onPress={handleAppletsButton}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
                 <CustomerButton
-                text="Services"
-                onPress={services}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Services"
+                    onPress={handleServicesButton}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={"blue"}
                 />
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
-                placeholder="Search Applets or Services"
+                    value={tags}
+                    setValue={setTags}
+                    placeholder="Search Applets or Services"
                 />
             </View>
-            <View style={styles.searchServices}>
+            {/* <View style={styles.searchServices}>
                 <CustomerInput
                 placeholder="All services"
             />
             </View>
-            {servicesData.map((services, index) => (
-                <AppletBox
-                key={index}
-                title={services.title}
-                description={services.description}
-                bgColor={services.bgColor}
-                onPress={ServicesDetails}
-                />
-            ))}
+            <AppletBox
+            title="5-Minute Crafts"
+            description=""
+            bgColor="green"
+            onPress={ServicesDetails}
+            />
         </ScrollView>
     );
 };
@@ -118,7 +140,7 @@ const styles = StyleSheet.create({
         width: '100%',
         alignSelf: 'center',
     },
-    appletBox: {
+    AppletAndServiceBox: {
         width: '100%',
         maxWidth: 400,
         backgroundColor: '#e0d8d7',

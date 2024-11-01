@@ -268,6 +268,7 @@ TAB_VERIFICATION = "Verification"
 TAB_ACTIVE_OAUTHS = "ActiveOauths"
 TAB_USER_SERVICES = "UserServices"
 TAB_ACTION_LOGGING = "ActionLoging"
+TAB_ACTION_TEMPLATE = "ActionTemplate"
 TAB_USER_OAUTH_CONNECTION = "UserOauthConnection"
 
 # Character info config

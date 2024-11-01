@@ -1,89 +1,137 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput/CustomerInput";
-import Header from '../../components/Header/header.tsx';
-import AppletBox from "../../components/AppletsBox/appletBox";
+import Header from '../../components/Header/header';
+import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
+import { queries } from "../../../back-endConnection/querier";
+import { getValue } from "../../components/StoreData/storeData";
 
 const Applets = () => {
-    const Navigation = useNavigation();
-    const allScreens = () => {
-        Navigation.navigate("All");
-    }
-    const applets = () => {
-        Navigation.navigate("Applets");
-    }
+    const navigation = useNavigation();
+    const [applets, setApplets] = useState([]);
+    const [tags, setTags] = useState("");
 
-    const services = () => {
-        Navigation.navigate("Services");
-    }
-
-    const appletsBox = () => {
-        Navigation.navigate("Applet screen");
+    const handleAllButton = () => {
+        navigation.navigate("All");
     };
 
-    const appletsData = [
-        {
-            title: "Get the weather forecast every dat at 7:00 AM",
-            description: "Weather Underground",
-            bgColor: "orange",
-        },
-        {
-            title: "Quickly create events in Google Calendar",
-            description: "Google",
-            bgColor: "blue",
-        },
-        {
-            title: "Track your fitness goals daily",
-            description: "Fitbit",
-            bgColor: "green",
-        },
-    ];
+    const handleAppletsButton = () => {
+        navigation.navigate("Applets");
+    };
+
+    const handleServicesButton = () => {
+        navigation.navigate("Services");
+    };
+
+    const handleAppletButton = async (applet: any) => {
+        navigation.navigate("Applet screen", { applet: applet });
+    };
+
+    useEffect(() => {
+        const getApplets = async () => {
+            try {
+                const token = await getValue("token");
+                const getServicesResponse = await queries.get("/api/v1/applets", {}, token);
+                setApplets(getServicesResponse.msg);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        getApplets();
+    }, []);
+
+    useEffect(() => {
+        const getAppletsByTags = async () => {
+            try {
+                const token = await getValue("token");
+                if (tags === "") {
+                    const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+                    setApplets(getAppletsResponse.msg);
+                } else {
+                    const noSpaceTags = tags.replaceAll(" ", ":");
+                    console.log("NoSpaceTags", noSpaceTags);
+                    let path = "/api/v1/applets/";
+                    path += noSpaceTags;
+                    const getAppletsResponse = await queries.get(path, {}, token);
+                    setApplets(getAppletsResponse.msg);
+                }
+            } catch (error) {
+                console.error(error);
+                setApplets([]);
+            }
+        }
+        getAppletsByTags();
+    }, [tags]);
+
+    // const appletsData = [
+    //     {
+    //         title: "Get the weather forecast every dat at 7:00 AM",
+    //         description: "Weather Underground",
+    //         bgColor: "orange",
+    //     },
+    //     {
+    //         title: "Quickly create events in Google Calendar",
+    //         description: "Google",
+    //         bgColor: "blue",
+    //     },
+    //     {
+    //         title: "Track your fitness goals daily",
+    //         description: "Fitbit",
+    //         bgColor: "green",
+    //     },
+    // ];
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-        <Header/>
+            <Header />
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
                 <CustomerButton
-                text="All"
-                onPress={allScreens}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="All"
+                    onPress={handleAllButton}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
                 <CustomerButton
-                text="Applets"
-                onPress={applets}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Applets"
+                    onPress={handleAppletsButton}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={"blue"}
                 />
                 <CustomerButton
-                text="Services"
-                onPress={services}
-                type="TERTIARY"
-                bgColor={""}
-                fgColor={""}
+                    text="Services"
+                    onPress={handleServicesButton}
+                    type="TERTIARY"
+                    bgColor={""}
+                    fgColor={""}
                 />
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
-                placeholder="Search Applets or Services"
+                    value={tags}
+                    setValue={setTags}
+                    placeholder="Search applets"
                 />
             </View>
-            {appletsData.map((applet, index) => (
-                <AppletBox
-                    key={index}
-                    title={applet.title}
-                    description={applet.description}
-                    bgColor={applet.bgColor}
-                    onPress={appletsBox}
-                />
-            ))}
-    </ScrollView>
+            {
+                applets.map((applet) => (
+                    <AppletAndServiceBox
+                        key={applet.id}
+                        title={applet.title}
+                        description={applet.description}
+                        author={applet.author}
+                        user_nb={applet.frequency}
+                        bgColor={applet.colour}
+                        onPress={() => handleAppletButton(applet)}
+                    />
+                ))
+            }
+        </ScrollView>
     )
 }
 

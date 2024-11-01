@@ -1,58 +1,85 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
+import Header from '../../components/Header/header';
+import BackButton from "../../components/BackButton/backButton";
+import { queries } from "../../../back-endConnection/querier";
+import { getValue } from "../../components/StoreData/storeData";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import ProfilLogo from '../../../assets/profilLogo.png';
 
-const AppletsScreen = () => {
-    const Navigation = useNavigation();
+const AppletsScreen = ({ route }) => {
+    const { applet } = route.params;
+    const navigation = useNavigation();
 
-    const signUp = () => {
-        Navigation.navigate('All');
+    const handleConnectButton = async () => {
+        try {
+            const token: string = await getValue("token");
+            let path: string = "/api/v1/connect_applet/";
+            const idStr: string = applet.id.toString();
+            path += idStr;
+            await queries.post(path, {}, token);
+            Alert.alert("You're connected successfully to the applet.");
+            navigation.navigate('All');
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Failed to connect with the applet.");
+        }
     }
 
-    const callApplets = () => {
-        Navigation.navigate('Applets')
+    const handleGoBackButton = () => {
+        navigation.goBack();
     }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
-                <Image
+                <Header />
+                {/* <Image
                     source={AreaLogo}
                     style={styles.areaLogo}
                 />
-                    <Image
-                        source={ProfilLogo}
-                        style={styles.profilLogo}
-                    />
+                <Image
+                    source={ProfilLogo}
+                    style={styles.profilLogo}
+                />
                 <View style={styles.backStyle}>
                     <CustomerButton
-                    text='<'
-                    onPress={callApplets}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
+                        text='<'
+                        onPress={callApplets}
+                        type="TERTIARY"
+                        bgColor={""}
+                        fgColor={""}
                     />
-                </View>
-                <Text style={styles.homeTitle}>5-Minute Crafts integrations</Text>
+                </View> */}
+                <BackButton
+                    text="<"
+                    onPress={handleGoBackButton}
+                />
+                <Text style={styles.homeTitle}>
+                    {applet.name}
+                    {/* 5-Minute Crafts integrations */}
+                </Text>
                 <View style={styles.homeNavigation}>
                 </View>
-                <Text style={styles.description}>The 5-Minute Crafts Youtube channel is a</Text>
+                <Text style={styles.description}>
+                    {applet.description}
+                    {/* The 5-Minute Crafts Youtube channel is a */}
+                </Text>
             </View>
             <View style={styles.connectStyle}>
-                    <CustomerButton
+                <CustomerButton
                     text="Connect"
-                    onPress={signUp}
+                    onPress={handleConnectButton}
                     type="PRIMARY"
                     bgColor={""}
                     fgColor={""}
-                    />
-                </View>
-            <Text style={styles.descriptionAppletsAfterConnectButton}>Get appletsScreensed with any Applet</Text>
+                />
+            </View>
+            {/* <Text style={styles.homeTitle}>Get appletsScreensed with any Applet</Text> */}
         </ScrollView>
     )
 }

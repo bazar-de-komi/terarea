@@ -9,9 +9,9 @@ interface QueryOptions {
 }
 
 async function query(
-  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-  path: string = "/", 
-  body: object = {}, 
+  method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE" = "GET",
+  path: string = "/",
+  body: object = {},
   token: string = ""
 ): Promise<any> {
   try {
@@ -34,7 +34,7 @@ async function query(
     let final_url: string;
 
     if (port === -1) {
-      final_url = `${url}${path}`;  
+      final_url = `${url}${path}`;
     } else {
       final_url = `${url}:${port}${path}`;
     }

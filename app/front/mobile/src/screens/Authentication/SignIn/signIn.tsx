@@ -20,7 +20,7 @@ const SignIn = () => {
     const { height } = useWindowDimensions();
     const navigation = useNavigation();
 
-    const SignInPressed = async () => {
+    const handleSignInButton = async () => {
         if (email === '') {
             Alert.alert("You must enter an email.");
             return;
@@ -61,11 +61,11 @@ const SignIn = () => {
         }
     }
 
-    const forgotPasswordPressed = () => {
+    const handleForgotPasswordButton = () => {
         navigation.navigate("Forgot password");
     }
 
-    const loginPressed = () => {
+    const handleSignUpButton = () => {
         navigation.navigate("Sign Up");
     }
 
@@ -93,7 +93,7 @@ const SignIn = () => {
                     />
                     <CustomerButton
                         text="Forgot your password ?"
-                        onPress={forgotPasswordPressed}
+                        onPress={handleForgotPasswordButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
@@ -101,7 +101,7 @@ const SignIn = () => {
                     />
                     <CustomerButton
                         text="Get started"
-                        onPress={SignInPressed}
+                        onPress={handleSignInButton}
                         bgColor={"black"}
                         fgColor={"white"}
                         icon={""}
@@ -111,7 +111,7 @@ const SignIn = () => {
                     <SocialLogo />
                     <CustomerButton
                         text="New to IFTTT ? Sign up here"
-                        onPress={loginPressed}
+                        onPress={handleSignUpButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"

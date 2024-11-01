@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -8,10 +8,10 @@ import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import MenuIcon from '../../../assets/menuIcon.png';
 
 const Start = () => {
-    const Navigation = useNavigation();
+    const navigation = useNavigation();
 
-    const signUp = () => {
-        Navigation.navigate('Sign Up');
+    const handleStartButton = () => {
+        navigation.navigate('Sign In');
     }
 
     return (
@@ -25,22 +25,22 @@ const Start = () => {
                     source={MenuIcon}
                     style={styles.profilLogo}
                 />
-                    <Text style={styles.homeTitle}>Automation for business and home</Text>
-                    <View style={styles.homeNavigation}>
-                    </View>
-                    <Text style={styles.title}>Save time and get more done</Text>
-                    <View style={styles.back}>
-                        <CustomerButton
+                <Text style={styles.homeTitle}>Automation for business and home</Text>
+                <View style={styles.homeNavigation}>
+                </View>
+                <Text style={styles.title}>Save time and get more done</Text>
+                <View style={styles.back}>
+                    <CustomerButton
                         text="Start Today"
-                        onPress={signUp}
+                        onPress={handleStartButton}
                         type="PRIMARY"
                         bgColor={""}
                         fgColor={""}
-                        />
-                    </View>
+                    />
                 </View>
-                <Text style={styles.homeTitle}>Get started with any Applet</Text>
-    </ScrollView>
+            </View>
+            <Text style={styles.homeTitle}>Get started with any Applet</Text>
+        </ScrollView>
     )
 }
 

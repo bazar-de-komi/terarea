@@ -1,6 +1,7 @@
 <template>
-  <img src="@/assets/logo.png" class="ifttt-logo" />
-  <AuthLayout title="Reset Password" link-text="" link-path="">
+  <AppHeader />
+  <BackButton ButtonText="Back" @click="goBack" />
+  <AuthLayout title="Change Password" link-text="" link-path="">
     <form @submit.prevent="submitPasswordReset" class="forgot-password-form">
       <input v-model="verificationCode" type="text" placeholder="Verification code" required />
       <button @click.prevent="resendVerificationEmail" class="resend-email-btn">Resend verification email</button>
@@ -23,9 +24,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import AuthButton from '../../../components/AuthButton.vue';
-import AuthLayout from '../../../components/AuthLayout.vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import AuthButton from '@/components/AuthButton.vue';
+import AuthLayout from '@/views/profil/ChangeLayout.vue';
+import AppHeader from '@/components/AppHeader.vue';
+import BackButton from '@/components/CancelButton.vue'
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
@@ -34,6 +37,8 @@ export default defineComponent({
   components: {
     AuthButton,
     AuthLayout,
+    AppHeader,
+    BackButton,
   },
   data() {
     return {
@@ -48,10 +53,16 @@ export default defineComponent({
     };
   },
   setup() {
+    const router = useRouter();
     const route = useRoute();
+
+    const goBack = () => {
+      router.push('/account');
+    };
 
     return {
       route,
+      goBack,
     };
   },
   methods: {
@@ -83,11 +94,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.ifttt-logo {
-  display: block;
-  margin: 0 auto 20px;
-}
-
 .forgot-password-form input {
   display: block;
   width: 100%;

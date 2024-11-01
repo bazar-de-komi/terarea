@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, StyleSheet, Text, Alert } from 'react-native';
+import { View, Image, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../CustomerButton";
@@ -14,13 +14,14 @@ const SocialAuthButton = () => {
     const navigation = useNavigation();
 
     const SignInGoogle = async () => {
-        console.warn("Sign In Google");
         try {
             const provider = {
                 provider: "google"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
-            await storeValue("authUrl", response.authorization_url);
+            const response = await queries.post("/api/v1/oauth/login", provider);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);
@@ -29,13 +30,14 @@ const SocialAuthButton = () => {
     };
 
     const SignInGithub = async () => {
-        console.warn("Sign In Github");
         try {
             const provider = {
                 provider: "github"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
-            await storeValue("authUrl", response.authorization_url);
+            const response = await queries.post("/api/v1/oauth/login", provider);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);
@@ -44,13 +46,15 @@ const SocialAuthButton = () => {
     };
 
     const SignInDiscord = async () => {
-        console.warn("Sign In Discord");
         try {
             const provider = {
                 provider: "discord"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
-            await storeValue("authUrl", response.authorization_url);
+            const response = await queries.post("/api/v1/oauth/login", provider);
+            console.log("Response:", response);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);
@@ -59,13 +63,14 @@ const SocialAuthButton = () => {
     };
 
     const SignInSpotify = async () => {
-        console.warn("Sign In Spotify");
         try {
             const provider = {
                 provider: "spotify"
             };
-            const response = await queries.get("/api/v1/oauth/login", provider);
-            await storeValue("authUrl", response.authorization_url);
+            const response = await queries.post("/api/v1/oauth/login", provider);
+            let url: string = response.authorization_url;
+            url = decodeURIComponent(url);
+            await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
             console.error(error);

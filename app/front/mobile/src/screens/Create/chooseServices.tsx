@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput";
 import BackButton from "../../components/BackButton/backButton";
 
-import AppletBox from "../../components/AppletsBox/appletBox";
+import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 
 const ChooseServices = () => {
     const Navigation = useNavigation();
@@ -19,21 +19,21 @@ const ChooseServices = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
             <Text style={styles.homeTitle}>Choose Services</Text>
             <BackButton
-            text={"<"}
-            onPress={AppletsHome}
+                text={"<"}
+                onPress={AppletsHome}
             />
 
             <CustomerInput
-            placeholder="Search Services"
+                placeholder="Search Services"
             />
 
-            <AppletBox
-            title={'test'}
-            description={"ok"}
-            bgColor={"red"}
+            <AppletAndServiceBox
+                title={'test'}
+                description={"ok"}
+                bgColor={"red"}
             />
-            
-    </ScrollView>
+
+        </ScrollView>
     )
 }
 
