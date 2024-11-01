@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerButton from "../../components/CustomerButton";
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import BackButton from "../../components/BackButton/backButton";
-import Header from '../../components/Header/header.tsx';
+import Header from '../../components/Header/header';
 import { getValue } from "../../components/StoreData/storeData";
 import { queries } from "../../../back-endConnection/querier";
 
@@ -18,9 +18,9 @@ const ServicesDetails = ({ route }) => {
         navigation.goBack();
     }
 
-    // const servicesScreen = () => {
-    //     navigation.navigate("Service screen");
-    // };
+    const handleAppletButton = async (applet: any) => {
+        navigation.navigate("Applet screen", { applet: applet });
+    };
 
     const handleCreateButton = () => {
         navigation.navigate('Create');
@@ -76,7 +76,7 @@ const ServicesDetails = ({ route }) => {
                         author={applet.author}
                         user_nb={applet.frequency}
                         bgColor={applet.colour}
-                    // onPress={servicesScreen}
+                        onPress={() => handleAppletButton(applet)}
                     />
                 ))
             }
