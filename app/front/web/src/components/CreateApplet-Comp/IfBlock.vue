@@ -1,106 +1,81 @@
 <template>
-  <div :class="['if-block', serviceColor]">
-    <!-- État du bouton "If" après sélection d'un service -->
-    <div v-if="condition && condition.name">
-      <img :src="condition.logo" alt="Service logo" class="service-logo" />
-      <h3>{{ condition.name }}</h3>
-      <p>{{ condition.description }}</p>
-
-      <div class="actions">
-        <!-- Bouton Edit -->
-        <button @click="editService">Edit</button>
-        <!-- Bouton Delete -->
-        <button @click="deleteService">Delete</button>
-      </div>
-    </div>
-
-    <!-- État initial du bouton avec "Add" -->
-    <div v-else>
-      <h3>If</h3>
-      <p>Select a service...</p>
-      <!-- Bouton Add -->
-      <button @click="addService">Add</button>
+  <div class="container">
+    <div class="ifThisBlock">
+      <span>If This</span>
+      <button class="add-button" @click="addService">Add</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  props: {
-    condition: {
-      type: Object as PropType<{ name: string; description: string; logo: string; color: string } | null>,
-      required: false
-    }
-  },
-  computed: {
-    serviceColor(): string {
-      return this.condition && this.condition.color ? this.condition.color : 'default-gray';
-    }
-  },
   methods: {
     addService() {
-      this.$emit('service-selected', {
-        name: 'Service XYZ',
-        description: 'Every day at 8 AM',
-        logo: '/path/to/logo.png',
-        color: 'service-blue'
-      });
-    },
-    editService() {
-      alert('Edit service');
-    },
-    deleteService() {
-      this.$emit('service-selected', null);
+      alert('Add Service');
     }
   }
 });
 </script>
 
 <style scoped>
-.if-block {
-  background-color: #ccc;
-  color: black;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  position: relative;
-  height: 120px;
-  width: 300px;
+.container {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   justify-content: center;
+  font-family: Arial, sans-serif;
+
+  padding: 10px;
+  min-height: 30vh;
+  box-sizing: border-box;
 }
 
-.service-logo {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-}
-
-.actions button {
-  margin-right: 10px;
+.ifThisBlock {
   background-color: black;
   color: white;
-  padding: 5px 10px;
+  padding: 10px 5vw;
+  border-radius: 75px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5vw;
+  max-width: 90%;
+  flex-wrap: wrap;
+}
+
+.ifThisBlock span {
+  font-weight: bold;
+  font-size: 5vw;
+  white-space: nowrap;
+}
+
+.add-button {
+  background-color: white;
+  color: black;
+  border-radius: 20px;
+  padding: 1vw 1vw;
+  font-size: 20px;
+  font-weight: bold;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
+  margin-left : 2vw;
 }
 
-.default-gray {
-  background-color: #ccc;
+@media (max-width: 600px) {
+  .ifThisBlock {
+    padding: 8px 3vw;
+    gap: 1vw;
+  }
+
+  .ifThisBlock span {
+    font-size: 6vw;
+  }
+
+  .add-button {
+    padding: 2vw 4vw;
+    font-size: 4vw;
+  }
 }
 
-.service-blue {
-  background-color: #4a90e2;
-}
 </style>
