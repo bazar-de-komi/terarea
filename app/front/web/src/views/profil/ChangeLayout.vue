@@ -21,7 +21,7 @@ export default defineComponent({
 <style scoped>
 .auth-layout {
   max-width: 600px;
-  margin: 75px auto;
+  margin: 200px auto 40px auto;
   padding: 45px;
   text-align: center;
   background-color: #f5f5f5;

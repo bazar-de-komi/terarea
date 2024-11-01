@@ -18,6 +18,8 @@
     <div class="social-login">
       <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon" />
       <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" />
+      <AuthButton text="Continue with Spotify" :buttonColor="'#1db954'" :icon="SpotifyIcon" />
+      <AuthButton text="Continue with Discord" :buttonColor="'#5865F2'" :icon="DiscordIcon" />
     </div>
     <router-link to="/forgot-password" class="forgot-password">Forgot your password?</router-link>
   </AuthLayout>
@@ -33,6 +35,8 @@ import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
 import GoogleIcon from '@/assets/googleicon.svg';
 import GithubIcon from '@/assets/githubicon.svg';
+import SpotifyIcon from '@/assets/spotifyicon.svg';
+import DiscordIcon from '@/assets/discordicon.svg';
 import logo from '@/assets/logo.png';
 
 export default defineComponent({
@@ -49,6 +53,8 @@ export default defineComponent({
       hideIcon,
       GoogleIcon,
       GithubIcon,
+      SpotifyIcon,
+      DiscordIcon,
       logo,
     };
   },
