@@ -16,6 +16,7 @@ import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
 import ChooseServices from '../screens/Create/chooseServices';
 import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
+import Profile from '../screens/profile.tsx';
 
 const Stack = createStackNavigator();
 

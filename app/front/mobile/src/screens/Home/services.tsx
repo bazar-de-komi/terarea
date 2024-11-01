@@ -104,7 +104,7 @@ const Services = () => {
                 <CustomerInput
                 placeholder="All services"
             />
-            </View>
+            </View>*/}
             <AppletBox
             title="5-Minute Crafts"
             description=""
