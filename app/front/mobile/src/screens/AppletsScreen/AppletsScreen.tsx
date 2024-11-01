@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
@@ -8,25 +8,56 @@ import BackButton from "../../components/BackButton/backButton";
 import { queries } from "../../../back-endConnection/querier";
 import { getValue } from "../../components/StoreData/storeData";
 
-import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-import ProfilLogo from '../../../assets/profilLogo.png';
+// import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
+// import ProfilLogo from '../../../assets/profilLogo.png';
 
 const AppletsScreen = ({ route }) => {
     const { applet } = route.params;
     const navigation = useNavigation();
+    const [connectText, setConnectText] = useState("Connect");
 
-    const handleConnectButton = async () => {
-        try {
+    useEffect(() => {
+        const isUserConnected = async () => {
             const token: string = await getValue("token");
-            let path: string = "/api/v1/connect_applet/";
-            const idStr: string = applet.id.toString();
-            path += idStr;
-            await queries.post(path, {}, token);
-            Alert.alert("You're connected successfully to the applet.");
-            navigation.navigate('All');
-        } catch (error) {
-            console.error(error);
-            Alert.alert("Failed to connect with the applet.");
+            const response = await queries.get("/api/v1/user_applets", {}, token);
+            const applets = response.msg;
+
+            applets.forEach(userApplet => {
+                if (userApplet.id === applet.id) {
+                    setConnectText("Disconnect");
+                    return;
+                }
+            });
+        }
+        isUserConnected();
+    }, []);
+
+    const handleConnectOrDisconnectButton = async () => {
+        const token: string = await getValue("token");
+        if (connectText === "Connect") {
+            try {
+                let path: string = "/api/v1/connect_applet/";
+                const idStr: string = applet.id.toString();
+                path += idStr;
+                await queries.post(path, {}, token);
+                Alert.alert("You're connected successfully to the applet.");
+                navigation.navigate('All');
+            } catch (error) {
+                console.error(error);
+                Alert.alert("Failed to connect with the applet.");
+            }
+        } else {
+            try {
+                let path: string = "/api/v1/disconnect_applet/";
+                const idStr: string = applet.id.toString();
+                path += idStr;
+                await queries.post(path, {}, token);
+                Alert.alert("You're disconnected successfully to the applet.");
+                navigation.navigate('All');
+            } catch (error) {
+                console.error(error);
+                Alert.alert("Failed to disconnect with the applet.");
+            }
         }
     }
 
@@ -72,8 +103,8 @@ const AppletsScreen = ({ route }) => {
             </View>
             <View style={styles.connectStyle}>
                 <CustomerButton
-                    text="Connect"
-                    onPress={handleConnectButton}
+                    text={connectText}
+                    onPress={handleConnectOrDisconnectButton}
                     type="PRIMARY"
                     bgColor={""}
                     fgColor={""}

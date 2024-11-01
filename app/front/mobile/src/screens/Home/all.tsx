@@ -7,7 +7,7 @@ import CustomerInput from "../../components/CustomersInput/CustomerInput";
 import Header from "../../components/Header/header";
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import { queries } from "../../../back-endConnection/querier";
-import { getValue, storeValue } from "../../components/StoreData/storeData";
+import { getValue } from "../../components/StoreData/storeData";
 
 const All = () => {
     const navigation = useNavigation();
