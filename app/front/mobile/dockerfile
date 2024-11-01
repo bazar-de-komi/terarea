@@ -4,7 +4,10 @@ FROM ubuntu:latest
 ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
+ENV docker_volume_path="/shared_folder"
 # ENV LAUNCH_COMMAND="serve -s build"
+
+WORKDIR /home/setup
 
 RUN apt-get update && \
     apt-get install -y \
@@ -43,9 +46,20 @@ RUN mkdir -p ${ANDROID_HOME} && \
     mkdir cmdline-tools && \
     mv tools cmdline-tools/latest
 
+# Downloading gradle
+ENV GRADLE_VERSION=8.10.2
+RUN wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp && \
+    unzip -d /opt/gradle /tmp/gradle-*.zip
+
+ENV GRADLE_HOME=/opt/gradle/gradle-${GRADLE_VERSION}
+ENV PATH=${GRADLE_HOME}/bin:${PATH}
+
 # Accept licenses and install platform tools and the SDK
 RUN yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses && \
     sdkmanager --sdk_root=${ANDROID_HOME} "platform-tools" "platforms;android-30"
+
+# Set the app ID in advance
+ARG APP_ID=com.terarea.terarea
 
 # Set the working directory in the Docker container
 WORKDIR ${HOME}
@@ -53,16 +67,23 @@ WORKDIR ${HOME}
 # Copy your project files to the container
 COPY . ${HOME}
 
-# Source SDKMAN, ensure gradlew has execute permissions and use gradlew to build the project
-RUN if [ -f "./gradlew" ]; then chmod +x ./gradlew \
-    && ./gradlew assembleRelease; \
-    else echo "gradlew not found"; fi
-
-# Copy APK from the build stage to the final image
-# COPY --from=build /mobile/app/build/outputs/apk/release/app-release.apk /output/app-release.apk
+# Set the app ID in app.json (or app.config.js)
+RUN sed -i "s|\"android\": {|\"android\": { \"package\": \"${APP_ID}\",|" ${HOME}/app.json
 
 # Install npm dependencies
 RUN timeout 60s npm install && npm cache clean --force || timeout 60s npm install && npm cache clean --force
+
+# Build android directory
+RUN npx expo prebuild --clean --no-install
+
+# Modify the build.gradle file
+RUN sed -i "/defaultConfig {/a \    manifestPlaceholders = [appAuthRedirectScheme: \"${APP_ID}\"]" android/app/build.gradle
+
+# Change to the android directory
+WORKDIR ${HOME}/android
+
+# Build the release version
+RUN ./gradlew assembleRelease
 
 # Build the project (optional, uncomment if you want to build here)
 # RUN npm run build
