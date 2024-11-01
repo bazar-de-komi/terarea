@@ -1,22 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert } from "react-native";
+import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { queries } from "../../../../back-endConnection/querier";
-import { storeValue } from "../../../components/StoreData/storeData";
 
-import CustomerInput from "../../../components/CustomersInput";
-import CustomerButton from '../../../components/CustomerButton';
-import SocialLogo from '../../../components/SocialAuthButton/socialAuthButton';
+import CustomerInput from "../../../components/CustomersInput/CustomerInput";
+import CustomerButton from '../../../components/CustomerButton/CustomerButton';
+import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
+import { storeValue } from '../../../components/StoreData/storeData';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
-const SignIn = () => {
+import { queries } from "../../../../back-endConnection/querier";
+
+const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [repeatPassword, setRepeatPassword] = useState('');
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { height } = useWindowDimensions();
+
     const navigation = useNavigation();
 
     const handleSignInButton = async () => {
@@ -24,7 +27,7 @@ const SignIn = () => {
             Alert.alert("You must enter an email.");
             return;
         }
-        if (password === '') {
+        if (password === '' || repeatPassword === '') {
             Alert.alert("You must enter a password.");
             return;
         }
@@ -38,46 +41,47 @@ const SignIn = () => {
             Alert.alert("The email you entered is not a valid email.")
             return;
         }
+        if (password !== repeatPassword) {
+            Alert.alert("Wrong password");
+            return;
+        }
         setIsSubmitting(true);
-        const account = {
+
+        const newUser = {
             email: email,
             password: password,
         };
         try {
-            const result = await queries.post("/api/v1/login", account);
-            if (result.token) {
-                storeValue('token', result.token);
-                navigation.navigate("All");
+            const response = await queries.post("/api/v1/register", newUser);
+            if (response.token) {
+                storeValue("token", response.token)
+                Alert.alert("Sign up sucessful");
+                navigation.navigate('All');
             } else {
-                setError("Identifiant or password incorrect");
-                Alert.alert("ID or password incorrect");
+                setError("Try again");
             }
-        } catch (error) {
-            console.error("Sign error: ", error);
-            setError("Error to connect. Please check your id or your password");
+        } catch (err) {
+            console.error("Sign up error: ", err);
+            setError("Error during sign up, try again");
         } finally {
             setIsSubmitting(false);
         }
     }
 
-    const handleForgotPasswordButton = () => {
-        navigation.navigate("Forgot password");
-    }
-
-    const handleSignUpButton = () => {
-        navigation.navigate("Sign Up");
+    const handleGoToSignInButton = () => {
+        navigation.navigate("Sign In");
     }
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.backgroundContainer}>
+            <View style={styles.bgSignUpContainer}>
                 <Image
                     source={AreaLogo}
                     style={[styles.areaLogo, { height: height * 0.1 }]}
                     resizeMode="contain"
                 />
-                <View style={styles.SignInContainer}>
-                    <Text style={styles.headerText}>Sign In</Text>
+                <View style={styles.SignUpContainer}>
+                    <Text style={styles.SignUpTitle}>Sign Up</Text>
                     <CustomerInput
                         placeholder="Email"
                         value={email}
@@ -90,30 +94,25 @@ const SignIn = () => {
                         setValue={setPassword}
                         secureTextEntry={true}
                     />
-                    <CustomerButton
-                        text="Forgot your password ?"
-                        onPress={() => handleForgotPasswordButton()}
-                        type="TERTIARY"
-                        bgColor=""
-                        fgColor="black"
-                        icon=""
+                    <CustomerInput
+                        placeholder="Confirmation Password"
+                        value={repeatPassword}
+                        setValue={setRepeatPassword}
+                        secureTextEntry={true}
                     />
                     <CustomerButton
                         text="Get started"
                         onPress={() => handleSignInButton()}
                         bgColor={"black"}
-                        fgColor={"white"}
-                        icon={""}
-                        type={""}
+                        fgColor={""}
                     />
-                    <SocialLogo />
+                    <SocialButton />
                     <CustomerButton
-                        text="New to IFTTT ? Sign up here"
-                        onPress={() => handleSignUpButton()}
+                        text="Already on IFTTT ? Sign in here"
+                        onPress={() => handleGoToSignInButton()}
                         type="TERTIARY"
-                        bgColor=""
-                        fgColor="black"
-                        icon={""}
+                        bgColor={""}
+                        fgColor={""}
                     />
                 </View>
             </View>
@@ -122,7 +121,7 @@ const SignIn = () => {
 };
 
 const styles = StyleSheet.create({
-    backgroundContainer: {
+    bgSignUpContainer: {
         top: 20,
         marginTop: 20,
         justifyContent: 'center',
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
         padding: 20,
         backgroundColor: '#F5F5F5',
     },
-    SignInContainer: {
+    SignUpContainer: {
         width: '100%',
         maxWidth: 400,
         backgroundColor: '#e0d8d7',
@@ -144,11 +143,11 @@ const styles = StyleSheet.create({
         maxHeight: 100,
         marginBottom: 60,
     },
-    headerText: {
+    SignUpTitle: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 10,
     },
-});
+})
 
-export default SignIn;
+export default SignUp;

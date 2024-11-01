@@ -375,7 +375,7 @@ RESPONSE_POST_REGISTER = {
     'title': 'Register',
     "msg": "Account created successfully.",
     'resp': 'success',
-    'logged in': False
+    'logged in': True
 }
 RESPONSE_PUT_USER = {
     "title": "Put user",

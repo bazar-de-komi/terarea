@@ -342,7 +342,6 @@ class OAuthAuthentication:
             return self.runtime_data_initialised.boilerplate_responses_initialised.no_access_token(title, None)
         data.append(access_token)
         self.disp.log_debug(f"Gotten access token: {access_token}", title)
-        # if provider in ("google", "discord", "spotify"):
         if provider == "github":
             data.append(
                 self.runtime_data_initialised.database_link.datetime_to_string(

@@ -1,16 +1,44 @@
 {
     "actions": [
         {
-            "action_id": 1,
-            "action_name": "email-me",
-            "service_name": "send_me_an_email",
-            "url_extra": "",
-            "url_params": [
-                "some-email@example.com"
-            ],
-            "body": {
-                "subject": "Wake up !",
-                "body": "It is ${current_time} in ${location}"
+            "ignore:id": 1,
+            "ignore:name": "email-me_new",
+            "ignore:description": "An action that will allow you to send an e-mail.",
+            "service": {
+                "name": "send_me_an_email",
+                "input:url_extra": "",
+                "url_params": [
+                    {
+                        "input:email": "some-email@example.com"
+                    }
+                ],
+                "body": {
+                    "input:subject": "Wake up !",
+                    "textarea:body": "It is ${{current_time}} in ${{location}}"
+                },
+                "drop:method": [
+                    "default:GET",
+                    "opt:POST",
+                    "opt:PUT",
+                    "opt:PATCH",
+                    "opt:DELETE",
+                    "opt:HEAD",
+                    "opt:OPTIONS"
+                ],
+                "header": {},
+                "response": {
+                    "int:code": [
+                        "default:200",
+                        "min:100",
+                        "max:500"
+                    ]
+                },
+                "ignore:token_location": {
+                    "param": false,
+                    "header": false,
+                    "body": false,
+                    "bearer": false
+                }
             }
         }
     ]

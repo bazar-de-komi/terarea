@@ -107,6 +107,8 @@ class UserEndpoints:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email: str = request_body["email"]
         password = request_body["password"]
+        if not email or email == "" or not password or password == "":
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
@@ -150,9 +152,10 @@ class UserEndpoints:
             return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
-            message=f"Welcome {email}",
+            message=f"Welcome {username}",
             resp="success",
-            token=data["token"]
+            token=data["token"],
+            error=False
         )
         body["token"] = data["token"]
         return HCI.success(
