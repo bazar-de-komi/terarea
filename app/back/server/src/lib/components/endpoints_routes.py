@@ -98,7 +98,10 @@ class Endpoints:
             "/api/v1/services", self.services.get_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/{name}", self.services.get_service, "GET"
+            "/api/v1/service/name/{name}", self.services.get_service_name, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/service/{id}", self.services.get_service_id, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/services/{tags}", self.services.get_services_by_tag, "GET"

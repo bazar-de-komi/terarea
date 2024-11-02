@@ -1,15 +1,15 @@
 {
     "ignore:id": 1,
-    "ignore:name": "notify_me",
-    "ignore:description": "An action that will notify the user via ntfy.",
+    "ignore:name": "sms_me",
+    "ignore:description": "An action that will send an sms to the user.",
     "service": {
         "ignore:id": 3,
-        "input:url_extra": "/tema_la_gueule_pa",
+        "input:url_extra": "api/v9/channels/{channel_id}/messages",
         "url_params": {
             "input:additional_params": ""
         },
         "body": {
-            "textarea:body": "It is ${{current_time}} in ${{location}}",
+            "textarea:content": "Hello World !",
             "input:additional_body": ""
         },
         "drop:method": [
@@ -22,7 +22,7 @@
             "opt:OPTIONS"
         ],
         "header": {
-            "input:title": "Title: Wake up !",
+            "input:Authorization": "Bot $ref{secrets.token}",
             "input:additional_header": ""
         },
         "response": {

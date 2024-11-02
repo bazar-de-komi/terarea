@@ -178,7 +178,7 @@ CREATE TABLE `Services` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL COMMENT 'The name of the service.',
   `url` varchar(2048) NOT NULL COMMENT 'The url that will be used to access the service.',
-  `api_key` varchar(1024) NOT NULL COMMENT 'The api token.',
+  `api_key` varchar(1024) NULL COMMENT 'The api token.',
   `category` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api.',
   `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT 'The amount of times the service is used.',
   `type` varchar(200) NOT NULL DEFAULT 'service' COMMENT 'The type of the api.',

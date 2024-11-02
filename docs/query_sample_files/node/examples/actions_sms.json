@@ -1,14 +1,15 @@
 {
     "ignore:id": 1,
-    "ignore:name": "notify_me",
-    "ignore:description": "An action that will notify the user via ntfy.",
+    "ignore:name": "sms_me",
+    "ignore:description": "An action that will send an sms to the user.",
     "service": {
         "ignore:id": 3,
-        "input:url_extra": "/tema_la_gueule_pa",
+        "input:url_extra": "/text",
         "url_params": {
             "input:additional_params": ""
         },
         "body": {
+            "input:key": "$ref{secrets.token}",
             "textarea:body": "It is ${{current_time}} in ${{location}}",
             "input:additional_body": ""
         },

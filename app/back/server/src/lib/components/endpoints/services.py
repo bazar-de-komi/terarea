@@ -2,11 +2,13 @@
 This file contains every method about services
 """
 
+from typing import Any, List
 from fastapi import Response, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .. import constants as CONST
 from ..runtime_data import RuntimeData
 from ..http_codes import HCI
+
 
 class Services:
     """
@@ -69,24 +71,29 @@ class Services:
             )
         self.disp.log_debug(f"Retrieved data {services_data}", title)
         for i, service in enumerate(services_data):
-            services_data[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(service["created_at"])
+            if "api_key" in service:
+                services_data[i]["api_key"] = self.runtime_data_initialised.boilerplate_non_http_initialised.hide_api_key(
+                    service["api_key"]
+                )
+            services_data[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(
+                service["created_at"])
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title=title,
-                message=services_data,
-                resp="success",
-                token=token
-            )
+            title=title,
+            message=services_data,
+            resp="success",
+            token=token
+        )
         return HCI.success(
             content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
 
-    async def get_service(self, request: Request, name: str) -> Response:
+    async def get_service_name(self, request: Request, name: str) -> Response:
         """
-        The method to get a service by his name
+        The method to get a service by it's name
         """
-        title = "get_service"
+        title = "Get service by name"
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
@@ -107,19 +114,86 @@ class Services:
             "*",
             f"name='{name}'"
         )
+        if not service_data or isinstance(service_data, int):
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="service not found.",
+                resp="not found",
+                token=token,
+                error=True
+            )
+            return HCI.not_found(
+                content=body,
+                content_type=CONST.CONTENT_TYPE,
+                headers=self.runtime_data_initialised.json_header
+            )
+        for i, service in enumerate(service_data):
+            if "api_key" in service:
+                service_data[i]["api_key"] = self.runtime_data_initialised.boilerplate_non_http_initialised.hide_api_key(
+                    service["api_key"]
+                )
+            service_data[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(
+                service["created_at"])
+        self.disp.log_debug(f"Service found: {service_data}", title)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=service_data,
+            resp="success",
+            token=token
+        )
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def get_service_id(self, request: Request, id: str) -> Response:
+        """
+        The method to get a service by it's id
+        """
+        title = "Get service by id"
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        self.disp.log_debug(f"Token = {token}", title)
+        if not token:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
+                title,
+                token
+            )
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        ) is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
+                title
+            )
+        service_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_SERVICES,
+            "*",
+            f"id='{id}'",
+            beautify=True
+        )
         if isinstance(service_data, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title,
                 token
             )
         for i, service in enumerate(service_data):
-            service_data[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(service["created_at"])
+            if "api_key" in service:
+                service_data[i]["api_key"] = self.runtime_data_initialised.boilerplate_non_http_initialised.hide_api_key(
+                    service["api_key"]
+                )
+            service_data[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(
+                service["created_at"]
+            )
+        if len(service_data) == 1:
+            service_data = service_data[0]
         self.disp.log_debug(f"Service found: {service_data}", title)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title=title,
-                message=service_data,
-                resp="success",
-                token=token
+            title=title,
+            message=service_data,
+            resp="success",
+            token=token
         )
         return HCI.success(
             content=body,
@@ -151,7 +225,7 @@ class Services:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
                 title,
                 token
-                )
+            )
         tags_list = tags.split(":")
         services_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
@@ -159,6 +233,10 @@ class Services:
         )
         filtered_services: list[dict] = []
         for i, service in enumerate(services_data):
+            if "api_key" in service:
+                service[i]["api_key"] = self.runtime_data_initialised.boilerplate_non_http_initialised.hide_api_key(
+                    service["api_key"]
+                )
             for _, element in enumerate(tags_list):
                 if element in service["tags"]:
                     filtered_services.append(service)
@@ -176,7 +254,8 @@ class Services:
                 headers=self.runtime_data_initialised.json_header
             )
         for i, service in enumerate(filtered_services):
-            filtered_services[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(service["created_at"])
+            filtered_services[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(
+                service["created_at"])
         msg = f"Services with guven tags '{tags}': "
         msg += f"{filtered_services}"
         self.disp.log_debug(msg, title)
@@ -233,7 +312,12 @@ class Services:
                 headers=self.runtime_data_initialised.json_header
             )
         for i, service in enumerate(recent_services):
-            recent_services[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(service["created_at"])
+            if "api_key" in service:
+                service_data[i]["api_key"] = self.runtime_data_initialised.boilerplate_non_http_initialised.hide_api_key(
+                    service["api_key"]
+                )
+            recent_services[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(
+                service["created_at"])
         self.disp.log_debug(f"Recent services: {recent_services}", title)
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
@@ -313,10 +397,12 @@ class Services:
                 token
             )
         self.disp.log_debug(f"Service name: {name}", title)
-        if isinstance(self.runtime_data_initialised.database_link.get_data_from_table(
+        response = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
             "*",
-            f"name='{name}'"), int) is False:
+            f"name='{name}'"
+        )
+        if isinstance(response, int) is False:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title,
                 token
@@ -340,7 +426,8 @@ class Services:
             str(int(False))
         ]
         self.disp.log_debug(f"Generated data: {data}", title)
-        columns = self.runtime_data_initialised.database_link.get_table_column_names(CONST.TAB_SERVICES)
+        columns: List[Any] = self.runtime_data_initialised.database_link.get_table_column_names(
+            CONST.TAB_SERVICES)
         if isinstance(columns, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title,
@@ -393,7 +480,9 @@ class Services:
             "*",
             f"id='{service_id}'"
         ), int):
-            self.disp.log_error(f"Failed to retrieve data from '{CONST.TAB_SERVICES}' table.", title)
+            msg = f"Failed to retrieve data from '{CONST.TAB_SERVICES}'"
+            msg += " table."
+            self.disp.log_error(msg, title)
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title,
                 token
@@ -419,7 +508,9 @@ class Services:
             CONST.TAB_SERVICES
         )
         if isinstance(columns, int):
-            self.disp.log_error(f"Failed to retrieve columns from '{CONST.TAB_SERVICES}' table.", title)
+            msg = "Failed to retrieve columns from "
+            msg += f"'{CONST.TAB_SERVICES}' table."
+            self.disp.log_error(msg, title)
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title,
                 token
@@ -436,7 +527,9 @@ class Services:
             columns,
             f"id='{service_id}'"
         ) == self.error:
-            self.disp.log_error(f"Failed to update data in '{CONST.TAB_SERVICES}' table.", title)
+            msg = f"Failed to update data in '{CONST.TAB_SERVICES}"
+            msg += "' table."
+            self.disp.log_error(msg, title)
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title,
                 token
@@ -481,7 +574,9 @@ class Services:
             "*",
             f"id='{service_id}'"
         ), int):
-            self.disp.log_error(f"Failed to retrieve data from '{CONST.TAB_SERVICES}' table.", title)
+            msg = f"Failed to retrieve data from '{CONST.TAB_SERVICES}'"
+            msg += "table."
+            self.disp.log_error(msg, title)
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title,
                 token

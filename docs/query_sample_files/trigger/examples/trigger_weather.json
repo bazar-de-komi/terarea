@@ -1,0 +1,71 @@
+{
+    "ignore:id": 1,
+    "ignore:name": "weather",
+    "ignore:description": "The service in charge of the gathering the weather.",
+    "service": {
+        "ignore:id": 2,
+        "input:url_extra": "/VisualCrossingWebServices/rest/services/timeline/Kremelin-Bicêtre,France",
+        "drop:url_params": {
+            "input:key": "$ref{secret.token}",
+            "input:additional_params": ""
+        },
+        "body": {
+            "input:additional_body": ""
+        },
+        "drop:method": [
+            "default:GET",
+            "opt:POST",
+            "opt:PUT",
+            "opt:PATCH",
+            "opt:DELETE",
+            "opt:HEAD",
+            "opt:OPTIONS"
+        ],
+        "header": {
+            "input:additional_header": ""
+        },
+        "response": {
+            "int:code": [
+                "default:200",
+                "min:100",
+                "max:500"
+            ],
+            "input:response_content": "$ref{body.days[0].icon}"
+        },
+        "drop:verification_operator": [
+            "default:==",
+            "opt:===",
+            "opt:eq",
+            "opt:-eq",
+            "opt:!=",
+            "opt:<>",
+            "opt:ne",
+            "opt:-ne",
+            "opt:<",
+            "opt:lt",
+            "opt:-lt",
+            "opt:>",
+            "opt:gt",
+            "opt:-gt",
+            "opt:<=",
+            "opt:le",
+            "opt:-le",
+            "opt:>=",
+            "opt:ge",
+            "opt:-ge",
+            "opt:<=>",
+            "opt:equal to",
+            "opt:less than",
+            "opt:not equal to",
+            "opt:greater than",
+            "opt:less than or equal to",
+            "opt:greater than or equal to"
+        ],
+        "time:verification_value": "cloudy",
+        "vars": {
+            "weather_node": "$ref{body.days[0]}",
+            "location": "Kremelin",
+            "cost": "$ref{body.queryCost}"
+        }
+    }
+}

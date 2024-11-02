@@ -536,3 +536,22 @@ class BoilerplateNonHTTP:
             )
         self.disp.log_debug(f"result = {result}", title)
         return result
+
+    def hide_api_key(self, api_key: str) -> str:
+        """_summary_
+            Hide the api key from the user.
+
+        Args:
+            api_key (str): _description_: The api key to hide
+
+        Returns:
+            str: _description_: The hidden api key
+        """
+        title = "hide_api_key"
+        self.disp.log_debug(f"api_key = {api_key}", title)
+        if api_key is None:
+            api_key = "No api key"
+        else:
+            api_key = "Some api key"
+        self.disp.log_debug(f"api_key after: {api_key}", title)
+        return api_key

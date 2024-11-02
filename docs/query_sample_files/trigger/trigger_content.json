@@ -5,15 +5,20 @@
             "ignore:name": "get_the_time",
             "ignore:description": "This is a trigger that starts based on a given time.",
             "service": {
-                "name": "give_me_the_time",
+                "ignore:id": 1,
                 "input:url_extra": "/api/time/current/zone",
-                "drop:url_params": [
-                    "opt:timeZone=Europe/Paris",
-                    "default:timeZone=Europe/Berlin",
-                    "opt:timeZone=Europe/Madrid",
-                    "opt:timeZone=Europe/London"
-                ],
-                "body": {},
+                "url_params": {
+                    "opt:timeZone=": [
+                        "opt:Europe/Paris",
+                        "default:Europe/Berlin",
+                        "opt:Europe/Madrid",
+                        "opt:Europe/London"
+                    ],
+                    "input:additional_params": ""
+                },
+                "body": {
+                    "input:additional_body": ""
+                },
                 "drop:method": [
                     "default:GET",
                     "opt:POST",
@@ -23,12 +28,8 @@
                     "opt:HEAD",
                     "opt:OPTIONS"
                 ],
-                "header": {},
-                "ignore:token_location": {
-                    "param": false,
-                    "header": false,
-                    "body": false,
-                    "bearer": false
+                "header": {
+                    "input:additional_header": ""
                 },
                 "response": {
                     "int:code": [
