@@ -3,10 +3,12 @@ import { View, Image, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../CustomerButton";
-import OrLine from "./OrLine";
 
 import GoogleLogo from '../../../assets/authenticationLogo/google.png';
 import githubLogo from '../../../assets/authenticationLogo/githubLogo.png';
+import DiscordLogo from '../../../assets/authenticationLogo/discord.png';
+import SpotifyLogo from '../../../assets/authenticationLogo/spotify.png';
+
 import { queries } from "../../../back-endConnection/querier";
 import { storeValue } from "../StoreData/storeData";
 
@@ -80,7 +82,6 @@ const SocialAuthButton = () => {
 
     return (
         <View style={styles.container}>
-            {/* <OrLine /> */}
             <CustomerButton
                 text="Sign in with Google"
                 onPress={SignInGoogle}
@@ -92,23 +93,23 @@ const SocialAuthButton = () => {
             <CustomerButton
                 text="Sign in with GitHub"
                 onPress={SignInGithub}
-                bgColor="#303030"
+                bgColor="#181717"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}
             />
             <CustomerButton
                 text="Sign in with Discord"
                 onPress={SignInDiscord}
-                bgColor="purple"
-                fgColor="white"
-                icon={<Image source={githubLogo} style={styles.logo} />}
+                bgColor="#5865F2"
+                fgColor="white" 
+                icon={<Image source={DiscordLogo} style={styles.discordLogo} />}
             />
             <CustomerButton
                 text="Sign in with Spotify"
                 onPress={SignInSpotify}
-                bgColor="green"
+                bgColor="#1DB954"
                 fgColor="white"
-                icon={<Image source={githubLogo} style={styles.logo} />}
+                icon={<Image source={SpotifyLogo} style={styles.logo} />}
             />
         </View>
     );
@@ -117,6 +118,11 @@ const SocialAuthButton = () => {
 const styles = StyleSheet.create({
     logo: {
         width: 24,
+        height: 24,
+        marginRight: 10,
+    },
+    discordLogo: {
+        width: 30,
         height: 24,
         marginRight: 10,
     },
