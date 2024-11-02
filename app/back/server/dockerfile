@@ -66,11 +66,11 @@ RUN echo '#!/bin/bash' > ${BASH_FILE_LAUNCHER} \
     && echo "if [[ \"\${LOG_SERVER_DATA,,}\" == 'true' ]]; then" >> ${BASH_FILE_LAUNCHER} \
     && echo "  echo 'setting logger command'" >> ${BASH_FILE_LAUNCHER} \
     && echo "  mkdir -p \"\${LOG_PATH}\"" >> ${BASH_FILE_LAUNCHER} \
-    && echo "  DATA=\"\$LOG_PATH\\\$LOG_DATA\"" >> ${BASH_FILE_LAUNCHER} \
+    && echo "  DATA=\"\$LOG_PATH/\$LOG_DATA\"" >> ${BASH_FILE_LAUNCHER} \
     && echo "  if [[ \"\${LOG_ADD_DATE,,}\" == 'true' ]]; then" >> ${BASH_FILE_LAUNCHER} \
-    && echo "    DATA=\"\${DATA}_\$(date -u +%Y_%m_%dT%Hh%Mm%SZ)\"" >> ${BASH_FILE_LAUNCHER} \
+    && echo "    DATA+=\"_\$(date -u +%Y_%m_%dT%Hh%Mm%SZ)\"" >> ${BASH_FILE_LAUNCHER} \
     && echo "  fi" >> ${BASH_FILE_LAUNCHER} \
-    && echo "  DATA=\"\${DATA}.\${LOG_FILE_FORMAT}\"" >> ${BASH_FILE_LAUNCHER} \
+    && echo "  DATA+=\".\${LOG_FILE_FORMAT}\"" >> ${BASH_FILE_LAUNCHER} \
     && echo "  echo \"log file name: \$DATA\"" >> ${BASH_FILE_LAUNCHER} \
     && echo "  LOGGER_COMMAND=\">\\\"\${DATA}\\\" 2>&1 & tail -f \\\"\${DATA}\\\"\"" >> ${BASH_FILE_LAUNCHER} \
     && echo "fi" >> ${BASH_FILE_LAUNCHER} \
@@ -83,10 +83,11 @@ RUN echo '#!/bin/bash' > ${BASH_FILE_LAUNCHER} \
     && echo "else" >> ${BASH_FILE_LAUNCHER} \
     && echo "  \$CMD" >> ${BASH_FILE_LAUNCHER} \
     && echo "fi" >> ${BASH_FILE_LAUNCHER} \
-    && chmod +x "$BASH_FILE_LAUNCHER"
+    && chmod +x "$BASH_FILE_LAUNCHER" \
+    && cp -f ${BASH_FILE_LAUNCHER} ${SYSTEM_ENV_LOCATION}
 
 # Cleaning cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Entry point
-CMD ["/bin/bash", "-c", "chmod +x ${BASH_FILE_LAUNCHER} && ${BASH_FILE_LAUNCHER}"]
+CMD ["/bin/bash", "-c", "cp -f ${SYSTEM_ENV_LOCATION}/${BASH_FILE_LAUNCHER} ${HOME}/${BASH_FILE_LAUNCHER} && chmod +x ${BASH_FILE_LAUNCHER} && ${BASH_FILE_LAUNCHER}"]
