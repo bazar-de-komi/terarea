@@ -266,6 +266,18 @@ class TriggerManagement:
         )
         query_endpoint.get_endpoint()
 
+    def process_single_trigger(self, node: Dict[str, Any]) -> int:
+        """_summary_
+            Process a single node.
+
+        Args:
+            node (Dict[str, Any]): _description_: The node to process.
+
+        Returns:
+            int: _description_: Returns self.success if the program succeeded, self.error otherwise.
+        """
+        pass
+
     def run(self) -> int:
         """_summary_
             Run the trigger checking.
@@ -294,7 +306,25 @@ class TriggerManagement:
                 title, msg, 0, raise_item=True,
                 raise_func=ValueError
             )
-        action_id = trigger[0].get('id')
+        if isinstance(trigger, List) is True:
+            if len(trigger) == 0:
+                self._log_fatal(
+                    title,
+                    "Empty trigger data.",
+                    0, raise_item=True,
+                    raise_func=ValueError
+                )
+            for i in trigger:
+                self.process_single_trigger(i)
+        elif isinstance(trigger, Dict) is True:
+            self.process_single_trigger(trigger)
+        else:
+            self._log_fatal(
+                title, "Incorrect type for variable 'trigger'.",
+                0, raise_item=True, raise_func=ValueError
+            )
+
+        action_id = trigger.get('id')
 
         if action_id is None:
             msg = "No action ID found in trigger data."
@@ -302,71 +332,6 @@ class TriggerManagement:
                 title, msg, 0, raise_item=True,
                 raise_func=ValueError
             )
-# variable = scope: {"test1": node1, "test2": node2, "test3": node3 }
-# example 1 : node = {"data": 1, "type": int}
-# example 2 : node = {"data": "1", "type": str}
 
-    def run(self) -> int:
-        """_summary_
-            Run the trigger checking.
-
-        Returns:
-            int: _description_: Returns self.success if the program succeeded, self.error otherwise.
-        """
-        title = "run"
-        if self.variable.has_variable("node_data", self.scope) is False:
-            return self.error
-
-        trigger = json.loads(
-            self.variable.get_variable(
-                name="node_data", scope=self.scope
-            )
-        )
-        action_id = trigger[0]['id']
-
-        if ACONST.OPERATOR_EXCHANGE.get(trigger.verification_operator) is None:
-            msg = f"Incorrect type for variable {trigger}."
-            self._log_fatal(
-                title, msg, action_id,
-                raise_item=True, raise_func=ValueError
-            )
-        comparison_func = ACONST.OPERATOR_EXCHANGE.get(
-            trigger["verification_operator"]
-        )
-
-        if comparison_func is not None:
-            res = comparison_func(
-                trigger["url_params"],
-                trigger["verification_value"]
-            )
-        else:
-            msg = f"Operator '{trigger['verification_operator']}'"
-            msg += "is not supported."
-            self._log_fatal(
-                title, msg, action_id, raise_item=True, raise_func=ValueError
-            )
-        if res is False:
-            msg = "Condition was not met."
-            self.logger.log_warning(
-                ACONST.TYPE_SERVICE_TRIGGER,
-                action_id=action_id,
-                message=msg,
-                resolved=True
-            )
-        oauth_token = self.runtime_data.database_link.get_data_from_table(
-            table=CONST.TAB_ACTIVE_OAUTHS,
-            column="token_expiration",
-            where=f"user_id={trigger[0]['user_id']}",
-            beautify=False
-        )
-        if ACONST.check_if_oauth_is_valid(oauth_token) is False:
-            msg = "Oauth token has expired."
-            self.disp.log_error(msg, title)
-            self.logger.log_fatal(
-                ACONST.TYPE_SERVICE_TRIGGER,
-                action_id=action_id,
-                message=msg,
-                resolved=True
-            )
-            return self.error
+        response = self.get_api_response(action_id, trigger)
         return self.success

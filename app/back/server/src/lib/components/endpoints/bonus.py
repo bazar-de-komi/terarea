@@ -212,7 +212,19 @@ class Bonus:
         data = self.runtime_data_initialised.actions_main_initialised.process_action_node(
             id
         )
-        content = {"action_data": node, "run_info": data}
+        run_data = self.runtime_data_initialised.actions_main_initialised.logger.get_logs(
+            id, beautify=True
+        )
+        self.disp.log_debug(f"run_data = {run_data}", title)
+        run_data = self.runtime_data_initialised.actions_main_initialised.variables.sanitize_for_json(
+            run_data, False
+        )
+        self.disp.log_debug(f"run_data_sanitised = {run_data}", title)
+        content = {
+            "action_data": node,
+            "run_status": data,
+            "run_data": run_data
+        }
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
             message=content,
