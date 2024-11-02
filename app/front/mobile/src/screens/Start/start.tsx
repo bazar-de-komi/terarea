@@ -1,11 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, ImageBackground } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
 
-import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-import MenuIcon from '../../../assets/menuIcon.png';
+import MenuIcon from '../../../assets/menuIconWhite.png';
+import AreaLogo from '../../../assets/authenticationLogo/AreaLogoWhite.png';
+import Bg from '../../../assets/authenticationLogo/backgroundStart.jpg';
 
 const Start = () => {
     const navigation = useNavigation();
@@ -16,7 +17,13 @@ const Start = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <View style={styles.headerContainer}>
+            <ImageBackground
+                source={Bg}
+                style={styles.headerContainer}
+                imageStyle={{ borderRadius: 5 }}
+            >
+                <View style={styles.overlay} />
+                
                 <Image
                     source={AreaLogo}
                     style={styles.areaLogo}
@@ -25,6 +32,7 @@ const Start = () => {
                     source={MenuIcon}
                     style={styles.profilLogo}
                 />
+                
                 <Text style={styles.homeTitle}>Automation for business and home</Text>
                 <View style={styles.homeNavigation}>
                 </View>
@@ -34,12 +42,12 @@ const Start = () => {
                         text="Start Today"
                         onPress={handleStartButton}
                         type="PRIMARY"
-                        bgColor={""}
-                        fgColor={""}
+                        bgColor={"white"}
+                        fgColor={"black"}
                     />
                 </View>
-            </View>
-            <Text style={styles.homeTitle}>Get started with any Applet</Text>
+            </ImageBackground>
+            <Text style={styles.appletTitle}>Get started with any Applet</Text>
         </ScrollView>
     )
 }
@@ -47,16 +55,22 @@ const Start = () => {
 const styles = StyleSheet.create({
     headerContainer: {
         marginTop: 30,
-        backgroundColor: '#e0d8d7',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
         borderRadius: 10,
         alignItems: 'center',
         padding: 5,
         height: 500,
+        overflow: 'hidden',
+    },
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        borderRadius: 10,
     },
     areaLogo: {
         maxHeight: 50,
-        marginTop: 10,
-        marginLeft: -250,
+        marginTop: 20,
+        marginLeft: -220,
     },
     profilLogo: {
         maxWidth: 30,
@@ -69,10 +83,18 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         margin: 30,
+        color: 'white',
+    },
+    appletTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
+        color: 'black',
     },
     title: {
         fontSize: 28,
         margin: 30,
+        color: 'white',
     },
     homeNavigation: {
         flexDirection: 'row',
