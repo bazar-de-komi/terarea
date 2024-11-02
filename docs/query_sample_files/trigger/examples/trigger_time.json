@@ -29,12 +29,6 @@
         "header": {
             "input:additional_header": ""
         },
-        "ignore:token_location": {
-            "param": false,
-            "header": false,
-            "body": false,
-            "bearer": false
-        },
         "response": {
             "int:code": [
                 "default:200",
