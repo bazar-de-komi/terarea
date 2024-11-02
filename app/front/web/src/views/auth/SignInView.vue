@@ -16,10 +16,11 @@
 
     <div class="separator">Or</div>
     <div class="social-login">
-      <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon" />
-      <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" />
-      <AuthButton text="Continue with Spotify" :buttonColor="'#1db954'" :icon="SpotifyIcon" />
-      <AuthButton text="Continue with Discord" :buttonColor="'#5865F2'" :icon="DiscordIcon" />
+      <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon"
+        :provider="'google'" />
+      <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" :provider="'github'" />
+      <AuthButton text="Continue with Discord" :buttonColor="'#5865F2'" :icon="DiscordIcon" :provider="'discord'" />
+      <AuthButton text="Continue with Spotify" :buttonColor="'#1db954'" :icon="SpotifyIcon" :provider="'spotify'" />
     </div>
     <router-link to="/forgot-password" class="forgot-password">Forgot your password?</router-link>
   </AuthLayout>

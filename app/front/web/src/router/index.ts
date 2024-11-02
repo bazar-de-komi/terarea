@@ -14,6 +14,7 @@ import DisplayReaction from '@/views/temp/DisplayReaction.vue';
 import MainPage from '@/views/main/MainPage.vue';
 import ProfilePage from '@/views/profil/AccountSetting.vue';
 import ChangePassword from '@/views/profil/ChangePassword.vue'
+import CallbackView from '@/views/auth/CallbackView.vue';
 
 const routes = [
   { path: '/', name: 'MainPage', component: MainPage },
@@ -21,6 +22,7 @@ const routes = [
   { path: '/sign-up', name: 'SignUp', component: SignUpView },
   { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPasswordView },
   { path: '/forgot-password/reset-password', name: 'ResetPassword', component: ResetPasswordView },
+  { path: '/callback', name: 'CallbackView', component: CallbackView },
   { path: '/explore/all', name: 'AreaExploreAll', component: AreaPageAll },
   { path: '/explore/applets', name: 'AreaExploreApplet', component: AreaPageApplet },
   { path: '/explore/services', name: 'AreaExploreService', component: AreaPageService },
