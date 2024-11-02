@@ -56,4 +56,16 @@ export default defineComponent({
   font-size: 5vw;
   white-space: nowrap;
 }
+
+.add-button {
+  background-color: white;
+  color: black;
+  border-radius: 20px;
+  padding: 1vw 1vw;
+  font-size: 20px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  margin-left: 2vw;
+}
 </style>
