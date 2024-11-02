@@ -8,114 +8,93 @@
     <div class="applet-creation">
       <h1>Create</h1>
 
-      <!-- Bloc If -->
       <IfBlock
-        :condition="applet.ifCondition"
-        @edit="editCondition"
-        @delete="deleteCondition"
-        @service-selected="updateIfBlock"
+        :serviceSelected="ifCondition?.name || ''"
+        @add-service="showAddServiceModalForIf"
       />
 
       <div class="connector">
         <span>+</span>
       </div>
 
-      <!-- Bloc Then -->
       <ThenBlock
-        :action="applet.thenAction"
-        @add="addAction"
-        @service-selected="updateThenBlock"
+        v-if="true"
+        :serviceSelected="thenAction?.name || ''"
+        @add-service="showAddServiceModalForThen"
+        :showAddButton="ifCondition !== null"
       />
     </div>
+
+    <AddServiceModal
+      v-if="isModalOpen"
+      @select-service="handleServiceSelection"
+      @close="closeModal"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
 import IfBlock from '@/components/CreateApplet-Comp/IfBlock.vue';
 import ThenBlock from '@/components/CreateApplet-Comp/ThenBlock.vue';
 import CancelButton from '@/components/CancelButton.vue';
+import AddServiceModal from '@/components/CreateApplet-Comp/AddServiceModal.vue';
 
 export default defineComponent({
   components: {
     AppHeader,
     CancelButton,
     IfBlock,
-    ThenBlock
+    ThenBlock,
+    AddServiceModal,
   },
   setup() {
     const router = useRouter();
-    const applet = ref({
-      ifCondition: {},
-      thenAction: {}
-    });
-    const appletCount = ref(0);
-
-    const fetchAppletData = async () => {
-      try {
-        const response = await fetch('/api/applet-data');
-        const data = await response.json();
-        applet.value = data;
-        appletCount.value = data.length;
-      } catch (error) {
-        console.error('Erreur lors du chargement des données :', error);
-      }
-    };
-
-    onMounted(() => {
-      fetchAppletData();
-    });
+    const ifCondition = ref(null);
+    const thenAction = ref(null);
+    const isModalOpen = ref(false);
+    const currentBlock = ref('');
 
     const goBack = () => {
       router.push('/explore/all');
     };
 
-    const updateIfBlock = (service: any) => {
-      applet.value.ifCondition = service;
+    const showAddServiceModalForIf = () => {
+      currentBlock.value = 'if';
+      isModalOpen.value = true;
     };
 
-    const updateThenBlock = (service: any) => {
-      applet.value.thenAction = service;
+    const showAddServiceModalForThen = () => {
+      currentBlock.value = 'then';
+      isModalOpen.value = true;
+    };
+
+    const handleServiceSelection = (service: any) => {
+      if (currentBlock.value === 'if') {
+        ifCondition.value = service;
+      } else if (currentBlock.value === 'then') {
+        thenAction.value = service;
+      }
+      closeModal();
+    };
+
+    const closeModal = () => {
+      isModalOpen.value = false;
     };
 
     return {
-      applet,
-      appletCount,
-      updateIfBlock,
-      updateThenBlock,
-      goBack
+      ifCondition,
+      thenAction,
+      isModalOpen,
+      currentBlock,
+      goBack,
+      showAddServiceModalForIf,
+      showAddServiceModalForThen,
+      handleServiceSelection,
+      closeModal,
     };
   }
 });
 </script>
-
-<style scoped>
-.create-applet-page {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.applet-creation {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 100px;
-}
-
-h1 {
-  margin-bottom: 20px;
-}
-
-.connector {
-  margin: 20px 0;
-  font-size: 2rem;
-}
-
-.applet-count {
-  margin: 20px 0;
-  font-size: 1rem;
-}
-</style>

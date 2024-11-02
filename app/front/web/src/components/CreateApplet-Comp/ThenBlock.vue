@@ -2,6 +2,8 @@
   <div class="thenThisContainer">
     <div class="ifThisBlock">
       <span>Then That</span>
+      <button v-if="showAddButton && !serviceSelected" class="add-button" @click="addService">Add</button>
+      <span v-else>{{ serviceSelected }}</span>
     </div>
   </div>
 </template>
@@ -10,16 +12,26 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  props: {
+    serviceSelected: {
+      type: String,
+      default: '',
+    },
+    showAddButton: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  emits: ['add-service'],
   methods: {
     addService() {
-      alert('Add Service');
+      this.$emit('add-service');
     }
   }
 });
 </script>
 
 <style scoped>
-
 .thenThisContainer {
   display: flex;
   align-items: center;
@@ -59,7 +71,5 @@ export default defineComponent({
   .ifThisBlock span {
     font-size: 6vw;
   }
-
 }
-
 </style>
