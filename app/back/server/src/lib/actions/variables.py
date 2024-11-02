@@ -222,9 +222,9 @@ class Variables:
             self.disp.log_debug(msg, title)
             raise ScopeError(msg)
         if name not in self.variables[scope]:
-            self.disp.log_debug(f"Variable {name} exists.", title)
+            self.disp.log_debug(f"Variable {name} does not exist.", title)
             return False
-        self.disp.log_debug(f"Variable {name} does not exist.", title)
+        self.disp.log_debug(f"Variable {name} exists.", title)
         return True
 
     def get_variable(self, name: str, scope: Any = "default_scope") -> Any:
