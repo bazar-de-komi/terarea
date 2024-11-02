@@ -31,6 +31,7 @@
                 "min:100",
                 "max:500"
             ]
-        }
+        },
+        "invite_the_bot": "https://discord.com/oauth2/authorize?client_id=1302353289014411285&permissions=1689917160085568&integration_type=0&scope=bot"
     }
 }
