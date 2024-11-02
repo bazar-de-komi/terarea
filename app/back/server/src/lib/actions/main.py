@@ -107,7 +107,7 @@ class ActionsMain:
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
             column=["running"],
-            values=[1],
+            data=[1],
             condition=f"id={node}"
         )
         if locked == self.error:
@@ -344,9 +344,10 @@ class ActionsMain:
             where=f"id={node}",
             beautify=False
         )
-        if locked == self.error:
+        self.disp.log_debug(f"action info = {locked}", title)
+        if locked == self.error or len(locked) == 0:
             return True
-        if locked[0][0] == 1:
+        if locked[0]["running"] == "1":
             self.disp.log_debug(f"Action {node} is locked.", title)
             return True
         self.disp.log_debug(f"Action {node} is not locked.", title)
