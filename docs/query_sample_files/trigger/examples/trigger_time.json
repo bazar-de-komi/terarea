@@ -5,7 +5,7 @@
     "service": {
         "ignore:id": 1,
         "input:url_extra": "/api/time/current/zone",
-        "drop:url_params": {
+        "url_params": {
             "opt:timeZone=": [
                 "opt:Europe/Paris",
                 "default:Europe/Berlin",

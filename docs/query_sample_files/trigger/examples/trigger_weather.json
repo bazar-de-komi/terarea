@@ -5,7 +5,7 @@
     "service": {
         "ignore:id": 2,
         "input:url_extra": "/VisualCrossingWebServices/rest/services/timeline/Kremelin-Bicêtre,France",
-        "drop:url_params": {
+        "url_params": {
             "input:key": "$ref{secret.token}",
             "input:additional_params": ""
         },

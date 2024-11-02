@@ -5,7 +5,7 @@
     "service": {
         "ignore:id": 4,
         "input:url_extra": "/v1/bpi/currentprice.json",
-        "drop:url_params": {
+        "url_params": {
             "input:additional_params": ""
         },
         "body": {
