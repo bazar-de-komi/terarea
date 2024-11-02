@@ -347,7 +347,7 @@ class ActionsMain:
         self.disp.log_debug(f"action info = {locked}", title)
         if locked == self.error or len(locked) == 0:
             return True
-        if locked[0]["running"] == "1":
+        if locked[0][0] == 1:
             self.disp.log_debug(f"Action {node} is locked.", title)
             return True
         self.disp.log_debug(f"Action {node} is not locked.", title)
