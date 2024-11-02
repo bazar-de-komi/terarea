@@ -98,3 +98,32 @@ export default defineComponent({
   }
 });
 </script>
+
+<style scoped>
+.create-applet-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.applet-creation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.connector {
+  margin: 20px 0;
+}
+
+.connector span {
+  font-size: 2em;
+  font-weight: bold;
+}
+</style>
