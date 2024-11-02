@@ -12,7 +12,7 @@ export default defineComponent({
     const code = urlParams.get('code');
     if (code) {
       let path = "/api/v1/oauth/callback?";
-      path += event.url.split('?')[1];
+      path += window.location.href.split('?')[1];
       try {
         const response = await queries.post(path);
         localStorage.setItem('authToken', response.token);
