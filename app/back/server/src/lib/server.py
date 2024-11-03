@@ -9,7 +9,7 @@ from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAM
 from .sql import SQL
 from .bucket import Bucket
 from .actions import ActionsMain
-from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST, BackgroundTasks, Crons, OAuthAuthentication
+from .components import Endpoints, ServerPaths, RuntimeData, ServerManagement, CONST, BackgroundTasks, Crons, OAuthAuthentication, MailManagement
 from .boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
 
 
@@ -123,6 +123,11 @@ class Server:
         )
         self.runtime_data_initialised.actions_main_initialised = ActionsMain(
             self.runtime_data_initialised,
+            error=self.error,
+            success=self.success,
+            debug=self.debug
+        )
+        self.runtime_data_initialised.mail_management_initialised = MailManagement(
             error=self.error,
             success=self.success,
             debug=self.debug

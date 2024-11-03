@@ -167,7 +167,7 @@ class ActionsMain:
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
             column=["running"],
-            values=["0"],
+            data=["0"],
             where=f"id={node}"
         )
         if locked == self.error:

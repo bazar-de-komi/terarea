@@ -409,6 +409,9 @@ class ActionManagement:
         )
         self.disp.log_debug("self.api_querier_initialised initialised", title)
         response: Response = self.api_querier_initialised.query()
+        if response == self.success:
+            self.disp.log_debug("Response is a success", title)
+            return self.success
         if response is None:
             self._log_fatal(
                 title=title,

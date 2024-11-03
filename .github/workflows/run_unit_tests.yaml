@@ -93,7 +93,7 @@ jobs:
 
       - name: Install netcat into the root to check connection status
         run: |
-          RUN_COMMAND="apt update && echo 'Installing netcat' && apt install -y netcat"
+          RUN_COMMAND="apt update && echo 'Installing netcat-traditional' && apt install -y netcat-traditional"
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$RUN_COMMAND"
 
       - name: Check for database connection
@@ -125,7 +125,7 @@ jobs:
 
       - name: Run server tests
         run: |
-          TEST_RUN_COMMAND="pwd && ls -Ra && pytest -s"
+          TEST_RUN_COMMAND="pwd && ls -Ra && . \$SYSTEM_ENV_LOCATION/\$SYSTEM_ENV_NAME/bin/activate && pytest -s"
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
           
       - name: Run tests client mobile

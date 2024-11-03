@@ -40,11 +40,14 @@ class UserEndpoints:
             self.debug
         )
         # ---------------------------- Mail sending ----------------------------
-        self.mail_management_initialised: MailManagement = MailManagement(
-            self.error,
-            self.success,
-            self.debug
-        )
+        if self.runtime_data_initialised.mail_management_initialised is None:
+            self.mail_management_initialised: MailManagement = MailManagement(
+                self.error,
+                self.success,
+                self.debug
+            )
+        else:
+            self.mail_management_initialised: MailManagement = self.runtime_data_initialised.mail_management_initialised
 
     async def post_login(self, request: Request) -> Response:
         """_summary_
