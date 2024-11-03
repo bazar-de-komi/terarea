@@ -3,7 +3,9 @@
     These are used to standardise error logging and other sections of the program.
 """
 # ---------------------------------- Imports  ----------------------------------
+from typing import Union
 import operator
+from datetime import datetime, date
 from .secrets import Secrets
 
 # ---------------------------------- log type ----------------------------------
@@ -403,3 +405,63 @@ def check_if_oauth_is_valid(oauth_token: str) -> bool:
     if current_time >= expiration:
         return False
     return True
+
+
+# -------------------- Bruteforce type conversion attempts  --------------------
+
+BRUTEFORCE_DATETIME_FORMATS = [
+    "%Y-%m-%dT%H:%M:%S.%f%z",
+    "%Y-%m-%dT%H:%M:%S%z",
+    "%Y-%m-%dT%H:%M:%S",
+    "%Y-%m-%d %H:%M:%S"
+]
+
+BRUTEFORCE_DATE_FORMATS = [
+    "%Y-%m-%d",
+    "%d/%m/%Y",
+    "%m/%d/%Y"
+]
+
+
+def detect_and_convert(value: str) -> Union[int, float, bool, None, datetime, date, str]:
+    """
+    Detects the type of the input string and converts it to the appropriate Python type.
+
+    Args:
+        value (str): The string to be converted.
+
+    Returns:
+        int, float, bool, None, datetime, date, or str: The converted value based on its detected type.
+    """
+    if isinstance(value, str) is False:
+        return value
+    value = value.strip()
+    lvalue = value.lower()
+    if lvalue == "none":
+        return None
+    if lvalue == "true":
+        return True
+    if lvalue == "false":
+        return False
+    try:
+        return int(value)
+    except ValueError:
+        pass
+    try:
+        return float(value)
+    except ValueError:
+        pass
+
+    for fmt in BRUTEFORCE_DATETIME_FORMATS:
+        try:
+            return datetime.strptime(value, fmt)
+        except ValueError:
+            continue
+
+    for fmt in BRUTEFORCE_DATE_FORMATS:
+        try:
+            return datetime.strptime(value, fmt).date()
+        except ValueError:
+            continue
+
+    return value

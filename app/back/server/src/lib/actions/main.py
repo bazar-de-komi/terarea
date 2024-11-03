@@ -181,26 +181,31 @@ class ActionsMain:
         Returns:
             int: _description_: The status of how the scope dumping went.
         """
-        data = self.variables.get_scope(scope=scope)
-        data = self.variables.sanitize_for_json(data)
-        try:
-            data = json.dumps(
-                data,
-                skipkeys=False,
-                ensure_ascii=True,
-                check_circular=True,
-                allow_nan=True,
-                cls=None,
-                indent=None,
-                sort_keys=False,
-            )
-        except Exception:
-            data = f"{data}"
-        self.logger.log_info(
-            log_type=log_type,
-            action_id=action_id,
-            message=data,
-            resolved=False
+        title = "dump_scope"
+        # data = self.variables.get_scope(scope=scope)
+        # data = self.variables.sanitize_for_json(data)
+        # try:
+        #     data = json.dumps(
+        #         data,
+        #         skipkeys=False,
+        #         ensure_ascii=True,
+        #         check_circular=True,
+        #         allow_nan=True,
+        #         cls=None,
+        #         indent=None,
+        #         sort_keys=False,
+        #     )
+        # except Exception:
+        #     data = f"{data}"
+        # self.logger.log_info(
+        #     log_type=log_type,
+        #     action_id=action_id,
+        #     message=data,
+        #     resolved=False
+        # )
+        self.disp.log_warning(
+            "Scope dumping is disabled for time reasons.",
+            title
         )
         return self.success
 

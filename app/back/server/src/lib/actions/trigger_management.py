@@ -251,43 +251,54 @@ class TriggerManagement:
             Any: _description_
         """
         title = "get_response_content"
+        self.disp.log_debug(f"Variable name: {variable_name}", title)
         if self.api_response is None:
+            msg = "No response found"
+            msg += f" in {title} for {variable_name} in {self.api_response}."
+            self.disp.log_critical(msg, title)
             self._log_fatal(
                 title=title,
                 msg="No response found.",
                 action_id=self.action_id,
-                raise_item=True,
+                raise_item=False,
                 raise_func=TypeError
             )
             return ""
         variable_name_list = variable_name.split(".")
         list_length = len(variable_name_list)
-        data_type: str = self.api_response.get(
-            ACONST.RESPONSE_NODE_BODY_TYPE_KEY
-        )
-        msg = f"Data type: {data_type}, list_length: {list_length}"
-        msg += f" Variable name list: {variable_name_list}"
-        self.disp.log_debug(msg, title)
-        if data_type is None:
-            self._log_fatal(
-                title=title,
-                msg="No data type found.",
-                action_id=self.action_id,
-                raise_item=True,
-                raise_func=TypeError
+        self.disp.log_debug(f"List length: {list_length}", title)
+        if variable_name_list[0] == "body":
+            data_type: str = self.api_response.get(
+                ACONST.RESPONSE_NODE_BODY_TYPE_KEY
             )
-            return ""
-        if data_type.split(";")[0] not in ACONST.CONTENT_TYPES_JSON and list_length > 1:
-            msg = "Search depth is not possible for"
-            msg += f" this data type {data_type}."
-            self._log_fatal(
-                title=title,
-                msg=msg,
-                action_id=self.action_id,
-                raise_item=True,
-                raise_func=TypeError
-            )
-            return ""
+            msg = f"Data type: {data_type}, list_length: {list_length}"
+            msg += f" Variable name list: {variable_name_list}"
+            self.disp.log_debug(msg, title)
+            if data_type is None:
+                self._log_fatal(
+                    title=title,
+                    msg="No data type found.",
+                    action_id=self.action_id,
+                    raise_item=False,
+                    raise_func=TypeError
+                )
+                return ""
+            if data_type.split(";")[0] not in ACONST.CONTENT_TYPES_JSON and list_length > 1:
+                msg = "Search depth is not possible for"
+                msg += f" this data type {data_type}."
+                self._log_fatal(
+                    title=title,
+                    msg=msg,
+                    action_id=self.action_id,
+                    raise_item=False,
+                    raise_func=TypeError
+                )
+                return ""
+        else:
+            msg = "Variable name list: "
+            msg += f"{variable_name_list}"
+            self.disp.log_debug(msg, title)
+
         node = self.api_response.copy()
         for index, item in enumerate(variable_name_list):
             if index == 0:
@@ -295,13 +306,17 @@ class TriggerManagement:
                     node: Dict[str, Any] = node.get(
                         ACONST.RESPONSE_NODE_KEY_EQUIVALENCE[item]
                     )
+                    self.disp.log_debug(f"Node[{index}]: {node}", title)
                     continue
             if item not in node:
+                self.disp.log_error(f"Item: {item} not in node: {node}", title)
                 return ""
             node: Dict[str, Any] = node.get(item)
+            self.disp.log_debug(f"Node[{index}]: {node}", title)
+        self.disp.log_debug(f"Node: {node}", title)
         return node
 
-    def get_variable_data_if_required(self, node: str) -> Any:
+    def get_variable_data_if_required(self, node: str, attempt_bruteforce: bool = True) -> Any:
         """_summary_
             Get the variable data if required.
 
@@ -327,12 +342,16 @@ class TriggerManagement:
                     self.disp.log_debug(f"var_content: {var_content}", title)
                     if var_content == "":
                         var_content = self.get_response_content(var_name)
-                    item_new = var_content + item[len(var_name) + 2:]
+                        self.disp.log_debug(
+                            f"var_content: {var_content}", title
+                        )
+                    item_new = f"{var_content}{item[len(var_name) + 2:]}"
                     self.disp.log_debug(f"item_new: {item_new}", title)
                     node_list[index] = item_new
             node = "".join(node_list)
         self.disp.log_debug(f"Processed node: {node}", title)
         node_list = node.split("${")
+        self.disp.log_debug(f"Node list: {node_list}", title)
         if len(node_list) > 1:
             self.disp.log_debug(f"node_list: {node_list}", title)
             for index, item in enumerate(node_list):
@@ -345,14 +364,17 @@ class TriggerManagement:
                     var_content = self.api_querier_initialised.get_normal_content(
                         var_name
                     )
-                    item_new = var_content + item[len(var_name) + 3:]
+                    item_new = f"{var_content}{item[len(var_name) + 3:]}"
                     self.disp.log_debug(f"item_new: {item_new}", title)
                     node_list[index] = item_new
             node = "".join(node_list)
         self.disp.log_debug(f"Node: {node}", title)
+        if attempt_bruteforce is True:
+            node = ACONST.detect_and_convert(node)
+            self.disp.log_warning(f"Node: {node}, type = {type(node)}", title)
         return node
 
-    def check_data_comparison(self, data: Any, operator: Any, verification_value: Any) -> bool:
+    def check_data_comparison(self, data: Any, operator: ACONST.operator, verification_value: Any) -> bool:
         """_summary_
             Check the data comparison.
 
@@ -368,6 +390,50 @@ class TriggerManagement:
         msg = f"data: {data}, operator: {operator}, "
         msg += f"verification_value: {verification_value}"
         self.disp.log_debug(msg, title)
+        try:
+            operation_result = operator(data, verification_value)
+            self.disp.log_debug(f"Operation result: {operation_result}", title)
+        except Exception as e:
+            self._log_fatal(
+                title=title,
+                msg=f"Error while comparing data: {e}",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=ValueError
+            )
+        return operation_result
+
+    def set_runtime_variables(self, data: Dict[str, Any]) -> None:
+        """_summary_
+            Set the runtime variables.
+
+        Args:
+            data (Any): _description_
+        """
+        title = "set_runtime_variables"
+        self.disp.log_debug(f"Data: {data}", title)
+        if data is None:
+            self._log_fatal(
+                title=title,
+                msg="No data found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+        if isinstance(data, Dict) is False:
+            self._log_fatal(
+                title=title,
+                msg="Data is not a dictionary.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+        for key, value in data.items():
+            self.disp.log_debug(f"Key: {key}, Value: {value}", title)
+            node = self.get_variable_data_if_required(value)
+            self.variable.add_variable(
+                key, node, type(node), self.scope
+            )
 
     def run(self) -> int:
         """_summary_
@@ -463,19 +529,32 @@ class TriggerManagement:
         verification_value = self.get_verification_value(
             node
         )
-        self.disp.log_debug("Verification info gathered", title)
+        self.disp.log_debug("raw Verification info gathered", title)
         msg = f"Verification operator: {verification_operator}, "
         msg += f"response_data = {response_data}, "
         msg += f"verification_value = {verification_value}"
         self.disp.log_debug(msg, title)
+        self.disp.log_info("Getting content for response_data", title)
         response_data = self.get_variable_data_if_required(response_data)
+        self.disp.log_info("Getting content for verification_value", title)
         verification_value = self.get_variable_data_if_required(
-            verification_value)
+            verification_value
+        )
+        self.disp.log_debug("Content gathered.", title)
         self.disp.log_debug(f"response_data: {response_data}", title)
         self.disp.log_debug(f"verification_value: {verification_value}", title)
-        self.check_data_comparison(
+        response = self.check_data_comparison(
             data=response_data,
             operator=verification_operator,
             verification_value=verification_value
         )
+        if response is False:
+            return self.error
+        self.disp.log_debug("Data comparison successful.", title)
+        var1 = node.get("variables")
+        var2 = node.get("vars")
+        if var1 is not None:
+            self.set_runtime_variables(var1)
+        if var2 is not None:
+            self.set_runtime_variables(var2)
         return self.success
