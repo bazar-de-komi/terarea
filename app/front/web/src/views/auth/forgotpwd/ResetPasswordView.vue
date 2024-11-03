@@ -73,16 +73,14 @@ export default defineComponent({
         console.error(error);
         alert("Failed to reset the password.");
       }
-      console.log('Resetting password for', this.email);
-      console.log('Verification Code:', this.verificationCode);
-      console.log('New Password:', this.newPassword);
+      // console.log('Resetting password for', this.email);
+      // console.log('Verification Code:', this.verificationCode);
+      // console.log('New Password:', this.newPassword);
     },
     async resendVerificationEmail() {
       await queries.post("/api/v1/send_email_verification", {
         email: this.email
       })
-      // alert("A verification email was resend.");
-      // console.log('Resending verification email to', this.email);
     },
     togglePassword() {
       this.showPassword = !this.showPassword;

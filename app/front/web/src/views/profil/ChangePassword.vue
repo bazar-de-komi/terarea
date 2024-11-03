@@ -29,6 +29,7 @@ import AuthButton from '@/components/AuthButton.vue';
 import AuthLayout from '@/views/profil/ChangeLayout.vue';
 import AppHeader from '@/components/AppHeader.vue';
 import CancelButton from '@/components/CancelButton.vue'
+import { queries } from '@/../lib/querier';
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
@@ -66,18 +67,30 @@ export default defineComponent({
     };
   },
   methods: {
-    submitPasswordReset() {
+    async submitPasswordReset() {
       if (this.newPassword !== this.passwordConfirmation) {
         alert('Passwords do not match!');
         return;
       }
-
-      console.log('Resetting password for', this.email);
-      console.log('Verification Code:', this.verificationCode);
-      console.log('New Password:', this.newPassword);
+      try {
+        await queries.patch("/api/v1/reset_password", {
+          code: this.verificationCode,
+          email: this.email,
+          password: this.newPassword
+        })
+        this.$router.push('/account');
+      } catch (error) {
+        console.error(error);
+        alert("Failed to change the password.");
+      }
+      // console.log('Resetting password for', this.email);
+      // console.log('Verification Code:', this.verificationCode);
+      // console.log('New Password:', this.newPassword);
     },
-    resendVerificationEmail() {
-      console.log('Resending verification email to', this.email);
+    async resendVerificationEmail() {
+      await queries.post("/api/v1/send_email_verification", {
+        email: this.email
+      })
     },
     togglePassword() {
       this.showPassword = !this.showPassword;
