@@ -92,7 +92,7 @@ jobs:
 
       - name: Install netcat into the root to check connection status
         run: |
-          RUN_COMMAND="apt update && echo 'Installing netcat' && apt install -y netcat"
+          RUN_COMMAND="apt update && echo 'Installing netcat-traditional' && apt install -y netcat-traditional"
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$RUN_COMMAND"
 
       - name: Check for database connection
