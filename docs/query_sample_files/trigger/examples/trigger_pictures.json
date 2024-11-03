@@ -3,8 +3,8 @@
     "ignore:name": "bitcoin",
     "ignore:description": "The service in charge of gathering information about bitcoin.",
     "service": {
-        "ignore:id": 4,
-        "input:url_extra": "/v1/bpi/currentprice.json",
+        "ignore:id": 7,
+        "input:url_extra": "200",
         "url_params": {
             "input:additional_params": ""
         },
@@ -29,12 +29,12 @@
                 "min:100",
                 "max:500"
             ],
-            "input:response_content": "$ref{body.time.updatedISO}"
+            "input:response_content": "9:00"
         },
         "drop:verification_operator": [
             "opt:==",
             "opt:===",
-            "opt:eq",
+            "default:eq",
             "opt:-eq",
             "opt:!=",
             "opt:<>",
@@ -49,7 +49,7 @@
             "opt:<=",
             "opt:le",
             "opt:-le",
-            "default:>=",
+            "opt:>=",
             "opt:ge",
             "opt:-ge",
             "opt:<=>",
@@ -62,8 +62,8 @@
         ],
         "input:verification_value": "$ref{secrets.now_utc}",
         "vars": {
-            "currency": "$ref{body.bpi}",
-            "cost": "$ref{header.Age}"
+            "type": "$ref{header.Content-Type}",
+            "content": "$ref{body}"
         }
     }
 }

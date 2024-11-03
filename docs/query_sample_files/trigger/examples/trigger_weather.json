@@ -61,7 +61,7 @@
             "opt:less than or equal to",
             "opt:greater than or equal to"
         ],
-        "time:verification_value": "cloudy",
+        "input:verification_value": "cloudy",
         "vars": {
             "weather_node": "$ref{body.days[0]}",
             "location": "Kremelin",

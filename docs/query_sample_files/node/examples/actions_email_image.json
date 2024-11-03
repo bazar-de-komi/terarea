@@ -1,0 +1,25 @@
+{
+    "ignore:id": 1,
+    "ignore:name": "email_me",
+    "ignore:description": "An action that will notify the user via ntfy.",
+    "service": {
+        "ignore:id": 5,
+        "input:url_extra": "",
+        "url_params": {
+            "input:additional_params": ""
+        },
+        "body": {
+            "input:to": "my_email@my_email_provider.com",
+            "input:subject": "Email notification",
+            "textarea:body": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>Embedded Image Email</title></head><body><p>Hello, here is an embedded image:</p><p>data type: ${{type}}</p><img src=\"data:image/png;base64,${{base64(content)}}\"/></body></html>",
+            "input:additional_body": ""
+        },
+        "response": {
+            "int:code": [
+                "default:200",
+                "min:100",
+                "max:500"
+            ]
+        }
+    }
+}
