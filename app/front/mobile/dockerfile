@@ -5,6 +5,9 @@ ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
 ENV docker_volume_path="/shared_folder"
+ARG APP_ID=com.terarea.terarea
+ENV ANDROID_HOME /usr/local/android-sdk-linux
+ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 # ENV LAUNCH_COMMAND="serve -s build"
 
 WORKDIR /home/setup
@@ -26,15 +29,11 @@ RUN apt update && apt upgrade -y && \
     npm cache clean --force && \
     apt clean
 
-# Install Amazon Corretto (OpenJDK 11)
-RUN file_name=amazon-corretto-21-x64-linux-jdk.deb && \
+# Install Amazon Corretto
+RUN file_name=amazon-corretto-11-x64-linux-jdk.deb && \
     wget https://corretto.aws/downloads/latest/$file_name && \
     apt install -y ./$file_name && \
     rm $file_name
-
-# Updating environement paths
-ENV ANDROID_HOME /usr/local/android-sdk-linux
-ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
 # Install Android SDK Command-Line Tools
 RUN mkdir -p ${ANDROID_HOME} && \
@@ -46,47 +45,49 @@ RUN mkdir -p ${ANDROID_HOME} && \
     mkdir cmdline-tools && \
     mv tools cmdline-tools/latest
 
-# Downloading gradle
-ENV GRADLE_VERSION=8.10.2
-RUN wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp && \
-    unzip -d /opt/gradle /tmp/gradle-*.zip
-
+# Set Gradle environment variables
+ENV GRADLE_VERSION=8.1.1
 ENV GRADLE_HOME=/opt/gradle/gradle-${GRADLE_VERSION}
 ENV PATH=${GRADLE_HOME}/bin:${PATH}
 
+# Downloading gradle
+RUN wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp && \
+    unzip -d /opt/gradle /tmp/gradle-*.zip
+
+# Set the working directory in the Docker container and install dependencies
+WORKDIR ${HOME}
+COPY package.json package-lock.json ./
+
+RUN timeout 60s npm install || timeout 60s npm install
+
+# Copy remaining project files
+COPY . .
+
+# Build android directory and modify build.gradle file
+RUN npx expo prebuild --clean --no-install && \
+    sed -i "/defaultConfig {/a \    manifestPlaceholders = [appAuthRedirectScheme: \"${APP_ID}\"]" android/app/build.gradle && \
+    sed -i "/^rootProject.name/c\rootProject.name = 'terarea'" android/settings.gradle && \
+    sed -i '/^org.gradle.jvmargs=/c\org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -Xss4m -Dfile.encoding=UTF-8' android/gradle.properties && \
+    sed -i '/^distributionUrl=/c\distributionUrl=https\://services.gradle.org/distributions/gradle-5.6.2-all.zip' android/gradle/wrapper/gradle-wrapper.properties
+
 # Accept licenses and install platform tools and the SDK
 RUN yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses && \
-    sdkmanager --sdk_root=${ANDROID_HOME} "platform-tools" "platforms;android-30"
-
-# Set the app ID in advance
-ARG APP_ID=com.terarea.terarea
-
-# Set the working directory in the Docker container
-WORKDIR ${HOME}
-
-# Copy your project files to the container
-COPY . ${HOME}
-
-# Set the app ID in app.json (or app.config.js)
-RUN sed -i "s|\"android\": {|\"android\": { \"package\": \"${APP_ID}\",|" ${HOME}/app.json
-
-# Install npm dependencies
-RUN timeout 60s npm install && npm cache clean --force || timeout 60s npm install && npm cache clean --force
-
-# Build android directory
-RUN npx expo prebuild --clean --no-install
-
-# Modify the build.gradle file
-RUN sed -i "/defaultConfig {/a \    manifestPlaceholders = [appAuthRedirectScheme: \"${APP_ID}\"]" android/app/build.gradle
+    sdkmanager --sdk_root=${ANDROID_HOME} \
+    "platform-tools" \
+    "platforms;android-30" \
+    "platforms;android-31" \
+    "build-tools;30.0.3"
 
 # Change to the android directory
 WORKDIR ${HOME}/android
 
-# Build the release version
-RUN ./gradlew assembleRelease
+# Build the release version - the command is commented because I do tests with docker exec
+# RUN ./gradlew assembleRelease
 
 # Build the project (optional, uncomment if you want to build here)
 # RUN npm run build
+
+RUN npm cache clean --force
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000
