@@ -17,11 +17,6 @@ export default defineComponent({
     textColor: { type: String, required: false, default: '#fff' },
     provider: { type: String, required: false }
   },
-  data() {
-    return {
-      popup: shallowRef<Window | null>(null),
-    };
-  },
   methods: {
     async onClick() {
       if (this.provider) {
