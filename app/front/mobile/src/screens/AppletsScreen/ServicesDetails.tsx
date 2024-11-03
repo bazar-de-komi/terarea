@@ -1,66 +1,86 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
-import AppletBox from "../../components/AppletsBox/appletBox";
+import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import BackButton from "../../components/BackButton/backButton";
+import Header from '../../components/Header/header';
+import { getValue } from "../../components/StoreData/storeData";
+import { queries } from "../../../back-endConnection/querier";
 
-import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-import ProfilLogo from '../../../assets/profilLogo.png';
+const ServicesDetails = ({ route }) => {
+    const { service } = route.params;
+    const navigation = useNavigation();
+    const [applets, setApplets] = useState([]);
 
-const ServicesDetails = () => {
-    const Navigation = useNavigation();
-
-    const callServices = () => {
-        Navigation.navigate('Services')
+    const handleGoBackButton = () => {
+        navigation.goBack();
     }
 
-    const servicesScreen = () => {
-        Navigation.navigate("Service screen");
+    const handleAppletButton = async (applet: any) => {
+        navigation.navigate("Applet screen", { applet: applet });
     };
 
-    const create = () => {
-        Navigation.navigate('Create');
+    const handleCreateButton = () => {
+        navigation.navigate('Create');
     };
+
+    useEffect(() => {
+        const getAppletsOfService = async () => {
+            try {
+                const token = await getValue("token");
+                let path = "/api/v1/applets/";
+                path += service.name;
+                const getAppletsResponse = await queries.get(path, {}, token);
+                setApplets(getAppletsResponse.msg);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        getAppletsOfService();
+    }, []);
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
-                <Image
-                    source={AreaLogo}
-                    style={styles.areaLogo}
-                />
-                <Image
-                    source={ProfilLogo}
-                    style={styles.profilLogo}
-                />
+                <Header />
                 <BackButton
-                text="<"
-                onPress={callServices}
+                    text=" < "
+                    onPress={handleGoBackButton}
                 />
-                <Text style={styles.homeTitle}>5-Minute Crafts integrations</Text>
+                <Text style={styles.homeTitle}>
+                    {service.name}
+                </Text>
                 <View style={styles.homeNavigation}>
                 </View>
-                <Text style={styles.description}>5-Minute Crafts Youtube channel is a</Text>
-            <View style={styles.createStyle}>
+                <Text style={styles.description}>
+                    {service.description}
+                </Text>
+                <View style={styles.createStyle}>
                     <CustomerButton
-                    text="Create"
-                    onPress={create}
-                    type="PRIMARY"
-                    bgColor={""}
-                    fgColor={""}
+                        text="Create"
+                        onPress={handleCreateButton}
+                        type="PRIMARY"
+                        bgColor={""}
+                        fgColor={""}
                     />
                 </View>
             </View>
-            <Text style={styles.homeTitle}>Popular 5-Minute Crafts workflows & automations</Text>
-            <AppletBox
-            title="Reveive a weekly email digest of all new videos for the 5-Minute Crafts Youtub channel"
-            description={"5-Minute Crafts"}
-            bgColor={"green"}
-            onPress={servicesScreen}
-
-            />
+            {/* <Text style={styles.homeTitle}>Popular 5-Minute Crafts workflows & automations</Text> */}
+            {
+                applets.map((applet) => (
+                    <AppletAndServiceBox
+                        key={applet.id}
+                        title={applet.name}
+                        description={applet.description}
+                        author={applet.author}
+                        user_nb={applet.frequency}
+                        bgColor={applet.colour}
+                        onPress={() => handleAppletButton(applet)}
+                    />
+                ))
+            }
         </ScrollView>
     )
 }
@@ -90,10 +110,15 @@ const styles = StyleSheet.create({
         margin: 30,
         color: 'white',
     },
+    descriptionSericesAfterCreateButton: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
+    },
     description: {
         fontSize: 20,
         margin: 30,
-        color:'white',
+        color: 'white',
     },
     homeNavigation: {
         flexDirection: 'row',

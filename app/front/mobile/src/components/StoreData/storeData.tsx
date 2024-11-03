@@ -12,7 +12,7 @@ export const storeValue = async (key: string, value: any) => {
 export const getValue = async (key: string) => {
     try {
         const value = await AsyncStorage.getItem(key);
-        if(value !== null) {
+        if (value !== null) {
             return value;
         }
     } catch (e) {
@@ -27,9 +27,3 @@ export const deleteKey = async (key: string) => {
         console.error(e);
     }
 };
-
-// export default {
-//     storeValue,
-//     getValue,
-//     deleteKey
-// }

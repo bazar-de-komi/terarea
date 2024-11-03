@@ -1,0 +1,37 @@
+{
+    "ignore:id": 1,
+    "ignore:name": "sms_me",
+    "ignore:description": "An action that will send an sms to the user.",
+    "service": {
+        "ignore:id": 3,
+        "input:url_extra": "api/v9/channels/{channel_id}/messages",
+        "url_params": {
+            "input:additional_params": ""
+        },
+        "body": {
+            "textarea:content": "Hello World !",
+            "input:additional_body": ""
+        },
+        "drop:method": [
+            "opt:GET",
+            "default:POST",
+            "opt:PUT",
+            "opt:PATCH",
+            "opt:DELETE",
+            "opt:HEAD",
+            "opt:OPTIONS"
+        ],
+        "header": {
+            "input:Authorization": "Bot $ref{secrets.token}",
+            "input:additional_header": ""
+        },
+        "response": {
+            "int:code": [
+                "default:200",
+                "min:100",
+                "max:500"
+            ]
+        },
+        "invite_the_bot": "https://discord.com/oauth2/authorize?client_id=1302353289014411285&permissions=1689917160085568&integration_type=0&scope=bot"
+    }
+}

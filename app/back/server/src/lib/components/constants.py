@@ -9,8 +9,6 @@ import dotenv
 from display_tty import IDISP
 IDISP.logger.name = "Constants"
 
-# Enable debugging for the functions in the constants file.
-IDISP.debug = True
 
 # Environement initialisation
 dotenv.load_dotenv(".env")
@@ -86,6 +84,12 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
     except KeyError as e:
         IDISP.log_warning(f"{e}", "_get_toml_variable")
         return default
+
+
+# Enable debugging for the functions in the constants file.
+IDISP.debug = _get_toml_variable(
+    TOML_CONF, "Server_configuration.debug_mode", "debug", False
+)
 
 
 # Mail management
@@ -245,6 +249,11 @@ RANDOM_MAX = int(_get_toml_variable(
     TOML_CONF,  "Verification", "random_max", 999999
 ))
 
+# |- Services
+API_REQUEST_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Services", "api_request_delay", 5
+))
+
 # Json default keys
 JSON_TITLE: str = "title"
 JSON_MESSAGE: str = "msg"
@@ -268,6 +277,7 @@ TAB_VERIFICATION = "Verification"
 TAB_ACTIVE_OAUTHS = "ActiveOauths"
 TAB_USER_SERVICES = "UserServices"
 TAB_ACTION_LOGGING = "ActionLoging"
+TAB_ACTION_TEMPLATE = "ActionTemplate"
 TAB_USER_OAUTH_CONNECTION = "UserOauthConnection"
 
 # Character info config

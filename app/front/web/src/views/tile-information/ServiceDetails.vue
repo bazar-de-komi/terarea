@@ -2,7 +2,7 @@
   <div>
     <header>
       <AppHeader />
-      <CancelButton @click="goBack" />
+      <CancelButton buttonText="Back" @click="goBack" />
     </header>
 
     <!-- Première boîte (service-header) -->
@@ -17,7 +17,7 @@
         <div class="applets-grid" ref="appletsGrid">
           <template v-for="(item, index) in filteredApplets" :key="index">
             <AppletTile
-              v-if="item.type === 'applet'"
+              v-if="item.type === 'applet' && item.tags.includes(service.title)"
               :title="item.title"
               :background-color="item.color"
             />
@@ -39,6 +39,7 @@ import CompDescription from '@/components/Details-Service/CompDescription.vue';
 import AppletTile from '@/components/AppletBoardTile.vue';
 
 interface Service {
+  id: number;
   title: string;
   description: string;
   source: string;
@@ -68,7 +69,7 @@ export default defineComponent({
     });
 
     const goBack = () => {
-      router.push('/explore/all');
+      router.back();
     };
 
     const filteredApplets = computed(() => store.getters['applets/filteredApplets']);
@@ -197,7 +198,7 @@ html, body {
 
 .applets-section {
   text-align: center;
-  position: relative; /* Permet de s'aligner en dessous de service-header */
+  position: relative;
 }
 
 .applets-container {

@@ -2,6 +2,7 @@
     File in charge of groupping the code for the parser of the actions
 """
 
+from .secrets import Secrets
 from .main import ActionsMain
 from .variables import Variables, ScopeError, VariableNotFoundError
 from .action_management import ActionManagement
@@ -10,12 +11,13 @@ from .logger import ActionLogger
 from . import constants as ACONST
 
 __all__ = [
-    'ActionsMain',
+    "ACONST",
+    'Secrets',
     'Variables',
     'ScopeError',
-    'VariableNotFoundError',
+    'ActionsMain',
+    'ActionLogger',
     'ActionManagement',
     'TriggerManagement',
-    'ActionLogger',
-    "ACONST"
+    'VariableNotFoundError'
 ]

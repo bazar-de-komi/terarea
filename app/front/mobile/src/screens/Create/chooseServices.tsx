@@ -1,12 +1,11 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
 import CustomerInput from "../../components/CustomersInput";
 import BackButton from "../../components/BackButton/backButton";
 
-import AppletBox from "../../components/AppletsBox/appletBox";
+import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 
 const ChooseServices = () => {
     const Navigation = useNavigation();
@@ -15,25 +14,37 @@ const ChooseServices = () => {
         Navigation.navigate("Applets");
     }
 
+    const createTwo = () => {
+        Navigation.navigate("Create two");
+    }
+
+    const dateTimeTrigger = () => {
+        Navigation.navigate("Date time trigger");
+    }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.homeTitle}>Choose Services</Text>
-            <BackButton
-            text={"<"}
+            <BackButton 
+            text={"back"}
             onPress={AppletsHome}
             />
+            <Text style={styles.homeTitle}>Choose Services</Text>
 
-            <CustomerInput
-            placeholder="Search Services"
+            <View style={styles.searchContainer}>
+                <CustomerInput
+                    placeholder="Search Services"
+                    style={styles.searchInput}
+                />
+            </View>
+
+            <AppletAndServiceBox
+                title={'title'}
+                description={"description"}
+                bgColor={"red"}
+                onPress={createTwo}
             />
 
-            <AppletBox
-            title={'test'}
-            description={"ok"}
-            bgColor={"red"}
-            />
-            
-    </ScrollView>
+        </ScrollView>
     )
 }
 
@@ -44,26 +55,31 @@ const styles = StyleSheet.create({
         margin: 80,
         marginLeft: 150,
     },
+    searchContainer: {
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    searchInput: {
+        width: '80%',
+    },
     section: {
         alignItems: 'center',
         marginVertical: 20,
     },
     ifThisContainer: {
         flexDirection: 'row',
-        // alignItems: 'center',
-        position: 'relative',  // To contain the absolutely positioned add button
+        position: 'relative',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
     },
     ifThisButton: {
-        width: 250,   // Adjust the width for "If This" button
-        height: 50,   // Adjust the height for "If This" button
+        width: 250,
+        height: 50,
     },
     addButtonContainer: {
         position: 'absolute',
-        right: 10,    // Adjust this to place it within the "If This" button visually
-        // top: 1,      // Adjust to vertically align
+        right: 10,
         width: 60,
         borderRadius: 80,
     },

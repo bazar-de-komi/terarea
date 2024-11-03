@@ -15,15 +15,6 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-
---
--- Current Database: `terarea`
---
-
-CREATE DATABASE IF NOT EXISTS `terarea` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci;
-
-USE `terarea`;
-
 --
 -- Table structure for table `ActionLoging`
 --
@@ -69,7 +60,7 @@ CREATE TABLE `ActionTemplate` (
   `action_id` bigint(20) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ActionTemplate_Actions_FK` (`action_id`),
-  CONSTRAINT `ActionTemplate_Actions_FK` FOREIGN KEY (`action_id`) REFERENCES `Actions` (`id`) ON UPDATE CASCADE
+  CONSTRAINT `ActionTemplate_Services_FK` FOREIGN KEY (`action_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table containing the templates for the action that the website has to offer.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -187,13 +178,15 @@ CREATE TABLE `Services` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL COMMENT 'The name of the service.',
   `url` varchar(2048) NOT NULL COMMENT 'The url that will be used to access the service.',
-  `api_key` varchar(1024) NOT NULL COMMENT 'The api token.',
+  `api_key` varchar(1024) NULL COMMENT 'The api token.',
   `category` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api.',
   `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT 'The amount of times the service is used.',
   `type` varchar(200) NOT NULL DEFAULT 'service' COMMENT 'The type of the api.',
   `tags` longtext DEFAULT NULL COMMENT 'The keywords to search for the api',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `oauth` tinyint(1) DEFAULT NULL COMMENT 'Inform the code if the service is authenticated via OAuth.',
+  `colour` varchar(1024) NULL COMMENT 'The colour of the service.',
+  `description` mediumtext NULL COMMENT 'The description for the service.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Services_UNIQUE_1` (`name`),
   UNIQUE KEY `Services_UNIQUE` (`url`) USING HASH
@@ -339,4 +332,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-30 12:09:32
+-- Dump completed on 2024-11-1  0:00:00

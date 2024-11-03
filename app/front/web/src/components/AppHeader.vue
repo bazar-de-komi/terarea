@@ -15,7 +15,7 @@
             <router-link to="/services" class="menu-item">My services</router-link>
             <div class="separator"></div>
             <router-link to="/help" class="menu-item">Help</router-link>
-            <router-link to="/logout" class="menu-item logout">Log out</router-link>
+            <router-link to="/" class="menu-item logout" @click="logUserOut">Log out</router-link>
           </div>
         </transition>
       </div>
@@ -25,6 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   setup() {
@@ -39,6 +40,17 @@ export default defineComponent({
       toggleProfileMenu,
     };
   },
+  methods: {
+    async logUserOut() {
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        await queries.post("/api/v1/logout", {}, token);
+        localStorage.removeItem("authToken");
+      } catch (error) {
+        alert("Failed to logout.");
+      }
+    }
+  }
 });
 </script>
 

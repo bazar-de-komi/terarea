@@ -7,6 +7,7 @@ import { storeValue } from "../../../components/StoreData/storeData";
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
 import SocialLogo from '../../../components/SocialAuthButton/socialAuthButton';
+import Or from '../../../components/SocialAuthButton/OrLine';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
@@ -19,7 +20,7 @@ const SignIn = () => {
     const { height } = useWindowDimensions();
     const navigation = useNavigation();
 
-    const SignInPressed = async () => {
+    const handleSignInButton = async () => {
         if (email === '') {
             Alert.alert("You must enter an email.");
             return;
@@ -60,11 +61,11 @@ const SignIn = () => {
         }
     }
 
-    const forgotPasswordPressed = () => {
+    const handleForgotPasswordButton = () => {
         navigation.navigate("Forgot password");
     }
 
-    const loginPressed = () => {
+    const handleSignUpButton = () => {
         navigation.navigate("Sign Up");
     }
 
@@ -90,26 +91,28 @@ const SignIn = () => {
                         setValue={setPassword}
                         secureTextEntry={true}
                     />
+
+                    <CustomerButton
+                        text="Get started"
+                        onPress={handleSignInButton}
+                        bgColor={"#666"}
+                        fgColor={"white"}
+                        icon={""}
+                        type={""}
+                    />
+                    <Or />
+                    <SocialLogo />
                     <CustomerButton
                         text="Forgot your password ?"
-                        onPress={forgotPasswordPressed}
+                        onPress={handleForgotPasswordButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
                         icon=""
                     />
                     <CustomerButton
-                        text="Get started"
-                        onPress={SignInPressed}
-                        bgColor={"black"}
-                        fgColor={"white"}
-                        icon={""}
-                        type={""}
-                    />
-                    <SocialLogo />
-                    <CustomerButton
-                        text="New to IFTTT ? Sign up here"
-                        onPress={loginPressed}
+                        text="Don't have an account ? Sign up here"
+                        onPress={handleSignUpButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
@@ -123,7 +126,6 @@ const SignIn = () => {
 
 const styles = StyleSheet.create({
     backgroundContainer: {
-        top: 20,
         marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -142,7 +144,7 @@ const styles = StyleSheet.create({
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,
-        marginBottom: 60,
+        marginBottom: 30,
     },
     headerText: {
         fontSize: 24,

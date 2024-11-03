@@ -5,8 +5,8 @@
 import os
 from typing import Dict, Union, List, Any
 from time import sleep
-from random import uniform
-import json
+from random import uniform, randint
+from string import ascii_letters, digits
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
 from ..components.runtime_data import RuntimeData
@@ -60,6 +60,25 @@ class ActionsMain:
             debug=self.debug
         )
 
+    def cache_busting(self, length: int) -> int:
+        """_summary_
+            Function in charge of generating a cache busting string.
+
+        Args:
+            length (int): _description_: The action id.
+
+        Returns:
+            int: _description_: The result of the cache busting.
+        """
+        node_text = "cache_busting"
+        data = str(ascii_letters + digits)
+        data_length = len(data)-1
+        cache_busting = f"{node_text}_"
+        for i in range(0, length):
+            cache_busting += data[randint(0, data_length)]
+        cache_busting += f"_{node_text}"
+        return cache_busting
+
     def random_delay(self, max_value: float = 1) -> float:
         """_summary_
             Function in charge of generating a random delay.
@@ -107,8 +126,8 @@ class ActionsMain:
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
             column=["running"],
-            values=[1],
-            condition=f"id={node}"
+            data=["1"],
+            where=f"id={node}"
         )
         if locked == self.error:
             msg = f"Failed to lock action {node} by process {os.getpid()}"
@@ -148,8 +167,8 @@ class ActionsMain:
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
             column=["running"],
-            values=[0],
-            condition=f"id={node}"
+            values=["0"],
+            where=f"id={node}"
         )
         if locked == self.error:
             msg = f"Failed to unlock action {node} by process {os.getpid()}"
@@ -181,26 +200,31 @@ class ActionsMain:
         Returns:
             int: _description_: The status of how the scope dumping went.
         """
-        data = self.variables.get_scope(scope=scope)
-        data = self.variables.sanitize_for_json(data)
-        try:
-            data = json.dumps(
-                data,
-                skipkeys=False,
-                ensure_ascii=True,
-                check_circular=True,
-                allow_nan=True,
-                cls=None,
-                indent=None,
-                sort_keys=False,
-            )
-        except Exception:
-            data = f"{data}"
-        self.logger.log_info(
-            log_type=log_type,
-            action_id=action_id,
-            message=data,
-            resolved=False
+        title = "dump_scope"
+        # data = self.variables.get_scope(scope=scope)
+        # data = self.variables.sanitize_for_json(data)
+        # try:
+        #     data = json.dumps(
+        #         data,
+        #         skipkeys=False,
+        #         ensure_ascii=True,
+        #         check_circular=True,
+        #         allow_nan=True,
+        #         cls=None,
+        #         indent=None,
+        #         sort_keys=False,
+        #     )
+        # except Exception:
+        #     data = f"{data}"
+        # self.logger.log_info(
+        #     log_type=log_type,
+        #     action_id=action_id,
+        #     message=data,
+        #     resolved=False
+        # )
+        self.disp.log_warning(
+            "Scope dumping is disabled for time reasons.",
+            title
         )
         return self.success
 
@@ -220,7 +244,7 @@ class ActionsMain:
             table=CONST.TAB_ACTIONS,
             column="*",
             where=f"id={node}",
-            beautify=False
+            beautify=True
         )
         if action_detail == self.error:
             msg = f"Failed to get the action {node} details"
@@ -239,30 +263,38 @@ class ActionsMain:
         )
         self.variables.create_scope(scope_name=variable_scope)
         self.variables.clear_variables(scope=variable_scope)
+        cache_busting = self.cache_busting(10)
+        node_key = f"node_data_{node}_{cache_busting}"
         self.variables.add_variable(
-            name="node_data",
-            variable_data=action_detail[0][0],
-            variable_type=type(action_detail[0][0]),
+            name=node_key,
+            variable_data=action_detail[0],
+            variable_type=type(action_detail[0]),
             scope=variable_scope
         )
         trigger_node: TriggerManagement = TriggerManagement(
             variable=self.variables,
             logger=self.logger,
             runtime_data=self.runtime_data,
+            action_id=node,
             error=self.error,
             success=self.success,
-            debug=self.debug
+            scope=variable_scope,
+            debug=self.debug,
+            delay=CONST.API_REQUEST_DELAY
         )
         action_node: ActionManagement = ActionManagement(
             variable=self.variables,
             logger=self.logger,
             runtime_data=self.runtime_data,
+            action_id=node,
             error=self.error,
             success=self.success,
-            debug=self.debug
+            scope=variable_scope,
+            debug=self.debug,
+            delay=CONST.API_REQUEST_DELAY
         )
         try:
-            status = trigger_node.run()
+            status = trigger_node.run(node_key)
         except Exception as e:
             self.logger.log_fatal(
                 log_type=ACONST.TYPE_SERVICE_TRIGGER,
@@ -294,7 +326,7 @@ class ActionsMain:
             self.unlock_action(node)
             return self.error
         try:
-            status = action_node.run()
+            status = action_node.run(node_key)
         except Exception as e:
             self.logger.log_fatal(
                 log_type=ACONST.TYPE_SERVICE_ACTION,
@@ -344,7 +376,8 @@ class ActionsMain:
             where=f"id={node}",
             beautify=False
         )
-        if locked == self.error:
+        self.disp.log_debug(f"action info = {locked}", title)
+        if locked == self.error or len(locked) == 0:
             return True
         if locked[0][0] == 1:
             self.disp.log_debug(f"Action {node} is locked.", title)

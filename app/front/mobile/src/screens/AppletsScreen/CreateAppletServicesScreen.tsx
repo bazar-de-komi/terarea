@@ -11,6 +11,10 @@ import ProfilLogo from '../../../assets/profilLogo.png';
 const ServicesScreen = () => {
     const Navigation = useNavigation();
 
+    const signUp = () => {
+        Navigation.navigate('All');
+    }
+
     const serviceDetails = () => {
         Navigation.navigate('Service details')
     }
@@ -35,6 +39,16 @@ const ServicesScreen = () => {
                 </View>
                 <Text style={styles.description}>5-Minute Crafts</Text>
             </View>
+            <View style={styles.connectStyle}>
+                    <CustomerButton
+                    text="Connect"
+                    onPress={signUp}
+                    type="PRIMARY"
+                    bgColor={""}
+                    fgColor={""}
+                    />
+                </View>
+            <Text style={styles.descriptionSericesAfterConnectButton}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
         </ScrollView>
     )
 }
@@ -62,10 +76,19 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         margin: 30,
+        color: 'white',
+        // fontFamily: 'arial',
+    },
+    descriptionSericesAfterConnectButton: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        margin: 30,
     },
     description: {
         fontSize: 20,
         margin: 30,
+        color: 'white',
+        // fontFamily: 'font',
     },
     homeNavigation: {
         flexDirection: 'row',

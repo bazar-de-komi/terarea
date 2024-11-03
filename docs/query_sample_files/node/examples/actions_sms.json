@@ -1,0 +1,37 @@
+{
+    "ignore:id": 1,
+    "ignore:name": "sms_me",
+    "ignore:description": "An action that will send an sms to the user.",
+    "service": {
+        "ignore:id": 3,
+        "input:url_extra": "/text",
+        "url_params": {
+            "input:additional_params": ""
+        },
+        "body": {
+            "input:key": "$ref{secrets.token}",
+            "textarea:body": "It is ${{current_time}} in ${{location}}",
+            "input:additional_body": ""
+        },
+        "drop:method": [
+            "opt:GET",
+            "default:POST",
+            "opt:PUT",
+            "opt:PATCH",
+            "opt:DELETE",
+            "opt:HEAD",
+            "opt:OPTIONS"
+        ],
+        "header": {
+            "input:title": "Title: Wake up !",
+            "input:additional_header": ""
+        },
+        "response": {
+            "int:code": [
+                "default:200",
+                "min:100",
+                "max:500"
+            ]
+        }
+    }
+}

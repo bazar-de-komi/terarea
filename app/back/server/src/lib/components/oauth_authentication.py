@@ -79,7 +79,10 @@ class OAuthAuthentication:
             return self.error
         state += ":"
         state += provider
-        url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}"
+        if provider == "google":
+            url = f"{base_url}?access_type=offline&client_id={client_id}&redirect_uri={redirect_uri}&prompt=consent"
+        else:
+            url = f"{base_url}?client_id={client_id}&redirect_uri={redirect_uri}"
         url += f"&response_type=code&scope={scope}&state={state}"
         url = url.replace(" ", "%20")
         url = url.replace(":", "%3A")
@@ -342,7 +345,6 @@ class OAuthAuthentication:
             return self.runtime_data_initialised.boilerplate_responses_initialised.no_access_token(title, None)
         data.append(access_token)
         self.disp.log_debug(f"Gotten access token: {access_token}", title)
-        # if provider in ("google", "discord", "spotify"):
         if provider == "github":
             data.append(
                 self.runtime_data_initialised.database_link.datetime_to_string(

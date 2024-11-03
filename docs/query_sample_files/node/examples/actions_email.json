@@ -1,0 +1,25 @@
+{
+    "ignore:id": 1,
+    "ignore:name": "email_me",
+    "ignore:description": "An action that will notify the user via ntfy.",
+    "service": {
+        "ignore:id": 5,
+        "input:url_extra": "",
+        "url_params": {
+            "input:additional_params": ""
+        },
+        "body": {
+            "input:to": "my_email@my_email_provider.com",
+            "input:subject": "Email notification",
+            "textarea:body": "It is ${{current_time}} in ${{location}}",
+            "input:additional_body": ""
+        },
+        "response": {
+            "int:code": [
+                "default:200",
+                "min:100",
+                "max:500"
+            ]
+        }
+    }
+}
