@@ -72,6 +72,7 @@ class TriggerManagement:
         )
         # ---------------- The class containing the api querier ----------------
         self.api_querier_initialised: APIQuerier = None
+        self.api_response: Dict[str, Any] = None
 
     def _log_fatal(self, title: str, msg, action_id: int, raise_item: bool = False, raise_func: object = ValueError) -> int:
         """_summary_
@@ -239,7 +240,68 @@ class TriggerManagement:
         self.disp.log_debug(f"Node: {node}", title)
         return node
 
-    def get_variable_data_if_required(self, node: Dict[str, Any]) -> Any:
+    def get_response_content(self, variable_name: str) -> Any:
+        """_summary_
+            Get the response content.
+
+        Args:
+            variable_name (str): _description_
+
+        Returns:
+            Any: _description_
+        """
+        title = "get_response_content"
+        if self.api_response is None:
+            self._log_fatal(
+                title=title,
+                msg="No response found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+            return ""
+        variable_name_list = variable_name.split(".")
+        list_length = len(variable_name_list)
+        data_type: str = self.api_response.get(
+            ACONST.RESPONSE_NODE_BODY_TYPE_KEY
+        )
+        msg = f"Data type: {data_type}, list_length: {list_length}"
+        msg += f" Variable name list: {variable_name_list}"
+        self.disp.log_debug(msg, title)
+        if data_type is None:
+            self._log_fatal(
+                title=title,
+                msg="No data type found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+            return ""
+        if data_type.split(";")[0] not in ACONST.CONTENT_TYPES_JSON and list_length > 1:
+            msg = "Search depth is not possible for"
+            msg += f" this data type {data_type}."
+            self._log_fatal(
+                title=title,
+                msg=msg,
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+            return ""
+        node = self.api_response.copy()
+        for index, item in enumerate(variable_name_list):
+            if index == 0:
+                if item in ACONST.RESPONSE_NODE_KEY_EQUIVALENCE:
+                    node: Dict[str, Any] = node.get(
+                        ACONST.RESPONSE_NODE_KEY_EQUIVALENCE[item]
+                    )
+                    continue
+            if item not in node:
+                return ""
+            node: Dict[str, Any] = node.get(item)
+        return node
+
+    def get_variable_data_if_required(self, node: str) -> Any:
         """_summary_
             Get the variable data if required.
 
@@ -251,40 +313,44 @@ class TriggerManagement:
         """
         title = "get_variable_data_if_required"
         node_list = node.split("$ref")
-        if len(node_list) == 1:
-            return node
-        for index, item in enumerate(node_list):
-            if item == "":
-                continue
-            if item[0] == "{":
-                var_name = self.api_querier_initialised.get_variable_name(
-                    item[1:]
-                )
-                var_content = self.api_querier_initialised.get_special_content(
-                    var_name
-                )
-                item_new = var_content + item[len(var_name) + 2:]
-                self.disp.log_debug(f"item_new: {item_new}", title)
-                node_list[index] = item_new
-        processed_node = "".join(node_list)
-        self.disp.log_debug(f"Processed node: {processed_node}", title)
-        node_list = processed_node.split("${")
-        self.disp.log_debug(f"node_list: {node_list}", title)
-        for index, item in enumerate(node_list):
-            if item == "":
-                continue
-            if item[0] == "{":
-                var_name = self.api_querier_initialised.get_variable_name(
-                    item[1:]
-                )
-                var_content = self.api_querier_initialised.get_normal_content(
-                    var_name
-                )
-                item_new = var_content + item[len(var_name) + 3:]
-                self.disp.log_debug(f"item_new: {item_new}", title)
-                node_list[index] = item_new
-        data = "".join(node_list)
-        return data
+        if len(node_list) > 1:
+            for index, item in enumerate(node_list):
+                if item == "":
+                    continue
+                if item[0] == "{":
+                    var_name = self.api_querier_initialised.get_variable_name(
+                        item[1:]
+                    )
+                    var_content = self.api_querier_initialised.get_special_content(
+                        var_name
+                    )
+                    self.disp.log_debug(f"var_content: {var_content}", title)
+                    if var_content == "":
+                        var_content = self.get_response_content(var_name)
+                    item_new = var_content + item[len(var_name) + 2:]
+                    self.disp.log_debug(f"item_new: {item_new}", title)
+                    node_list[index] = item_new
+            node = "".join(node_list)
+        self.disp.log_debug(f"Processed node: {node}", title)
+        node_list = node.split("${")
+        if len(node_list) > 1:
+            self.disp.log_debug(f"node_list: {node_list}", title)
+            for index, item in enumerate(node_list):
+                if item == "":
+                    continue
+                if item[0] == "{":
+                    var_name = self.api_querier_initialised.get_variable_name(
+                        item[1:]
+                    )
+                    var_content = self.api_querier_initialised.get_normal_content(
+                        var_name
+                    )
+                    item_new = var_content + item[len(var_name) + 3:]
+                    self.disp.log_debug(f"item_new: {item_new}", title)
+                    node_list[index] = item_new
+            node = "".join(node_list)
+        self.disp.log_debug(f"Node: {node}", title)
+        return node
 
     def check_data_comparison(self, data: Any, operator: Any, verification_value: Any) -> bool:
         """_summary_
@@ -381,11 +447,12 @@ class TriggerManagement:
                 raise_func=ValueError
             )
         self.disp.log_debug(f"Response: {response}", title)
-        data = self.query_endpoint.get_content(response)
+        data = self.query_endpoint.compile_response_data(response)
         self.disp.log_debug(f"Data: {data}, type = {type(data)}", title)
         self.variable.add_variable(
             "trigger_data", data, type(data), self.scope
         )
+        self.api_response = data
         self.disp.log_debug("Variable added.", title)
         verification_operator = self.get_verification_operator(
             node.get("drop:verification_operator")
@@ -396,10 +463,16 @@ class TriggerManagement:
         verification_value = self.get_verification_value(
             node
         )
+        self.disp.log_debug("Verification info gathered", title)
         msg = f"Verification operator: {verification_operator}, "
         msg += f"response_data = {response_data}, "
-        msg += f"verification_value = {verification_value}",
+        msg += f"verification_value = {verification_value}"
         self.disp.log_debug(msg, title)
+        response_data = self.get_variable_data_if_required(response_data)
+        verification_value = self.get_variable_data_if_required(
+            verification_value)
+        self.disp.log_debug(f"response_data: {response_data}", title)
+        self.disp.log_debug(f"verification_value: {verification_value}", title)
         self.check_data_comparison(
             data=response_data,
             operator=verification_operator,

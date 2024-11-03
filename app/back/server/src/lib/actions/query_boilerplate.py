@@ -337,3 +337,35 @@ class QueryEndpoint:
         else:
             self.disp.log_error(f"Unhandled content type: {content_type}")
             return {ACONST.CONTENT_TYPE_KEY: content_type, ACONST.CONTENT_KEY: None}
+
+    def compile_response_data(self, response: requests.Response) -> Dict[str, Union[int, Dict[str, Union[str, bytes, Dict[str, Any], None]]]]:
+        """
+        Compile the response from an HTTP request into a dictionary.
+
+        Args:
+            response (requests.Response): The HTTP response from the server.
+
+        Returns:
+            Dict[str, Union[int, Dict[str, Union[str, bytes, Dict[str, Any], None]]]: A dictionary with the response status code and content.
+        """
+        title = "compile_response_data"
+        self.disp.log_debug("Compiling response data", title)
+        self.disp.log_debug(f"response = {response}", title)
+        compiled = {}
+        data = self.get_content(response)
+        self.disp.log_debug(f"data = {data}", title)
+        compiled[ACONST.RESPONSE_NODE_BODY_KEY] = data[ACONST.CONTENT_KEY]
+        compiled[ACONST.RESPONSE_NODE_BODY_TYPE_KEY] = data[ACONST.CONTENT_TYPE_KEY]
+        compiled[ACONST.RESPONSE_NODE_STATUS_CODE_KEY] = response.status_code
+        compiled[ACONST.RESPONSE_NODE_HEADERS_KEY] = response.headers
+        compiled[ACONST.RESPONSE_NODE_HEADERS_TYPE_KEY] = type(
+            response.headers)
+        compiled[ACONST.RESPONSE_NODE_ENCODING_KEY] = response.encoding
+        compiled[ACONST.RESPONSE_NODE_HISTORY_KEY] = response.history
+        compiled[ACONST.RESPONSE_NODE_COOKIES_KEY] = response.cookies
+        compiled[ACONST.RESPONSE_NODE_ELAPSED_KEY] = response.elapsed
+        compiled[ACONST.RESPONSE_NODE_REASON_KEY] = response.reason
+        compiled[ACONST.RESPONSE_NODE_URL_KEY] = response.url
+        compiled[ACONST.RESPONSE_NODE_URL_KEY] = response.request.method
+        self.disp.log_debug(f"compiled = {compiled}", title)
+        return compiled
