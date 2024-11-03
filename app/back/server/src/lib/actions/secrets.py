@@ -24,6 +24,7 @@ class Secrets:
         self.debug: bool = debug
         self.success: int = success
         self.error: int = error
+        self.scope: str = "secrets"
 
         self.vars: Variables = Variables(
             success=self.success,
@@ -41,7 +42,7 @@ class Secrets:
         Returns:
             Dict[str, Any]: _description_
         """
-        return self.vars.get_variable(secret_name)
+        return self.vars.get_variable(secret_name, self.scope)
 
     def set_token(self, token: str) -> None:
         """_summary_
@@ -50,8 +51,9 @@ class Secrets:
         Args:
             token (str): _description_
         """
-        self.vars.insert_or_update("token", token)
-        self.vars.insert_or_update("bearer", f"Bearer {token}")
+        self.vars.insert_or_update("token", token, type(token), self.scope)
+        bearer = f"Bearer {token}"
+        self.vars.insert_or_update("bearer", bearer, type(bearer), self.scope)
 
     def get_token(self) -> str:
         """_summary_
@@ -60,7 +62,7 @@ class Secrets:
         Returns:
             str: _description_
         """
-        return self.vars.get_variable("token")
+        return self.vars.get_variable("token", self.scope)
 
     def get_bearer(self) -> str:
         """_summary_
@@ -69,15 +71,17 @@ class Secrets:
         Returns:
             str: _description_
         """
-        return self.vars.get_variable("bearer")
+        return self.vars.get_variable("bearer", self.scope)
 
-    def now(self):
+    @staticmethod
+    def now() -> str:
         """_summary_
         Get the current time.
         """
         return datetime.now().isoformat()
 
-    def current_date(self):
+    @staticmethod
+    def current_date() -> str:
         """_summary_
             $ref{secrets.current_date}: Returns the current date without the time in the server's local timezone
 
@@ -86,7 +90,8 @@ class Secrets:
         """
         return datetime.now().date().isoformat()
 
-    def current_time(self):
+    @staticmethod
+    def current_time() -> str:
         """_summary_
             $ref{secrets.current_time}: Returns the current time (hours:minutes:seconds) in the server's local timezone
 
@@ -95,7 +100,8 @@ class Secrets:
         """
         return datetime.now().time().replace(microsecond=0).isoformat()
 
-    def now_utc(self):
+    @staticmethod
+    def now_utc() -> str:
         """_summary_
             $ref{secrets.now_utc}: Returns the current datetime in UTC with timezone info
 
@@ -104,7 +110,8 @@ class Secrets:
         """
         return datetime.now(timezone.utc).isoformat()
 
-    def current_date_utc(self):
+    @staticmethod
+    def current_date_utc() -> str:
         """_summary_
             $ref{secrets.current_date_utc}: Returns the current date without the time in UTC
 
@@ -113,7 +120,8 @@ class Secrets:
         """
         return datetime.now(timezone.utc).date().isoformat()
 
-    def current_time_utc(self):
+    @staticmethod
+    def current_time_utc() -> str:
         """_summary_
             $ref{secrets.current_time_utc}: Returns the current time (hours:minutes:seconds) in UTC
 
@@ -122,7 +130,8 @@ class Secrets:
         """
         return datetime.now(timezone.utc).time().replace(microsecond=0).isoformat()
 
-    def now_server(self):
+    @staticmethod
+    def now_server() -> str:
         """_summary_
             $ref{secrets.now_server}: Returns the current datetime with timezone info in the server's local timezone
 
@@ -131,7 +140,8 @@ class Secrets:
         """
         return datetime.now().astimezone().isoformat()
 
-    def current_date_server(self):
+    @staticmethod
+    def current_date_server() -> str:
         """_summary_
             $ref{secrets.current_date_server}: Returns the current date without the time in the server's local timezone
 
@@ -140,7 +150,8 @@ class Secrets:
         """
         return datetime.now().astimezone().date().isoformat()
 
-    def current_time_server(self):
+    @staticmethod
+    def current_time_server() -> str:
         """_summary_
             $ref{secrets.current_time_server}: Returns the current time (hours:minutes:seconds) in the server's local timezone
 
