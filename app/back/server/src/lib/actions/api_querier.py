@@ -289,9 +289,14 @@ class APIQuerier:
         Returns:
             str: _description_
         """
+        title = "get_normal_content"
+        self.disp.log_debug(f"var_name: {var_name}", title)
         if self.variable.has_variable(var_name, self.scope) is False:
+            self.disp.log_debug(f"Variable {var_name} not found", title)
             return ""
-        return self.variable.get_variable(var_name, self.scope)
+        data = self.variable.get_variable(var_name, self.scope)
+        self.disp.log_debug(f"{var_name}: {data}", title)
+        return data
 
     def check_special_vars(self, var: str) -> str:
         """_summary_
@@ -315,7 +320,7 @@ class APIQuerier:
             if item[0] == "{":
                 var_name = self.get_variable_name(item[1:])
                 var_content = self.get_special_content(var_name)
-                item_new = var_content + item[len(var_name) + 2:]
+                item_new = f"{var_content}{item[len(var_name) + 2:]}"
                 self.disp.log_debug(f"item_new: {item_new}", title)
                 var_list[index] = item_new
         data = "".join(var_list)
@@ -344,7 +349,7 @@ class APIQuerier:
             if item[0] == "{":
                 var_name = self.get_variable_name(item[1:])
                 var_content = self.get_normal_content(var_name)
-                item_new = var_content + item[len(var_name) + 3:]
+                item_new = f"{var_content}{item[len(var_name) + 3:]}"
                 self.disp.log_debug(f"item_new: {item_new}", title)
                 var_list[index] = item_new
         data = "".join(var_list)

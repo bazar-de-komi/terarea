@@ -364,6 +364,7 @@ class TriggerManagement:
                     var_content = self.api_querier_initialised.get_normal_content(
                         var_name
                     )
+                    self.disp.log_debug(f"var_content: {var_content}", title)
                     item_new = f"{var_content}{item[len(var_name) + 3:]}"
                     self.disp.log_debug(f"item_new: {item_new}", title)
                     node_list[index] = item_new
