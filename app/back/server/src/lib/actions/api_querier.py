@@ -628,7 +628,9 @@ class APIQuerier:
                 url_extra = url_extra[1:]
             url += url_extra
         if url_params is not None:
-            url += "?" + self.compile_url_parameters(url_params)
+            data = self.compile_url_parameters(url_params)
+            if data != "":
+                url += "?" + data
         return url
 
     def query(self) -> Response:
@@ -675,16 +677,26 @@ class APIQuerier:
                 raise_item=True,
                 raise_func=ValueError
             )
-        self.disp.log_debug(f"Expected response: {expected_response}", title)
+        msg = f"Expected response: {expected_response},"
+        msg += f" type: {type(expected_response)}"
+        self.disp.log_debug(msg, title)
         qei = QueryEndpoint(
             host=url_base,
             port=None,
-            delay=CONST.API_REQUEST_DELAY
+            delay=CONST.API_REQUEST_DELAY,
+            debug=self.debug
         )
         self.disp.log_debug(f"qei = {qei}", title)
+        if not body:
+            body = None
+        if not headers:
+            headers = None
+        self.disp.log_debug(
+            f"final_body = {body}, final_headers = {headers}", title
+        )
         response = None
         if method == "GET":
-            response = qei.get_endpoint(url, header=headers, content=body)
+            response = qei.get_endpoint(url, content=body, header=headers)
         elif method == "POST":
             response = qei.post_endpoint(url, content=body, header=headers)
         elif method == "PUT":
@@ -707,5 +719,9 @@ class APIQuerier:
                 raise_func=ValueError
             )
         self.disp.log_debug(f"Response: {response}", title)
+        self.disp.log_debug(
+            f"Response status_code: {response.status_code}", title
+        )
+        self.disp.log_debug(f"Expected response: {expected_response}", title)
         self.check_response_code(response, expected_response)
         return response

@@ -251,7 +251,6 @@ class ActionsMain:
             variable_type=type(action_detail[0]["user_id"]),
             scope=variable_scope
         )
-        self.variables.add_variable("a", "a", type("a"), variable_scope)
         trigger_node: TriggerManagement = TriggerManagement(
             variable=self.variables,
             logger=self.logger,

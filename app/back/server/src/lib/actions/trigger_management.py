@@ -4,7 +4,7 @@
 
 import os
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from requests import Response
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
@@ -14,6 +14,8 @@ from .variables import Variables
 from .logger import ActionLogger
 from . import constants as ACONST
 from .api_querier import APIQuerier
+from .query_boilerplate import QueryEndpoint
+
 from ..components import constants as CONST
 from ..components.runtime_data import RuntimeData
 
@@ -61,6 +63,15 @@ class TriggerManagement:
             error=self.error,
             debug=self.debug
         )
+        # ------------- The class in charge of managing endpoints  -------------
+        self.query_endpoint: QueryEndpoint = QueryEndpoint(
+            host="",
+            port=None,
+            delay=0,
+            debug=self.debug
+        )
+        # ---------------- The class containing the api querier ----------------
+        self.api_querier_initialised: APIQuerier = None
 
     def _log_fatal(self, title: str, msg, action_id: int, raise_item: bool = False, raise_func: object = ValueError) -> int:
         """_summary_
@@ -89,6 +100,208 @@ class TriggerManagement:
             raise_func(msg)
         else:
             return self.error
+
+    def get_verification_operator(self, operator: str) -> Any:
+        """_summary_
+            Get the verification operator.
+
+        Args:
+            operator (str): _description_
+
+        Returns:
+            Any: _description_
+        """
+        title = "get_verification_operator"
+        self.disp.log_debug(f"Operator: {operator}", title)
+        if operator is None or operator == "":
+            self._log_fatal(
+                title=title,
+                msg="No operator found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+        node1 = None
+        node2 = None
+        for i in operator:
+            if i.startswith("selected:"):
+                node1 = self.api_querier_initialised.strip_descriptor(i)
+            if i.startswith("default:"):
+                node2 = self.api_querier_initialised.strip_descriptor(i)
+        self.disp.log_debug(f"Node1: {node1}, Node2: {node2}", title)
+        if node1 is None and node2 is None:
+            self._log_fatal(
+                title=title,
+                msg="No node found in operator.",
+                action_id=0,
+                raise_item=True,
+                raise_func=TypeError
+            )
+        self.disp.log_debug(f"Node1: {node1}, Node2: {node2}", title)
+        if node1 not in ACONST.OPERATOR_EXCHANGE:
+            self.disp.log_debug(
+                f"Node1: {node1} not in ACONST.OPERATOR_EXCHANGE", title
+            )
+            if node2 not in ACONST.OPERATOR_EXCHANGE:
+                self.disp.log_debug(
+                    f"Node2: {node2} not in ACONST.OPERATOR_EXCHANGE", title
+                )
+                self._log_fatal(
+                    title=title,
+                    msg="No node found in operator.",
+                    action_id=self.action_id,
+                    raise_item=True,
+                    raise_func=TypeError
+                )
+            else:
+                response = ACONST.OPERATOR_EXCHANGE[node2]
+                self.disp.log_debug(f"Response: {response}", title)
+                return response
+        else:
+            response = ACONST.OPERATOR_EXCHANGE[node1]
+            self.disp.log_debug(f"Response: {response}", title)
+            return response
+
+    def get_response_verification(self, response_node: Dict[str, Any]) -> Any:
+        """_summary_
+            Get the response verification.
+
+        Args:
+            response_node (Dict[str, Any]): _description_
+
+        Returns:
+            Any: _description_
+        """
+        title = "get_response_verification"
+        self.disp.log_debug(f"response_node: {response_node}", title)
+        if response_node is None or response_node == "":
+            self._log_fatal(
+                title=title,
+                msg="No response node found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+
+        for key, values in response_node.items():
+            self.disp.log_debug(f"Key: {key}, Values: {values}", title)
+            if ":" not in key:
+                if key == "response_content":
+                    self.disp.log_debug(f"Values: {values}", title)
+                    node = values
+                    break
+            elif self.api_querier_initialised.strip_descriptor(key) == "response_content":
+                self.disp.log_debug(f"Values: {values}", title)
+                node = values
+                break
+            else:
+                self.disp.log_debug(f"Skipping key: {key}", title)
+
+        self.disp.log_debug(f"Node: {node}", title)
+        return node
+
+    def get_verification_value(self, response_node: Dict[str, Any]) -> Any:
+        """_summary_
+            Get the verification value.
+
+        Args:
+            response_node (Dict[str, Any]): _description_
+
+        Returns:
+            Any: _description_
+        """
+        title = "get_verification_value"
+        self.disp.log_debug(f"response_node: {response_node}", title)
+        if response_node is None or response_node == "":
+            self._log_fatal(
+                title=title,
+                msg="No response node found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+
+        node = None
+        for key, values in response_node.items():
+            self.disp.log_debug(f"Key: {key}, Values: {values}", title)
+            if ":" not in key:
+                if key == "verification_value":
+                    self.disp.log_debug(f"Values: {values}", title)
+                    node = values
+                    break
+            elif self.api_querier_initialised.strip_descriptor(key) == "verification_value":
+                self.disp.log_debug(f"Values: {values}", title)
+                node = values
+                break
+            else:
+                self.disp.log_debug(f"Skipping key: {key}", title)
+
+        self.disp.log_debug(f"Node: {node}", title)
+        return node
+
+    def get_variable_data_if_required(self, node: Dict[str, Any]) -> Any:
+        """_summary_
+            Get the variable data if required.
+
+        Args:
+            node (Dict[str, Any]): _description_
+
+        Returns:
+            Any: _description_
+        """
+        title = "get_variable_data_if_required"
+        node_list = node.split("$ref")
+        if len(node_list) == 1:
+            return node
+        for index, item in enumerate(node_list):
+            if item == "":
+                continue
+            if item[0] == "{":
+                var_name = self.api_querier_initialised.get_variable_name(
+                    item[1:]
+                )
+                var_content = self.api_querier_initialised.get_special_content(
+                    var_name
+                )
+                item_new = var_content + item[len(var_name) + 2:]
+                self.disp.log_debug(f"item_new: {item_new}", title)
+                node_list[index] = item_new
+        processed_node = "".join(node_list)
+        self.disp.log_debug(f"Processed node: {processed_node}", title)
+        node_list = processed_node.split("${")
+        self.disp.log_debug(f"node_list: {node_list}", title)
+        for index, item in enumerate(node_list):
+            if item == "":
+                continue
+            if item[0] == "{":
+                var_name = self.api_querier_initialised.get_variable_name(
+                    item[1:]
+                )
+                var_content = self.api_querier_initialised.get_normal_content(
+                    var_name
+                )
+                item_new = var_content + item[len(var_name) + 3:]
+                self.disp.log_debug(f"item_new: {item_new}", title)
+                node_list[index] = item_new
+        data = "".join(node_list)
+        return data
+
+    def check_data_comparison(self, data: Any, operator: Any, verification_value: Any) -> bool:
+        """_summary_
+            Check the data comparison.
+
+        Args:
+            data (Any): _description_
+            operator (Any): _description_
+            verification_value (Any): _description_
+
+        Returns:
+            bool: _description_
+        """
+        title = "check_data_comparison"
+        msg = f"data: {data}, operator: {operator}, "
+        msg += f"verification_value: {verification_value}"
+        self.disp.log_debug(msg, title)
 
     def run(self) -> int:
         """_summary_
@@ -145,8 +358,8 @@ class TriggerManagement:
                 raise_item=True,
                 raise_func=ValueError
             )
-        node = trigger.get(node_of_interest)
-        apiqi = APIQuerier(
+        node: Dict[str, Any] = trigger.get(node_of_interest)
+        self.api_querier_initialised = APIQuerier(
             service=node,
             variable=self.variable,
             scope=self.scope,
@@ -157,8 +370,8 @@ class TriggerManagement:
             success=self.success,
             debug=self.debug
         )
-        self.disp.log_debug("apiqi initialised", title)
-        response: Response = apiqi.query()
+        self.disp.log_debug("self.api_querier_initialised initialised", title)
+        response: Response = self.api_querier_initialised.query()
         if response is None:
             self._log_fatal(
                 title=title,
@@ -168,25 +381,28 @@ class TriggerManagement:
                 raise_func=ValueError
             )
         self.disp.log_debug(f"Response: {response}", title)
-        self.disp.log_debug(
-            f"Response status_code: {response.status_code}", title
+        data = self.query_endpoint.get_content(response)
+        self.disp.log_debug(f"Data: {data}, type = {type(data)}", title)
+        self.variable.add_variable(
+            "trigger_data", data, type(data), self.scope
         )
-        self.disp.log_debug(
-            f"Response headers: {response.headers}", title
+        self.disp.log_debug("Variable added.", title)
+        verification_operator = self.get_verification_operator(
+            node.get("drop:verification_operator")
         )
-        self.disp.log_debug(
-            f"Response content: {response.content}", title
+        response_data = self.get_response_verification(
+            node.get("response")
         )
-        self.disp.log_debug(
-            f"Response json: {response.json()}", title
+        verification_value = self.get_verification_value(
+            node
         )
-        if response.json() is None:
-            self._log_fatal(
-                title=title,
-                msg="No JSON data found in response.",
-                action_id=self.action_id,
-                raise_item=True,
-                raise_func=ValueError
-            )
-
+        msg = f"Verification operator: {verification_operator}, "
+        msg += f"response_data = {response_data}, "
+        msg += f"verification_value = {verification_value}",
+        self.disp.log_debug(msg, title)
+        self.check_data_comparison(
+            data=response_data,
+            operator=verification_operator,
+            verification_value=verification_value
+        )
         return self.success

@@ -211,6 +211,124 @@ SECRETS_EQUIVALENCE = {
 }
 
 
+# --------------------------------- Data types ---------------------------------
+
+CONTENT_TYPE_KEY = "type"
+CONTENT_KEY = "content"
+
+CONTENT_TYPES_JSON = {"application/json", "application/ld+json"}
+CONTENT_TYPES_TEXT = {
+    "text/html",
+    "text/plain",
+    "text/csv",
+    "text/xml",
+    "text/css"
+}
+CONTENT_TYPES_XML = {"application/xml", "application/xhtml+xml", "text/xml"}
+CONTENT_TYPES_BINARY = {
+    "application/octet-stream",
+    "application/pdf",
+    "application/zip",
+    "application/x-gzip",
+    "application/x-tar",
+    "application/x-7z-compressed",
+    "application/x-rar-compressed",
+    "application/x-bzip2",
+    "application/x-xz",
+    "application/x-lzip",
+    "application/x-lzma",
+    "application/x-lzop",
+    "application/x-snappy-framed",
+    "application/xz",
+    "application/x-arj",
+    "application/x-cpio",
+    "application/x-shar",
+    "application/x-compress",
+    "application/x-ace",
+    "application/x-stuffit",
+    "application/x-stuffitx",
+    "application/x-iso9660-image",
+    "application/x-nrg",
+    "application/x-gear",
+    "application/x-dms",
+    "application/x-cfs-compressed",
+    "application/x-astrotite-afa",
+    "application/x-squeeze",
+    "application/x-lzh-compressed",
+    "application/x-lha",
+    "application/x-lrzip",
+    "application/x-lrzip-compressed-tar",
+    "application/x-arc",
+    "application/x-ear",
+    "application/x-war",
+    "application/x-cab",
+    "application/x-msi",
+    "application/x-alz",
+    "application/x-ar",
+    "application/x-deb",
+    "application/x-rpm",
+    "application/x-sis",
+    "application/x-apk",
+    "application/x-ipk",
+    "application/x-xpi",
+    "application/x-java-archive",
+    "application/x-webarchive",
+    "application/x-b1",
+    "application/x-b6z",
+    "application/x-cbr",
+    "application/x-cb7",
+    "application/x-cbt",
+    "application/x-cbz",
+    "application/x-cba",
+    "application/java-archive",
+    "application/x-shockwave-flash",
+    "application/x-www-form-urlencoded",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    "application/vnd.ms-powerpoint",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.android.package-archive"
+}
+CONTENT_TYPES_AUDIO = {
+    "audio/midi",
+    "audio/mpeg",
+    "audio/webm",
+    "audio/ogg",
+    "audio/wav",
+    "audio/flac",
+    "audio/aac",
+    "audio/mp4",
+    "audio/opus",
+    "audio/x-ms-wma",
+    "audio/vnd.rn-realaudio"
+}
+CONTENT_TYPES_IMAGES = {
+    "image/gif",
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/svg+xml",
+    "image/bmp",
+    "image/vnd.microsoft.icon",
+    "image/tiff",
+    "image/x-icon",
+    "image/vnd.djvu"
+}
+CONTENT_TYPES_VIDEO = {
+    "video/mpeg",
+    "video/mp4",
+    "video/quicktime",
+    "video/x-ms-wmv",
+    "video/x-msvideo",
+    "video/x-flv",
+    "video/webm"
+}
+
+# --------------------------------- Functions  ---------------------------------
+
+
 def check_if_oauth_is_valid(oauth_token: str) -> bool:
     from datetime import datetime
 
