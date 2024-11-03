@@ -265,7 +265,7 @@ random_max = 999999
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 5 seconds
-api_request_delay = 5 #seconds
+api_request_delay = 20 #seconds
 
 # Arg, here comes the test territory
 [Test]
