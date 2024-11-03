@@ -9,8 +9,8 @@ import AreaPageService from '../views/board/AreaPage-Service.vue';
 import AppletDetails from '../views/tile-information/AppletDetails.vue';
 import ServiceDetails from '../views/tile-information/ServiceDetails.vue';
 import CreateApplet from '@/views/create/CreateApplet.vue';
-import DisplayAction from '@/views/temp/DisplayAction.vue';
-import DisplayReaction from '@/views/temp/DisplayReaction.vue';
+import DisplayAction from '@/views/create/DisplayAction.vue';
+import DisplayReaction from '@/views/create/DisplayReaction.vue';
 import MainPage from '@/views/main/MainPage.vue';
 import ProfilePage from '@/views/profil/AccountSetting.vue';
 import ChangePassword from '@/views/profil/ChangePassword.vue'

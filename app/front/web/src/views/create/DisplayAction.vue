@@ -2,14 +2,14 @@
   <div class="choose-service-page">
     <header class="header">
       <CancelButton buttonText="Back" @click="goBack" class="cancel-button" />
-      <h1 class="page-title">Choose a Reaction</h1>
+      <h1 class="page-title">Choose a Action</h1>
     </header>
 
     <div class="search-section">
       <input
         type="text"
         class="search-bar"
-        placeholder="Search Reaction"
+        placeholder="Search Action"
         v-model="searchQuery"
       />
       <button class="clear-search" @click="clearSearchQuery">✖</button>
@@ -26,6 +26,7 @@
           :description="tile.description"
           :backgroundColor="tile.backgroundColor"
           :name="tile.name"
+          @tile-selected="handleTileSelection"
         />
       </div>
     </section>
@@ -36,7 +37,7 @@
 import { defineComponent, ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
-import TileComponent from '@/views/temp/TileAct-ReactComp.vue';
+import TileComponent from '@/components/CreateApplet-Comp/TileAct-ReactComp.vue';
 
 export default defineComponent({
   components: {
@@ -48,25 +49,17 @@ export default defineComponent({
     const searchQuery = ref('');
 
     const goBack = () => {
-      router.push('/explore/all');
+      router.push('/create');
     };
 
     const clearSearchQuery = () => {
       searchQuery.value = '';
     };
 
-    // Example tile data
     const tiles = ref([
       { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
       { title: 'New status message with hashtag on page', description: 'This Trigger fires every time you create a new status message with a specific hashtag on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      // Ajoute d'autres tuiles ici
+      // Ajoutez d'autres tuiles ici
     ]);
 
     const filteredTiles = computed(() => {
@@ -75,11 +68,16 @@ export default defineComponent({
       );
     });
 
+    const handleTileSelection = (tileData: any) => {
+      router.push({ name: 'CreateApplet', params: { selectedTile: tileData } });
+    };
+
     return {
       searchQuery,
       goBack,
       clearSearchQuery,
       filteredTiles,
+      handleTileSelection,
     };
   },
 });
