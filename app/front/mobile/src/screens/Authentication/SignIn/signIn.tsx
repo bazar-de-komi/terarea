@@ -91,6 +91,17 @@ const SignIn = () => {
                         setValue={setPassword}
                         secureTextEntry={true}
                     />
+
+                    <CustomerButton
+                        text="Get started"
+                        onPress={handleSignInButton}
+                        bgColor={"#666"}
+                        fgColor={"white"}
+                        icon={""}
+                        type={""}
+                    />
+                    <Or />
+                    <SocialLogo />
                     <CustomerButton
                         text="Forgot your password ?"
                         onPress={handleForgotPasswordButton}
@@ -100,17 +111,7 @@ const SignIn = () => {
                         icon=""
                     />
                     <CustomerButton
-                        text="Get started"
-                        onPress={handleSignInButton}
-                        bgColor={"black"}
-                        fgColor={"white"}
-                        icon={""}
-                        type={""}
-                    />
-                    <Or />
-                    <SocialLogo />
-                    <CustomerButton
-                        text="New to IFTTT ? Sign up here"
+                        text="Don't have an account ? Sign up here"
                         onPress={handleSignUpButton}
                         type="TERTIARY"
                         bgColor=""
@@ -125,7 +126,6 @@ const SignIn = () => {
 
 const styles = StyleSheet.create({
     backgroundContainer: {
-        top: 20,
         marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,
-        marginBottom: 60,
+        marginBottom: 30,
     },
     headerText: {
         fontSize: 24,

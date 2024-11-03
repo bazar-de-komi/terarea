@@ -27,11 +27,11 @@ const CustomerButton = ({ onPress, text, type, bgColor, fgColor, icon}) => {
     )
 }
 
-//Primary for "Get started" button + text in the button
-//Tertiary for change page for sign in or sign up (text)
+//Primary: button with a coloured outline
+//Tertiary button without a coloured outline
 const styles = StyleSheet.create({
     buttonContainer: {
-        width: '60%',
+        width: '65%',
         padding: 5,
         marginVertical: 10,
         alignItems: 'center',
