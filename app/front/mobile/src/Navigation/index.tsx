@@ -14,7 +14,7 @@ import AppletsScreen from '../screens/AppletsScreen/AppletsScreen';
 import ServicesScreen from '../screens/AppletsScreen/CreateAppletServicesScreen';
 import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
-import CreateTwo from '../screens/Create/createTwo';
+import CreateTwo from '../screens/Create/createServices';
 import ChooseServices from '../screens/Create/chooseServices';
 import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
 import Profile from '../screens/profile.tsx';
