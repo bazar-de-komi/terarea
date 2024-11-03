@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from .background_tasks import BackgroundTasks
     from .server_management import ServerManagement
     from .oauth_authentication import OAuthAuthentication
+    from .mail_management import MailManagement
     from ..boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
     from ..actions import ActionsMain
 
@@ -64,3 +65,4 @@ class RuntimeData:
         self.boilerplate_non_http_initialised: 'BoilerplateNonHTTP' = None
         self.oauth_authentication_initialised: 'OAuthAuthentication' = None
         self.actions_main_initialised: 'ActionsMain' = None
+        self.mail_management_initialised: 'MailManagement' = None

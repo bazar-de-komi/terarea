@@ -432,13 +432,7 @@ class APIQuerier:
         title = "process_headers"
         if header is None:
             self.disp.log_debug("header: None", title)
-            self._log_fatal(
-                title=title,
-                msg="The header is None",
-                action_id=self.action_id,
-                raise_item=True,
-                raise_func=ValueError
-            )
+            return {}
         self.disp.log_debug(f"header: {header}", title)
         result = {}
         for key, value in header.items():
@@ -496,13 +490,7 @@ class APIQuerier:
         title = "process_body"
         if body is None:
             self.disp.log_debug("body: None", title)
-            self._log_fatal(
-                title=title,
-                msg="The body is None",
-                action_id=self.action_id,
-                raise_item=True,
-                raise_func=ValueError
-            )
+            return {}
         result = {}
         for key, value in body.items():
             if "input:additional_body" == key:
@@ -632,11 +620,11 @@ class APIQuerier:
             str: _description_
         """
         url = ""
-        if url_extra is not None:
+        if url_extra is not None and len(url_extra) > 0:
             if url_extra[0] == "/":
                 url_extra = url_extra[1:]
             url += url_extra
-        if url_params is not None:
+        if url_params is not None and len(url_params) > 0:
             data = self.compile_url_parameters(url_params)
             if data != "":
                 url += "?" + data
@@ -703,6 +691,74 @@ class APIQuerier:
         self.disp.log_debug(
             f"final_body = {body}, final_headers = {headers}", title
         )
+        self.disp.log_debug(f"url_base = {url_base}", title)
+        if url_base in ("https://mail.google.com", "https://mail.google.com/"):
+            self.disp.log_debug("Sending email", title)
+            receiver = body.get("input:to")
+            if receiver is None:
+                receiver = body.get("to")
+            if receiver is None:
+                self._log_fatal(
+                    title=title,
+                    msg="'to' field not found in body.",
+                    action_id=self.action_id,
+                    raise_item=True,
+                    raise_func=ValueError
+                )
+            self.disp.log_debug(f"receiver: {receiver}", title)
+            subject = body.get("input:subject")
+            if subject is None:
+                subject = body.get("subject")
+            if subject is None:
+                self._log_fatal(
+                    title=title,
+                    msg="'subject' field not found in body.",
+                    action_id=self.action_id,
+                    raise_item=True,
+                    raise_func=ValueError
+                )
+            self.disp.log_debug(f"subject: {subject}", title)
+            email_content = body.get("input:body")
+            if email_content is None:
+                email_content = body.get("textarea:body")
+            if email_content is None:
+                email_content = body.get("textearea:body")
+            if email_content is None:
+                email_content = body.get("body")
+            if email_content is None:
+                email_content = body.get("input:emailbody")
+            if email_content is None:
+                email_content = body.get("textarea:emailbody")
+            if email_content is None:
+                email_content = body.get("textearea:emailbody")
+            if email_content is None:
+                email_content = body.get("emailbody")
+            if email_content is None:
+                self._log_fatal(
+                    title=title,
+                    msg="'body' field not found in body.",
+                    action_id=self.action_id,
+                    raise_item=True,
+                    raise_func=ValueError
+                )
+            self.disp.log_debug(f"email_content: {email_content}", title)
+            response = self.runtime_data.mail_management_initialised.send_email(
+                receiver=receiver,
+                subject=subject,
+                body=email_content,
+                body_type="html"
+            )
+            self.disp.log_debug(f"response: {response}", title)
+            if response == self.error:
+                self._log_fatal(
+                    title=title,
+                    msg=f"Failed to send email to {receiver}.",
+                    action_id=self.action_id,
+                    raise_item=True,
+                    raise_func=ValueError
+                )
+            return response
+
         response = None
         if method == "GET":
             response = qei.get_endpoint(url, content=body, header=headers)
