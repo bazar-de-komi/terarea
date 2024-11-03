@@ -5,8 +5,8 @@
 import os
 from typing import Dict, Union, List, Any
 from time import sleep
-from random import uniform
-import json
+from random import uniform, randint
+from string import ascii_letters, digits
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
 from ..components.runtime_data import RuntimeData
@@ -59,6 +59,25 @@ class ActionsMain:
             error=self.error,
             debug=self.debug
         )
+
+    def cache_busting(self, length: int) -> int:
+        """_summary_
+            Function in charge of generating a cache busting string.
+
+        Args:
+            length (int): _description_: The action id.
+
+        Returns:
+            int: _description_: The result of the cache busting.
+        """
+        node_text = "cache_busting"
+        data = str(ascii_letters + digits)
+        data_length = len(data)-1
+        cache_busting = f"{node_text}_"
+        for i in range(0, length):
+            cache_busting += data[randint(0, data_length)]
+        cache_busting += f"_{node_text}"
+        return cache_busting
 
     def random_delay(self, max_value: float = 1) -> float:
         """_summary_
@@ -244,16 +263,12 @@ class ActionsMain:
         )
         self.variables.create_scope(scope_name=variable_scope)
         self.variables.clear_variables(scope=variable_scope)
+        cache_busting = self.cache_busting(10)
+        node_key = f"node_data_{node}_{cache_busting}"
         self.variables.add_variable(
-            name="node_data",
+            name=node_key,
             variable_data=action_detail[0],
             variable_type=type(action_detail[0]),
-            scope=variable_scope
-        )
-        self.variables.add_variable(
-            name="user_id",
-            variable_data=action_detail[0]["user_id"],
-            variable_type=type(action_detail[0]["user_id"]),
             scope=variable_scope
         )
         trigger_node: TriggerManagement = TriggerManagement(
@@ -264,7 +279,8 @@ class ActionsMain:
             error=self.error,
             success=self.success,
             scope=variable_scope,
-            debug=self.debug
+            debug=self.debug,
+            delay=CONST.API_REQUEST_DELAY
         )
         action_node: ActionManagement = ActionManagement(
             variable=self.variables,
@@ -274,10 +290,11 @@ class ActionsMain:
             error=self.error,
             success=self.success,
             scope=variable_scope,
-            debug=self.debug
+            debug=self.debug,
+            delay=CONST.API_REQUEST_DELAY
         )
         try:
-            status = trigger_node.run()
+            status = trigger_node.run(node_key)
         except Exception as e:
             self.logger.log_fatal(
                 log_type=ACONST.TYPE_SERVICE_TRIGGER,
@@ -309,7 +326,7 @@ class ActionsMain:
             self.unlock_action(node)
             return self.error
         try:
-            status = action_node.run()
+            status = action_node.run(node_key)
         except Exception as e:
             self.logger.log_fatal(
                 log_type=ACONST.TYPE_SERVICE_ACTION,

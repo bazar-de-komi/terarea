@@ -435,7 +435,7 @@ class TriggerManagement:
                 key, node, type(node), self.scope
             )
 
-    def run(self) -> int:
+    def run(self, key: str) -> int:
         """_summary_
             Run the trigger checking.
 
@@ -448,7 +448,7 @@ class TriggerManagement:
         self.disp.log_debug(
             f"Scope: {self.scope}, scope_content = {data}", title
         )
-        if self.variable.has_variable("node_data", self.scope) is False:
+        if self.variable.has_variable(key, self.scope) is False:
             msg = f"No applet data found for scope {self.scope}"
             msg += f" in pid {os.getpid()}."
             self._log_fatal(
@@ -456,9 +456,7 @@ class TriggerManagement:
                 raise_func=ValueError
             )
 
-        action_node = self.variable.get_variable(
-            name="node_data", scope=self.scope
-        )
+        action_node = self.variable.get_variable(name=key, scope=self.scope)
         if "trigger" not in action_node:
             self._log_fatal(
                 title=title,
