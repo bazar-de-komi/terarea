@@ -17,7 +17,7 @@
         <div class="applets-grid" ref="appletsGrid">
           <template v-for="(item, index) in filteredApplets" :key="index">
             <AppletTile
-              v-if="item.type === 'applet'"
+              v-if="item.type === 'applet' && item.tags.includes(service.title)"
               :title="item.title"
               :background-color="item.color"
             />
@@ -39,6 +39,7 @@ import CompDescription from '@/components/Details-Service/CompDescription.vue';
 import AppletTile from '@/components/AppletBoardTile.vue';
 
 interface Service {
+  id: number;
   title: string;
   description: string;
   source: string;

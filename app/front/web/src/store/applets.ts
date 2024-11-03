@@ -8,6 +8,7 @@ export interface AppletsState {
 }
 
 export interface Applet {
+  id: number;
   title: string;
   description: string;
   color: string;
@@ -20,6 +21,7 @@ const appletsModule: Module<AppletsState, AppState> = {
   // state: {
   //   applets: [
   //     {
+  //       id: 20,
   //       title: "Update your Android wallpaper with NASA’s image of the day",
   //       description: "Change your Android wallpaper daily with NASA's image.",
   //       color: "#8140DD",
@@ -27,6 +29,7 @@ const appletsModule: Module<AppletsState, AppState> = {
   //       type: 'applet',
   //     },
   //     {
+  //       id: 21,
   //       title: "The Verge on YouTube integrations",
   //       description: "The Verge is a popular technology news and media network that covers a wide range of topics including gadgets, science, entertainment, and culture. They have a YouTube channel where they upload videos related to their coverage, including product reviews, interviews, and news updates. You can find their YouTube channel by searching for The Verge on YouTube.",
   //       color: '#003399',
@@ -34,6 +37,7 @@ const appletsModule: Module<AppletsState, AppState> = {
   //       type: 'service',
   //     },
   //     {
+  //       id: 22,
   //       title: "Ask ChatGPT anything",
   //       description: "Posez vos questions à ChatGPT pour obtenir des réponses instantanées et détaillées.",
   //       color: "#64F58C",
@@ -41,6 +45,7 @@ const appletsModule: Module<AppletsState, AppState> = {
   //       type: 'applet',
   //     },
   //     {
+  //       id: 23,
   //       title: "NASA's Astronomy Picture of the Day",
   //       description: "Affichez l'image astronomique du jour de la NASA directement sur votre écran.",
   //       color: "#8140DD",
@@ -48,6 +53,7 @@ const appletsModule: Module<AppletsState, AppState> = {
   //       type: 'applet',
   //     },
   //     {
+  //       id: 24,
   //       title: "NASA Space News Feed",
   //       description: "Restez à jour avec les dernières nouvelles de la NASA concernant l'espace et l'astronomie.",
   //       color: "#8140DD",
@@ -55,6 +61,7 @@ const appletsModule: Module<AppletsState, AppState> = {
   //       type: 'applet',
   //     },
   //     {
+  //       id: 25,
   //       title: "ChatGPT communication",
   //       description: "Utilisez ChatGPT pour des réponses instantanées.",
   //       color: "#64F58C",
@@ -111,26 +118,32 @@ const appletsModule: Module<AppletsState, AppState> = {
       commit('SET_SEARCH_QUERY', query);
     },
     async updateData({ commit }) {
-      try {
-        const token = localStorage.getItem('authToken') || '';
-        const appletsPath = '/api/v1/applets';
-        const servicesPath = '/api/v1/services';
+      const token = localStorage.getItem('authToken') || '';
+      const appletsPath = '/api/v1/applets';
+      const servicesPath = '/api/v1/services';
 
-        commit('CLEAR_APPLETS');
-        // const appletsResponse = await queries.get(appletsPath, {}, token);
-        // for (let i = 0; i < appletsResponse.msg.length; i++) {
-        //   const applets = [{
-        //     title: appletsResponse.msg[i].name,
-        //     description: appletsResponse.msg[i].description,
-        //     color: appletsResponse.msg[i].colour,
-        //     tags: appletsResponse.msg[i].tags,
-        //     type: appletsResponse.msg[i].type
-        //   }]
-        //   commit('APPEND_APPLETS', applets);
-        // }
+      commit('CLEAR_APPLETS');
+      try {
+        const appletsResponse = await queries.get(appletsPath, {}, token);
+        for (let i = 0; i < appletsResponse.msg.length; i++) {
+          const applets = [{
+            id: appletsResponse.msg[i].id,
+            title: appletsResponse.msg[i].name,
+            description: appletsResponse.msg[i].description,
+            color: appletsResponse.msg[i].colour,
+            tags: appletsResponse.msg[i].tags,
+            type: appletsResponse.msg[i].type
+          }]
+          commit('APPEND_APPLETS', applets);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      try {
         const servicesResponse = await queries.get(servicesPath, {}, token);
         for (let i = 0; i < servicesResponse.msg.length; i++) {
           const applets = [{
+            id: servicesResponse.msg[i].id,
             title: servicesResponse.msg[i].name,
             description: servicesResponse.msg[i].description,
             color: servicesResponse.msg[i].colour,
@@ -140,7 +153,7 @@ const appletsModule: Module<AppletsState, AppState> = {
           commit('APPEND_APPLETS', applets);
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des applets et services:', error);
+        console.error(error)
       }
     }
   },
