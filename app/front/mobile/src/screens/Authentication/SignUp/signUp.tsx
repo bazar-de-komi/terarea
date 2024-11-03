@@ -7,6 +7,7 @@ import CustomerButton from '../../../components/CustomerButton/CustomerButton';
 import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
 import { storeValue } from '../../../components/StoreData/storeData';
 
+import OrLine from "../../../components/SocialAuthButton/OrLine";
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 import { queries } from "../../../../back-endConnection/querier";
@@ -103,12 +104,13 @@ const SignUp = () => {
                     <CustomerButton
                         text="Get started"
                         onPress={handleSignInButton}
-                        bgColor={"black"}
-                        fgColor={""}
+                        bgColor={"#666"}
+                        fgColor={"white"}
                     />
-                    <SocialButton/>
+                    <OrLine />
+                    <SocialButton />
                     <CustomerButton
-                        text="Already on IFTTT ? Sign in here"
+                        text="Already have an account ? Sign in here"
                         onPress={handleGoToSignInButton}
                         type="TERTIARY"
                         bgColor={""}
@@ -122,7 +124,6 @@ const SignUp = () => {
 
 const styles = StyleSheet.create({
     bgSignUpContainer: {
-        top: 20,
         marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,
-        marginBottom: 60,
+        marginBottom: 30,
     },
     SignUpTitle: {
         fontSize: 24,

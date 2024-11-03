@@ -83,7 +83,7 @@ const SocialAuthButton = () => {
     return (
         <View style={styles.container}>
             <CustomerButton
-                text="Sign in with Google"
+                text="Continue with Google"
                 onPress={SignInGoogle}
                 bgColor="white"
                 fgColor="black"
@@ -91,21 +91,21 @@ const SocialAuthButton = () => {
                 type=""
             />
             <CustomerButton
-                text="Sign in with GitHub"
+                text="Continue with GitHub"
                 onPress={SignInGithub}
                 bgColor="#181717"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}
             />
             <CustomerButton
-                text="Sign in with Discord"
+                text="Continue with Discord"
                 onPress={SignInDiscord}
                 bgColor="#5865F2"
                 fgColor="white" 
                 icon={<Image source={DiscordLogo} style={styles.discordLogo} />}
             />
             <CustomerButton
-                text="Sign in with Spotify"
+                text="Continue with Spotify"
                 onPress={SignInSpotify}
                 bgColor="#1DB954"
                 fgColor="white"

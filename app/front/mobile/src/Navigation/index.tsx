@@ -14,9 +14,11 @@ import AppletsScreen from '../screens/AppletsScreen/AppletsScreen';
 import ServicesScreen from '../screens/AppletsScreen/CreateAppletServicesScreen';
 import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
+import CreateTwo from '../screens/Create/createServices';
 import ChooseServices from '../screens/Create/chooseServices';
 import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
 import Profile from '../screens/profile.tsx';
+import DateTimeTrigger from '../screens/Create/dateTimeTrigger';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +43,8 @@ const Navigation = () => {
 
                 <Stack.Screen name="Create" component={Create} />
                 <Stack.Screen name="Choose services" component={ChooseServices} />
+                <Stack.Screen name="Create two" component={CreateTwo} />
+                <Stack.Screen name="Date time trigger" component={DateTimeTrigger} />
 
                 <Stack.Screen name="Profile" component={Profile} />
 
