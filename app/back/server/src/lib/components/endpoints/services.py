@@ -408,7 +408,7 @@ class Services:
                 token
             )
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
-        if not request_body or not all(key in request_body for key in ("url", "api_key", "category", "type", "tags")):
+        if not request_body or not all(key in request_body for key in ("url", "api_key", "category", "type", "tags", "colour", "description")):
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
                 title,
                 token
@@ -423,7 +423,9 @@ class Services:
             request_body["type"],
             request_body["tags"],
             "NOW()",
-            str(int(False))
+            str(int(False)),
+            request_body["colour"],
+            request_body["description"]
         ]
         self.disp.log_debug(f"Generated data: {data}", title)
         columns: List[Any] = self.runtime_data_initialised.database_link.get_table_column_names(
@@ -490,7 +492,7 @@ class Services:
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(
             request
         )
-        if not request_body or not all(key in request_body for key in ("name", "url", "api_key", "category", "tags")):
+        if not request_body or not all(key in request_body for key in ("name", "url", "api_key", "category", "tags", "colour", "description")):
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
                 title,
                 token
@@ -501,7 +503,9 @@ class Services:
             request_body["url"],
             request_body["api_key"],
             request_body["category"],
-            request_body["tags"]
+            request_body["tags"],
+            request_body["colour"],
+            request_body["description"]
         ]
         self.disp.log_debug(f"Generated data: {data}", title)
         columns: list = self.runtime_data_initialised.database_link.get_table_column_names(
@@ -516,10 +520,10 @@ class Services:
                 token
             )
         columns.pop(0)
-        columns.pop()
-        columns.pop()
         columns.pop(4)
         columns.pop(4)
+        columns.pop(5)
+        columns.pop(5)
         self.disp.log_debug(f"Columns: {columns}", title)
         if self.runtime_data_initialised.database_link.update_data_in_table(
             CONST.TAB_SERVICES,
@@ -631,6 +635,24 @@ class Services:
                 CONST.TAB_SERVICES,
                 "id",
                 "tags",
+                service_id,
+                request_body
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        if "colour" in request_body:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_SERVICES,
+                "id",
+                "colour",
+                service_id,
+                request_body
+            ) == self.error:
+                return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        if "description" in request_body:
+            if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
+                CONST.TAB_SERVICES,
+                "id",
+                "description",
                 service_id,
                 request_body
             ) == self.error:
