@@ -125,7 +125,7 @@ jobs:
 
       - name: Run server tests
         run: |
-          TEST_RUN_COMMAND="pwd && ls -Ra && pytest -s"
+          TEST_RUN_COMMAND="pwd && ls -Ra && . \$SYSTEM_ENV_LOCATION/\$SYSTEM_ENV_NAME/bin/activate && pytest -s"
           docker exec -t ${{env.SERVER_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
           
       - name: Run tests client mobile
