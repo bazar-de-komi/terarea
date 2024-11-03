@@ -58,7 +58,7 @@ export default defineComponent({
     const route = useRoute();
 
     const goBack = () => {
-      router.push('/account');
+      router.back();
     };
 
     return {

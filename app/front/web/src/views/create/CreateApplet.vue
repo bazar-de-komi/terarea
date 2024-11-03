@@ -82,7 +82,7 @@ export default defineComponent({
     const isSecondPhase = ref({ if: false, then: false });
 
     const goBack = () => {
-      router.push('/explore/all');
+      router.back();
     };
 
     const showAddServiceModalForIf = () => {

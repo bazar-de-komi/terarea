@@ -49,7 +49,7 @@ export default defineComponent({
     const searchQuery = ref('');
 
     const goBack = () => {
-      router.push('/create');
+      router.back();
     };
 
     const clearSearchQuery = () => {
@@ -59,7 +59,6 @@ export default defineComponent({
     const tiles = ref([
       { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
       { title: 'New status message with hashtag on page', description: 'This Trigger fires every time you create a new status message with a specific hashtag on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      // Ajoutez d'autres tuiles ici
     ]);
 
     const filteredTiles = computed(() => {
