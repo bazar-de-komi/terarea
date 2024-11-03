@@ -5,7 +5,7 @@
     "service": {
         "ignore:id": 1,
         "input:url_extra": "/api/time/current/zone",
-        "drop:url_params": {
+        "url_params": {
             "opt:timeZone=": [
                 "opt:Europe/Paris",
                 "default:Europe/Berlin",
@@ -28,12 +28,6 @@
         ],
         "header": {
             "input:additional_header": ""
-        },
-        "ignore:token_location": {
-            "param": false,
-            "header": false,
-            "body": false,
-            "bearer": false
         },
         "response": {
             "int:code": [
@@ -72,7 +66,7 @@
             "opt:less than or equal to",
             "opt:greater than or equal to"
         ],
-        "time:verification_value": "9:00",
+        "input:verification_value": "9:00",
         "vars": {
             "current_time": "$ref{body.hour}:$ref{body.minute}:$ref{body.second}",
             "location": "Europe/Paris",

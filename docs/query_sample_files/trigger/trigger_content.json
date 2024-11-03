@@ -68,7 +68,7 @@
                     "opt:less than or equal to",
                     "opt:greater than or equal to"
                 ],
-                "time:verification_value": "9:00",
+                "input:verification_value": "9:00",
                 "vars": {
                     "current_time": "$ref{body.hour}:$ref{body.minute}:$ref{body.second}",
                     "location": "Europe/Paris",

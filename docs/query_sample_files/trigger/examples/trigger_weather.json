@@ -5,7 +5,7 @@
     "service": {
         "ignore:id": 2,
         "input:url_extra": "/VisualCrossingWebServices/rest/services/timeline/Kremelin-Bicêtre,France",
-        "drop:url_params": {
+        "url_params": {
             "input:key": "$ref{secret.token}",
             "input:additional_params": ""
         },
@@ -61,7 +61,7 @@
             "opt:less than or equal to",
             "opt:greater than or equal to"
         ],
-        "time:verification_value": "cloudy",
+        "input:verification_value": "cloudy",
         "vars": {
             "weather_node": "$ref{body.days[0]}",
             "location": "Kremelin",

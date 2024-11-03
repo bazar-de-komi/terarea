@@ -77,10 +77,14 @@ class ActionLogger:
             self.disp.log_error(msg, title)
             return self.error
 
+        self.disp.log_debug(f"code = {code}", title)
+
         if code in ACONST.LOG_EQUIVALENCE:
             code_level = ACONST.LOG_EQUIVALENCE[code]
         else:
             code_level = ACONST.LOG_EQUIVALENCE[ACONST.CODE_UNKNOWN]
+
+        self.disp.log_debug(f"code_level = {code_level}", title)
 
         if message is None:
             self.disp.log_warning(
@@ -88,11 +92,15 @@ class ActionLogger:
             )
             message = ACONST.LOG_MESSAGE_EQUIVALENCE[code_level]
 
+        self.disp.log_debug(f"message = {message}", title)
+
         if isinstance(resolved, bool) is False:
             self.disp.log_warning(
                 "The resolved status is not a boolean, defaulting to False.", title
             )
             resolved = False
+
+        self.disp.log_debug(f"resolved = {resolved}", title)
 
         data = [
             "now",  # time
@@ -103,6 +111,7 @@ class ActionLogger:
             f"{code_level}",  # error_level
             f"{int(resolved)}"  # resolved
         ]
+        self.disp.log_debug(f"data = {data}", title)
         status = self.runtime_data.database_link.insert_data_into_table(
             table=CONST.TAB_ACTION_LOGGING,
             data=data,
@@ -129,7 +138,7 @@ class ActionLogger:
         data = self.runtime_data.database_link.get_data_from_table(
             table=CONST.TAB_ACTIONS,
             column="id",
-            where=f"id={action_id}",
+            where=f"id='{action_id}'",
             beautify=False
         )
         self.disp.log_debug(f"data = {data}", title)

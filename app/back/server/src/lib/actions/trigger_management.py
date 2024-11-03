@@ -4,30 +4,35 @@
 
 import os
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict
 
-from fastapi import Response
+from requests import Response
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 
+from .secrets import Secrets
 from .variables import Variables
 from .logger import ActionLogger
-from .query_boilerplate import QueryEndpoint
 from . import constants as ACONST
-from ..components.runtime_data import RuntimeData
+from .api_querier import APIQuerier
+from .query_boilerplate import QueryEndpoint
+
 from ..components import constants as CONST
+from ..components.runtime_data import RuntimeData
 
 
 class TriggerManagement:
     """_summary_
     """
 
-    def __init__(self, variable: Variables, logger: ActionLogger, runtime_data: RuntimeData, scope: Any = "default_scope", error: int = 84, success: int = 0, debug: bool = False, delay: int = 10):
+    def __init__(self, variable: Variables, logger: ActionLogger, runtime_data: RuntimeData, scope: Any = "default_scope", action_id: int = 0, error: int = 84, success: int = 0, debug: bool = False, delay: int = 10):
         """_summary_
             This is the class in charge of checking the triggers and storing variables if required.
 
         Args:
             variable (Variables): _description_: The class variable in charge of tracking the variables for the runtime.
+            logger (ActionLogger): _description_: The class logger in charge of logging the actions.
             runtime_data (RuntimeData): _description_: The class runtime data in charge of containing important connections.
+            action_id (int): _description_: The action ID to log.
             scope (Any, optional): _description_: The scope of the trigger. Defaults to "default_scope".
             error (int, optional): _description_. Defaults to 84.: The error value
             success (int, optional): _description_. Defaults to 0.: The success value
@@ -39,6 +44,7 @@ class TriggerManagement:
         self.delay: int = delay
         self.debug: bool = debug
         self.success: int = success
+        self.action_id: str = str(action_id)
         self.logger: ActionLogger = logger
         self.variable: Variables = variable
         self.runtime_data: RuntimeData = runtime_data
@@ -51,6 +57,22 @@ class TriggerManagement:
             debug=self.debug,
             logger=self.__class__.__name__
         )
+        # ------------------ The class containing the secrets ------------------
+        self.secrets: Secrets = Secrets(
+            success=self.success,
+            error=self.error,
+            debug=self.debug
+        )
+        # ------------- The class in charge of managing endpoints  -------------
+        self.query_endpoint: QueryEndpoint = QueryEndpoint(
+            host="",
+            port=None,
+            delay=0,
+            debug=self.debug
+        )
+        # ---------------- The class containing the api querier ----------------
+        self.api_querier_initialised: APIQuerier = None
+        self.api_response: Dict[str, Any] = None
 
     def _log_fatal(self, title: str, msg, action_id: int, raise_item: bool = False, raise_func: object = ValueError) -> int:
         """_summary_
@@ -80,193 +102,341 @@ class TriggerManagement:
         else:
             return self.error
 
-    def compile_final_url(self, url: str, url_extra: str, url_params: str) -> str:
+    def get_verification_operator(self, operator: str) -> Any:
         """_summary_
-            This function will compile the final URL to be used.
+            Get the verification operator.
 
         Args:
-            url (str): _description_: The URL to be used.
-            url_extra (str): _description_: The extra URL to be used.
-            url_params (str): _description_: The URL parameters to be used.
+            operator (str): _description_
 
         Returns:
-            str: _description_: The final URL to be used.
+            Any: _description_
         """
-        if url_extra is not None:
-            url += url_extra
-        if url_params is not None:
-            if url_params[0] != "?":
-                url += "?"
-            url += url_params
-        return url
-
-    def get_api(self, api_name: str, action_id: int) -> Dict[str, Any]:
-        """_summary_
-            Get the API data from the database.
-
-        Args:
-            api_name (str): _description_
-            action_id (int): _description_
-
-        Returns:
-            Dict[str, Any]: _description_
-        """
-        title = "get_api"
-        if api_name is None:
+        title = "get_verification_operator"
+        self.disp.log_debug(f"Operator: {operator}", title)
+        if operator is None or operator == "":
             self._log_fatal(
                 title=title,
-                action_id=action_id,
-                msg="No api_name found.",
-                raise_item=True
+                msg="No operator found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
             )
-        service = self.runtime_data.database_link.get_data_from_table(
-            table=CONST.TAB_SERVICES,
-            column="*",
-            where=f"name='{api_name}'",
-            beautify=True
-        )
-        if isinstance(service, int) is True:
+        node1 = None
+        node2 = None
+        for i in operator:
+            if i.startswith("selected:"):
+                node1 = self.api_querier_initialised.strip_descriptor(i)
+            if i.startswith("default:"):
+                node2 = self.api_querier_initialised.strip_descriptor(i)
+        self.disp.log_debug(f"Node1: {node1}, Node2: {node2}", title)
+        if node1 is None and node2 is None:
             self._log_fatal(
                 title=title,
-                action_id=action_id,
-                msg=f"Service '{api_name}' not found.",
-                raise_item=True
+                msg="No node found in operator.",
+                action_id=0,
+                raise_item=True,
+                raise_func=TypeError
             )
-        data: Dict[str, Any] = service[0]
-        if data.get("url") is None:
-            self._log_fatal(
-                title=title,
-                action_id=action_id,
-                msg="No url found in the service.",
-                raise_item=True
+        self.disp.log_debug(f"Node1: {node1}, Node2: {node2}", title)
+        if node1 not in ACONST.OPERATOR_EXCHANGE:
+            self.disp.log_debug(
+                f"Node1: {node1} not in ACONST.OPERATOR_EXCHANGE", title
             )
-        if data.get("api_key") is None:
-            self._log_fatal(
-                title=title,
-                action_id=action_id,
-                msg="No api_key found in the service.",
-                raise_item=True
-            )
-        if data.get("oauth") is None:
-            self._log_fatal(
-                title=title,
-                action_id=action_id,
-                msg="No oauth found in the service.",
-                raise_item=True
-            )
-        return data
-
-    def process_url_params(self, url_params: List[str]) -> str:
-        """_summary_
-        Args:
-        url_params (List[str]): _description_
-        Returns:
-        str: _description_
-        """
-        title = "process_url_params"
-        params = ""
-        self.disp.log_debug(f"Processing URL params: {url_params}", title)
-        param_length = len(url_params)
-        for index, item in enumerate(url_params):
-            if index == param_length - 1:
-                params += f"{item}"
+            if node2 not in ACONST.OPERATOR_EXCHANGE:
+                self.disp.log_debug(
+                    f"Node2: {node2} not in ACONST.OPERATOR_EXCHANGE", title
+                )
+                self._log_fatal(
+                    title=title,
+                    msg="No node found in operator.",
+                    action_id=self.action_id,
+                    raise_item=True,
+                    raise_func=TypeError
+                )
             else:
-                params += f"{item}&"
-        self.disp.log_debug(f"Processed URL params: {params}", title)
-        return params
+                response = ACONST.OPERATOR_EXCHANGE[node2]
+                self.disp.log_debug(f"Response: {response}", title)
+                return response
+        else:
+            response = ACONST.OPERATOR_EXCHANGE[node1]
+            self.disp.log_debug(f"Response: {response}", title)
+            return response
 
-    def get_oauth_token(self, user_id: int) -> str:
+    def get_response_verification(self, response_node: Dict[str, Any]) -> Any:
         """_summary_
-            Get the OAuth token for the user.
+            Get the response verification.
 
         Args:
-            user_id (int): _description_: The user ID to get the token for.
+            response_node (Dict[str, Any]): _description_
 
         Returns:
-            str: _description_: The OAuth token for the user.
+            Any: _description_
         """
-        title = "get_oauth_token"
-        token = self.runtime_data.database_link.get_data_from_table(
-            table=CONST.TAB_ACTIVE_OAUTHS,
-            column="token",
-            where=f"user_id={user_id}",
-            beautify=False
-        )
-        if token is None:
-            msg = "No token found for user."
-            self._log_fatal(title, msg, 0, raise_item=True)
-        return token
+        title = "get_response_verification"
+        self.disp.log_debug(f"response_node: {response_node}", title)
+        if response_node is None or response_node == "":
+            self._log_fatal(
+                title=title,
+                msg="No response node found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
 
-    def get_correct_token(self, token: str, oauth: bool, location: Dict[str, Any]) -> str:
+        for key, values in response_node.items():
+            self.disp.log_debug(f"Key: {key}, Values: {values}", title)
+            if ":" not in key:
+                if key == "response_content":
+                    self.disp.log_debug(f"Values: {values}", title)
+                    node = values
+                    break
+            elif self.api_querier_initialised.strip_descriptor(key) == "response_content":
+                self.disp.log_debug(f"Values: {values}", title)
+                node = values
+                break
+            else:
+                self.disp.log_debug(f"Skipping key: {key}", title)
+
+        self.disp.log_debug(f"Node: {node}", title)
+        return node
+
+    def get_verification_value(self, response_node: Dict[str, Any]) -> Any:
         """_summary_
-            Get the correct token to use.
-
-        Returns:
-            str: _description_: The correct token to use.
-        """
-        title = "get_correct_token"
-        if oauth is True:
-            data = self.get_oauth_token(location.get("user_id"))
-        return token
-
-    def get_api_response(self, action_id: int, service: Dict[str, Any]) -> Response:
-        """_summary_
-            Get the response from the API.
+            Get the verification value.
 
         Args:
-            action_id (int): _description_: The action ID to log.
-            service_name (str): _description_: The name of the service to call.
-            url_extra (str): _description_: The extra URL to call.
-            url_params (str): _description_: The URL parameters to pass.
-            body (Dict[str, Any]): _description_: The body to pass.
+            response_node (Dict[str, Any]): _description_
 
         Returns:
-            Response: _description_: The response from the API.
+            Any: _description_
         """
-        title = "get_api_response"
-        url = ""
-        header = {}
-        body = {}
-        if service.get("name") is None:
-            msg = "No name found in the service."
-            return self._log_fatal(title, msg, action_id, raise_item=False)
-        api_node = self.get_api(service.get("name"), action_id)
-        url += api_node.get("url")
-        url_extra = service.get("url_extra")
-        if url_extra is not None:
-            if url_extra[0] != "/" and url[-1] != "/":
-                url += "/" + url_extra
-            elif url_extra[0] == "/" and url[-1] == "/":
-                url += url_extra[1:]
-            else:
-                url += url_extra
-        url_params = service.get("url_params")
-        if url_params is not None:
-            url_params += self.process_url_params(url_params)
-            if url_params[0] != "?" and url[-1] != "?":
-                url += "?" + url_params
-            else:
-                url += url_params
-        self.disp.log_debug(f"URL: {url}", title)
-        body = service.get("body")
-        if body is not None:
-            self.disp.log_debug(f"Body: {body}", title)
-        token_location = service.get("token_location")
-        key = self.get_correct_token(
-            api_node.get("api_key"),
-            api_node.get("oauth"),
-            token_location
-        )
-        usr_header = service.get("header")
-        if usr_header is not None:
-            header.update(usr_header)
-        query_endpoint = QueryEndpoint(
-            host=url,
-            delay=self.delay
-        )
-        query_endpoint.get_endpoint()
+        title = "get_verification_value"
+        self.disp.log_debug(f"response_node: {response_node}", title)
+        if response_node is None or response_node == "":
+            self._log_fatal(
+                title=title,
+                msg="No response node found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
 
-    def run(self) -> int:
+        node = None
+        for key, values in response_node.items():
+            self.disp.log_debug(f"Key: {key}, Values: {values}", title)
+            if ":" not in key:
+                if key == "verification_value":
+                    self.disp.log_debug(f"Values: {values}", title)
+                    node = values
+                    break
+            elif self.api_querier_initialised.strip_descriptor(key) == "verification_value":
+                self.disp.log_debug(f"Values: {values}", title)
+                node = values
+                break
+            else:
+                self.disp.log_debug(f"Skipping key: {key}", title)
+
+        self.disp.log_debug(f"Node: {node}", title)
+        return node
+
+    def get_response_content(self, variable_name: str) -> Any:
+        """_summary_
+            Get the response content.
+
+        Args:
+            variable_name (str): _description_
+
+        Returns:
+            Any: _description_
+        """
+        title = "get_response_content"
+        self.disp.log_debug(f"Variable name: {variable_name}", title)
+        if self.api_response is None:
+            msg = "No response found"
+            msg += f" in {title} for {variable_name} in {self.api_response}."
+            self.disp.log_critical(msg, title)
+            self._log_fatal(
+                title=title,
+                msg="No response found.",
+                action_id=self.action_id,
+                raise_item=False,
+                raise_func=TypeError
+            )
+            return ""
+        variable_name_list = variable_name.split(".")
+        list_length = len(variable_name_list)
+        self.disp.log_debug(f"List length: {list_length}", title)
+        if variable_name_list[0] == "body":
+            data_type: str = self.api_response.get(
+                ACONST.RESPONSE_NODE_BODY_TYPE_KEY
+            )
+            msg = f"Data type: {data_type}, list_length: {list_length}"
+            msg += f" Variable name list: {variable_name_list}"
+            self.disp.log_debug(msg, title)
+            if data_type is None:
+                self._log_fatal(
+                    title=title,
+                    msg="No data type found.",
+                    action_id=self.action_id,
+                    raise_item=False,
+                    raise_func=TypeError
+                )
+                return ""
+            if data_type.split(";")[0] not in ACONST.CONTENT_TYPES_JSON and list_length > 1:
+                msg = "Search depth is not possible for"
+                msg += f" this data type {data_type}."
+                self._log_fatal(
+                    title=title,
+                    msg=msg,
+                    action_id=self.action_id,
+                    raise_item=False,
+                    raise_func=TypeError
+                )
+                return ""
+        else:
+            msg = "Variable name list: "
+            msg += f"{variable_name_list}"
+            self.disp.log_debug(msg, title)
+
+        node = self.api_response.copy()
+        for index, item in enumerate(variable_name_list):
+            if index == 0:
+                if item in ACONST.RESPONSE_NODE_KEY_EQUIVALENCE:
+                    node: Dict[str, Any] = node.get(
+                        ACONST.RESPONSE_NODE_KEY_EQUIVALENCE[item]
+                    )
+                    self.disp.log_debug(f"Node[{index}]: {node}", title)
+                    continue
+            if item not in node:
+                self.disp.log_error(f"Item: {item} not in node: {node}", title)
+                return ""
+            node: Dict[str, Any] = node.get(item)
+            self.disp.log_debug(f"Node[{index}]: {node}", title)
+        self.disp.log_debug(f"Node: {node}", title)
+        return node
+
+    def get_variable_data_if_required(self, node: str, attempt_bruteforce: bool = True) -> Any:
+        """_summary_
+            Get the variable data if required.
+
+        Args:
+            node (Dict[str, Any]): _description_
+
+        Returns:
+            Any: _description_
+        """
+        title = "get_variable_data_if_required"
+        node_list = node.split("$ref")
+        if len(node_list) > 1:
+            for index, item in enumerate(node_list):
+                if item == "":
+                    continue
+                if item[0] == "{":
+                    var_name = self.api_querier_initialised.get_variable_name(
+                        item[1:]
+                    )
+                    var_content = self.api_querier_initialised.get_special_content(
+                        var_name
+                    )
+                    self.disp.log_debug(f"var_content: {var_content}", title)
+                    if var_content == "":
+                        var_content = self.get_response_content(var_name)
+                        self.disp.log_debug(
+                            f"var_content: {var_content}", title
+                        )
+                    item_new = f"{var_content}{item[len(var_name) + 2:]}"
+                    self.disp.log_debug(f"item_new: {item_new}", title)
+                    node_list[index] = item_new
+            node = "".join(node_list)
+        self.disp.log_debug(f"Processed node: {node}", title)
+        node_list = node.split("${")
+        self.disp.log_debug(f"Node list: {node_list}", title)
+        if len(node_list) > 1:
+            self.disp.log_debug(f"node_list: {node_list}", title)
+            for index, item in enumerate(node_list):
+                if item == "":
+                    continue
+                if item[0] == "{":
+                    var_name = self.api_querier_initialised.get_variable_name(
+                        item[1:]
+                    )
+                    var_content = self.api_querier_initialised.get_normal_content(
+                        var_name
+                    )
+                    self.disp.log_debug(f"var_content: {var_content}", title)
+                    item_new = f"{var_content}{item[len(var_name) + 3:]}"
+                    self.disp.log_debug(f"item_new: {item_new}", title)
+                    node_list[index] = item_new
+            node = "".join(node_list)
+        self.disp.log_debug(f"Node: {node}", title)
+        if attempt_bruteforce is True:
+            node = ACONST.detect_and_convert(node)
+            self.disp.log_warning(f"Node: {node}, type = {type(node)}", title)
+        return node
+
+    def check_data_comparison(self, data: Any, operator: ACONST.operator, verification_value: Any) -> bool:
+        """_summary_
+            Check the data comparison.
+
+        Args:
+            data (Any): _description_
+            operator (Any): _description_
+            verification_value (Any): _description_
+
+        Returns:
+            bool: _description_
+        """
+        title = "check_data_comparison"
+        msg = f"data: {data}, operator: {operator}, "
+        msg += f"verification_value: {verification_value}"
+        self.disp.log_debug(msg, title)
+        try:
+            operation_result = operator(data, verification_value)
+            self.disp.log_debug(f"Operation result: {operation_result}", title)
+        except Exception as e:
+            self._log_fatal(
+                title=title,
+                msg=f"Error while comparing data: {e}",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=ValueError
+            )
+        return operation_result
+
+    def set_runtime_variables(self, data: Dict[str, Any]) -> None:
+        """_summary_
+            Set the runtime variables.
+
+        Args:
+            data (Any): _description_
+        """
+        title = "set_runtime_variables"
+        self.disp.log_debug(f"Data: {data}", title)
+        if data is None:
+            self._log_fatal(
+                title=title,
+                msg="No data found.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+        if isinstance(data, Dict) is False:
+            self._log_fatal(
+                title=title,
+                msg="Data is not a dictionary.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=TypeError
+            )
+        for key, value in data.items():
+            self.disp.log_debug(f"Key: {key}, Value: {value}", title)
+            node = self.get_variable_data_if_required(value)
+            self.variable.add_variable(
+                key, node, type(node), self.scope
+            )
+
+    def run(self, key: str) -> int:
         """_summary_
             Run the trigger checking.
 
@@ -274,99 +444,116 @@ class TriggerManagement:
             int: _description_: Returns self.success if the program succeeded, self.error otherwise.
         """
         title = "run"
-        if self.variable.has_variable("node_data", self.scope) is False:
+        self.disp.log_debug("Running trigger management.", title)
+        data = self.variable.get_scope(self.scope)
+        self.disp.log_debug(
+            f"Scope: {self.scope}, scope_content = {data}", title
+        )
+        if self.variable.has_variable(key, self.scope) is False:
             msg = f"No applet data found for scope {self.scope}"
             msg += f" in pid {os.getpid()}."
             self._log_fatal(
-                title, msg, 0, raise_item=True,
+                title, msg, self.action_id, raise_item=True,
                 raise_func=ValueError
             )
 
-        try:
-            trigger = json.loads(
-                self.variable.get_variable(
-                    name="node_data", scope=self.scope
+        action_node = self.variable.get_variable(name=key, scope=self.scope)
+        if "trigger" not in action_node:
+            self._log_fatal(
+                title=title,
+                msg="No trigger data found in applet data.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=ValueError
+            )
+        trigger_node = action_node["trigger"]
+        self.disp.log_debug(f"Trigger node: {trigger_node}", title)
+        if isinstance(trigger_node, Dict) is False:
+            try:
+                trigger = json.loads(trigger_node)
+            except json.JSONDecodeError as e:
+                msg = f"Error while decoding trigger data: {e}"
+                self._log_fatal(
+                    title, msg, self.action_id, raise_item=True,
+                    raise_func=ValueError
                 )
-            )
-        except json.JSONDecodeError as e:
-            msg = f"Error while decoding trigger data: {e}"
-            self._log_fatal(
-                title, msg, 0, raise_item=True,
-                raise_func=ValueError
-            )
-        action_id = trigger[0].get('id')
-
-        if action_id is None:
-            msg = "No action ID found in trigger data."
-            self._log_fatal(
-                title, msg, 0, raise_item=True,
-                raise_func=ValueError
-            )
-# variable = scope: {"test1": node1, "test2": node2, "test3": node3 }
-# example 1 : node = {"data": 1, "type": int}
-# example 2 : node = {"data": "1", "type": str}
-
-    def run(self) -> int:
-        """_summary_
-            Run the trigger checking.
-
-        Returns:
-            int: _description_: Returns self.success if the program succeeded, self.error otherwise.
-        """
-        title = "run"
-        if self.variable.has_variable("node_data", self.scope) is False:
-            return self.error
-
-        trigger = json.loads(
-            self.variable.get_variable(
-                name="node_data", scope=self.scope
-            )
-        )
-        action_id = trigger[0]['id']
-
-        if ACONST.OPERATOR_EXCHANGE.get(trigger.verification_operator) is None:
-            msg = f"Incorrect type for variable {trigger}."
-            self._log_fatal(
-                title, msg, action_id,
-                raise_item=True, raise_func=ValueError
-            )
-        comparison_func = ACONST.OPERATOR_EXCHANGE.get(
-            trigger["verification_operator"]
-        )
-
-        if comparison_func is not None:
-            res = comparison_func(
-                trigger["url_params"],
-                trigger["verification_value"]
-            )
         else:
-            msg = f"Operator '{trigger['verification_operator']}'"
-            msg += "is not supported."
+            trigger: Dict[str, Any] = trigger_node
+        self.disp.log_debug(f"Trigger data: {trigger}", title)
+        node_of_interest = "service"
+        if node_of_interest not in trigger:
             self._log_fatal(
-                title, msg, action_id, raise_item=True, raise_func=ValueError
+                title=title,
+                msg="No service data found in trigger data.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=ValueError
             )
-        if res is False:
-            msg = "Condition was not met."
-            self.logger.log_warning(
-                ACONST.TYPE_SERVICE_TRIGGER,
-                action_id=action_id,
-                message=msg,
-                resolved=True
-            )
-        oauth_token = self.runtime_data.database_link.get_data_from_table(
-            table=CONST.TAB_ACTIVE_OAUTHS,
-            column="token_expiration",
-            where=f"user_id={trigger[0]['user_id']}",
-            beautify=False
+        node: Dict[str, Any] = trigger.get(node_of_interest)
+        self.api_querier_initialised = APIQuerier(
+            service=node,
+            variable=self.variable,
+            scope=self.scope,
+            runtime_data=self.runtime_data,
+            logger=self.logger,
+            action_id=self.action_id,
+            error=self.error,
+            success=self.success,
+            debug=self.debug
         )
-        if ACONST.check_if_oauth_is_valid(oauth_token) is False:
-            msg = "Oauth token has expired."
-            self.disp.log_error(msg, title)
-            self.logger.log_fatal(
-                ACONST.TYPE_SERVICE_TRIGGER,
-                action_id=action_id,
-                message=msg,
-                resolved=True
+        self.disp.log_debug("self.api_querier_initialised initialised", title)
+        response: Response = self.api_querier_initialised.query()
+        if response is None:
+            self._log_fatal(
+                title=title,
+                msg="No response found from API query.",
+                action_id=self.action_id,
+                raise_item=True,
+                raise_func=ValueError
             )
+        self.disp.log_debug(f"Response: {response}", title)
+        data = self.query_endpoint.compile_response_data(response)
+        self.disp.log_debug(f"Data: {data}, type = {type(data)}", title)
+        self.variable.add_variable(
+            "trigger_data", data, type(data), self.scope
+        )
+        self.api_response = data
+        self.disp.log_debug("Variable added.", title)
+        verification_operator = self.get_verification_operator(
+            node.get("drop:verification_operator")
+        )
+        response_data = self.get_response_verification(
+            node.get("response")
+        )
+        verification_value = self.get_verification_value(
+            node
+        )
+        self.disp.log_debug("raw Verification info gathered", title)
+        msg = f"Verification operator: {verification_operator}, "
+        msg += f"response_data = {response_data}, "
+        msg += f"verification_value = {verification_value}"
+        self.disp.log_debug(msg, title)
+        self.disp.log_info("Getting content for response_data", title)
+        response_data = self.get_variable_data_if_required(response_data)
+        self.disp.log_info("Getting content for verification_value", title)
+        verification_value = self.get_variable_data_if_required(
+            verification_value
+        )
+        self.disp.log_debug("Content gathered.", title)
+        self.disp.log_debug(f"response_data: {response_data}", title)
+        self.disp.log_debug(f"verification_value: {verification_value}", title)
+        response = self.check_data_comparison(
+            data=response_data,
+            operator=verification_operator,
+            verification_value=verification_value
+        )
+        if response is False:
             return self.error
+        self.disp.log_debug("Data comparison successful.", title)
+        var1 = node.get("variables")
+        var2 = node.get("vars")
+        if var1 is not None:
+            self.set_runtime_variables(var1)
+        if var2 is not None:
+            self.set_runtime_variables(var2)
         return self.success
