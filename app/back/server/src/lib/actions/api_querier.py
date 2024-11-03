@@ -266,12 +266,16 @@ class APIQuerier:
         title = "get_special_content"
         self.disp.log_debug(f"var_name: {var_name}", title)
         node = ""
-        if var_name == "secrets.token" or var_name == "secret.token":
+        lvar_name = var_name.lower()
+        if lvar_name in ("secrets.token", "secret.token", "token"):
             node = self.secrets.get_token()
-        if var_name == "secrets.bearer" or var_name == "secret.bearer":
+        if lvar_name in ("secrets.bearer", "secret.bearer", "bearer"):
             node = self.secrets.get_bearer()
-        if var_name == ACONST.SECRETS_EQUIVALENCE:
-            node = ACONST.SECRETS_EQUIVALENCE[var_name]()
+        if lvar_name in ACONST.SECRETS_EQUIVALENCE:
+            msg = f"lvar_name: {lvar_name} found in "
+            msg += "ACONST.SECRETS_EQUIVALENCE"
+            self.disp.log_debug(msg, title)
+            node = ACONST.SECRETS_EQUIVALENCE[lvar_name]()
         self.disp.log_debug(f"node: {node}", title)
         return node
 

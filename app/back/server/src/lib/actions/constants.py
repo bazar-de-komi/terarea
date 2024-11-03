@@ -207,7 +207,16 @@ SECRETS_EQUIVALENCE = {
     "secret.current_time_utc": Secrets.current_time_utc,
     "secret.now_server": Secrets.now_server,
     "secret.current_date_server": Secrets.current_date_server,
-    "secret.current_time_server": Secrets.current_time_server
+    "secret.current_time_server": Secrets.current_time_server,
+    "now": Secrets.now_server,
+    "current_date": Secrets.current_date,
+    "current_time": Secrets.current_time,
+    "now_utc": Secrets.now_utc,
+    "current_date_utc": Secrets.current_date_utc,
+    "current_time_utc": Secrets.current_time_utc,
+    "now_server": Secrets.now_server,
+    "current_date_server": Secrets.current_date_server,
+    "current_time_server": Secrets.current_time_server
 }
 
 
@@ -324,6 +333,62 @@ CONTENT_TYPES_VIDEO = {
     "video/x-msvideo",
     "video/x-flv",
     "video/webm"
+}
+
+# ---------------- Compiled response nodes for the request info ----------------
+RESPONSE_NODE_BODY_KEY = "body"
+RESPONSE_NODE_BODY_TYPE_KEY = "body_type"
+RESPONSE_NODE_HEADERS_KEY = "headers"
+RESPONSE_NODE_HEADERS_TYPE_KEY = "headers_type"
+RESPONSE_NODE_ENCODING_KEY = "encoding"
+RESPONSE_NODE_HISTORY_KEY = "history"
+RESPONSE_NODE_COOKIES_KEY = "cookies"
+RESPONSE_NODE_ELAPSED_KEY = "elapsed"
+RESPONSE_NODE_REASON_KEY = "reason"
+RESPONSE_NODE_URL_KEY = "url"
+RESPONSE_NODE_METHOD_KEY = "method"
+RESPONSE_NODE_STATUS_CODE_KEY = "status_code"
+
+RESPONSE_NODE_KEY_EQUIVALENCE = {
+    "elapsed": RESPONSE_NODE_ELAPSED_KEY,
+    "url": RESPONSE_NODE_URL_KEY,
+    "urls": RESPONSE_NODE_URL_KEY,
+    "reason": RESPONSE_NODE_REASON_KEY,
+    "reasons": RESPONSE_NODE_REASON_KEY,
+    "encoding": RESPONSE_NODE_ENCODING_KEY,
+    "encodings": RESPONSE_NODE_ENCODING_KEY,
+    "cookie": RESPONSE_NODE_COOKIES_KEY,
+    "cookies": RESPONSE_NODE_COOKIES_KEY,
+    "header": RESPONSE_NODE_HEADERS_KEY,
+    "headers": RESPONSE_NODE_HEADERS_KEY,
+    "method": RESPONSE_NODE_METHOD_KEY,
+    "methods": RESPONSE_NODE_METHOD_KEY,
+    "history": RESPONSE_NODE_HISTORY_KEY,
+    "historie": RESPONSE_NODE_HISTORY_KEY,
+    "historys": RESPONSE_NODE_HISTORY_KEY,
+    "histore": RESPONSE_NODE_HISTORY_KEY,
+    "histores": RESPONSE_NODE_HISTORY_KEY,
+    "histories": RESPONSE_NODE_HISTORY_KEY,
+    "body_type": RESPONSE_NODE_BODY_TYPE_KEY,
+    "body_types": RESPONSE_NODE_BODY_TYPE_KEY,
+    "bodys_type": RESPONSE_NODE_BODY_TYPE_KEY,
+    "bodies_type": RESPONSE_NODE_BODY_TYPE_KEY,
+    "bodies_types": RESPONSE_NODE_BODY_TYPE_KEY,
+    "header_type": RESPONSE_NODE_HEADERS_TYPE_KEY,
+    "headers_type": RESPONSE_NODE_HEADERS_TYPE_KEY,
+    "header_types": RESPONSE_NODE_HEADERS_TYPE_KEY,
+    "headers_types": RESPONSE_NODE_HEADERS_TYPE_KEY,
+    "body": RESPONSE_NODE_BODY_KEY,
+    "bodys": RESPONSE_NODE_BODY_KEY,
+    "bodies": RESPONSE_NODE_BODY_KEY,
+    "bodie": RESPONSE_NODE_BODY_KEY,
+    "status_code": RESPONSE_NODE_STATUS_CODE_KEY,
+    "status_codes": RESPONSE_NODE_STATUS_CODE_KEY,
+    "statuses_codes": RESPONSE_NODE_STATUS_CODE_KEY,
+    "statuses_code": RESPONSE_NODE_STATUS_CODE_KEY,
+    "statuss_code": RESPONSE_NODE_STATUS_CODE_KEY,
+    "statuss_codes": RESPONSE_NODE_STATUS_CODE_KEY
+
 }
 
 # --------------------------------- Functions  ---------------------------------
