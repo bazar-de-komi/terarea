@@ -4,7 +4,7 @@
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
 from .password_handling import PasswordHandling
-from .endpoints import Bonus, UserEndpoints, Services, Mandatory
+from .endpoints import Bonus, UserEndpoints, Services, Mandatory, Applets
 
 
 class Endpoints:
@@ -57,6 +57,12 @@ class Endpoints:
             debug=debug
         )
         self.mandatory: Mandatory = Mandatory(
+            runtime_data=runtime_data,
+            success=success,
+            error=error,
+            debug=debug
+        )
+        self.applets: Applets = Applets(
             runtime_data=runtime_data,
             success=success,
             error=error,
@@ -183,6 +189,44 @@ class Endpoints:
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/user_id", self.user_endpoints.get_user_id, "GET"
+        )
+        
+        # Applets routes
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/applet", self.applets.create_applet, "POST"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/applet/{id}", self.applets.put_applet_by_id, "PUT"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/applet/{id}", self.applets.get_applet_by_id, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/applet/{id}", self.applets.delete_applet_by_id, "DELETE"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/applets", self.applets.get_all_applets, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/user_applets", self.applets.get_user_applets, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/applets/{tags}", self.applets.get_applets_by_tags, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/recent_applets", self.applets.get_recent_applets, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/connect_applets/{id}", self.applets.post_connect_applet, "POST"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/disconnect_applets/{id}", self.applets.delete_disconnect_applet, "DELETE"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/triggers/{service_name}", self.applets.get_triggers_by_service_name, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/reactions/{service_name}", self.applets.get_reactions_by_service_name, "GET"
         )
 
         # Mandatory routes
