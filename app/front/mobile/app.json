@@ -12,14 +12,16 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
-    },    "android": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.terarea.terarea"
+    },
+    "android": {
+      "package": "com.terarea.terarea",
+      "permissions": ["INTERNET"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.terarea.terarea",
-      "permissions": ["INTERNET"]
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
