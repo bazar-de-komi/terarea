@@ -58,7 +58,7 @@ export default defineComponent({
     });
 
     const goBack = () => {
-      router.push('/explore/all');
+      router.back();
     };
 
     return {

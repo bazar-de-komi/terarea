@@ -69,7 +69,7 @@ export default defineComponent({
     });
 
     const goBack = () => {
-      router.push('/explore/all');
+      router.back();
     };
 
     const filteredApplets = computed(() => store.getters['applets/filteredApplets']);

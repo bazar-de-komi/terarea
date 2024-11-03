@@ -49,7 +49,7 @@ export default defineComponent({
     const searchQuery = ref('');
 
     const goBack = () => {
-      router.push('/create');
+      router.back();
     };
 
     const clearSearchQuery = () => {

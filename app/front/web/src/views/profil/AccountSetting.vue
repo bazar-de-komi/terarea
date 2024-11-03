@@ -50,7 +50,7 @@ export default defineComponent({
     const router = useRouter();
 
     const goBack = () => {
-      router.push('/explore/all');
+      router.back();
     };
 
     return {

@@ -82,15 +82,14 @@ export default defineComponent({
         const field: Field = { type, name };
 
         if (type.toLowerCase() === 'dropdown') {
-          // Extract Dropdown options (example: default, opt1, opt2)
-          field.options = ['Option 1', 'Option 2']; // Replace this with actual parsing logic
+          field.options = ['Option 1', 'Option 2'];
           field.value = 'Option 1';
         } else if (type.toLowerCase() === 'int') {
           field.min = 0;
           field.max = 100;
           field.value = field.min;
         } else if (type.toLowerCase() === 'date' || type.toLowerCase() === 'time') {
-          field.value = new Date().toISOString().split('T')[0]; // Default to today for Date and Time
+          field.value = new Date().toISOString().split('T')[0];
         }
 
         return field;

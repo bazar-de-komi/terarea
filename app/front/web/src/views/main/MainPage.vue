@@ -17,7 +17,7 @@
       <div class="applets-container">
         <div class="applets-grid">
           <AppletTile
-            v-for="(applet, index) in filteredApplets"
+            v-for="(applet, index) in filteredServices.slice(0, 4)"
             :key="index"
             :title="applet.title"
             :backgroundColor="applet.color"
@@ -30,7 +30,7 @@
       <div class="applets-container">
         <div class="applets-grid">
           <AppletTile
-            v-for="(applet, index) in filteredServices"
+            v-for="(applet, index) in filteredServices.slice(0, 4)"
             :key="index"
             :title="applet.title"
             :backgroundColor="applet.color"
@@ -176,7 +176,9 @@ export default defineComponent({
   gap: 20px;
   padding: 20px 0;
   max-width: 100%;
-  grid-auto-rows: minmax(100px, auto);
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: auto;
+  overflow: hidden;
 }
 
 .applets-grid > * {
