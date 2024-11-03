@@ -6,14 +6,14 @@
     </header>
 
     <!-- Première boîte (applet-header) -->
-    <div class="applet-header" :style="{ backgroundColor: applet.color }">
-      <CompTitle :title="applet.title" />
+    <div class="applet-header" :style="{ backgroundColor: applet?.color }">
+      <CompTitle :title="applet?.title || ''" />
     </div>
 
     <!-- Boîte contenant CompConnectButton et CompDescription -->
-    <div class="applet-body" :style="{ backgroundColor: applet.color }">
-      <CompConnectButton :buttonColor="applet.color" />
-      <CompDescription :description="applet.description" />
+    <div class="applet-body" :style="{ backgroundColor: applet?.color }">
+      <CompConnectButton :applet-id="applet?.id || 0" buttonColor="applet?.color || 'blue'" />
+      <CompDescription :description="applet?.description || ''" />
     </div>
   </div>
 </template>
@@ -30,6 +30,7 @@ import CompConnectButton from '@/components/Details-Applet/CompConnectButton.vue
 import CompDescription from '@/components/Details-Applet/CompDescription.vue';
 
 interface Applet {
+  id: number;
   title: string;
   description: string;
   source: string;
@@ -64,7 +65,7 @@ export default defineComponent({
       applet,
       goBack,
     };
-  },
+  }
 });
 </script>
 
