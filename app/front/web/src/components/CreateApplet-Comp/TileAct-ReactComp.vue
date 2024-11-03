@@ -1,5 +1,5 @@
 <template>
-  <div class="tile" :style="{ backgroundColor: backgroundColor }">
+  <div class="tile" :style="{ backgroundColor: backgroundColor }" @click="selectTile">
     <h2 class="tile-title">{{ title }}</h2>
     <p class="tile-description">{{ description }}</p>
     <span class="tile-name">{{ name }}</span>
@@ -7,26 +7,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   name: 'TileComponent',
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    backgroundColor: {
-      type: String,
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
+    title: String,
+    description: String,
+    backgroundColor: String,
+    name: String,
+    details: Array as PropType<string[]>,
+  },
+  emits: ['tile-selected'],
+  methods: {
+    selectTile() {
+      this.$emit('tile-selected', {
+        title: this.title,
+        description: this.description,
+        backgroundColor: this.backgroundColor,
+        name: this.name,
+        fieldsData: this.details,
+      });
     },
   },
 });

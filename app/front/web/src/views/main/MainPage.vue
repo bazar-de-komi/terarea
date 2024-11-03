@@ -91,6 +91,7 @@ export default defineComponent({
   z-index: -1;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  transition: height 0.4s ease;
 }
 
 /* Contenu principal centré */
@@ -192,17 +193,26 @@ export default defineComponent({
   .applets-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+  .background-image {
+    height: 60vh;
+  }
 }
 
 @media (min-width: 768px) and (max-width: 991px) {
   .applets-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .background-image {
+    height: 60vh;
+  }
 }
 
 @media (max-width: 767px) {
   .applets-grid {
     grid-template-columns: 1fr;
+  }
+  .background-image {
+    height: 70vh;
   }
 }
 </style>
