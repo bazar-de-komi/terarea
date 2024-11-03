@@ -1,7 +1,7 @@
 #!/bin/bash
-if [[ -x "${SYSTEM_ENV_LOCATION}/${SYSTEM_ENV_NAME}/bin/activate" ]]; then
+if [[ -f "${SYSTEM_ENV_LOCATION}/${SYSTEM_ENV_NAME}/bin/activate" ]]; then
     . ${SYSTEM_ENV_LOCATION}/${SYSTEM_ENV_NAME}/bin/activate
-elif [[ -x ". ./server_env/bin/activate" ]]; then
+elif [[ -f ". ./server_env/bin/activate" ]]; then
     . ./server_env/bin/activate
 else
     make create_environement install_dependencies
