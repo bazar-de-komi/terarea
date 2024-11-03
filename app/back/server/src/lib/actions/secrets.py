@@ -71,6 +71,12 @@ class Secrets:
         """
         return self.vars.get_variable("bearer")
 
+    def now(self):
+        """_summary_
+        Get the current time.
+        """
+        return datetime.now().isoformat()
+
     def current_date(self):
         """_summary_
             $ref{secrets.current_date}: Returns the current date without the time in the server's local timezone

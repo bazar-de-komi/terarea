@@ -249,6 +249,11 @@ RANDOM_MAX = int(_get_toml_variable(
     TOML_CONF,  "Verification", "random_max", 999999
 ))
 
+# |- Services
+API_REQUEST_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Services", "api_request_delay", 5
+))
+
 # Json default keys
 JSON_TITLE: str = "title"
 JSON_MESSAGE: str = "msg"

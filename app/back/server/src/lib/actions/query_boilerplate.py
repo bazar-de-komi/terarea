@@ -12,6 +12,8 @@ class QueryEndpoint:
             self._host = f"http://{host}"
         else:
             self._host = host
+        if self._host.endswith("/") is True:
+            self._host = self._host[:-1]
         if port is not None:
             self._host += f":{port}"
         self._delay = delay
@@ -135,6 +137,54 @@ class QueryEndpoint:
         if content is not None and header is not None:
             return requests.delete(f"{self._host}/{path}", json=content, headers=header, timeout=self._delay)
         return requests.delete(f"{self._host}/{path}", timeout=self._delay)
+
+    def head_endpoint(self, path: str, content: Union[Dict[str, Any], None] = None, header: Union[Mapping[str, str], None] = None) -> requests.Response:
+        """_summary_
+            This function is in charge of sending a HEAD request to the server.
+        Args:
+            path (str): _description_: The path of the endpoint.
+            content (Union[Dict[str, Any], None], optional): _description_: The content to be sent to the server.
+            header (Union[Mapping[str, str], None], optional): _description_: The header to be sent to the server. Defaults to None.
+        Returns:
+            requests.Response: _description_: The response from the server.
+        """
+        if isinstance(path, str) is False:
+            raise ValueError(
+                f"Expected an input of type string but got {type(path)}"
+            )
+        if path[0] == "/":
+            path = path[1:]
+        if content is not None and header is None:
+            return requests.head(f"{self._host}/{path}", json=content, timeout=self._delay)
+        if content is None and header is not None:
+            return requests.head(f"{self._host}/{path}", headers=header, timeout=self._delay)
+        if content is not None and header is not None:
+            return requests.head(f"{self._host}/{path}", json=content, headers=header, timeout=self._delay)
+        return requests.head(f"{self._host}/{path}", timeout=self._delay)
+
+    def options_endpoint(self, path: str, content: Union[Dict[str, Any], None] = None, header: Union[Mapping[str, str], None] = None) -> requests.Response:
+        """_summary_
+            This function is in charge of sending a OPTIONS request to the server.
+        Args:
+            path (str): _description_: The path of the endpoint.
+            content (Union[Dict[str, Any], None], optional): _description_: The content to be sent to the server.
+            header (Union[Mapping[str, str], None], optional): _description_: The header to be sent to the server. Defaults to None.
+        Returns:
+            requests.Response: _description_: The response from the server.
+        """
+        if isinstance(path, str) is False:
+            raise ValueError(
+                f"Expected an input of type string but got {type(path)}"
+            )
+        if path[0] == "/":
+            path = path[1:]
+        if content is not None and header is None:
+            return requests.options(f"{self._host}/{path}", json=content, timeout=self._delay)
+        if content is None and header is not None:
+            return requests.options(f"{self._host}/{path}", headers=header, timeout=self._delay)
+        if content is not None and header is not None:
+            return requests.options(f"{self._host}/{path}", json=content, headers=header, timeout=self._delay)
+        return requests.options(f"{self._host}/{path}", timeout=self._delay)
 
     def get_status(self, response: requests.Response) -> int:
         """_summary_

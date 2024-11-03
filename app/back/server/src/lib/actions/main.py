@@ -107,8 +107,8 @@ class ActionsMain:
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
             column=["running"],
-            data=[1],
-            condition=f"id={node}"
+            data=["1"],
+            where=f"id={node}"
         )
         if locked == self.error:
             msg = f"Failed to lock action {node} by process {os.getpid()}"
@@ -148,8 +148,8 @@ class ActionsMain:
         locked = self.runtime_data.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
             column=["running"],
-            values=[0],
-            condition=f"id={node}"
+            values=["0"],
+            where=f"id={node}"
         )
         if locked == self.error:
             msg = f"Failed to unlock action {node} by process {os.getpid()}"
@@ -220,7 +220,7 @@ class ActionsMain:
             table=CONST.TAB_ACTIONS,
             column="*",
             where=f"id={node}",
-            beautify=False
+            beautify=True
         )
         if action_detail == self.error:
             msg = f"Failed to get the action {node} details"
@@ -241,24 +241,35 @@ class ActionsMain:
         self.variables.clear_variables(scope=variable_scope)
         self.variables.add_variable(
             name="node_data",
-            variable_data=action_detail[0][0],
-            variable_type=type(action_detail[0][0]),
+            variable_data=action_detail[0],
+            variable_type=type(action_detail[0]),
             scope=variable_scope
         )
+        self.variables.add_variable(
+            name="user_id",
+            variable_data=action_detail[0]["user_id"],
+            variable_type=type(action_detail[0]["user_id"]),
+            scope=variable_scope
+        )
+        self.variables.add_variable("a", "a", type("a"), variable_scope)
         trigger_node: TriggerManagement = TriggerManagement(
             variable=self.variables,
             logger=self.logger,
             runtime_data=self.runtime_data,
+            action_id=node,
             error=self.error,
             success=self.success,
+            scope=variable_scope,
             debug=self.debug
         )
         action_node: ActionManagement = ActionManagement(
             variable=self.variables,
             logger=self.logger,
             runtime_data=self.runtime_data,
+            action_id=node,
             error=self.error,
             success=self.success,
+            scope=variable_scope,
             debug=self.debug
         )
         try:

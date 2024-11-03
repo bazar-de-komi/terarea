@@ -112,7 +112,7 @@ class Variables:
             "data": variable_data, "type": variable_type
         }
         msg = f"Variable: {name} of type {variable_type}"
-        msg += f"containing {variable_data} successfully added"
+        msg += f" containing {variable_data} successfully added"
         msg += f" to scope {scope}."
         self.disp.log_debug(msg, title)
         return self.success
@@ -150,7 +150,7 @@ class Variables:
             raise TypeError(msg)
         self.variables[name] = {"data": variable_data, "type": variable_type}
         msg = f"Variable: {name} of type {variable_type}"
-        msg += f"containing {variable_data} successfully added"
+        msg += f" containing {variable_data} successfully added"
         msg += f" to scope {scope}."
         self.disp.log_debug(msg, title)
         return self.success

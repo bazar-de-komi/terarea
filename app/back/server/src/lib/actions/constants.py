@@ -4,6 +4,7 @@
 """
 # ---------------------------------- Imports  ----------------------------------
 import operator
+from .secrets import Secrets
 
 # ---------------------------------- log type ----------------------------------
 
@@ -186,6 +187,29 @@ OPERATOR_EXCHANGE = {
     "less than or equal to": operator.le,
     "greater than or equal to": operator.ge,
 }
+
+# ---------------------------------- Secrets  ----------------------------------
+SECRETS_EQUIVALENCE = {
+    "secrets.now": Secrets.now_server,
+    "secrets.current_date": Secrets.current_date,
+    "secrets.current_time": Secrets.current_time,
+    "secrets.now_utc": Secrets.now_utc,
+    "secrets.current_date_utc": Secrets.current_date_utc,
+    "secrets.current_time_utc": Secrets.current_time_utc,
+    "secrets.now_server": Secrets.now_server,
+    "secrets.current_date_server": Secrets.current_date_server,
+    "secrets.current_time_server": Secrets.current_time_server,
+    "secret.now": Secrets.now_server,
+    "secret.current_date": Secrets.current_date,
+    "secret.current_time": Secrets.current_time,
+    "secret.now_utc": Secrets.now_utc,
+    "secret.current_date_utc": Secrets.current_date_utc,
+    "secret.current_time_utc": Secrets.current_time_utc,
+    "secret.now_server": Secrets.now_server,
+    "secret.current_date_server": Secrets.current_date_server,
+    "secret.current_time_server": Secrets.current_time_server
+}
+
 
 def check_if_oauth_is_valid(oauth_token: str) -> bool:
     from datetime import datetime

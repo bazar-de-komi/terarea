@@ -258,6 +258,14 @@ random_min = 100000
 # default: 999999
 random_max = 999999
 
+# services
+[Services]
+
+# delay accorded to requests made to the api's
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
+# default: 5 seconds
+api_request_delay = 5 #seconds
 
 # Arg, here comes the test territory
 [Test]
