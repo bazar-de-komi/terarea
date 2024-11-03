@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+import { defineComponent, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import Header from '@/components/AppHeader.vue';
 import AppletTile from '@/components/AppletBoardTile.vue';
@@ -51,7 +51,10 @@ export default defineComponent({
 
     const searchQuery = computed({
       get: () => store.state.applets.searchQuery,
-      set: (value: string) => store.dispatch('applets/updateSearchQuery', value),
+      set: (value: string) => {
+        store.dispatch('applets/updateSearchQuery', value);
+        store.dispatch('applets/updateData', value)
+      },
     });
 
     const filteredApplets = computed(() => store.getters['applets/filteredApplets']);
@@ -60,9 +63,20 @@ export default defineComponent({
       store.dispatch('applets/updateSearchQuery', searchQuery.value);
     };
 
+    const updateData = () => {
+      store.dispatch('applets/updateData');
+    };
+
     const clearSearchQuery = () => {
+      searchQuery.value = '';
       store.dispatch('applets/updateSearchQuery', '');
     };
+
+    watch(searchQuery, updateSearchQuery);
+
+    onMounted(async () => {
+      updateData();
+    });
 
     return {
       searchQuery,

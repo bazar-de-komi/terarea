@@ -36,7 +36,7 @@ export default defineComponent({
     async submitForgotPassword() {
       if (this.email) {
         try {
-          const response = await queries.post('/api/v1/send_email_verification', {
+          await queries.post('/api/v1/send_email_verification', {
             email: this.email
           });
           this.router.push({

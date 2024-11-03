@@ -84,11 +84,11 @@ export default defineComponent({
           localStorage.setItem('authToken', response.token);
           this.$router.push('/explore/all');
         } else {
-          alert('Erreur lors de la création du compte. Veuillez réessayer.');
+          alert('The authentication have failed.');
         }
       } catch (error) {
         console.error('Erreur lors de l\'inscription:', error);
-        alert('Erreur lors de l\'inscription. Veuillez vérifier vos informations.');
+        alert('Failed to create a new account.');
       }
     },
     togglePassword() {

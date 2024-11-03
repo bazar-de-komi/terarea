@@ -61,11 +61,6 @@ export default defineComponent({
   },
   methods: {
     async submitSignIn() {
-      // if (this.email === 'user@example.com' && this.password === 'password123') {
-      //   this.$router.push('/explore/all');
-      // } else {
-      //   alert('Invalid email or password');
-      // }
       try {
         const response = await queries.post('/api/v1/login', {
           email: this.email,
@@ -75,11 +70,11 @@ export default defineComponent({
           localStorage.setItem('authToken', response.token);
           this.$router.push('/explore/all');
         } else {
-          alert('Erreur lors de la connection au compte. Veuillez réessayer.');
+          alert('The authentication have failed.');
         }
       } catch (error) {
         console.error('Erreur lors de la connection:', error);
-        alert('Erreur lors de la connection. Veuillez vérifier vos informations.');
+        alert('Failed to log in your account.');
       }
     },
     togglePassword() {

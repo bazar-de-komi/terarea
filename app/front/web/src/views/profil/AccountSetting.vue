@@ -24,39 +24,67 @@
     </div>
 
 
-    <Button text="Save Change" />
+    <button class="save-button" @click="saveChange" >Save Change</button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
-import CancelButton from '@/components/CancelButton.vue';
-import Button from '@/components/AuthButton.vue'
 import PasswordField from '@/views/profil/PasswordField.vue';
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   components: {
     AppHeader,
-    CancelButton,
     PasswordField,
-    Button,
+  },
+  data() {
+    return {
+      username: '',
+      email: '',
+    }
   },
   setup() {
     const router = useRouter();
+
     const goBack = () => {
       router.push('/explore/all');
     };
 
-    const username = ref('totolebouc91');
-    const email = ref('toto.lebouc91@gmail.com');
-
     return {
       goBack,
-      username,
-      email,
     };
+  },
+  async mounted() {
+    try {
+      const token = localStorage.getItem("authToken") || '';
+      const response = await queries.get("/api/v1/user", {}, token);
+
+      this.username = response.msg.username;
+      this.email = response.msg.email;
+    } catch (error) {
+      alert("Failed to retrieve your account information.");
+    }
+  },
+  methods: {
+    async saveChange() {
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        let body: { username?: string; email?: string } = {};
+
+        if (this.username !== "") {
+            body.username = this.username;
+        }
+        body.email = this.email;
+        await queries.patch("/api/v1/user", { body }, token);
+        alert("Your information was updated successfully.");
+      } catch (error) {
+          console.error(error);
+          alert("Failed to change your information.");
+      }
+    }
   },
 });
 </script>
