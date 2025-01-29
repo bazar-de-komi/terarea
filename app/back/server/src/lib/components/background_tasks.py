@@ -42,6 +42,7 @@ class BackgroundTasks:
         """_summary_
             The destructor of the class
         """
+        self.disp.log_info("Stopping background tasks.", "__del__")
         exit_code = self.safe_stop()
         msg = f"The cron exited with status {exit_code}."
         if exit_code != self.success:
@@ -213,6 +214,12 @@ class BackgroundTasks:
                 "add_task"
             )
             raise ValueError("The seconds must be an integer.")
+        msg = f"Adding job: {func.__name__} "
+        msg += f"with trigger: {trigger}, "
+        msg += f"seconds = {seconds}, "
+        msg += f"args = {args}, "
+        msg += f"kwargs = {kwargs}."
+        self.disp.log_debug(msg, "add_task")
         return self.scheduler.add_job(
             func=func,
             trigger=trigger,

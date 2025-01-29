@@ -1,59 +1,71 @@
-import React, {useState} from "react";
-import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions} from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../../../components/CustomersInput/CustomerInput";
 import CustomerButton from "../../../components/CustomerButton";
+import { getValue, storeValue } from "../../../components/StoreData/storeData";
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
+import { queries } from "../../../../back-endConnection/querier";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const { height } = useWindowDimensions();
     const navigation = useNavigation();
 
-    const SignSendPressed = () => {
-        navigation.navigate("New password");
+    const handleSendEmailButton = async () => {
+        try {
+            const response = await queries.post("/api/v1/send_email_verification", { email: email })
+            if (response) {
+                await storeValue("email", email)
+                navigation.navigate("New password");
+            }
+        } catch (error) {
+            console.error("Forgot password error:", error);
+        }
     }
 
-    const loginPressed = () => {
+    const handleLoginButton = () => {
         navigation.navigate("Sign In");
     }
 
     return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.bgForgotPass}>
-            <Image
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <View style={styles.bgForgotPass}>
+                <Image
                     source={AreaLogo}
                     style={[styles.areaLogo, { height: height * 0.1 }]}
                     resizeMode="contain"
-            />
+                />
                 <View style={styles.ForgotPasswordContainer}>
                     <Text style={styles.ForgotPasswordTitle}>Forgot your password ?</Text>
                     <CustomerInput
-                    placeholder="Email"
-                    value={email}
-                    setValue={setEmail}
-                    secureTextEntry={false}
+                        placeholder="Email"
+                        value={email}
+                        setValue={setEmail}
+                        secureTextEntry={false}
                     />
                     <Text>We will send you a link to reset your password</Text>
                     <CustomerButton
-                    text="Reset password"
-                    onPress={SignSendPressed}
-                    bgColor={""}
-                    fgColor={""}
+                        text="Reset password"
+                        onPress={handleSendEmailButton}
+                        bgColor={"black"}
+                        fgColor={""}
+                        icon={""}
+                        type={""}
                     />
-                     <CustomerButton
+                    <CustomerButton
                         text="Remember your password ? Sign in here"
-                        onPress={loginPressed}
+                        onPress={handleLoginButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
                         icon=""
                     />
                 </View>
-        </View>
-    </ScrollView>
+            </View>
+        </ScrollView>
     );
 };
 

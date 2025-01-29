@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 
-const CustomerButton = ({ onPress, text, type = "PRIMARY", bgColor, fgColor, icon}) => {
+const CustomerButton = ({ onPress, text, type, bgColor, fgColor, icon}) => {
     return (
         <Pressable
         onPress={onPress}
@@ -27,11 +27,11 @@ const CustomerButton = ({ onPress, text, type = "PRIMARY", bgColor, fgColor, ico
     )
 }
 
-//Primary for "Get started" button + text in the button
-//Tertiary for change page for sign in or sign up (text)
+//Primary: button with a coloured outline
+//Tertiary button without a coloured outline
 const styles = StyleSheet.create({
     buttonContainer: {
-        width: '60%',
+        width: '65%',
         padding: 5,
         marginVertical: 10,
         alignItems: 'center',

@@ -1,10 +1,17 @@
 """
+The file to export every endpoints class
 """
 
-from .authentication import Authentication
 from .bonus import Bonus
+from .services import Services
+from .user_endpoints import UserEndpoints
+from .mandatory import Mandatory
+from .applets import Applets
 
 __all__ = [
-    "Authentication",
-    "Bonus"
+    "Bonus",
+    "Services",
+    "Mandatory",
+    "UserEndpoints",
+    "Applets"
 ]

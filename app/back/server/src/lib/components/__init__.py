@@ -11,16 +11,20 @@ from .server_management import ServerManagement
 from .password_handling import PasswordHandling
 from .mail_management import MailManagement
 from .background_tasks import BackgroundTasks
+from .crons import Crons
+from .oauth_authentication import OAuthAuthentication
 
 __all__ = [
-    "CONST",
-    "Endpoints",
     "HCI",
+    "CONST",
+    "Crons",
+    "Endpoints",
     "HttpCodes",
     "ServerPaths",
     "RuntimeData",
-    "ServerManagement",
-    "PasswordHandling",
     "MailManagement",
-    "BackgroundTasks"
+    "BackgroundTasks",
+    "PasswordHandling",
+    "ServerManagement",
+    "OAuthAuthentication"
 ]

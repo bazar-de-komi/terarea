@@ -1,29 +1,71 @@
 import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView } from "react-native";
+import { View, Text, Image, StyleSheet, useWindowDimensions, ScrollView, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { queries } from "../../../../back-endConnection/querier";
+import { storeValue } from "../../../components/StoreData/storeData";
 
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from '../../../components/CustomerButton';
 import SocialLogo from '../../../components/SocialAuthButton/socialAuthButton';
+import Or from '../../../components/SocialAuthButton/OrLine';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { height } = useWindowDimensions() ;
+    const { height } = useWindowDimensions();
     const navigation = useNavigation();
 
-    const SignInPressed = () => {
-        navigation.navigate("Home");
+    const handleSignInButton = async () => {
+        if (email === '') {
+            Alert.alert("You must enter an email.");
+            return;
+        }
+        if (password === '') {
+            Alert.alert("You must enter a password.");
+            return;
+        }
+        const emailRegex: RegExp = /^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,}$/;
+
+        function isValidEmail(email: string): boolean {
+            return emailRegex.test(email);
+        }
+
+        if (isValidEmail(email) === false) {
+            Alert.alert("The email you entered is not a valid email.")
+            return;
+        }
+        setIsSubmitting(true);
+        const account = {
+            email: email,
+            password: password,
+        };
+        try {
+            const result = await queries.post("/api/v1/login", account);
+            if (result.token) {
+                storeValue('token', result.token);
+                navigation.navigate("All");
+            } else {
+                setError("Identifiant or password incorrect");
+                Alert.alert("ID or password incorrect");
+            }
+        } catch (error) {
+            console.error("Sign error: ", error);
+            setError("Error to connect. Please check your id or your password");
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
-    const forgotPasswordPressed = () => {
+    const handleForgotPasswordButton = () => {
         navigation.navigate("Forgot password");
     }
 
-    const loginPressed = () => {
+    const handleSignUpButton = () => {
         navigation.navigate("Sign Up");
     }
 
@@ -49,29 +91,32 @@ const SignIn = () => {
                         setValue={setPassword}
                         secureTextEntry={true}
                     />
+
+                    <CustomerButton
+                        text="Get started"
+                        onPress={handleSignInButton}
+                        bgColor={"#666"}
+                        fgColor={"white"}
+                        icon={""}
+                        type={""}
+                    />
+                    <Or />
+                    <SocialLogo />
                     <CustomerButton
                         text="Forgot your password ?"
-                        onPress={forgotPasswordPressed}
+                        onPress={handleForgotPasswordButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
                         icon=""
                     />
                     <CustomerButton
-                    text="Get started"
-                    onPress={SignInPressed}
-                    bgColor={"black"}
-                    fgColor={"white"}
-                    icon=""
-                    />
-                    <SocialLogo/>
-                    <CustomerButton
-                        text="New to IFTTT ? Sign up here"
-                        onPress={loginPressed}
+                        text="Don't have an account ? Sign up here"
+                        onPress={handleSignUpButton}
                         type="TERTIARY"
                         bgColor=""
                         fgColor="black"
-                        icon=""
+                        icon={""}
                     />
                 </View>
             </View>
@@ -81,7 +126,6 @@ const SignIn = () => {
 
 const styles = StyleSheet.create({
     backgroundContainer: {
-        top: 20,
         marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
@@ -100,7 +144,7 @@ const styles = StyleSheet.create({
         width: '40%',
         maxWidth: 300,
         maxHeight: 100,
-        marginBottom: 60,
+        marginBottom: 30,
     },
     headerText: {
         fontSize: 24,

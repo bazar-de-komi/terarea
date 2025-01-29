@@ -4,12 +4,14 @@
 import os
 import sys
 from fastapi import Request, Response, FastAPI
+import constants as TCONST
 
 sys.path.append(os.getcwd())
 try:
     from src.lib.components.paths import ServerPaths
     from src.lib.components.runtime_data import RuntimeData
     from src.lib.components.endpoints_routes import Endpoints
+    from src.lib.components.oauth_authentication import OAuthAuthentication
     from src.lib.components.constants import PATH_KEY, ENDPOINT_KEY,  METHOD_KEY, ALLOWED_METHODS
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
@@ -22,21 +24,28 @@ def dummy_path(request: Request) -> Response:
     return {"msg": "Hello World !"}
 
 
-ERROR = 84
-SUCCESS = 0
-RDI = RuntimeData("0.0.0.0", 5000, "Area", ERROR, SUCCESS)
+ERROR = TCONST.ERROR
+SUCCESS = TCONST.SUCCESS
+DEBUG = TCONST.DEBUG
+RDI = RuntimeData(TCONST.SERVER_HOST, TCONST.PORT, "Area", ERROR, SUCCESS)
 RDI.app = FastAPI()
 RDI.endpoints_initialised = Endpoints(
     runtime_data=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
+)
+RDI.oauth_authentication_initialised = OAuthAuthentication(
+    runtime_data=RDI,
+    success=SUCCESS,
+    error=ERROR,
+    debug=DEBUG
 )
 SPI = ServerPaths(
     runtime_data=RDI,
     success=SUCCESS,
     error=ERROR,
-    debug=False
+    debug=DEBUG
 )
 RDI.paths_initialised = SPI
 
@@ -82,4 +91,5 @@ def test_inject_routes() -> None:
     try:
         SPI.inject_routes()
     except Exception as e:
+        print(f"error: {str(e)}")
         assert False

@@ -1,0 +1,38 @@
+{
+    "1": {
+        "ignore:id": 1,
+        "ignore:name": "notify_me",
+        "ignore:description": "An action that will notify the user via ntfy.",
+        "service": {
+            "ignore:id": 3,
+            "input:url_extra": "/tema_la_gueule_pa",
+            "url_params": {
+                "input:additional_params": ""
+            },
+            "body": {
+                "textarea:body": "It is $ref{secret.now} in ${{currency}}, cost: ${{cost}}, time: ${{time}}",
+                "input:additional_body": ""
+            },
+            "drop:method": [
+                "opt:GET",
+                "default:POST",
+                "opt:PUT",
+                "opt:PATCH",
+                "opt:DELETE",
+                "opt:HEAD",
+                "opt:OPTIONS"
+            ],
+            "header": {
+                "input:title": "Title: I love bitcoin !",
+                "input:additional_header": ""
+            },
+            "response": {
+                "int:code": [
+                    "default:200",
+                    "min:100",
+                    "max:500"
+                ]
+            }
+        }
+    }
+}

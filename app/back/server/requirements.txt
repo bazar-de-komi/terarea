@@ -4,6 +4,9 @@ requests ==2.32.3
 # spritesheet management
 Pillow ==10.4.0
 
+# Code linting
+typing-extensions == 4.12.2
+
 # Text desining
 display-tty == 1.1.7
 
@@ -11,7 +14,7 @@ display-tty == 1.1.7
 uuid == 1.30
 
 # database management
-mariadb == 1.1.10
+mysql-connector-python == 9.1.0
 
 # Minio connector
 boto3 == 1.35.21 

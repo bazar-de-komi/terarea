@@ -8,11 +8,14 @@ from . import constants as CONST
 from ..sql.sql_manager import SQL
 from ..bucket import Bucket
 if TYPE_CHECKING:
+    from .crons import Crons
     from .paths import ServerPaths
     from .endpoints_routes import Endpoints
     from .background_tasks import BackgroundTasks
     from .server_management import ServerManagement
+    from .oauth_authentication import OAuthAuthentication
     from ..boilerplates import BoilerplateIncoming, BoilerplateNonHTTP, BoilerplateResponses
+    from ..actions import ActionsMain
 
 
 class RuntimeData:
@@ -27,13 +30,6 @@ class RuntimeData:
         self.error: int = error
         self.success: int = success
         self.app_name: str = app_name
-        # -------------------------- Active sessions  --------------------------
-        # <token>: {
-        #     "user": <user>,
-        #     "email": <email>,
-        #     "lifespan": <datetime>
-        # }
-        self.user_data: Dict[Dict[str, Any]] = {}
         # --------------------- The rest api boiling class ---------------------
         self.app: FastAPI = None
         # ------------------------ The active database  ------------------------
@@ -58,6 +54,7 @@ class RuntimeData:
         self.server_running: bool = True
         self.continue_running: bool = True
         # ------------------------- Classes reference  -------------------------
+        self.crons_initialised: 'Crons' = None
         self.paths_initialised: 'ServerPaths' = None
         self.endpoints_initialised: 'Endpoints' = None
         self.background_tasks_initialised: 'BackgroundTasks' = None
@@ -65,3 +62,5 @@ class RuntimeData:
         self.boilerplate_responses_initialised: 'BoilerplateResponses' = None
         self.boilerplate_incoming_initialised: 'BoilerplateIncoming' = None
         self.boilerplate_non_http_initialised: 'BoilerplateNonHTTP' = None
+        self.oauth_authentication_initialised: 'OAuthAuthentication' = None
+        self.actions_main_initialised: 'ActionsMain' = None

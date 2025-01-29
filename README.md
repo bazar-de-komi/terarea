@@ -15,6 +15,9 @@
 - [Deployment Instructions](#deployment-instructions)
 - [License](#license)
 - [Additional Considerations](#additional-considerations)
+- [Commit norm](#commit-norm)
+- [Acknowledgments](#acknowledgments)
+- [References](#references)
 
 ---
 
@@ -126,6 +129,9 @@ If this is the case (i.e. non-root linux user), you can add the `sudo` in front 
   SENDER_KEY=[16-character-auth-key]                   # Your authentication key
   SENDER_HOST=smtp.gmail.com                           # If you are using a gmail account
   SENDER_PORT=465                                      # If you are using a gmail account
+
+  # Server Oauth variables
+  REDIRECT_URI=[the-redirect-url-once-the-user-is-connected]
 
   # Databse login details
   DB_HOST=maria-db
@@ -259,3 +265,40 @@ This project is under the ownership of **[Epitech](https://epitech.eu)** all rig
 ## Additional Considerations
 
 - **Contributions**: Contributions are welcome! Please fork the repository and submit a pull request with your proposed changes.
+
+---
+
+## Commit norm
+
+You can find the norm used for this repository here:
+
+- [Commit norm](./COMMIT_CONVENTION.md)
+
+---
+
+## Acknowledgments
+
+Thank you to the following people that have made this project possible:
+
+Main contributors:
+
+- **[Harleen-sk](https://github.com/Harleen-sk)**
+- **[KomiWolf](https://github.com/KomiWolf)**
+- **[OrionPX4k](https://github.com/OrionPX4k)**
+- **[flavienepitech](https://github.com/flavienepitech)**
+- **[Henry Letellier](https://github.com/HenraL)**
+
+Everybody else:
+
+[![All the contributors of terarea.](https://contrib.rocks/image?repo=bazar-de-komi/terarea)](https://contrib.rocks/image?repo=bazar-de-komi/terarea)
+
+---
+
+## References
+
+- [Epitech](https://epitech.eu)
+- [Epitech GitHub](https://github.com/epitech)
+- [Project home page](https://pingpal.news)
+- [Project documentation](https://ifttt-area.pingpal.news/)
+- [Project API documentation]()
+- [Project commit convention](./COMMIT_CONVENTION.md)
