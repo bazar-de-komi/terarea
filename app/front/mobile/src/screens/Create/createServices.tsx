@@ -50,8 +50,8 @@ const CreateServices = () => {
                 </View>
 
                 <View style={styles.infoBox}>
-                    <Text style={styles.infoBoxTitle}>Default Title</Text>
-                    <Text style={styles.infoBoxDescription}>Default Description</Text>
+                    <Text style={styles.infoBoxTitle}>Title</Text>
+                    <Text style={styles.infoBoxDescription}>Description</Text>
 
                     <Text style={styles.label}>ServiceType:</Text>
                     <Picker
