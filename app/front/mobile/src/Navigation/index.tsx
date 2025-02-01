@@ -16,6 +16,7 @@ import ServicesDetails from '../screens/AppletsScreen/ServicesDetails';
 import Create from '../screens/Create/create';
 import CreateTwo from '../screens/Create/createServices';
 import ChooseServices from '../screens/Create/chooseServices';
+import ChooseServicesOptions from '../screens/Create/chooseServicesOptions';
 import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
 import Profile from '../screens/profile.tsx';
 import DateTimeTrigger from '../screens/Create/dateTimeTrigger';
@@ -43,6 +44,7 @@ const Navigation = () => {
 
                 <Stack.Screen name="Create" component={Create} />
                 <Stack.Screen name="Choose services" component={ChooseServices} />
+                <Stack.Screen name="Choose options" component={ChooseServicesOptions} />
                 <Stack.Screen name="Create two" component={CreateTwo} />
                 <Stack.Screen name="Date time trigger" component={DateTimeTrigger} />
 

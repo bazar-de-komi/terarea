@@ -18,6 +18,10 @@ const ChooseServices = () => {
         Navigation.navigate("Create two");
     }
 
+    const chooseOption = () => {
+        Navigation.navigate("Choose options");
+    }
+
     const dateTimeTrigger = () => {
         Navigation.navigate("Date time trigger");
     }
@@ -41,7 +45,7 @@ const ChooseServices = () => {
                 title={'title'}
                 description={"description"}
                 bgColor={"red"}
-                onPress={createTwo}
+                onPress={chooseOption}
             />
 
         </ScrollView>
