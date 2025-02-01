@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Image, Alert, TouchableOpacity } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerInput from "../components/CustomersInput/CustomerInput";
-import BackButton from "../components/BackButton/backButton";
-import SocialAuthButton from "../components/SocialAuthButton";
+import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import BackButton from "../../components/BackButton/backButton";
+import SocialAuthButton from "../../components/SocialAuthButton";
 
-import Header from "../components/Header/header";
+import Header from "../../components/Header/header";
 
 // import ProfileLogo from "../../assets/profilLogo.png";
-import { getValue } from "../components/StoreData/storeData";
-import { queries } from "../../back-endConnection/querier";
+import { getValue } from "../../components/StoreData/storeData";
+import { queries } from "../../../back-endConnection/querier";
 
 const Profile = () => {
     const [username, setUsername] = useState("");

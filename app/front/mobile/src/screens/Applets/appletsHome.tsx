@@ -27,8 +27,12 @@ const Applets = () => {
     };
 
     const handleAppletButton = async (applet: any) => {
-        navigation.navigate("Applet screen", { applet: applet });
+        navigation.navigate("Create two", { applet: applet });
     };
+
+    // const handleAppletButton = async (applet: any) => {
+    //     navigation.navigate("Applet screen", { applet: applet });
+    // };
 
     useEffect(() => {
         const getApplets = async () => {
@@ -87,29 +91,9 @@ const Applets = () => {
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Header />
-            <Text style={styles.homeTitle}>Explore</Text>
+            <Text style={styles.homeTitle}>My Applets</Text>
+            {/* <TouchableOpacity onPress={() => navigation.navigate('Applets')}></TouchableOpacity> */}
             <View style={styles.homeNavigation}>
-                <CustomerButton
-                    text="All"
-                    onPress={handleAllButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                />
-                <CustomerButton
-                    text="Applets"
-                    onPress={handleAppletsButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={"blue"}
-                />
-                <CustomerButton
-                    text="Services"
-                    onPress={handleServicesButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                />
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput

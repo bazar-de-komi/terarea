@@ -31,7 +31,7 @@ const AppletsScreen = ({ route }) => {
         }
         isUserConnected();
     }, []);
-
+    // Date time trigger
     const handleConnectOrDisconnectButton = async () => {
         const token: string = await getValue("token");
         if (connectText === "Connect") {
