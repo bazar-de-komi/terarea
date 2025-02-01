@@ -3,18 +3,18 @@
     <AppHeader />
     <Header />
     <section class="title-section">
-      <h1 class="section-title">Explore</h1>
-      <div class="filter-buttons">
+      <h1 class="section-title">My Applets</h1>
+      <!-- <div class="filter-buttons">
         <router-link to="/explore/all" class="filter-btn active" :class="{ active: $route.path === '/explore/all' }">All</router-link>
         <router-link to="/explore/applets" class="filter-btn" :class="{ active: $route.path === '/explore/applets' }">Applets</router-link>
         <router-link to="/explore/services" class="filter-btn" :class="{ active: $route.path === '/explore/services' }">Services</router-link>
-      </div>
+      </div> -->
     </section>
     <div class="search-section">
       <input
         type="text"
         class="search-bar"
-        placeholder="Search Applets or services"
+        placeholder="Search an applet"
         v-model="searchQuery"
         @input="updateSearchQuery"
       />
@@ -30,11 +30,11 @@
               :title="item.title"
               :background-color="item.color"
             />
-            <ServiceTile
+            <!-- <ServiceTile
               v-else-if="item.type === 'service'"
               :title="item.title"
               :background-color="item.color"
-            />
+            /> -->
           </template>
         </div>
       </div>
@@ -47,13 +47,13 @@ import { defineComponent, computed, watch, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import Header from '@/components/AppHeader.vue';
 import AppletTile from '@/components/AppletBoardTile.vue';
-import ServiceTile from '@/components/ServiceBoardTile.vue';
+// import ServiceTile from '@/components/ServiceBoardTile.vue';
 
 export default defineComponent({
   components: {
     Header,
     AppletTile,
-    ServiceTile,
+    // ServiceTile,
   },
   setup() {
     const store = useStore();
