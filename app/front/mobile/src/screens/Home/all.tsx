@@ -34,47 +34,47 @@ const All = () => {
         navigation.navigate("Service details", { service: service });
     }
 
-    useEffect(() => {
-        const getAppletsAndServices = async () => {
-            try {
-                const token = await getValue("token");
-                const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
-                setApplets(getAppletsResponse.msg);
-                const getServicesResponse = await queries.get("/api/v1/services", {}, token);
-                setServices(getServicesResponse.msg);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        getAppletsAndServices();
-    }, []);
+    // useEffect(() => {
+    //     const getAppletsAndServices = async () => {
+    //         try {
+    //             const token = await getValue("token");
+    //             const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+    //             setApplets(getAppletsResponse.msg);
+    //             const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+    //             setServices(getServicesResponse.msg);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     }
+    //     getAppletsAndServices();
+    // }, []);
 
-    useEffect(() => {
-        const getAppletsAndServicesByTags = async () => {
-            try {
-                const token = await getValue("token");
-                if (tags === "") {
-                    const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
-                    setApplets(getAppletsResponse.msg);
-                    const getServicesResponse = await queries.get("/api/v1/services", {}, token);
-                    setServices(getServicesResponse);
-                } else {
-                    const noSpaceTags = tags.replaceAll(" ", ":");
-                    let path = "/api/v1/applets/";
-                    path += noSpaceTags;
-                    const getAppletsResponse = await queries.get(path, {}, token);
-                    setApplets(getAppletsResponse.msg);
-                    path = "/api/v1/services/tag/";
-                    path += noSpaceTags;
-                    const getServicesResponse = await queries.get(path, {}, token);
-                    setServices(getServicesResponse.msg);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        getAppletsAndServicesByTags();
-    }, [tags]);
+    // useEffect(() => {
+    //     const getAppletsAndServicesByTags = async () => {
+    //         try {
+    //             const token = await getValue("token");
+    //             if (tags === "") {
+    //                 const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+    //                 setApplets(getAppletsResponse.msg);
+    //                 const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+    //                 setServices(getServicesResponse);
+    //             } else {
+    //                 const noSpaceTags = tags.replaceAll(" ", ":");
+    //                 let path = "/api/v1/applets/";
+    //                 path += noSpaceTags;
+    //                 const getAppletsResponse = await queries.get(path, {}, token);
+    //                 setApplets(getAppletsResponse.msg);
+    //                 path = "/api/v1/services/tag/";
+    //                 path += noSpaceTags;
+    //                 const getServicesResponse = await queries.get(path, {}, token);
+    //                 setServices(getServicesResponse.msg);
+    //             }
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     }
+    //     getAppletsAndServicesByTags();
+    // }, [tags]);
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>

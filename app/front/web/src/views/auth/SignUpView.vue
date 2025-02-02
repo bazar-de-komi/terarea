@@ -82,7 +82,7 @@ export default defineComponent({
         });
         if (response.token) {
           localStorage.setItem('authToken', response.token);
-          this.$router.push('/explore/all');
+          this.$router.push('/explore/applets');
         } else {
           alert('The authentication have failed.');
         }
