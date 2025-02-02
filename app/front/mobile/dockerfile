@@ -1,47 +1,57 @@
-FROM node:latest
+FROM ubuntu:latest
 
+# Set the default environment variables
 ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
-ENV LAUNCH_COMMAND="serve -s build"
+ENV docker_volume_path="/shared_folder"
+ARG APP_ID=com.terarea.terarea
+ENV ANDROID_HOME /usr/local/android-sdk-linux
+ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
 
-# Update the system
-RUN apt update -y && apt upgrade -y
+# Set main working directory
+WORKDIR /home/setup
 
-# Install npm and nodejs
-RUN apt install -y \
-    npm \
-    nodejs \
-    xsel
+# Update the system and Install required packages
+RUN apt update && apt upgrade -y && \
+    apt install -y npm xsel wget unzip zip && \
+    npm cache clean --force && \
+    apt clean
 
+# Copy package files and Install dependencies
+COPY package.json package-lock.json ./
+RUN timeout 60s npm install || timeout 60s npm install
 
-# Installing latest version of npm
-# RUN npm install -g npm@latest
-
-# Installing npm requirements
-RUN npm install -g \
-    serve \
-    react-icons \
-    recharts \
-    axios
-
-
-# Create working folder
-RUN mkdir -p ${HOME}
-
-# Go to the working folder
+# Set WD to Generate the APK with EAS
 WORKDIR ${HOME}
 
-# Copy the content of the backend into the container
-COPY . ${HOME}
+# Copy remaining project files
+COPY . .
 
-# Run the setup code
-# RUN npm install
-# RUN npm run build
+# Set EXPO token
+ENV EXPO_TOKEN=yYsaPuUykd4Rs9O1aqTJ4HHX0Fv4fMzoZxsxMvR8
+
+# Initialize a Git repository (to prevent EAS from prompting)
+RUN git init && \
+    git config user.email "noreply.terarea@gmail.com" && \
+    git config user.name "UserName" && \
+    git add . && \
+    git commit -m "Initial commit"
+
+# Downloading and Set up EAS
+RUN npm install -g eas-cli
+
+# Set WD to Save the APK
+WORKDIR ${HOME}/android
+
+# Generate the APK
+RUN eas build --profile production --platform android --non-interactive
 
 # Expose the ports that need to be used
 EXPOSE 1024-9000
 
+# Cleanup
+RUN npm cache clean --force
+
 # Entry point
-# CMD ["/bin/bash","-c", "${LAUNCH_COMMAND}" ]
 CMD ["/bin/bash"]
