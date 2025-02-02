@@ -1,7 +1,7 @@
 """_summary_
     File in charge of containing the functions that will be run in the background.
 """
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Union
 from datetime import datetime
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 from .runtime_data import RuntimeData
@@ -277,12 +277,14 @@ class Crons:
         self.disp.log_debug(
             "Checking for oaths that need to be renewed", title
         )
-        oath_connections: List[Dict[str]] = self.runtime_data.database_link.get_data_from_table(
+        oath_connections: Union[List[Dict[str]], int] = self.runtime_data.database_link.get_data_from_table(
             table=CONST.TAB_ACTIVE_OAUTHS,
             column="*",
             where="",
             beautify=True
         )
+        if isinstance(oath_connections, int) or len(oath_connections) == 0:
+            return
         current_time: datetime = datetime.now()
         for oath in oath_connections:
             node_id: str = oath['id']
