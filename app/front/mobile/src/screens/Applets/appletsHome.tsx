@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -91,8 +91,9 @@ const Applets = () => {
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Header />
-            <Text style={styles.homeTitle}>My Applets</Text>
-            {/* <TouchableOpacity onPress={() => navigation.navigate('Applets')}></TouchableOpacity> */}
+            <TouchableOpacity onPress={() => navigation.navigate('Applets')} >
+                <Text style={styles.homeTitle}>My Applets</Text>
+            </TouchableOpacity>
             <View style={styles.homeNavigation}>
             </View>
             <View style={styles.searchBar}>
