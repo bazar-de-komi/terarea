@@ -14,20 +14,20 @@ const Applets = () => {
     const [applets, setApplets] = useState([]);
     const [tags, setTags] = useState("");
 
-    const handleAllButton = () => {
-        navigation.navigate("All");
-    };
+    // const handleAllButton = () => {
+    //     navigation.navigate("All");
+    // };
 
-    const handleAppletsButton = () => {
-        navigation.navigate("Applets");
-    };
+    // const handleAppletsButton = () => {
+    //     navigation.navigate("Applets");
+    // };
 
-    const handleServicesButton = () => {
-        navigation.navigate("Services");
-    };
+    // const handleServicesButton = () => {
+    //     navigation.navigate("Services");
+    // };
 
     const handleAppletButton = async (applet: any) => {
-        navigation.navigate("Create two", { applet: applet });
+        navigation.navigate("Applets information", { applet: applet });
     };
 
     // const handleAppletButton = async (applet: any) => {
