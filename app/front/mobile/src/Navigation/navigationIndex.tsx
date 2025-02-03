@@ -13,13 +13,20 @@ import Start from '../screens/Start/start';
 import AppletsScreen from '../screens/Applets/appletsBox';
 import ServicesScreen from '../screens/Applets/createAppletServicesScreen';
 import ServicesDetails from '../screens/Services/servicesDetails';
-import Create from '../screens/Create/create';
+import Create from '../screens/Create/Home/create';
 import CreateTwo from '../screens/Create/createServices';
-import ChooseServices from '../screens/Create/chooseServices';
-import ChooseServicesOptions from '../screens/Create/chooseServicesOptions';
+import ChooseServicesTrigger from '../screens/Create/chooseServicesTrigger';
+import ChooseServicesAction from '../screens/Create/chooseServicesAction';
+import AppletsInformation from '../screens/Applets/appletsInformation';
+import ChooseServicesOptionsForTrigger from '../screens/Create/chooseServicesOptionsForTrigger';
+import ChooseServicesOptionsForAction from '../screens/Create/chooseServicesOptionsForAction'; 
 import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
 import Profile from '../screens/UserSideBar/sideBarProfil';
-import DateTimeTrigger from '../screens/Create/dateTimeTrigger';
+import DateTimeTrigger from '../screens/Create/CreateTrigger';
+// import CreateAction from '../screens/Create/createAction';
+import createAction from '../screens/Create/createAction';
+import CreateAndHaveService from '../screens/Create/Home/createAndHaveService';
+import CreateEnd from '../screens/Create/Home/createEnd';
 
 const Stack = createStackNavigator();
 
@@ -41,12 +48,18 @@ const Navigation = () => {
                 <Stack.Screen name="Applet screen" component={AppletsScreen} />
                 <Stack.Screen name="Service screen" component={ServicesScreen} />
                 <Stack.Screen name="Service details" component={ServicesDetails} />
+                <Stack.Screen name="Applets information" component={AppletsInformation} />            
 
                 <Stack.Screen name="Create" component={Create} />
-                <Stack.Screen name="Choose services" component={ChooseServices} />
-                <Stack.Screen name="Choose options" component={ChooseServicesOptions} />
+                <Stack.Screen name="Choose services trigger" component={ChooseServicesTrigger} />
+                <Stack.Screen name="Choose services action" component={ChooseServicesAction} />
+                <Stack.Screen name="Choose options service for trigger" component={ChooseServicesOptionsForTrigger} />
+                <Stack.Screen name="Choose options service for action" component={ChooseServicesOptionsForAction} />
                 <Stack.Screen name="Create two" component={CreateTwo} />
                 <Stack.Screen name="Date time trigger" component={DateTimeTrigger} />
+                <Stack.Screen name="Create action" component={createAction} />
+                <Stack.Screen name="Create and have service" component={CreateAndHaveService} />
+                <Stack.Screen name="Create end" component={CreateEnd} />
 
                 <Stack.Screen name="Profile" component={Profile} />
 
