@@ -19,11 +19,7 @@ const ChooseServices = () => {
     }
 
     const chooseOption = () => {
-        Navigation.navigate("Choose options");
-    }
-
-    const dateTimeTrigger = () => {
-        Navigation.navigate("Date time trigger");
+        Navigation.navigate("Create action");
     }
 
     return (
@@ -32,7 +28,7 @@ const ChooseServices = () => {
             text={"back"}
             onPress={AppletsHome}
             />
-            <Text style={styles.homeTitle}>Choose Services</Text>
+            <Text style={styles.homeTitle}>Choose an action</Text>
 
             <View style={styles.searchContainer}>
                 <CustomerInput
@@ -57,7 +53,8 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         margin: 80,
-        marginLeft: 150,
+        marginLeft: 100,
+        width: 1000,
     },
     searchContainer: {
         alignItems: 'center',

@@ -22,13 +22,17 @@ const ChooseServices = () => {
         Navigation.navigate("Date time trigger");
     }
 
+    const chooseOption = () => {
+        Navigation.navigate("Choose options");
+    }
+
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <BackButton 
             text={"back"}
             onPress={AppletsHome}
             />
-            <Text style={styles.homeTitle}>Choose Options</Text>
+            <Text style={styles.homeTitle}>Choose a trigger</Text>
 
             <View style={styles.searchContainer}>
                 <CustomerInput
@@ -41,7 +45,8 @@ const ChooseServices = () => {
                 title={'title'}
                 description={"description"}
                 bgColor={"red"}
-                onPress={createTwo}
+                onPress={dateTimeTrigger}
+                // onPress={choose }
             />
 
         </ScrollView>
@@ -53,7 +58,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         margin: 80,
-        marginLeft: 150,
+        marginLeft: 100,
     },
     searchContainer: {
         alignItems: 'center',
