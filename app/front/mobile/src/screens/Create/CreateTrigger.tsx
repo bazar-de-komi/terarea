@@ -1,53 +1,95 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from "@react-navigation/native";
 
-const TriggerPage = () => {
-    const [selectedHour, setSelectedHour] = useState("12 AM");
-    const [selectedMinute, setSelectedMinute] = useState("00");
+const jsonData = {
+    "name": "Every day",
+    "description": "This action triggers every day at a specific time set by you.",
+    "service": {
+        "url_params": {
+            "drop:timeZone": [
+                "opt:Africa/Cairo", "opt:America/New_York", "default:Europe/Paris"
+            ]
+        },
+        "verification": {
+            "hour": {
+                "drop:verification_value": [
+                    "default:0", "opt:1", "opt:2", "opt:3"
+                ]
+            },
+            "minute": {
+                "drop:verification_value": [
+                    "default:0", "opt:10", "opt:20", "opt:30"
+                ]
+            }
+        }
+    }
+};
 
-    const Navigation = useNavigation();
-
-    const hours = ["12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM",
-                   "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
+const parseJsonToForm = (json) => {
+    const fields = [];
     
-                   const minutes = Array.from({ length: 60 }, (_, i) => (i < 10 ? `0${i}` : `${i}`));
+    const traverse = (obj, parentKey = "") => {
+        Object.entries(obj).forEach(([key, value]) => {
+            if (key.startsWith("ignore:")) return;
+            
+            if (key.startsWith("drop:")) {
+                const fieldName = key.replace("drop:", "");
+                const options = value.map(option => option.replace(/^(opt:|default:)/, ""));
+                fields.push({ type: "dropdown", name: fieldName, options });
+            } else if (typeof value === "object" && !Array.isArray(value)) {
+                traverse(value, key);
+            } else {
+                fields.push({ type: "input", name: key, defaultValue: value });
+            }
+        });
+    };
+    traverse(json);
+    return fields;
+};
 
+const TriggerPage = () => {
+    const Navigation = useNavigation();
+    const formFields = parseJsonToForm(jsonData);
+    const [formValues, setFormValues] = useState({});
+
+    const handleChange = (name, value) => {
+        setFormValues(prev => ({ ...prev, [name]: value }));
+    };
+ 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Complete trigger fields</Text>
-            <Text style={styles.description}>Every day at</Text>
             
-            <Text style={styles.label}>Time</Text>
-            
-            <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={selectedHour}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedHour(itemValue)}
-                >
-                    {hours.map((hour) => (
-                        <Picker.Item key={hour} label={hour} value={hour} />
-                    ))}
-                </Picker>
-            </View>
-
-            <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={selectedMinute}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedMinute(itemValue)}
-                >
-                    {minutes.map((minute) => (
-                        <Picker.Item key={minute} label={minute} value={minute} />
-                    ))}
-                </Picker>
-            </View>
+            {formFields.map((field, index) => (
+                <View key={index} style={styles.fieldContainer}>
+                    <Text style={styles.label}>{field.name}</Text>
+                    
+                    {field.type === "dropdown" ? (
+                        <Picker
+                            selectedValue={formValues[field.name] || field.options[0]}
+                            style={styles.picker}
+                            onValueChange={(itemValue) => handleChange(field.name, itemValue)}
+                        >
+                            {field.options.map((option, idx) => (
+                                <Picker.Item key={idx} label={option} value={option} />
+                            ))}
+                        </Picker>
+                    ) : (
+                        <TextInput
+                            style={styles.input}
+                            defaultValue={field.defaultValue}
+                            onChangeText={(text) => handleChange(field.name, text)}
+                        />
+                    )}
+                </View>
+            ))}
 
             <TouchableOpacity
                 style={styles.triggerButton}
-                onPress={() => Navigation.navigate("Create and have service")} >
+                onPress={() => console.log("Form Values:", formValues)}
+            >
                 <Text style={styles.triggerButtonText}>Create trigger</Text>
             </TouchableOpacity>
         </View>
@@ -56,7 +98,6 @@ const TriggerPage = () => {
 
 const styles = StyleSheet.create({
     container: {
-        top: 20,
         flex: 1,
         backgroundColor: "#333",
         paddingHorizontal: 20,
@@ -64,34 +105,30 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     title: {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: "bold",
         color: "white",
-        marginBottom: 10,
+        marginBottom: 20,
     },
-    description: {
-        fontSize: 16,
-        color: "#bbb",
-        textAlign: "center",
-        marginBottom: 30,
+    fieldContainer: {
+        width: "100%",
+        marginBottom: 15,
     },
     label: {
         fontSize: 18,
         fontWeight: "600",
         color: "white",
-        alignSelf: "flex-start",
-        marginBottom: 10,
-    },
-    pickerContainer: {
-        width: "100%",
-        backgroundColor: "white",
-        borderRadius: 8,
-        marginBottom: 15,
-        overflow: "hidden",
+        marginBottom: 5,
     },
     picker: {
-        height: 50,
-        color: "black",
+        backgroundColor: "white",
+        borderRadius: 8,
+    },
+    input: {
+        backgroundColor: "white",
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 16,
     },
     triggerButton: {
         marginTop: 30,
