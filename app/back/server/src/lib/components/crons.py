@@ -296,7 +296,7 @@ class Crons:
                     Dict[str, Any]
                 ] = self.runtime_data.database_link.get_data_from_table(
                     table=CONST.TAB_SERVICES,
-                    column="name",
+                    column="*",
                     where=f"id='{oath['service_id']}'",
                     beautify=True
                 )
