@@ -210,10 +210,10 @@ class Endpoints:
             "/api/v1/my_applet/{applet_id}", self.applets.put_applet_by_id, "PUT"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/triggers/quey/{query}", self.applets.get_triggers_by_research, "GET"
+            "/api/v1/triggers/query/{query}", self.applets.get_triggers_by_research, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/reactions/quey/{query}", self.applets.get_reactions_by_research, "GET"
+            "/api/v1/reactions/query/{query}", self.applets.get_reactions_by_research, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/my_applet/{applet_id}", self.applets.patch_applet_by_id, "PATCH"
