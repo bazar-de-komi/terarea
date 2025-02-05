@@ -195,38 +195,41 @@ class Endpoints:
 
         # Applets routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet", self.applets.create_applet, "POST"
+            "/api/v1/my_applet/{applet_id}", self.applets.get_applet_by_id, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet/{id}", self.applets.put_applet_by_id, "PUT"
+            "/api/v1/my_applets", self.applets.get_my_applets, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet/{id}", self.applets.get_applet_by_id, "GET"
+            "/api/v1/my_applets/{tags}", self.applets.get_my_applets_by_tags, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet/{id}", self.applets.delete_applet_by_id, "DELETE"
+            "/api/v1/my_applet", self.applets.create_applet, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applets", self.applets.get_all_applets, "GET"
+            "/api/v1/my_applet/{applet_id}", self.applets.put_applet_by_id, "PUT"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/user_applets", self.applets.get_user_applets, "GET"
+            "/api/v1/triggers/quey/{query}", self.applets.get_triggers_by_research, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applets/{tags}", self.applets.get_applets_by_tags, "GET"
+            "/api/v1/reactions/quey/{query}", self.applets.get_reactions_by_research, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/recent_applets", self.applets.get_recent_applets, "GET"
+            "/api/v1/my_applet/{applet_id}", self.applets.patch_applet_by_id, "PATCH"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/connect_applets/{id}", self.applets.post_connect_applet, "POST"
+            "/api/v1/triggers_services", self.applets.get_triggers_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/disconnect_applets/{id}", self.applets.delete_disconnect_applet, "DELETE"
+            "/api/v1/reactions_services", self.applets.get_reactions_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/triggers/{service_name}", self.applets.get_triggers_by_service_name, "GET"
+            "/api/v1/triggers/{service_id}", self.applets.get_triggers_by_service_id, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/reactions/{service_name}", self.applets.get_reactions_by_service_name, "GET"
+            "/api/v1/reactions/{service_id}", self.applets.get_reactions_by_service_id, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/my_applet/{applet_id}", self.applets.delete_my_applet_by_id, "DELETE"
         )

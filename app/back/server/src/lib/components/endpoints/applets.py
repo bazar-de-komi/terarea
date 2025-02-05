@@ -29,43 +29,9 @@ class Applets:
             logger=self.__class__.__name__
         )
 
-    def create_applet(self, request: Request) -> Response:
-        """
-        Create applet by id
-        """
-        title = "Create applet"
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title="create_applet",
-            message="Not implemented yet",
-            resp="not implemented",
-            token=None,
-            error= True
-        )
-        return HCI.not_implemented(
-            content=body,
-            content_type=CONST.CONTENT_TYPE,
-            headers=self.runtime_data_initialised.json_header
-        )
+    # Endpoints for my applets page
 
-    def put_applet_by_id(self, request: Request, id: str) -> Response:
-        """
-        Modify applet by id
-        """
-        title = "Put applet by id"
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title="create_applet",
-            message="Not implemented yet",
-            resp="not implemented",
-            token=None,
-            error= True
-        )
-        return HCI.not_implemented(
-            content=body,
-            content_type=CONST.CONTENT_TYPE,
-            headers=self.runtime_data_initialised.json_header
-        )
-
-    def get_applet_by_id(self, request: Request, id: int) -> Response:
+    async def get_applet_by_id(self, request: Request, applet_id: int) -> Response:
         """
         Get applet by id
         """
@@ -116,60 +82,11 @@ class Applets:
             headers=self.runtime_data_initialised.json_header
         )
 
-    def get_all_applets(self, request: Request) -> Response:
+    async def get_my_applets(self, request: Request) -> Response:
         """
-        Get all applets
+        Get my applets
         """
-        title = "Get all applets"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-            request
-        )
-        if not token:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
-                title
-            )
-        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
-            token
-        ) is False:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
-                title
-            )
-        self.disp.log_debug(f"Token = {token}", title)
-        applets_data = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACTIONS,
-            "*"
-        )
-        if not applets_data or isinstance(applets_data, int):
-            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title=title,
-                message="Applets not found.",
-                resp="not found",
-                token=token,
-                error=True
-            )
-            return HCI.not_found(
-                content=body,
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
-            )
-        self.disp.log_debug(f"Applet found: {applets_data}", title)
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title=title,
-            message=applets_data,
-            resp="success",
-            token=token
-        )
-        return HCI.success(
-            content=body,
-            content_type=CONST.CONTENT_TYPE,
-            headers=self.runtime_data_initialised.json_header
-        )
-
-    def get_user_applets(self, request: Request) -> Response:
-        """
-        Get user applets
-        """
-        title = "Get user applets"
+        title = "Get my applets"
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
@@ -220,11 +137,11 @@ class Applets:
             headers=self.runtime_data_initialised.json_header
         )
 
-    def get_applets_by_tags(self, request: Request, tags: str) -> Response:
+    async def get_my_applets_by_tags(self, request: Request, tags: str) -> Response:
         """
-        Get applets by tags
+        Get my applets by tags
         """
-        title = "Get applets by tags"
+        title = "Get my applets by tags"
         token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
@@ -281,13 +198,15 @@ class Applets:
             headers=self.runtime_data_initialised.json_header
         )
 
-    def get_recent_applets(self, request: Request) -> Response:
+    # Endpoints for Create/Modify applets page
+
+    async def create_applet(self, request: Request) -> Response:
         """
-        Get recent applets
+        Create applet
         """
-        title = "Get recent applets"
+        title = "Create applet"
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title="create_applet",
+            title=title,
             message="Not implemented yet",
             resp="not implemented",
             token=None,
@@ -299,150 +218,115 @@ class Applets:
             headers=self.runtime_data_initialised.json_header
         )
 
-    def post_connect_applet(self, request: Request, id: int) -> Response:
+    async def put_applet_by_id(self, request: Request, applet_id: str) -> Response:
         """
-        Connect user to an applet
+        Modify applet by id
         """
-        title = "Connect user to an applet"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-            request
-        )
-        if not token:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
-                title
-            )
-        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
-            token
-        ) is False:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
-                title
-            )
-        self.disp.log_debug(f"Token = {token}", title)
-        id_str = str(id)
-        applet_id = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACTIONS,
-            "id",
-            f"id='{id_str}'"
-        )
-        if not applet_id or isinstance(applet_id, int):
-            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title=title,
-                message="Applet not found.",
-                resp="not found",
-                token=token,
-                error=True
-            )
-            return HCI.not_found(
-                content=body,
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
-            )
-        self.disp.log_debug(f"Applet id found: {applet_id}", title)
-        user_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
-            title,
-            token
-        )
-        if isinstance(user_id, Response):
-            return user_id
-        self.disp.log_debug(f"User id found: {user_id}", title)
-        data: list = [user_id, applet_id]
-        columns: list = self.runtime_data_initialised.database_link.get_table_column_names(
-            CONST.TAB_USER_SERVICES
-        )
-        if not columns or isinstance(columns, int):
-            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
-                title,
-                token
-            )
-        columns.pop(0)
-        self.disp.log_debug(f"Got columns: {columns}", title)
-        self.runtime_data_initialised.database_link.insert_data_into_table(
-            CONST.TAB_USER_SERVICES,
-            data,
-            columns
-        )
-        self.disp.log_debug("Connected", title)
+        title = "Put applet by id"
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
-            message="You are connected to the applet successfully.",
-            resp="success",
-            token=token
+            message="Not implemented yet",
+            resp="not implemented",
+            token=None,
+            error= True
         )
-        return HCI.success(
+        return HCI.not_implemented(
             content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
 
-    def delete_disconnect_applet(self, request: Request, id: int) -> Response:
+    async def patch_applet_by_id(self, request: Request, applet_id: str) -> Response:
         """
-        Disconnect user to an applet
+        Modify some applet by id
         """
-        title = "Disconnect user to an applet"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-            request
-        )
-        if not token:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
-                title
-            )
-        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
-            token
-        ) is False:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
-                title
-            )
-        self.disp.log_debug(f"Token = {token}", title)
-        id_str = str(id)
-        applet_id = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACTIONS,
-            "id",
-            f"id='{id_str}'"
-        )
-        if not applet_id or isinstance(applet_id, int):
-            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title=title,
-                message="Applet not found.",
-                resp="not found",
-                token=token,
-                error=True
-            )
-            return HCI.not_found(
-                content=body,
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
-            )
-        self.disp.log_debug(f"Applet id found: {applet_id}", title)
-        user_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
-            title,
-            token
-        )
-        if isinstance(user_id, Response):
-            return user_id
-        self.disp.log_debug(f"User id found: {user_id}", title)
-        remove = self.runtime_data_initialised.database_link.remove_data_from_table(
-            CONST.TAB_USER_SERVICES,
-            f"user_id='{user_id}' AND area_id='{applet_id}'"
-        )
-        if remove == self.error:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
-                title,
-                token
-            )
-        self.disp.log_debug("Disconnected", title)
+        title = "Patch applet by id"
         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
-            message="You are disconnected from the applet successfully.",
-            resp="success",
-            token=token
+            message="Not implemented yet",
+            resp="not implemented",
+            token=None,
+            error= True
         )
-        return HCI.success(
+        return HCI.not_implemented(
             content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
 
-    def get_triggers_by_service_name(self, request: Request, service_name: str) -> Response:
+    async def get_triggers_services(self, request: Request) -> Response:
+        """
+        Get triggers services
+        """
+        title = "Get triggers services"
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="Not implemented yet",
+            resp="not implemented",
+            token=None,
+            error= True
+        )
+        return HCI.not_implemented(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def get_triggers_by_research(self, request: Request, query: str) -> Response:
+        """
+        Get triggers by research
+        """
+        title = "Get triggers by research"
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="Not implemented yet",
+            resp="not implemented",
+            token=None,
+            error= True
+        )
+        return HCI.not_implemented(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def get_reactions_by_research(self, request: Request, query: str) -> Response:
+        """
+        Get reactions by research
+        """
+        title = "Get reactions by research"
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="Not implemented yet",
+            resp="not implemented",
+            token=None,
+            error= True
+        )
+        return HCI.not_implemented(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def get_reactions_services(self, request: Request) -> Response:
+        """
+        Get reactions services
+        """
+        title = "Get reactions services"
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="Not implemented yet",
+            resp="not implemented",
+            token=None,
+            error= True
+        )
+        return HCI.not_implemented(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
+
+    async def get_triggers_by_service_id(self, request: Request, service_id: str) -> Response:
         """
         Get triggers by service name
         """
@@ -460,7 +344,7 @@ class Applets:
             headers=self.runtime_data_initialised.json_header
         )
 
-    def get_reactions_by_service_name(self, request: Request, service_name: str) -> Response:
+    async def get_reactions_by_service_id(self, request: Request, service_id: str) -> Response:
         """
         Get reactions by service name
         """
@@ -477,8 +361,8 @@ class Applets:
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
-    
-    def delete_applet_by_id(self, request: Request, id: str) -> Response:
+
+    async def delete_my_applet_by_id(self, request: Request, applet_id: str) -> Response:
         """
         Get reactions by service name
         """
