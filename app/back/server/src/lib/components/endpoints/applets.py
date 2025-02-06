@@ -262,7 +262,7 @@ class Applets:
 
         # Get Actions table columns names
         columns: Union[List[str], int] = self.runtime_data_initialised.database_link.get_table_column_names(
-            table=CONST.TAB_ACTIONS
+            table_name=CONST.TAB_ACTIONS
         )
         if isinstance(columns, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
@@ -341,9 +341,29 @@ class Applets:
         if isinstance(user_id, Response):
             return user_id
 
+        # Verify if the applet is found
+        applet_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_ACTIONS,
+            "*",
+            [f"id='{applet_id}'", f"user_id='{user_id}'"]
+        )
+        if not applet_data or isinstance(applet_data, int):
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="Your applet was not found.",
+                resp="not found",
+                token=token,
+                error=True
+            )
+            return HCI.not_found(
+                content=body,
+                content_type=CONST.CONTENT_TYPE,
+                headers=self.runtime_data_initialised.json_header
+            )
+
         # Get Actions table columns names
         columns: Union[List[str], int] = self.runtime_data_initialised.database_link.get_table_column_names(
-            table=CONST.TAB_ACTIONS
+            table_name=CONST.TAB_ACTIONS
         )
         if isinstance(columns, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
@@ -419,9 +439,29 @@ class Applets:
         if isinstance(user_id, Response):
             return user_id
 
+        # Verify if the applet is found
+        applet_data = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_ACTIONS,
+            "*",
+            [f"id='{applet_id}'", f"user_id='{user_id}'"]
+        )
+        if not applet_data or isinstance(applet_data, int):
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="Your applet was not found.",
+                resp="not found",
+                token=token,
+                error=True
+            )
+            return HCI.not_found(
+                content=body,
+                content_type=CONST.CONTENT_TYPE,
+                headers=self.runtime_data_initialised.json_header
+            )
+
         # Get Actions table columns names
         columns: Union[List[str], int] = self.runtime_data_initialised.database_link.get_table_column_names(
-            table=CONST.TAB_ACTIONS
+            table_name=CONST.TAB_ACTIONS
         )
         if isinstance(columns, int):
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
