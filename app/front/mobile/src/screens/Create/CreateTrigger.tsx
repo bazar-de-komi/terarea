@@ -2,62 +2,50 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from "@react-navigation/native";
+import ParseJson from "../../ParseJson.js";
 
 const jsonData = {
-    "name": "Every day",
-    "description": "This action triggers every day at a specific time set by you.",
+    "": "Ceci est un texte affiché",
+    "ignore:ceChamp": "Ne pas afficher",
+    "drop:choixPays": [
+        "default:France",
+        "opt:USA",
+        "opt:Canada",
+    ],
+    "input:nom": "Jean Dupont",
+    "textarea:description": "Texte long ici...",
     "service": {
-        "url_params": {
-            "drop:timeZone": [
-                "opt:Africa/Cairo", "opt:America/New_York", "default:Europe/Paris"
-            ]
-        },
+        "drop:timeZone": [
+            "opt:Africa/Cairo",
+            "opt:America/New_York",
+            "default:Europe/Paris"
+        ],
         "verification": {
-            "hour": {
-                "drop:verification_value": [
-                    "default:0", "opt:1", "opt:2", "opt:3"
-                ]
-            },
-            "minute": {
-                "drop:verification_value": [
-                    "default:0", "opt:10", "opt:20", "opt:30"
-                ]
-            }
+            "drop:hour": [
+                "default:0",
+                "opt:1",
+                "opt:2",
+                "opt:3"
+            ],
+            "drop:minute": [
+                "default:0",
+                "opt:10",
+                "opt:20",
+                "opt:30"
+            ]
         }
     }
 };
 
-const parseJsonToForm = (json) => {
-    const fields = [];
-    
-    const traverse = (obj, parentKey = "") => {
-        Object.entries(obj).forEach(([key, value]) => {
-            if (key.startsWith("ignore:")) return;
-            
-            if (key.startsWith("drop:")) {
-                const fieldName = key.replace("drop:", "");
-                const options = value.map(option => option.replace(/^(opt:|default:)/, ""));
-                fields.push({ type: "dropdown", name: fieldName, options });
-            } else if (typeof value === "object" && !Array.isArray(value)) {
-                traverse(value, key);
-            } else {
-                fields.push({ type: "input", name: key, defaultValue: value });
-            }
-        });
-    };
-    traverse(json);
-    return fields;
-};
-
 const TriggerPage = () => {
     const Navigation = useNavigation();
-    const formFields = parseJsonToForm(jsonData);
+    const formFields = ParseJson(jsonData);
     const [formValues, setFormValues] = useState({});
 
     const handleChange = (name, value) => {
         setFormValues(prev => ({ ...prev, [name]: value }));
     };
- 
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Complete trigger fields</Text>
@@ -65,10 +53,12 @@ const TriggerPage = () => {
             {formFields.map((field, index) => (
                 <View key={index} style={styles.fieldContainer}>
                     <Text style={styles.label}>{field.name}</Text>
-                    
-                    {field.type === "dropdown" ? (
+
+                    {field.type === "text" ? (
+                        <Text style={styles.text}>{field.value}</Text>
+                    ) : field.type === "dropdown" ? (
                         <Picker
-                            selectedValue={formValues[field.name] || field.options[0]}
+                            selectedValue={formValues[field.name] || field.defaultValue}
                             style={styles.picker}
                             onValueChange={(itemValue) => handleChange(field.name, itemValue)}
                         >
@@ -76,6 +66,13 @@ const TriggerPage = () => {
                                 <Picker.Item key={idx} label={option} value={option} />
                             ))}
                         </Picker>
+                    ) : field.type === "textarea" ? (
+                        <TextInput
+                            style={styles.textarea}
+                            defaultValue={field.defaultValue}
+                            multiline={true}
+                            onChangeText={(text) => handleChange(field.name, text)}
+                        />
                     ) : (
                         <TextInput
                             style={styles.input}
@@ -120,6 +117,10 @@ const styles = StyleSheet.create({
         color: "white",
         marginBottom: 5,
     },
+    text: {
+        fontSize: 16,
+        color: "white",
+    },
     picker: {
         backgroundColor: "white",
         borderRadius: 8,
@@ -129,6 +130,13 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 10,
         fontSize: 16,
+    },
+    textarea: {
+        backgroundColor: "white",
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 16,
+        height: 100,
     },
     triggerButton: {
         marginTop: 30,
