@@ -89,7 +89,7 @@ class Services:
             headers=self.runtime_data_initialised.json_header
         )
 
-    async def get_service_id(self, request: Request, id: str) -> Response:
+    async def get_service_by_id(self, request: Request, service_id: str) -> Response:
         """
         The method to get a service by it's id
         """
@@ -112,7 +112,7 @@ class Services:
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
             "*",
-            f"id='{id}'",
+            f"id='{service_id}'",
             beautify=True
         )
         if isinstance(service_data, int):

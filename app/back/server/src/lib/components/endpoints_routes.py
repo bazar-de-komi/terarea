@@ -169,7 +169,7 @@ class Endpoints:
             "/api/v1/services", self.services.get_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/{id}", self.services.get_service_id, "GET"
+            "/api/v1/service/{service_id}", self.services.get_service_by_id, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/services/{tags}", self.services.get_services_by_tag, "GET"
@@ -210,10 +210,10 @@ class Endpoints:
             "/api/v1/my_applet/{applet_id}", self.applets.put_applet_by_id, "PUT"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/triggers/query/{query}", self.applets.get_triggers_by_research, "GET"
+            "/api/v1/triggers", self.applets.get_triggers, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/reactions/query/{query}", self.applets.get_reactions_by_research, "GET"
+            "/api/v1/reactions", self.applets.get_reactions, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/my_applet/{applet_id}", self.applets.patch_applet_by_id, "PATCH"
@@ -225,10 +225,10 @@ class Endpoints:
             "/api/v1/reactions_services", self.applets.get_reactions_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/triggers/{service_id}", self.applets.get_triggers_by_service_id, "GET"
+            "/api/v1/triggers/service/{service_id}", self.applets.get_triggers_by_service_id, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/reactions/{service_id}", self.applets.get_reactions_by_service_id, "GET"
+            "/api/v1/reactions/service/{service_id}", self.applets.get_reactions_by_service_id, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/my_applet/{applet_id}", self.applets.delete_my_applet_by_id, "DELETE"
