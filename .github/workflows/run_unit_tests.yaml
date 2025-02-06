@@ -137,7 +137,7 @@ jobs:
         run: |
           TEST_RUN_COMMAND="echo 'hi'"
           docker exec -t ${{env.CLIENT_WEB_CONTAINER_NAME}} /bin/bash -c "$TEST_RUN_COMMAND"
-      
+
       - name: Stop the docker compose
         run: |
           docker compose down
@@ -145,4 +145,3 @@ jobs:
       - name: Clean ressources
         run: |
           docker system prune -f
-      
