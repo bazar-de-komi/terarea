@@ -10,11 +10,12 @@ import AppletDetails from '../views/tile-information/AppletDetails.vue';
 import ServiceDetails from '../views/tile-information/ServiceDetails.vue';
 import CreateApplet from '@/views/create/CreateApplet.vue';
 import DisplayAction from '@/views/create/DisplayAction.vue';
-import DisplayReaction from '@/views/create/DisplayReaction.vue';
+import DisplayTrigger from '@/views/create/DisplayTrigger.vue';
 import MainPage from '@/views/main/MainPage.vue';
 import ProfilePage from '@/views/profil/AccountSetting.vue';
 import ChangePassword from '@/views/profil/ChangePassword.vue'
 import CallbackView from '@/views/auth/CallbackView.vue';
+import TriggerInformation from '@/views/create/TriggerInformation.vue';
 
 const routes = [
   { path: '/', name: 'MainPage', component: MainPage },
@@ -30,9 +31,10 @@ const routes = [
   { path: '/service/:title', name: 'ServiceDetails', component: ServiceDetails },
   { path: '/create', name: 'CreateApplet', component: CreateApplet },
   { path: '/create/add-action', name: 'DisplayAction', component: DisplayAction },
-  { path: '/create/add-reaction', name: 'DisplayReaction', component: DisplayReaction },
+  { path: '/create/add-trigger', name: 'DisplayTrigger', component: DisplayTrigger },
   { path: '/account', name: 'ProfilePage', component: ProfilePage },
   { path: '/account/change-password', name: 'ChangePassword', component: ChangePassword },
+  { path: '/trigger-detail', name: 'TriggerInformation', component: TriggerInformation},
 ];
 
 const router = createRouter({
