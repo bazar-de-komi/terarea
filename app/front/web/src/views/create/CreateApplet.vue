@@ -10,43 +10,36 @@
 
       <div class="ifThenContainer">
         <!-- Bloc If -->
-        <div class="ifThenBlock" @click="togglePhase('if')">
+        <div
+          class="ifThenBlock"
+          :class="{ disabled: !ifCondition }"
+          @click="ifCondition && togglePhase('if')"
+        >
           <span class="block-text">If</span>
           <AddButton
             v-if="!ifCondition && !isSecondPhase.if"
             @click="showAddServiceModalForIf"
+            :route="'/create/add-trigger'"
+            class="add-button-right"
+          />
+          <span v-else class="selected-service">{{ ifCondition?.name || '' }}</span>
+        </div>
+
+        <!-- Bloc Then -->
+        <div
+          class="ifThenBlock"
+          :class="{ disabled: !thenAction }"
+          @click="thenAction && togglePhase('then')"
+        >
+          <span class="block-text">Then</span>
+          <AddButton
+            v-if="ifCondition && isSecondPhase.if && !thenAction && !isSecondPhase.then"
+            @click="showAddServiceModalForThen"
             :route="'/create/add-action'"
             class="add-button-right"
           />
-          <span v-else class="selected-service">{{ ifCondition?.name || 'No service selected' }}</span>
+          <span v-else class="selected-service">{{ thenAction?.name || '' }}</span>
         </div>
-        <BlockDetails
-        v-if="isSecondPhase.if"
-        :title="ifCondition?.title || 'Default Title'"
-        :description="ifCondition?.description || 'Default Description'"
-        :fieldsData="['Dropdown:ServiceType', 'Date:StartDate', 'Time:StartTime', 'Input:Username', 'int:Age']"
-        :blockWidth="800"
-        />
-
-        <!-- Bloc Then -->
-        <div class="ifThenBlock" @click="togglePhase('then')">
-          <span class="block-text">Then</span>
-          <AddButton
-            v-if="!thenAction && !isSecondPhase.then"
-            @click="showAddServiceModalForThen"
-            :route="'/create/add-reaction'"
-            class="add-button-right"
-          />
-          <span v-else class="selected-service">{{ thenAction?.name || 'No action selected' }}</span>
-        </div>
-        <BlockDetails
-        v-if="isSecondPhase.then"
-          :title="ifCondition?.title || 'Default Title'"
-          :description="ifCondition?.description || 'Default Description'"
-          :fieldsData="['Dropdown:ServiceType', 'Date:StartDate', 'Time:StartTime', 'Input:Username', 'int:Age']"
-          :blockWidth="800"
-        />
-
       </div>
     </div>
 
@@ -62,7 +55,6 @@
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
-import BlockDetails from '@/components/CreateApplet-Comp/BlockDetails.vue';
 import AddButton from '@/components/CreateApplet-Comp/AddDelButtonComp.vue';
 import CancelButton from '@/components/CancelButton.vue';
 
@@ -71,7 +63,6 @@ export default defineComponent({
     AppHeader,
     CancelButton,
     AddButton,
-    BlockDetails,
   },
   setup() {
     const router = useRouter();
@@ -175,7 +166,8 @@ h1 {
   background-color: grey;
 }
 
-.block-text, .selected-service {
+.block-text,
+.selected-service {
   font-weight: bold;
   font-size: 64px;
   white-space: nowrap;
@@ -187,4 +179,5 @@ h1 {
   position: absolute;
   right: 15px;
 }
+
 </style>
