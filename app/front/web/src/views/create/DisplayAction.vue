@@ -9,7 +9,7 @@
       <input
         type="text"
         class="search-bar"
-        placeholder="Search Action"
+        placeholder="Search Reaction"
         v-model="searchQuery"
       />
       <button class="clear-search" @click="clearSearchQuery">✖</button>
@@ -109,7 +109,6 @@ export default defineComponent({
   font-size: 2rem;
   font-weight: bold;
 }
-
 
 .search-section {
   display: flex;
