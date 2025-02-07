@@ -31,7 +31,7 @@ const Header = () => {
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={() => navigation.navigate('All')}>
+                <TouchableOpacity onPress={() => navigation.navigate('Applets')}>
                     <Image
                         source={AreaLogo}
                         style={styles.areaLogo}

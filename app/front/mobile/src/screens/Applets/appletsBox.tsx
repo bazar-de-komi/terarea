@@ -8,9 +8,6 @@ import BackButton from "../../components/BackButton/backButton";
 import { queries } from "../../../back-endConnection/querier";
 import { getValue } from "../../components/StoreData/storeData";
 
-// import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-// import ProfilLogo from '../../../assets/profilLogo.png';
-
 const AppletsScreen = ({ route }) => {
     const { applet } = route.params;
     const navigation = useNavigation();
@@ -69,23 +66,6 @@ const AppletsScreen = ({ route }) => {
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
                 <Header />
-                {/* <Image
-                    source={AreaLogo}
-                    style={styles.areaLogo}
-                />
-                <Image
-                    source={ProfilLogo}
-                    style={styles.profilLogo}
-                />
-                <View style={styles.backStyle}>
-                    <CustomerButton
-                        text='<'
-                        onPress={callApplets}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                    />
-                </View> */}
                 <BackButton
                     text="<"
                     onPress={handleGoBackButton}

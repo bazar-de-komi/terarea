@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView,  } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -79,15 +79,17 @@ const All = () => {
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Header />
-            <Text style={styles.homeTitle}>Explore</Text>
+            <Text style={styles.homeTitle}>My Applets</Text>
+
+
             <View style={styles.homeNavigation}>
-                <CustomerButton
+                {/* <CustomerButton
                     text="All"
                     onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
-                />
+                /> */}
                 <CustomerButton
                     text="Applets"
                     onPress={handleAppletsButton}
@@ -95,13 +97,13 @@ const All = () => {
                     bgColor={""}
                     fgColor={""}
                 />
-                <CustomerButton
+                {/* <CustomerButton
                     text="Services"
                     onPress={handleServicesButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
-                />
+                /> */}
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
@@ -176,6 +178,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         marginBottom: 20,
+        fontWeight: 'bold',
     },
     searchBar: {
         alignItems: 'center',

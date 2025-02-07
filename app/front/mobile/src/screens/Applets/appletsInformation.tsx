@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import CustomerButton from "../../components/CustomerButton";
 import BackButton from "../../components/BackButton/backButton";
 
-const CreateServices = () => {
+const AppletsInformation = () => {
     const navigation = useNavigation();
     const [serviceName, setServiceName] = useState("");
     const [serviceType, setServiceType] = useState("Option 1");
@@ -25,7 +25,7 @@ const CreateServices = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-            <Text style={styles.homeTitle}>Create</Text>
+            <Text style={styles.homeTitle}>Name Applet</Text>
             <View style={styles.backButtonContainer}>
                 <BackButton
                     text={"X"}
@@ -221,4 +221,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CreateServices;
+export default AppletsInformation;

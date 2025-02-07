@@ -11,6 +11,17 @@
     </div>
 
     <div class="service-body">
+      <template v-if="formFields.length">
+        <div v-for="(field, index) in formFields" :key="index" class="form-group">
+          <label :for="field.name">{{ field.name }}</label>
+          <input v-if="field.type === 'text'" :id="field.name" type="text" v-model="field.value" />
+          <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
+            <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
+          </select>
+          <input v-else-if="field.type === 'input'" :id="field.name" type="text" v-model="field.defaultValue" />
+          <textarea v-else-if="field.type === 'textarea'" :id="field.name" v-model="field.defaultValue"></textarea>
+        </div>
+      </template>
       <button class="connect-button" @click="useTrigger">Use this Trigger</button>
     </div>
   </div>
@@ -20,6 +31,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
+import parseJsonToForm from '@/ParseJson';
 
 export default defineComponent({
   components: {
@@ -29,6 +41,7 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const tileData = ref<any>(null);
+    const formFields = ref<any[]>([]);
 
     const goBack = () => {
       router.back();
@@ -48,6 +61,7 @@ export default defineComponent({
       if (route.query.tile) {
         try {
           tileData.value = JSON.parse(route.query.tile as string);
+          formFields.value = parseJsonToForm(tileData.value.service);
         } catch (error) {
           console.error('Failed to parse tile data:', error);
         }
@@ -58,11 +72,11 @@ export default defineComponent({
       goBack,
       useTrigger,
       tileData,
+      formFields,
     };
   },
 });
 </script>
-
 
 <style scoped>
 * {
@@ -96,21 +110,18 @@ html, body {
   position: relative;
   text-align: center;
   color: white;
+  top: 0;
+  left: 0;
 }
 
 .cancel-button {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  background-color: black;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 8px;
-  cursor: pointer;
+  top: 40px;
+  left: 40px;
+  z-index: 10;
 }
 
 .cancel-button:hover {
-  background-color: #212121;
   transform: scale(1.05);
 }
 
@@ -149,9 +160,28 @@ html, body {
   border-radius: 20px;
   width: 40%;
   max-width: 90%;
-  margin-top: -50px;
+  margin-top: 20px;
   background: white;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .connect-button {

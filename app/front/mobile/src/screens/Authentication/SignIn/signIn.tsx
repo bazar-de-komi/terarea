@@ -48,7 +48,7 @@ const SignIn = () => {
             const result = await queries.post("/api/v1/login", account);
             if (result.token) {
                 storeValue('token', result.token);
-                navigation.navigate("All");
+                navigation.navigate("Applets");
             } else {
                 setError("Identifiant or password incorrect");
                 Alert.alert("ID or password incorrect");

@@ -57,7 +57,7 @@ const SignUp = () => {
             if (response.token) {
                 storeValue("token", response.token)
                 Alert.alert("Sign up sucessful");
-                navigation.navigate('All');
+                navigation.navigate('Applets');
             } else {
                 setError("Try again");
             }
