@@ -7,9 +7,9 @@ from fastapi import FastAPI, Request
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
 import httpx
 import logging
-from .. import constants as CONST
-from ..runtime_data import RuntimeData
-from ..http_codes import HCI
+from ....app.back.server.src.lib.components import constants as CONST
+from ....app.back.server.src.lib.components.runtime_data import RuntimeData
+from ....app.back.server.src.lib.components.http_codes import HCI
 
 app = FastAPI()
 

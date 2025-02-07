@@ -44,11 +44,11 @@ class Endpoints:
             error=error,
             debug=debug
         )
-        self.services: Services = Services(
-            runtime_data=self.runtime_data_initialised,
-            success=self.success,
-            error=self.error,
-            debug=self.debug
+        self.mandatory: Mandatory = Mandatory(
+            runtime_data=runtime_data,
+            success=success,
+            error=error,
+            debug=debug
         )
         self.user_endpoints: UserEndpoints = UserEndpoints(
             runtime_data=runtime_data,
@@ -56,11 +56,11 @@ class Endpoints:
             error=error,
             debug=debug
         )
-        self.mandatory: Mandatory = Mandatory(
-            runtime_data=runtime_data,
-            success=success,
-            error=error,
-            debug=debug
+        self.services: Services = Services(
+            runtime_data=self.runtime_data_initialised,
+            success=self.success,
+            error=self.error,
+            debug=self.debug
         )
         self.applets: Applets = Applets(
             runtime_data=runtime_data,
@@ -99,36 +99,9 @@ class Endpoints:
             "/api/v1/trigger_action/{id}", self.bonus.trigger_endpoint, "GET"
         )
 
-        # Services routes
+        # Mandatory routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/services", self.services.get_services, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/name/{name}", self.services.get_service_name, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/{id}", self.services.get_service_id, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/services/{tags}", self.services.get_services_by_tag, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/recent_services", self.services.get_recent_services, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/{name}", self.services.create_service, "POST"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/{service_id}", self.services.update_service, "PUT"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/{service_id}", self.services.patch_service, "PATCH"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service_id/name/{name}", self.services.get_service_id_by_name, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/service/{service_id}", self.services.delete_service, "DELETE"
+            "/about.json", self.mandatory.get_about, "GET"
         )
 
         # Authentication routes
@@ -190,46 +163,73 @@ class Endpoints:
         self.runtime_data_initialised.paths_initialised.add_path(
             "/api/v1/user_id", self.user_endpoints.get_user_id, "GET"
         )
-        
-        # Applets routes
+
+        # Services routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet", self.applets.create_applet, "POST"
+            "/api/v1/services", self.services.get_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet/{id}", self.applets.put_applet_by_id, "PUT"
+            "/api/v1/service/{service_id}", self.services.get_service_by_id, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet/{id}", self.applets.get_applet_by_id, "GET"
+            "/api/v1/services/{tags}", self.services.get_services_by_tag, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applet/{id}", self.applets.delete_applet_by_id, "DELETE"
+            "/api/v1/recent_services", self.services.get_recent_services, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applets", self.applets.get_all_applets, "GET"
+            "/api/v1/service/{name}", self.services.create_service, "POST"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/user_applets", self.applets.get_user_applets, "GET"
+            "/api/v1/service/{service_id}", self.services.update_service, "PUT"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/applets/{tags}", self.applets.get_applets_by_tags, "GET"
+            "/api/v1/service/{service_id}", self.services.patch_service, "PATCH"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/recent_applets", self.applets.get_recent_applets, "GET"
+            "/api/v1/service_id/name/{name}", self.services.get_service_id_by_name, "GET"
         )
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/connect_applets/{id}", self.applets.post_connect_applet, "POST"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/disconnect_applets/{id}", self.applets.delete_disconnect_applet, "DELETE"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/triggers/{service_name}", self.applets.get_triggers_by_service_name, "GET"
-        )
-        self.runtime_data_initialised.paths_initialised.add_path(
-            "/api/v1/reactions/{service_name}", self.applets.get_reactions_by_service_name, "GET"
+            "/api/v1/service/{service_id}", self.services.delete_service, "DELETE"
         )
 
-        # Mandatory routes
+        # Applets routes
         self.runtime_data_initialised.paths_initialised.add_path(
-            "/about.json", self.mandatory.get_about, "GET"
+            "/api/v1/my_applet/{applet_id}", self.applets.get_applet_by_id, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/my_applets", self.applets.get_my_applets, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/my_applets/{tags}", self.applets.get_my_applets_by_tags, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/my_applet", self.applets.create_applet, "POST"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/my_applet/{applet_id}", self.applets.put_applet_by_id, "PUT"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/triggers", self.applets.get_triggers, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/reactions", self.applets.get_reactions, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/my_applet/{applet_id}", self.applets.patch_applet_by_id, "PATCH"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/triggers_services", self.applets.get_triggers_services, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/reactions_services", self.applets.get_reactions_services, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/triggers/service/{service_id}", self.applets.get_triggers_by_service_id, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/reactions/service/{service_id}", self.applets.get_reactions_by_service_id, "GET"
+        )
+        self.runtime_data_initialised.paths_initialised.add_path(
+            "/api/v1/my_applet/{applet_id}", self.applets.delete_my_applet_by_id, "DELETE"
         )

@@ -131,7 +131,7 @@ SUCCESS = int(_get_toml_variable(
     TOML_CONF, "Server_configuration.status_codes", "success", 0
 ))
 ERROR = int(_get_toml_variable(
-    TOML_CONF, "Server_configuration.status_codes", "error", 84
+    TOML_CONF, "Server_configuration.status_codes", "error", -84
 ))
 
 # |- Server configuration -> Debug
@@ -275,7 +275,6 @@ TAB_SERVICES = "Services"
 TAB_CONNECTIONS = "Connections"
 TAB_VERIFICATION = "Verification"
 TAB_ACTIVE_OAUTHS = "ActiveOauths"
-TAB_USER_SERVICES = "UserServices"
 TAB_ACTION_LOGGING = "ActionLoging"
 TAB_ACTION_TEMPLATE = "ActionTemplate"
 TAB_USER_OAUTH_CONNECTION = "UserOauthConnection"

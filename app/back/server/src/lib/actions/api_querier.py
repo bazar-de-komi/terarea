@@ -2,7 +2,7 @@
     File in charge of querying the data from the API
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Union
 
 import json
 import urllib.parse
@@ -368,23 +368,42 @@ class APIQuerier:
         """
         title = "compile_url_parameters"
         url = ""
-        param_length = len(url_params)
         index = 0
+        value = None
+        key_stripped = None
         self.disp.log_debug(f"url_params: {url_params}", title)
         for key, value in url_params.items():
-            key_stripped = self.strip_descriptor(key)
-            value = self.check_special_vars(value)
-            value = self.check_normal_vars(value)
-            if "input:additional_params" == key:
-                if value == "":
-                    index += 1
-                    continue
+            if key in ("input:additional_params", "ignore:additional_params"):
+                    if value == "":
+                        index += 1
+                        continue
+            if isinstance(value, Dict):
+                for key2, value2 in value.items():
+                    key_stripped = self.strip_descriptor(key2)
+                    value = self.check_special_vars(value2)
+                    value = self.check_normal_vars(value2)
+            elif isinstance(value, List):
+                key_stripped = self.strip_descriptor(key)
+                default = None
+                selected = None
+                for i in value:
+                    if i.startswith("selected:"):
+                        selected = self.strip_descriptor(i)
+                        value = self.check_special_vars(selected)
+                        value = self.check_normal_vars(selected)
+                        break
+                    if i.startswith("default:"):
+                        default = self.strip_descriptor(i)
+                        value = self.check_special_vars(default)
+                        value = self.check_normal_vars(default)
+            else:
+                key_stripped = self.strip_descriptor(key)
+                value = self.check_special_vars(value)
+                value = self.check_normal_vars(value)
+            if index != 0:
                 url += "&"
-                url += self.sanitize_parameter_value(value)
-                self.disp.log_debug(f"url: {url}", title)
+            self.disp.log_debug(f"url: {url}", title)
             url += f"{key_stripped}={self.sanitize_parameter_value(value)}"
-            if index < param_length - 2:
-                url += "&"
             index += 1
         self.disp.log_debug(f"url: {url}", title)
         return url
@@ -441,13 +460,35 @@ class APIQuerier:
             )
         self.disp.log_debug(f"header: {header}", title)
         result = {}
+        key_stripped = None
+        value = None
         for key, value in header.items():
-            if "input:additional_header" == key:
+            if key in ("input:additional_header", "ignore:additional_header"):
                 result.update(self.process_extra_headers(value))
                 continue
-            value = self.check_special_vars(value)
-            value = self.check_normal_vars(value)
-            key_stripped = self.strip_descriptor(key)
+            if isinstance(value, Dict):
+                for key2, value2 in value.items():
+                    key_stripped = self.strip_descriptor(key2)
+                    value = self.check_special_vars(value2)
+                    value = self.check_normal_vars(value2)
+            elif isinstance(value, List):
+                key_stripped = self.strip_descriptor(key)
+                default = None
+                selected = None
+                for i in value:
+                    if i.startswith("selected:"):
+                        selected = self.strip_descriptor(i)
+                        break
+                    if i.startswith("default:"):
+                        default = self.strip_descriptor(i)
+                if default is not None:
+                    value = default
+                if selected is not None:
+                    value = selected
+            else:
+                key_stripped = self.strip_descriptor(key)
+                value = self.check_special_vars(value)
+                value = self.check_normal_vars(value)
             self.disp.log_debug(f"key: {key_stripped}, value: {value}", title)
             result[key_stripped] = value
         self.disp.log_debug(f"header: {result}", title)
@@ -504,13 +545,35 @@ class APIQuerier:
                 raise_func=ValueError
             )
         result = {}
+        key_stripped = None
+        value = None
         for key, value in body.items():
-            if "input:additional_body" == key:
+            if key in ("input:additional_body", "ignore:additional_body"):
                 result.update(self.process_extra_body(value))
                 continue
-            value = self.check_special_vars(value)
-            value = self.check_normal_vars(value)
-            key_stripped = self.strip_descriptor(key)
+            if isinstance(value, Dict):
+                for key2, value2 in value.items():
+                    key_stripped = self.strip_descriptor(key2)
+                    value = self.check_special_vars(value2)
+                    value = self.check_normal_vars(value2)
+            elif isinstance(value, List):
+                key_stripped = self.strip_descriptor(key)
+                default = None
+                selected = None
+                for i in value:
+                    if i.startswith("selected:"):
+                        selected = self.strip_descriptor(i)
+                        break
+                    if i.startswith("default:"):
+                        default = self.strip_descriptor(i)
+                if default is not None:
+                    value = default
+                if selected is not None:
+                    value = selected
+            else:
+                key_stripped = self.strip_descriptor(key)
+                value = self.check_special_vars(value)
+                value = self.check_normal_vars(value)
             self.disp.log_debug(f"key: {key_stripped}, value: {value}", title)
             result[key_stripped] = value
         self.disp.log_debug(f"body: {result}", title)
@@ -642,6 +705,28 @@ class APIQuerier:
                 url += "?" + data
         return url
 
+    def replace_url_body_params(self, url_extra: str, url_body_params: Union[Dict[str, Any], None]) -> str:
+        """
+        Replaces placeholders in the URL with values from the given dictionary.
+
+        Args:
+            url_extra: The URL containing placeholders in the format {param}.
+            url_body_params: A dictionary containing the parameters and their values.
+
+        Returns:
+            The URL with the placeholders replaced by their corresponding values.
+
+        If url_body_params is None, the function returns url_extra unchanged.
+        """
+        if url_body_params is None:
+            return url_extra
+
+        for key, value in url_body_params.items():
+            real_key = self.strip_descriptor(key)
+            placeholder = f"{{{real_key}}}"
+            url_extra = url_extra.replace(placeholder, str(value))
+        return url_extra
+
     def query(self) -> Response:
         """_summary_
             Query the API
@@ -654,28 +739,42 @@ class APIQuerier:
         self.disp.log_debug(f"API info: {self.api_info}", title)
         self.disp.log_debug(f"Service info: {self.service}", title)
         self.disp.log_debug("Processing url", title)
-        url_extra = self.service.get("input:url_extra")
-        url_params = self.service.get("url_params")
+
+        # Get informations to send to the API
+        url_extra = (self.service.get("input:url_extra") or self.service.get("ignore:url_extra"))
+        url_body_params = (self.service.get("url_body_params") or self.service.get("ignore:url_body_params"))
+        url_query_params = (self.service.get("url_params") or self.service.get("ignore:url_params"))
         self.disp.log_debug(
-            f"url_extra: {url_extra}, url_params: {url_params}", title
+            f"url_extra: {url_extra}, url_body_params: {url_body_params}, url_query_params: {url_query_params}", title
         )
+
         self.disp.log_debug("Processing body", title)
-        body = self.process_body(self.service.get("body"))
+        body = (self.service.get("body") or self.service.get("ignore:body"))
+        if body is not None:
+            body = self.process_body(body)
+
         self.disp.log_debug("Processing method", title)
-        method = self.get_method(self.service.get("drop:method"))
+        method = (self.service.get("drop:method") or self.service.get("ignore:method"))
+        if isinstance(method, List):
+            method = self.get_method(method)
+
         self.disp.log_debug("Processing headers", title)
-        headers = self.process_headers(self.service.get("header"))
+        headers = (self.service.get("header") or self.service.get("ignore:header"))
+        if headers is not None:
+            headers = self.process_headers(headers)
         self.disp.log_debug("Compiling url", title)
-        url = self.compile_url(url_extra, url_params)
+        url = self.compile_url(self.replace_url_body_params(url_extra, url_body_params), url_query_params)
         url_base = self.api_info.get("url")
         if url_base[-1] != "/":
             url_base += "/"
         msg = "Processed data: '"
-        msg += f"url_extra: {url_extra}, url_params: {url_params},"
+        msg += f"url_extra: {url_extra}, url_query_params: {url_query_params},"
         msg += f" body: {body}, method: {method}, headers: {headers},"
         msg += f" url: {url}, url_base: {url_base}'"
         self.disp.log_debug(msg, title)
-        expected_response: Dict[str, Any] = self.service.get("response")
+
+        # Get the expected response
+        expected_response: Union[Dict[str, Any], None] = (self.service.get("response") or self.service.get("ignore:response"))
         if expected_response is not None:
             expected_response = self.extract_response_code(expected_response)
         else:
@@ -703,6 +802,8 @@ class APIQuerier:
         self.disp.log_debug(
             f"final_body = {body}, final_headers = {headers}", title
         )
+
+        # Get the response of the called API
         response = None
         if method == "GET":
             response = qei.get_endpoint(url, content=body, header=headers)
