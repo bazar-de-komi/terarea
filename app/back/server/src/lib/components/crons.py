@@ -287,6 +287,9 @@ class Crons:
             return
         current_time: datetime = datetime.now()
         for oath in oath_connections:
+            if oath["token_lifespan"] == 0:
+                self.disp.log_debug(f"Token for {oath['id']} does not need to be renewed.", title)
+                continue
             node_id: str = oath['id']
             token_expiration: datetime = oath["token_expiration"]
             if current_time > token_expiration:
@@ -305,12 +308,15 @@ class Crons:
                         f"Could not find provider name for {node_id}", title
                     )
                     continue
-                new_token: str = self.runtime_data.oauth_authentication_initialised.refresh_token(
+                new_token: Union[str, None] = self.runtime_data.oauth_authentication_initialised.refresh_token(
                     provider_name[0]['name'],
                     renew_link
                 )
+                if new_token is None:
+                    self.disp.log_debug("Refresh token failed to generate a new token.", title)
+                    continue
                 token_expiration: str = self.runtime_data.database_link.datetime_to_string(
-                    datetime=self.runtime_data.boilerplate_non_http_initialised.set_lifespan(
+                    datetime_instance=self.runtime_data.boilerplate_non_http_initialised.set_lifespan(
                         seconds=lifespan
                     ),
                     date_only=False,
@@ -322,10 +328,14 @@ class Crons:
                 if new_token != "":
                     self.runtime_data.database_link.update_data_in_table(
                         table=CONST.TAB_ACTIVE_OAUTHS,
-                        data={
-                            "token": new_token,
-                            "token_expiration": token_expiration
-                        },
+                        data=[
+                            new_token,
+                            token_expiration
+                        ],
+                        column=[
+                            "token",
+                            "token_expiration"
+                        ],
                         where=f"id='{node_id}'"
                     )
                     self.disp.log_debug(
