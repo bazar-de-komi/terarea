@@ -408,7 +408,7 @@ class BoilerplateNonHTTP:
         actions = self.runtime_data_initialised.database_link.get_data_from_table(
             table=CONST.TAB_ACTION_TEMPLATE,
             column="*",
-            where=f"action_id='{service_id}' AND type='trigger'",
+            where=f"service_id='{service_id}' AND type='trigger'",
             beautify=True
         )
         self.disp.log_debug(f"actions = {actions}", title)
@@ -437,8 +437,8 @@ class BoilerplateNonHTTP:
                 self.disp.log_debug("Adding reaction to result", title)
                 result.append(
                     {
-                        "name": node["ignore:name"],
-                        "description": node["ignore:description"],
+                        "name": node["name"],
+                        "description": node["description"],
                     }
                 )
                 self.disp.log_debug("Reaction gathered.", title)
@@ -465,7 +465,7 @@ class BoilerplateNonHTTP:
         reactions = self.runtime_data_initialised.database_link.get_data_from_table(
             table=CONST.TAB_ACTION_TEMPLATE,
             column="*",
-            where=f"action_id='{service_id}' AND type='action'",
+            where=f"service_id='{service_id}' AND type='action'",
             beautify=True
         )
         self.disp.log_debug(f"reactions = {reactions}", title)
@@ -494,8 +494,8 @@ class BoilerplateNonHTTP:
                 self.disp.log_debug("Adding reaction to result", title)
                 result.append(
                     {
-                        "name": node["ignore:name"],
-                        "description": node["ignore:description"],
+                        "name": node["name"],
+                        "description": node["description"],
                     }
                 )
                 self.disp.log_debug("Reaction gathered.", title)
