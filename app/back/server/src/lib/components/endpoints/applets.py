@@ -246,11 +246,11 @@ class Applets:
 
         # Request Body getter
         request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
-        self.disp.log_debug(f"Request body: {request_body}", title)
         if not request_body or not all(key in request_body for key in ("name", "trigger", "consequences", "tags", "description", "colour")):
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         if request_body["name"] == "" or request_body["description"] == "" or request_body["colour"] == "" or len(request_body["trigger"]) == 0 or len(request_body["consequences"]) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
+        self.disp.log_debug(f"Request body: {request_body}", title)
 
         # User id getter
         user_id: Union[str, Response] = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
@@ -271,21 +271,29 @@ class Applets:
             )
         columns.pop(0)
 
+        if (isinstance(request_body["trigger"], str) is False):
+            request_body["trigger"] = json.dumps(request_body["trigger"], ensure_ascii=False)
+        if (isinstance(request_body["consequences"], str) is False):
+            request_body["consequences"] = json.dumps(request_body["consequences"], ensure_ascii=False)
+
+        self.disp.log_debug(f"Before inserting in database: {request_body}", title)
+
         # Insert new applet into database
         status: int = self.runtime_data_initialised.database_link.insert_data_into_table(
             table=CONST.TAB_ACTIONS,
             data=[
                 request_body["name"],
-                json.dumps(request_body["trigger"], ensure_ascii=False),
-                json.dumps(request_body["consequences"], ensure_ascii=False),
+                request_body["trigger"],
+                request_body["consequences"],
                 user_id,
                 request_body["tags"],
-                0,
+                "0",
                 request_body["description"],
                 request_body["colour"]
             ],
             column=columns
         )
+        self.disp.log_debug(f"Insert status: {status}", title)
         if status == self.error:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(
                 title=title,
@@ -372,16 +380,21 @@ class Applets:
             )
         columns.pop(0)
 
+        if (isinstance(request_body["trigger"], str) is False):
+            request_body["trigger"] = json.dumps(request_body["trigger"], ensure_ascii=False)
+        if (isinstance(request_body["consequences"], str) is False):
+            request_body["consequences"] = json.dumps(request_body["consequences"], ensure_ascii=False)
+
         # Update applet into database
         status: int = self.runtime_data_initialised.database_link.update_data_in_table(
             table=CONST.TAB_ACTIONS,
             data=[
                 request_body["name"],
-                json.dumps(request_body["trigger"], ensure_ascii=False),
-                json.dumps(request_body["consequences"], ensure_ascii=False),
+                request_body["trigger"],
+                request_body["consequences"],
                 user_id,
                 request_body["tags"],
-                0,
+                "0",
                 request_body["description"],
                 request_body["colour"]
             ],
@@ -485,7 +498,8 @@ class Applets:
         if "trigger" in request_body:
             if len(request_body["trigger"]) == 0:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
-            request_body["trigger"] = json.dumps(request_body["trigger"], ensure_ascii=False)
+            if (isinstance(request_body["trigger"], str) is False):
+                request_body["trigger"] = json.dumps(request_body["trigger"], ensure_ascii=False)
             if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
                 CONST.TAB_ACTIONS,
                 "id",
@@ -497,7 +511,8 @@ class Applets:
         if "consequences" in request_body:
             if len(request_body["consequences"]) == 0:
                 return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
-            request_body["consequences"] = json.dumps(request_body["consequences"], ensure_ascii=False)
+            if (isinstance(request_body["consequences"], str) is False):
+                request_body["consequences"] = json.dumps(request_body["consequences"], ensure_ascii=False)
             if self.runtime_data_initialised.boilerplate_non_http_initialised.update_single_data(
                 CONST.TAB_ACTIONS,
                 "id",
