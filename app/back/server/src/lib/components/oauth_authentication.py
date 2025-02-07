@@ -412,7 +412,7 @@ class OAuthAuthentication:
         The function that use the given provider name and refresh link to generate a new token for oauth authentication
         """
         title: str = "refresh_token"
-        if provider_name == "google":
+        if any(word in provider_name for word in ("google", "discord", "spotify")):
             retrieved_data = self.runtime_data_initialised.database_link.get_data_from_table(
                 CONST.TAB_USER_OAUTH_CONNECTION,
                 "*",
@@ -428,22 +428,24 @@ class OAuthAuthentication:
                 return None
             token_url: str = retrieved_data[0]["token_grabber_base_url"]
             generated_data: dict = {}
-            generated_data["client_id"] = retrieved_data[0]["token_grabber_base_url"]
+            generated_data["client_id"] = retrieved_data[0]["client_id"]
             generated_data["client_secret"] = retrieved_data[0]["client_secret"]
             generated_data["refresh_token"] = refresh_link
             generated_data["grant_type"] = "refresh_token"
             self.disp.log_debug(f"Generated data: {generated_data}", title)
-            google_response: Response = requests.post(
+            provider_response: Response = requests.post(
                 token_url, data=generated_data, timeout=10
             )
-            self.disp.log_debug(f"Google response: {google_response}", title)
-            if google_response.status_code == 200:
-                token_response = google_response.json()
-                msg = "Google response to json: "
+            self.disp.log_debug(f"Provider response: {provider_response}", title)
+            if provider_response.status_code == 200:
+                token_response = provider_response.json()
+                msg = "Provider response to json: "
                 msg += f"{token_response}"
                 self.disp.log_debug(msg, title)
                 if "access_token" in token_response:
                     return token_response["access_token"]
+            else:
+                return None
         self.disp.log_error("The provider is not recognised", title)
         return None
 

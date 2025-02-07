@@ -3,11 +3,10 @@ name: epitech_mirrorer
 # version: 1.0.0
 
 on:
-  workflow_run:
-    workflows: 
-      - "run_unit_tests_on_branch_main"
-    types:
-      - completed
+  push:
+    branches:
+      - main
+      - dev
 
 env:
     SOURCE: bazar-de-komi/terarea

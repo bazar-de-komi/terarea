@@ -38,7 +38,7 @@ success = 0
 # type: integer
 # options: 0 (unix success code) -> 255 (abnormal termination)
 # The default code is 84 (unix: EILSEQ 84 Invalid or incomplete multibyte or wide character) (epitech: standard error code)
-error = 1
+error = -84
 
 # Debug mode, the mode that shows everything (almost) that is going on in the server
 # Be cautious, you may get a mind overflow with all the information.

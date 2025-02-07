@@ -2,14 +2,14 @@
   <div class="choose-service-page">
     <header class="header">
       <CancelButton buttonText="Back" @click="goBack" class="cancel-button" />
-      <h1 class="page-title">Choose a Action</h1>
+      <h1 class="page-title">Choose a Reaction</h1>
     </header>
 
     <div class="search-section">
       <input
         type="text"
         class="search-bar"
-        placeholder="Search Action"
+        placeholder="Search Reaction"
         v-model="searchQuery"
       />
       <button class="clear-search" @click="clearSearchQuery">✖</button>
@@ -26,7 +26,7 @@
           :description="tile.description"
           :backgroundColor="tile.backgroundColor"
           :name="tile.name"
-          @tile-selected="handleTileSelection"
+          @tile-selected="handleTileSelection(tile)"
         />
       </div>
     </section>
@@ -57,8 +57,8 @@ export default defineComponent({
     };
 
     const tiles = ref([
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message with hashtag on page', description: 'This Trigger fires every time you create a new status message with a specific hashtag on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
+      { title: 'New status message on page', description: 'This Reaction fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
+      { title: 'New status message with hashtag on page', description: 'This Reaction fires every time you create a new status message with a specific hashtag on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
     ]);
 
     const filteredTiles = computed(() => {
@@ -68,7 +68,7 @@ export default defineComponent({
     });
 
     const handleTileSelection = (tileData: any) => {
-      router.push({ name: 'CreateApplet', params: { selectedTile: tileData } });
+      router.push({ name: 'ReactionInformation', query: { tile: JSON.stringify(tileData) } });
     };
 
     return {

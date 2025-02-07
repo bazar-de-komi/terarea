@@ -36,7 +36,7 @@ export default defineComponent({
 <style scoped>
 .tile {
   width: 100%;
-  max-width: 250px; /* Largeur maximale pour des tuiles équilibrées */
+  max-width: 250px;
   padding: 20px;
   border-radius: 10px;
   color: white;
@@ -48,10 +48,9 @@ export default defineComponent({
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   min-height: 180px;
   text-align: left;
-  margin: 10px; /* Espace autour des tuiles */
+  margin: 10px;
 }
 
-/* Effet de survol pour ajouter du dynamisme */
 .tile:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -77,7 +76,6 @@ export default defineComponent({
   color: rgba(255, 255, 255, 0.8);
 }
 
-/* Disposition en grille pour les tuiles */
 .tiles-grid {
   display: flex;
   flex-wrap: wrap;
