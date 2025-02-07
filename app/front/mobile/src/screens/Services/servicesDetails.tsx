@@ -63,7 +63,7 @@ const ServicesDetails = ({ route }) => {
                         onPress={handleCreateButton}
                         type="PRIMARY"
                         bgColor={""}
-                        fgColor={""}
+                        Date time trigger  fgColor={""}
                     />
                 </View>
             </View>

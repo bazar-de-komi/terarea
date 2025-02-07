@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -14,21 +14,25 @@ const Applets = () => {
     const [applets, setApplets] = useState([]);
     const [tags, setTags] = useState("");
 
-    const handleAllButton = () => {
-        navigation.navigate("All");
-    };
+    // const handleAllButton = () => {
+    //     navigation.navigate("All");
+    // };
 
-    const handleAppletsButton = () => {
-        navigation.navigate("Applets");
-    };
+    // const handleAppletsButton = () => {
+    //     navigation.navigate("Applets");
+    // };
 
-    const handleServicesButton = () => {
-        navigation.navigate("Services");
-    };
+    // const handleServicesButton = () => {
+    //     navigation.navigate("Services");
+    // };
 
     const handleAppletButton = async (applet: any) => {
-        navigation.navigate("Applet screen", { applet: applet });
+        navigation.navigate("Applets information", { applet: applet });
     };
+
+    // const handleAppletButton = async (applet: any) => {
+    //     navigation.navigate("Applet screen", { applet: applet });
+    // };
 
     useEffect(() => {
         const getApplets = async () => {
@@ -87,29 +91,10 @@ const Applets = () => {
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Header />
-            <Text style={styles.homeTitle}>Explore</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Applets')} >
+                <Text style={styles.homeTitle}>My Applets</Text>
+            </TouchableOpacity>
             <View style={styles.homeNavigation}>
-                <CustomerButton
-                    text="All"
-                    onPress={handleAllButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                />
-                <CustomerButton
-                    text="Applets"
-                    onPress={handleAppletsButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={"blue"}
-                />
-                <CustomerButton
-                    text="Services"
-                    onPress={handleServicesButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                />
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
