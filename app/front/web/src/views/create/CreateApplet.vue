@@ -9,116 +9,122 @@
       <h1>Create</h1>
 
       <div class="ifThenContainer">
-        <!-- Bloc If -->
+        <div
+          class="ifThenBlock"
+          @click="goToAddTrigger"
+        >
+          <span class="block-text">If</span>
+          <AddButton v-if="!ifCondition" class="add-button-right" />
+          <span v-else class="selected-service">{{ ifCondition.name }}</span>
+        </div>
+
         <div
           class="ifThenBlock"
           :class="{ disabled: !ifCondition }"
-          @click="ifCondition && togglePhase('if')"
-        >
-          <span class="block-text">If</span>
-          <AddButton
-            v-if="!ifCondition && !isSecondPhase.if"
-            @click="showAddServiceModalForIf"
-            :route="'/create/add-trigger'"
-            class="add-button-right"
-          />
-          <span v-else class="selected-service">{{ ifCondition?.name || '' }}</span>
-        </div>
-
-        <!-- Bloc Then -->
-        <div
-          class="ifThenBlock"
-          :class="{ disabled: !thenAction }"
-          @click="thenAction && togglePhase('then')"
+          @click="ifCondition && goToAddAction()"
         >
           <span class="block-text">Then</span>
-          <AddButton
-            v-if="ifCondition && isSecondPhase.if && !thenAction && !isSecondPhase.then"
-            @click="showAddServiceModalForThen"
-            :route="'/create/add-action'"
-            class="add-button-right"
-          />
-          <span v-else class="selected-service">{{ thenAction?.name || '' }}</span>
+          <AddButton v-if="ifCondition && !thenAction" class="add-button-right" />
+          <span v-else-if="thenAction" class="selected-service">{{ thenAction.name }}</span>
         </div>
       </div>
-    </div>
 
-    <AddServiceModal
-      v-if="isModalOpen"
-      @select-service="handleServiceSelection"
-      @close="closeModal"
-    />
+      <CreateButton v-if="ifCondition && thenAction" @create="handleCreateApplet" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineComponent, ref, watchEffect, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
 import AddButton from '@/components/CreateApplet-Comp/AddDelButtonComp.vue';
 import CancelButton from '@/components/CancelButton.vue';
+import CreateButton from '@/components/CreateApplet-Comp/CreateButton.vue';
 
 export default defineComponent({
   components: {
     AppHeader,
     CancelButton,
     AddButton,
+    CreateButton,
   },
   setup() {
     const router = useRouter();
-    const ifCondition = ref(null);
-    const thenAction = ref(null);
-    const isModalOpen = ref(false);
-    const currentBlock = ref('');
-    const isSecondPhase = ref({ if: false, then: false });
+    const route = useRoute();
+    const ifCondition = ref<any>(null);
+    const thenAction = ref<any>(null);
 
     const goBack = () => {
       router.back();
     };
 
-    const showAddServiceModalForIf = () => {
-      currentBlock.value = 'if';
-      isModalOpen.value = true;
+    const goToAddTrigger = () => {
+      router.push('/create/add-trigger');
     };
 
-    const showAddServiceModalForThen = () => {
-      currentBlock.value = 'then';
-      isModalOpen.value = true;
-    };
-
-    const handleServiceSelection = (service: any) => {
-      if (currentBlock.value === 'if') {
-        ifCondition.value = service;
-      } else if (currentBlock.value === 'then') {
-        thenAction.value = service;
+    const goToAddAction = () => {
+      if (ifCondition.value) {
+        router.push('/create/add-action');
       }
-      closeModal();
     };
 
-    const closeModal = () => {
-      isModalOpen.value = false;
+    const handleCreateApplet = () => {
+      alert('Applet créé avec succès !');
+      localStorage.removeItem('selectedTrigger');
+      localStorage.removeItem('selectedAction');
+      router.push('/explore/applets');
     };
 
-    const togglePhase = (block: 'if' | 'then') => {
-      isSecondPhase.value[block] = !isSecondPhase.value[block];
-    };
+    watchEffect(() => {
+      const triggerData = route.query.trigger;
+      if (!ifCondition.value && typeof triggerData === 'string') {
+        try {
+          ifCondition.value = JSON.parse(triggerData);
+          localStorage.setItem('selectedTrigger', triggerData);
+        } catch (error) {
+          console.error('Erreur de parsing du déclencheur:', error);
+        }
+      } else if (!ifCondition.value) {
+        const storedTrigger = localStorage.getItem('selectedTrigger');
+        if (storedTrigger) {
+          ifCondition.value = JSON.parse(storedTrigger);
+        }
+      }
+
+      const actionData = route.query.action;
+      if (!thenAction.value && typeof actionData === 'string') {
+        try {
+          thenAction.value = JSON.parse(actionData);
+          localStorage.setItem('selectedAction', actionData);
+        } catch (error) {
+          console.error('Erreur de parsing de l\'action:', error);
+        }
+      } else if (!thenAction.value) {
+        const storedAction = localStorage.getItem('selectedAction');
+        if (storedAction) {
+          thenAction.value = JSON.parse(storedAction);
+        }
+      }
+    });
+
+    onMounted(() => {
+      ifCondition.value = JSON.parse(localStorage.getItem('selectedTrigger') || 'null');
+      thenAction.value = JSON.parse(localStorage.getItem('selectedAction') || 'null');
+    });
 
     return {
       ifCondition,
       thenAction,
-      isModalOpen,
-      currentBlock,
-      isSecondPhase,
       goBack,
-      showAddServiceModalForIf,
-      showAddServiceModalForThen,
-      handleServiceSelection,
-      closeModal,
-      togglePhase,
+      goToAddTrigger,
+      goToAddAction,
+      handleCreateApplet,
     };
-  }
+  },
 });
 </script>
+
 
 <style scoped>
 .create-applet-page {
@@ -148,7 +154,7 @@ h1 {
 }
 
 .ifThenBlock {
-  background-color: black;
+  background-color: rgb(60, 59, 59);
   color: white;
   padding: 20px;
   border-radius: 40px;
@@ -162,8 +168,9 @@ h1 {
   cursor: pointer;
 }
 
-.ifThenBlock:nth-child(2) {
+.ifThenBlock.disabled {
   background-color: grey;
+  cursor: not-allowed;
 }
 
 .block-text,
@@ -179,5 +186,4 @@ h1 {
   position: absolute;
   right: 15px;
 }
-
 </style>

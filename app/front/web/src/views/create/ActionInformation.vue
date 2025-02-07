@@ -1,86 +1,189 @@
 <template>
-  <router-link :to="`/action/${title.replace(/\s+/g, '-')}`" class="action-tile-link">
-    <div class="action-tile" :style="{ backgroundColor: backgroundColor }">
-      <h3 class="action-title">{{ title }}</h3>
-      <p class="action-description">{{ description }}</p>
+  <div class="reaction-page">
+    <header>
+      <CancelButton buttonText="Back" @click="goBack" class="cancel-button" />
+    </header>
+
+    <div class="service-header" :style="{ backgroundColor: tileData?.backgroundColor }">
+      <h1 class="service-title">{{ tileData?.title }}</h1>
+      <p class="service-source">{{ tileData?.name }}</p>
+      <p class="service-description">{{ tileData?.description }}</p>
     </div>
-  </router-link>
+
+    <div class="service-body">
+      <button class="connect-button" @click="useReaction">Use this Reaction</button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineComponent, ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import CancelButton from '@/components/CancelButton.vue';
 
 export default defineComponent({
-  props: {
-    id: Number,
-    title: String,
-    description: String,
-    backgroundColor: String,
-    icon: String,
+  components: {
+    CancelButton,
   },
-  setup(props) {
+  setup() {
     const router = useRouter();
+    const route = useRoute();
+    const tileData = ref<any>(null);
 
-    const goToDetails = () => {
-      router.push({ name: 'actionDetails', params: { id: props.id } });
+    const goBack = () => {
+      router.back();
     };
 
+    const useReaction = () => {
+      if (tileData.value) {
+        localStorage.setItem('selectedAction', JSON.stringify(tileData.value));
+      }
+      router.push({
+        path: '/create',
+        query: { startSecondPhase: 'true' }
+      });
+    };
+
+    onMounted(() => {
+      if (route.query.tile) {
+        try {
+          tileData.value = JSON.parse(route.query.tile as string);
+        } catch (error) {
+          console.error('Failed to parse tile data:', error);
+        }
+      }
+    });
+
+
     return {
-      goToDetails,
+      goBack,
+      useReaction,
+      tileData,
     };
   },
 });
 </script>
 
 <style scoped>
-.action-tile {
-  padding: 20px;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-  position: relative;
-  width: 250px;
-  height: 300px;
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.action-tile:hover {
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.reaction-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.service-header {
+  padding: 50px 30px;
+  width: 100%;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.cancel-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: black;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background-color: #212121;
   transform: scale(1.05);
 }
 
-.action-title {
-  font-size: 1.5rem;
-  margin: 0;
+.service-title {
+  font-size: 3em;
   font-weight: bold;
-  margin-bottom: 15px;
-  color: #fff;
+  margin-bottom: 10px;
   word-wrap: break-word;
-  white-space: normal;
+  max-width: 60%;
 }
 
-.action-description {
-  margin-top: 10px;
-  color: #333;
+.service-source {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  opacity: 0.8;
 }
 
-.action-tile-link {
-  text-decoration: none;
-  color: inherit;
+.service-description {
+  font-size: 1.5em;
+  margin-top: 20px;
+  padding: 15px;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  width: 80%;
+  max-width: 600px;
+  word-wrap: break-word;
 }
 
-.action-icon {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  width: 24px;
-  height: 24px;
+.service-body {
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  width: 40%;
+  max-width: 90%;
+  margin-top: -50px;
+  background: white;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.connect-button {
+  width: 100%;
+  padding: 15px;
+  font-size: 1.2em;
+  margin: 20px 0;
+  border-radius: 50px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.connect-button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 767px) {
+  .service-title {
+    font-size: 2em;
+    max-width: 80%;
+  }
+
+  .service-description {
+    font-size: 1.2em;
+    width: 90%;
+  }
+
+  .service-body {
+    width: 90%;
+  }
 }
 </style>
