@@ -5,6 +5,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV CI=1
+ENV EMAIL=${EMAIL}
+ENV USERNAME=${USERNAME}
+ENV EXPO_PASSWORD=${EXPO_PASSWORD}
+ENV EXPO_TOKEN=${EXPO_TOKEN}
 
 # Set main working directory
 WORKDIR ${HOME}
