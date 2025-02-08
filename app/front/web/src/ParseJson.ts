@@ -65,14 +65,16 @@ export const parseJsonToForm = (json: Record<string, any>): FormField[] => {
                     type: "input",
                     name: cleanName,
                     path: newPath,
-                    defaultValue: typeof value === "string" ? value : ""
+                    defaultValue: typeof value === "string" ? value : "",
+                    value: ""
                 });
             } else if (key.startsWith("textarea:")) {
                 fields.push({
                     type: "textarea",
                     name: cleanName,
                     path: newPath,
-                    defaultValue: typeof value === "string" ? value : ""
+                    defaultValue: typeof value === "string" ? value : "",
+                    value: ""
                 });
             }
         });

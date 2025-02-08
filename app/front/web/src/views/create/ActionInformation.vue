@@ -14,8 +14,8 @@
       <template v-if="formFields.length">
         <div v-for="(field, index) in formFields" :key="index" class="form-group">
           <label :for="field.name">{{ field.name }}</label>
-          <input v-if="field.type === 'input'" :id="field.name" type="text" v-model="field.defaultValue">
-          <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" v-model="field.defaultValue" />
+          <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.value">
+          <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.value" />
           <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
             <option v-for="option in field.options" :key="option" :value="option">
               {{ option }}
