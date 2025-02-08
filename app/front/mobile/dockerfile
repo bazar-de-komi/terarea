@@ -1,57 +1,51 @@
-FROM ubuntu:latest
+FROM node:20.17.0
 
 # Set the default environment variables
-ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
-ENV docker_volume_path="/shared_folder"
-ARG APP_ID=com.terarea.terarea
-ENV ANDROID_HOME /usr/local/android-sdk-linux
-ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV CI=1
 
 # Set main working directory
-WORKDIR /home/setup
+WORKDIR ${HOME}
 
 # Update the system and Install required packages
 RUN apt update && apt upgrade -y && \
-    apt install -y npm xsel wget unzip zip && \
-    npm cache clean --force && \
-    apt clean
+    apt install -y openjdk-17-jdk wget unzip zip xsel && \
+    npm install -g npm@latest && \
+    npm cache clean --force
 
 # Copy package files and Install dependencies
 COPY package.json package-lock.json ./
-RUN timeout 60s npm install || timeout 60s npm install
 
-# Set WD to Generate the APK with EAS
-WORKDIR ${HOME}
+# Downloading EAS and dependencies
+RUN npm install -g expo-cli eas-cli \
+    npm install @react-native-masked-view/masked-view@0.3.2 \
+    npx expo install expo-status-bar@~2.0.1 \
+    react-native@0.76.6 \
+    react-native-gesture-handler@~2.20.2 \
+    react-native-safe-area-context@4.12.0 \
+    react-native-screens@~4.4.0 \
+    typescript@^5.3.3
 
 # Copy remaining project files
 COPY . .
 
-# Set EXPO token
-ENV EXPO_TOKEN=yYsaPuUykd4Rs9O1aqTJ4HHX0Fv4fMzoZxsxMvR8
+# Initialize a Git repository, config EXPO login for EAS build
+RUN mkdir -p ${HOME}/scripts && \
+    echo '#!/bin/bash\n\
+    if [ -z "$EMAIL" ] || [ -z "$USERNAME" ]; then\n\
+        echo "ERROR: EMAIL and USERNAME environment variables must be set"\n\
+        exit 1\n\
+    fi\n\
+    git config --global user.email "${EMAIL}"\n\
+    git config --global user.name "${USERNAME}"\n\
+    rm -rf .git\n\
+    git init\n\
+    git add .\n\
+    git commit -m "feat: initial commit"\n\
+    eas build -p android --profile preview --clear-cache --non-interactive\n\
+    ' > ${HOME}/scripts/build.sh && \
+    chmod +x ${HOME}/scripts/build.sh
 
-# Initialize a Git repository (to prevent EAS from prompting)
-RUN git init && \
-    git config user.email "noreply.terarea@gmail.com" && \
-    git config user.name "UserName" && \
-    git add . && \
-    git commit -m "Initial commit"
-
-# Downloading and Set up EAS
-RUN npm install -g eas-cli
-
-# Set WD to Save the APK
-WORKDIR ${HOME}/android
-
-# Generate the APK
-RUN eas build --profile production --platform android --non-interactive
-
-# Expose the ports that need to be used
-EXPOSE 1024-9000
-
-# Cleanup
-RUN npm cache clean --force
-
-# Entry point
-CMD ["/bin/bash"]
+ENTRYPOINT ["/mobile/scripts/build.sh"]
