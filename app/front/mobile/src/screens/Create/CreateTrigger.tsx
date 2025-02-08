@@ -1,45 +1,19 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import ParseJson from "../../ParseJson.js";
 
-const jsonData = {
-    "": "Ceci est un texte affiché",
-    "ignore:ceChamp": "Ne pas afficher",
-    "drop:choixPays": [
-        "default:France",
-        "opt:USA",
-        "opt:Canada",
-    ],
-    "input:nom": "Jean Dupont",
-    "textarea:description": "Texte long ici...",
-    "service": {
-        "drop:timeZone": [
-            "opt:Africa/Cairo",
-            "opt:America/New_York",
-            "default:Europe/Paris"
-        ],
-        "verification": {
-            "drop:hour": [
-                "default:0",
-                "opt:1",
-                "opt:2",
-                "opt:3"
-            ],
-            "drop:minute": [
-                "default:0",
-                "opt:10",
-                "opt:20",
-                "opt:30"
-            ]
-        }
-    }
-};
-
 const TriggerPage = () => {
-    const Navigation = useNavigation();
-    const formFields = ParseJson(jsonData);
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { trigger } = route.params || {};
+
+    if (!trigger || !trigger.json) {
+        return <Text style={styles.error}>Aucune donnée disponible pour ce trigger.</Text>;
+    }
+
+    const formFields = ParseJson(trigger.json);
     const [formValues, setFormValues] = useState({});
 
     const handleChange = (name, value) => {
@@ -85,8 +59,7 @@ const TriggerPage = () => {
 
             <TouchableOpacity
                 style={styles.triggerButton}
-                onPress={() => console.log("Form Values:", formValues)}
-            >
+                onPress={() => navigation.navigate("Create and have service")}>
                 <Text style={styles.triggerButtonText}>Create trigger</Text>
             </TouchableOpacity>
         </View>
