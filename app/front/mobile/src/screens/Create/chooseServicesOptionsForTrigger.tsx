@@ -24,7 +24,7 @@ const ChooseServices = () => {
         const fetchServices = async () => {
             try {
                 const token = await getValue("token");
-                const response = await queries.get("/api/v1/services", {}, token);
+                const response = await queries.get("/api/v1/triggers_services", {}, token);
                 
                 if (Array.isArray(response.msg)) {
                     setServices(response.msg);
