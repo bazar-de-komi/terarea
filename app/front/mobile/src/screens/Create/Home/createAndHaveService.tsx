@@ -9,14 +9,14 @@ const CreateHaveService = () => {
     const navigation = useNavigation();
 
     const route = useRoute();
-    const { service, trigger } = route.params || {};
+    const { trigger } = route.params || {};
 
     const AppletsHome = () => {
         navigation.navigate("Applets");
     };
 
     const ChooseServices = () => {
-        navigation.navigate("Choose options service for action");
+        navigation.navigate("Choose options service for action", { trigger });
     };
 
     return (
