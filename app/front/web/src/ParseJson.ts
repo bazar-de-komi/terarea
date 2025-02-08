@@ -30,11 +30,7 @@ export const parseJsonToForm = (json: Record<string, any>): FormField[] => {
 
             const newName = newNameFormat(cleanName, newPath);
 
-            if (typeof value === "string") {
-                return;
-                // fields.push({ type: "text", name: cleanName, value, path: newPath });
-
-            } else if (typeof value === "object" && !Array.isArray(value)) {
+            if (typeof value === "object" && !Array.isArray(value)) {
                 traverse(value, newPath);
 
             } else if (key.startsWith("drop:") && Array.isArray(value)) {
