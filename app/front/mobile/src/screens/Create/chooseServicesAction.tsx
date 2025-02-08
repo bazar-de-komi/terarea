@@ -21,7 +21,7 @@ const ChooseServicesAction = () => {
     const [actions, setActions] = useState([]);
     const [search, setSearch] = useState("");
 
-    const { service } = route.params || {};
+    const { service, trigger } = route.params || {};
 
     useEffect(() => {
         const fetchActions = async () => {
@@ -50,8 +50,8 @@ const ChooseServicesAction = () => {
         fetchActions();
     }, [service]);
 
-    const handleActionSelection = (service, action) => {
-        Navigation.navigate("Create action", { service, action });
+    const handleActionSelection = (service, action, trigger) => {
+        Navigation.navigate("Create action", { service, action, trigger });
     };
 
     const filteredActions = actions.filter(action =>
@@ -83,7 +83,7 @@ const ChooseServicesAction = () => {
                         title={action.json.name || "Unknown Trigger"}
                         description={action.json.description || "No description available"}
                         bgColor={"#f39c12"}
-                        onPress={() => handleActionSelection(service, action)}
+                        onPress={() => handleActionSelection(service, action, trigger)}
                     />
                 ))
             ) : (

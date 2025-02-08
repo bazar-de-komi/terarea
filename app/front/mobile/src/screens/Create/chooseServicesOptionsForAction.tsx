@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import CustomerInput from "../../components/CustomersInput";
 import BackButton from "../../components/BackButton/backButton";
@@ -12,6 +12,9 @@ import { getValue } from "../../components/StoreData/storeData";
 
 const ChooseServicesAction = () => {
     const Navigation = useNavigation();
+    const route = useRoute();
+
+    const { trigger } = route.params || {};
 
     const AppletsHome = () => {
         Navigation.navigate("Applets");
@@ -41,7 +44,7 @@ const ChooseServicesAction = () => {
     }, []);
     
     const handleServiceClick = (service: any) => {
-        Navigation.navigate("Choose services action", { service });
+        Navigation.navigate("Choose services action", { service, trigger });
     };
 
     return (
