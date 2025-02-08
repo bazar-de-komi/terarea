@@ -1,26 +1,62 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import CustomerInput from "../../components/CustomersInput";
 import BackButton from "../../components/BackButton/backButton";
 
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 
-const ChooseServices = () => {
+import { queries } from "../../../back-endConnection/querier";
+import { getValue } from "../../components/StoreData/storeData";
+
+const ChooseServicesAction = () => {
     const Navigation = useNavigation();
+    const route = useRoute();
 
     const AppletsHome = () => {
         Navigation.navigate("Applets");
     }
 
-    const createTwo = () => {
-        Navigation.navigate("Create two");
-    }
+    const [actions, setActions] = useState([]);
+    const [search, setSearch] = useState("");
 
-    const chooseOption = () => {
-        Navigation.navigate("Create action");
-    }
+    const { service } = route.params || {};
+
+    useEffect(() => {
+        const fetchActions = async () => {
+            if (!service || !service.id) {
+                console.error("Aucun service sélectionné !");
+                return;
+            }
+
+            try {
+                const token = await getValue("token");
+                const response = await queries.get(`/api/v1/reactions/service/${service.id}`, {}, token);
+                if (response.resp === "success") {
+                    console.log("Response: ", response.msg);
+                    setActions(response.msg);
+                    console.log(response.msg[0].json);
+                } else {
+                    console.error("La réponse de l'API ne contient pas la bonne structure.");
+                    setActions([]);
+                }
+            } catch (error) {
+                console.error("Error fetching actions:", error);
+                setActions([]);
+            }
+        };
+
+        fetchActions();
+    }, [service]);
+
+    const handleActionSelection = (service, action) => {
+        Navigation.navigate("Create action", { service, action });
+    };
+
+    const filteredActions = actions.filter(action =>
+        action.json.name && action.json.name.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
@@ -28,22 +64,31 @@ const ChooseServices = () => {
             text={"back"}
             onPress={AppletsHome}
             />
-            <Text style={styles.homeTitle}>Choose an action</Text>
+            <Text style={styles.homeTitle}>
+                {service ? `Choose an action for ${service.name}` : "Choose an action"}
+            </Text>
 
             <View style={styles.searchContainer}>
                 <CustomerInput
                     placeholder="Search Services"
                     style={styles.searchInput}
+                    onChangeText={setSearch}
                 />
             </View>
 
-            <AppletAndServiceBox
-                title={'title'}
-                description={"description"}
-                bgColor={"red"}
-                onPress={chooseOption}
-            />
-
+        {filteredActions.length > 0 ? (
+                filteredActions.map(action => (
+                    <AppletAndServiceBox
+                        key={action.id}
+                        title={action.json.name || "Unknown Trigger"}
+                        description={action.json.description || "No description available"}
+                        bgColor={"#f39c12"}
+                        onPress={() => handleActionSelection(service, action)}
+                    />
+                ))
+            ) : (
+                <Text style={styles.noResults}>No actions found</Text>
+            )}
         </ScrollView>
     )
 }
@@ -90,4 +135,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default ChooseServices
+export default ChooseServicesAction
