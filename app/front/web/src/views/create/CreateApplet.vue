@@ -9,23 +9,16 @@
       <h1>Create</h1>
 
       <div class="ifThenContainer">
-        <div
-          class="ifThenBlock"
-          @click="goToAddTrigger"
-        >
+        <div class="ifThenBlock" @click="goToAddTrigger">
           <span class="block-text">If</span>
           <AddButton v-if="!ifCondition" class="add-button-right" />
-          <span v-else class="selected-service">{{ ifCondition.name }}</span>
+          <span v-else class="selected-service">{{ ifCondition.json.name }}</span>
         </div>
 
-        <div
-          class="ifThenBlock"
-          :class="{ disabled: !ifCondition }"
-          @click="ifCondition && goToAddAction()"
-        >
+        <div class="ifThenBlock" :class="{ disabled: !ifCondition }" @click="ifCondition && goToAddAction()">
           <span class="block-text">Then</span>
           <AddButton v-if="ifCondition && !thenAction" class="add-button-right" />
-          <span v-else-if="thenAction" class="selected-service">{{ thenAction.name }}</span>
+          <span v-else-if="thenAction" class="selected-service">{{ thenAction.json.name }}</span>
         </div>
       </div>
 
@@ -71,8 +64,8 @@ export default defineComponent({
 
     const handleCreateApplet = () => {
       alert('Applet créé avec succès !');
-      localStorage.removeItem('selectedTrigger');
-      localStorage.removeItem('selectedAction');
+      sessionStorage.removeItem('selectedTrigger');
+      sessionStorage.removeItem('selectedAction');
       router.push('/explore/applets');
     };
 
@@ -81,12 +74,12 @@ export default defineComponent({
       if (!ifCondition.value && typeof triggerData === 'string') {
         try {
           ifCondition.value = JSON.parse(triggerData);
-          localStorage.setItem('selectedTrigger', triggerData);
+          sessionStorage.setItem('selectedTrigger', triggerData);
         } catch (error) {
           console.error('Erreur de parsing du déclencheur:', error);
         }
       } else if (!ifCondition.value) {
-        const storedTrigger = localStorage.getItem('selectedTrigger');
+        const storedTrigger = sessionStorage.getItem('selectedTrigger');
         if (storedTrigger) {
           ifCondition.value = JSON.parse(storedTrigger);
         }
@@ -96,12 +89,12 @@ export default defineComponent({
       if (!thenAction.value && typeof actionData === 'string') {
         try {
           thenAction.value = JSON.parse(actionData);
-          localStorage.setItem('selectedAction', actionData);
+          sessionStorage.setItem('selectedAction', actionData);
         } catch (error) {
           console.error('Erreur de parsing de l\'action:', error);
         }
       } else if (!thenAction.value) {
-        const storedAction = localStorage.getItem('selectedAction');
+        const storedAction = sessionStorage.getItem('selectedAction');
         if (storedAction) {
           thenAction.value = JSON.parse(storedAction);
         }
@@ -109,8 +102,8 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      ifCondition.value = JSON.parse(localStorage.getItem('selectedTrigger') || 'null');
-      thenAction.value = JSON.parse(localStorage.getItem('selectedAction') || 'null');
+      ifCondition.value = JSON.parse(sessionStorage.getItem('selectedTrigger') || 'null');
+      thenAction.value = JSON.parse(sessionStorage.getItem('selectedAction') || 'null');
     });
 
     return {

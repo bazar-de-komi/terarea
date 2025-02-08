@@ -34,7 +34,7 @@
 import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
-import parseJsonToForm from '@/ParseJson';
+import { parseJsonToForm, injectFormValuesIntoJson, FormField } from '@/ParseJson';
 
 export default defineComponent({
   components: {
@@ -44,7 +44,7 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const tileData = ref<any>(null);
-    const formFields = ref<any[]>([]);
+    const formFields = ref<FormField[]>([]);
 
     const goBack = () => {
       router.back();
@@ -52,7 +52,9 @@ export default defineComponent({
 
     const useTrigger = () => {
       if (tileData.value) {
-        localStorage.setItem('selectedTrigger', JSON.stringify(tileData.value));
+        const newJson = injectFormValuesIntoJson(tileData.value.json, formFields.value);
+        tileData.value = { ...tileData.value, json: newJson };
+        sessionStorage.setItem('selectedTrigger', JSON.stringify(tileData.value));
       }
       router.push({
         path: '/create',
@@ -60,21 +62,11 @@ export default defineComponent({
       });
     };
 
-    const getDropdownModel = (field: any) => {
-      return computed({
-        get: () => field.value ?? field.defaultValue,
-        set: (newValue) => field.value = newValue
-      });
-    };
-
     onMounted(() => {
       if (route.query.tile) {
-        console.log(route.query.tile);
         try {
           tileData.value = JSON.parse(route.query.tile as string);
-          console.log("TileData:", tileData.value);
           formFields.value = parseJsonToForm(tileData.value.json);
-          console.log("FormFields:", formFields);
         } catch (error) {
           console.error('Failed to parse tile data:', error);
         }
@@ -86,7 +78,6 @@ export default defineComponent({
       useTrigger,
       tileData,
       formFields,
-      getDropdownModel,
     };
   },
 });

@@ -31,7 +31,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
-import parseJsonToForm from '@/ParseJson';
+import { parseJsonToForm } from '@/ParseJson';
 
 export default defineComponent({
   components: {
@@ -86,7 +86,8 @@ export default defineComponent({
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -178,7 +179,9 @@ label {
   margin-bottom: 5px;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
