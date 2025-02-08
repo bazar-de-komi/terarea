@@ -1,4 +1,3 @@
-
 const url = "https://ifttt-back.pingpal.news";
 const port = -1;
 

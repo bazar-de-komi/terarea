@@ -22,7 +22,22 @@
         </div>
       </div>
 
-      <CreateButton v-if="ifCondition && thenAction" @create="handleCreateApplet" />
+      <div v-if="ifCondition && thenAction">
+        <label>Your applet name</label>
+        <input v-model="applet_name" placeholder="Enter applet name" />
+
+        <label>Your applet description</label>
+        <input v-model="applet_description" placeholder="Enter applet description" />
+
+        <label>Your applet tags (Optional)</label>
+        <input v-model="applet_tags" placeholder="Enter tags" />
+
+        <label>Your applet colour</label>
+        <input type="color" v-model="applet_colour" />
+      </div>
+
+      <CreateButton v-if="ifCondition && thenAction && applet_name && applet_description && applet_colour"
+        @create="handleCreateApplet" />
     </div>
   </div>
 </template>
@@ -34,6 +49,7 @@ import AppHeader from '@/components/AppHeader.vue';
 import AddButton from '@/components/CreateApplet-Comp/AddDelButtonComp.vue';
 import CancelButton from '@/components/CancelButton.vue';
 import CreateButton from '@/components/CreateApplet-Comp/CreateButton.vue';
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   components: {
@@ -48,8 +64,15 @@ export default defineComponent({
     const ifCondition = ref<any>(null);
     const thenAction = ref<any>(null);
 
+    const applet_name = ref('');
+    const applet_description = ref('');
+    const applet_tags = ref('');
+    const applet_colour = ref('#ffffff');
+
     const goBack = () => {
-      router.back();
+      sessionStorage.removeItem('selectedTrigger');
+      sessionStorage.removeItem('selectedAction');
+      router.push('/explore/applets');
     };
 
     const goToAddTrigger = () => {
@@ -62,11 +85,33 @@ export default defineComponent({
       }
     };
 
-    const handleCreateApplet = () => {
-      alert('Applet créé avec succès !');
-      sessionStorage.removeItem('selectedTrigger');
-      sessionStorage.removeItem('selectedAction');
-      router.push('/explore/applets');
+    const handleCreateApplet = async () => {
+      const storedTrigger = JSON.parse(sessionStorage.getItem('selectedTrigger') || "");
+      const storedAction = JSON.parse(sessionStorage.getItem('selectedAction') || "");
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        const response = await queries.post(
+          "/api/v1/my_applet",
+          {
+            name: applet_name.value,
+            trigger: storedTrigger?.json,
+            consequences: storedAction?.json,
+            tags: applet_tags.value,
+            description: applet_description.value,
+            colour: applet_colour.value
+          },
+          token
+        );
+        if (response.resp === "success") {
+          sessionStorage.removeItem('selectedTrigger');
+          sessionStorage.removeItem('selectedAction');
+          router.push('/explore/applets');
+          alert('Applet créé avec succès !');
+        }
+      } catch (error) {
+        alert('Failed to create the new applet.');
+        return;
+      }
     };
 
     watchEffect(() => {
@@ -113,6 +158,10 @@ export default defineComponent({
       goToAddTrigger,
       goToAddAction,
       handleCreateApplet,
+      applet_name,
+      applet_description,
+      applet_tags,
+      applet_colour
     };
   },
 });
@@ -178,5 +227,41 @@ h1 {
 .add-button-right {
   position: absolute;
   right: 15px;
+}
+
+/* Inputs */
+label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+  display: block;
+  margin: 10px 0 5px;
+  text-align: left;
+  width: 100%;
+}
+
+input {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+/* Input couleur */
+input[type="color"] {
+  width: 60px;
+  height: 40px;
+  padding: 5px;
+  border: none;
+  cursor: pointer;
 }
 </style>
