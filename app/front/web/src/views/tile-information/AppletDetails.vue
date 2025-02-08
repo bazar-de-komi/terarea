@@ -5,22 +5,25 @@
       <CancelButton buttonText="Back" @click="goBack" />
     </header>
 
-    <!-- Première boîte (applet-header) -->
-    <div class="applet-header" :style="{ backgroundColor: applet?.color }">
-      <CompTitle :title="applet?.title || ''" />
-    </div>
+    <div v-if="!applet">Chargement...</div>
 
-    <!-- Boîte contenant CompConnectButton et CompDescription -->
-    <div class="applet-body" :style="{ backgroundColor: applet?.color }">
-      <CompConnectButton :applet-id="applet?.id || 0" buttonColor="applet?.color || 'blue'" />
-      <CompDescription :description="applet?.description || ''" />
+    <!-- Afficher le contenu seulement si applet existe -->
+    <div v-else>
+      <div class="applet-header" :style="{ backgroundColor: applet.colour }">
+        <CompTitle :title="applet.name || ''" />
+        <CompDescription :description="applet.description || ''" />
+      </div>
+
+      <div class="applet-body" :style="{ backgroundColor: applet.colour }">
+        <CompConnectButton :applet-id="applet.id || 0" :buttonColor="applet.color || 'blue'" />
+        <CompDescription :description="applet.description || ''" />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
-import { useStore } from 'vuex';
+import { defineComponent, computed, ref, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
@@ -28,15 +31,7 @@ import CancelButton from '@/components/CancelButton.vue';
 import CompTitle from '@/components/Details-Applet/CompTitle.vue';
 import CompConnectButton from '@/components/Details-Applet/CompConnectButton.vue';
 import CompDescription from '@/components/Details-Applet/CompDescription.vue';
-
-interface Applet {
-  id: number;
-  title: string;
-  description: string;
-  source: string;
-  userCount: number;
-  color: string;
-}
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   components: {
@@ -47,19 +42,32 @@ export default defineComponent({
     CompDescription,
   },
   setup() {
-    const route = useRoute();
     const router = useRouter();
-    const store = useStore();
+    const route = useRoute();
+    const applet = ref<any>(null);
 
-    const applet = computed<Applet | undefined>(() => {
+    const appletId = computed(() => {
       const title = Array.isArray(route.params.title) ? route.params.title[0] : route.params.title;
-      const formattedTitle = title.replace(/-/g, ' ');
-      return store.state.applets.applets.find((applet: Applet) => applet.title.toLowerCase() === formattedTitle.toLowerCase());
+      return title ? title.split('-')[0] : null;
     });
 
     const goBack = () => {
       router.back();
     };
+
+    onBeforeMount(async () => {
+      if (appletId.value) {
+        try {
+          const token = localStorage.getItem("authToken") || "";
+          const response = await queries.get(`/api/v1/my_applet/${appletId.value}`, {}, token);
+          if (response.resp === "success") {
+            applet.value = response.msg;
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    })
 
     return {
       applet,

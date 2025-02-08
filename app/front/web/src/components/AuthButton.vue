@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, shallowRef } from 'vue';
+import { defineComponent } from 'vue';
 import { queries } from '@/../lib/querier';
 
 export default defineComponent({

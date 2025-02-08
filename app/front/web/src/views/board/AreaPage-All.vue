@@ -76,7 +76,6 @@ export default defineComponent({
         const response = await queries.get("/api/v1/my_applets", {}, token);
         if (response.resp === "success") {
           applets.value = response.msg;
-          console.log("Applets:", applets.value[0].name);
         }
       } catch (error) {
         console.error("Error when retrieving triggers:", error);

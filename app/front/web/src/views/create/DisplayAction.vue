@@ -63,7 +63,7 @@ export default defineComponent({
         const reactions_response = await queries.get("/api/v1/reactions", {}, token);
         if (reactions_response.resp === "success") {
           tiles.value = reactions_response.msg;
-          const tilesWithServiceName = await Promise.all(
+          await Promise.all(
             tiles.value.map(async (tile: any, index: number) => {
               try {
                 const getServiceNameResponse = await queries.get(`/api/v1/service/${tile.service_id}`, {}, token);

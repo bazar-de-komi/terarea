@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
 import { parseJsonToForm, injectFormValuesIntoJson, FormField } from '@/ParseJson';
