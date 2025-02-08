@@ -4,31 +4,34 @@
       <CancelButton buttonText="Back" @click="goBack" class="cancel-button" />
     </header>
 
-    <div class="service-header" :style="{ backgroundColor: tileData?.backgroundColor }">
-      <h1 class="service-title">{{ tileData?.title }}</h1>
-      <p class="service-source">{{ tileData?.name }}</p>
-      <p class="service-description">{{ tileData?.description }}</p>
+    <div class="service-header" :style="{ backgroundColor: '#ff61fc' }">
+      <h1 class="service-title">{{ tileData?.json.name }}</h1>
+      <p class="service-source">{{ tileData?.serviceInfo.name }}</p>
+      <p class="service-description">{{ tileData?.json.description }}</p>
     </div>
 
     <div class="service-body">
+
       <template v-if="formFields.length">
         <div v-for="(field, index) in formFields" :key="index" class="form-group">
           <label :for="field.name">{{ field.name }}</label>
-          <input v-if="field.type === 'text'" :id="field.name" type="text" v-model="field.value" />
+          <input v-if="field.type === 'input'" :id="field.name" type="text" v-model="field.value">
+          <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" v-model="field.value" />
           <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
-            <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
+            <option v-for="option in field.options" :key="option" :value="option">
+              {{ option }}
+            </option>
           </select>
-          <input v-else-if="field.type === 'input'" :id="field.name" type="text" v-model="field.defaultValue" />
-          <textarea v-else-if="field.type === 'textarea'" :id="field.name" v-model="field.defaultValue"></textarea>
         </div>
       </template>
+
       <button class="connect-button" @click="useTrigger">Use this Trigger</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
 import parseJsonToForm from '@/ParseJson';
@@ -57,11 +60,21 @@ export default defineComponent({
       });
     };
 
+    const getDropdownModel = (field: any) => {
+      return computed({
+        get: () => field.value ?? field.defaultValue,
+        set: (newValue) => field.value = newValue
+      });
+    };
+
     onMounted(() => {
       if (route.query.tile) {
+        console.log(route.query.tile);
         try {
           tileData.value = JSON.parse(route.query.tile as string);
-          formFields.value = parseJsonToForm(tileData.value.service);
+          console.log("TileData:", tileData.value);
+          formFields.value = parseJsonToForm(tileData.value.json);
+          console.log("FormFields:", formFields);
         } catch (error) {
           console.error('Failed to parse tile data:', error);
         }
@@ -73,6 +86,7 @@ export default defineComponent({
       useTrigger,
       tileData,
       formFields,
+      getDropdownModel,
     };
   },
 });
@@ -85,7 +99,8 @@ export default defineComponent({
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -177,7 +192,9 @@ label {
   margin-bottom: 5px;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
