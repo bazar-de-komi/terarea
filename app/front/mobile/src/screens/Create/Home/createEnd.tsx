@@ -1,12 +1,16 @@
 import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import CustomerButton from "../../../components/CustomerButton";
 import BackButton from "../../../components/BackButton/backButton";
 
 const Create = () => {
     const navigation = useNavigation();
+    const route = useRoute();
+
+    const { action, trigger } = route.params || {};
+
 
     const AppletsHome = () => {
         navigation.navigate("Applets");
@@ -14,6 +18,7 @@ const Create = () => {
 
     const ChooseServices = () => {
         navigation.navigate("Choose services");
+        console.log("Trigger dans CreateEnd.js :", trigger);
     };
 
     return (
@@ -38,7 +43,9 @@ const Create = () => {
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>Name of the service selected</Text>
+                    <Text style={styles.addButtonText}>
+                        {trigger?.json?.name || "Name of the trigger selected"}
+                    </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.ThenThatContainer}>
@@ -53,12 +60,14 @@ const Create = () => {
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>Name of the servie selected</Text>
+                    <Text style={styles.addButtonText}>
+                        {action?.json?.name || "Name of the action selected"}
+                    </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.ContinueContainer}>
                     <CustomerButton
-                        text="Continue"
+                        text="Create"
                         type="PRIMARY"
                         bgColor={"transparent"}
                         fgColor={"white"}
