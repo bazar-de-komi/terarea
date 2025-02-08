@@ -103,10 +103,10 @@ export default defineComponent({
           token
         );
         if (response.resp === "success") {
+          alert('Applet créé avec succès !');
           sessionStorage.removeItem('selectedTrigger');
           sessionStorage.removeItem('selectedAction');
           router.push('/explore/applets');
-          alert('Applet créé avec succès !');
         }
       } catch (error) {
         alert('Failed to create the new applet.');
