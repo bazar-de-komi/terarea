@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
-import ParseJson from "../../ParseJson.js";
+import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson.js";
 
 const TriggerPage = () => {
     const navigation = useNavigation();
@@ -13,11 +13,25 @@ const TriggerPage = () => {
         return <Text style={styles.error}>Aucune donnée disponible pour ce trigger.</Text>;
     }
 
-    const formFields = ParseJson(trigger.json);
+    const formFields = parseJsonToForm(trigger.json);
     const [formValues, setFormValues] = useState({});
 
     const handleChange = (name, value) => {
         setFormValues(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = () => {
+        const updatedTrigger = {
+            ...trigger,
+            json: injectFormValuesIntoJson(trigger.json, formFields.map(field => ({
+                ...field,
+                value: formValues[field.name] || field.defaultValue || ""
+            })))
+        };
+
+        console.log("Updated Trigger:", updatedTrigger);
+
+        navigation.navigate("Create and have service", { trigger: updatedTrigger });
     };
 
     return (
@@ -57,9 +71,7 @@ const TriggerPage = () => {
                 </View>
             ))}
 
-            <TouchableOpacity
-                style={styles.triggerButton}
-                onPress={() => navigation.navigate("Create and have service")}>
+            <TouchableOpacity style={styles.triggerButton} onPress={handleSubmit} > 
                 <Text style={styles.triggerButtonText}>Create trigger</Text>
             </TouchableOpacity>
         </View>
