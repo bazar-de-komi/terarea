@@ -8,11 +8,10 @@
     <div v-if="!applet">Loading...</div>
 
     <!-- Afficher le contenu seulement si applet existe -->
-    <div v-else>
+    <div v-else style="margin-bottom: 30px;">
       <div class="applet-header" :style="{ backgroundColor: applet.colour }">
         <CompTitle :title="applet.name || ''" />
         <CompDescription :description="applet.description || ''" />
-        <button class="delete-button" @click="deleteApplet">🗑️ Delete Applet</button>
       </div>
 
       <div class="applet-body" :style="{ backgroundColor: applet.colour }">
@@ -59,6 +58,10 @@
             </select>
           </div>
         </template>
+        <div class="applet-buttons-container">
+          <button class="edit-button" @click="deleteApplet">✏️ Edit Applet</button>
+          <button class="delete-button" @click="deleteApplet">🗑️ Delete Applet</button>
+        </div>
       </div>
     </div>
   </div>
@@ -269,24 +272,6 @@ h2 {
   word-wrap: break-word;
 }
 
-.delete-button {
-  background-color: red;
-  color: white;
-  border: none;
-  font-weight: bold;
-  padding: 10px 20px;
-  font-size: 1em;
-  cursor: pointer;
-  border-radius: 5px;
-  margin-top: 20px;
-  transition: 0.3s;
-}
-
-.delete-button:hover {
-  background-color: darkred;
-  transform: scale(1.05);
-}
-
 .basic-form-group {
   display: flex;
   flex-direction: column;
@@ -356,5 +341,44 @@ h2 {
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-</style>
 
+/* .applet-buttons-container {
+  gap: 30px;
+} */
+
+.edit-button {
+  background-color: #4ea8de; /* Bleu clair */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-right: 30px;
+  transition: 0.3s;
+}
+
+.edit-button:hover {
+  background-color: #0077b6; /* Bleu plus foncé pour le hover */
+  transform: scale(1.05);
+}
+
+.delete-button {
+  background-color: rgba(255, 38, 0, 0.767);
+  color: white;
+  border: none;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 20px;
+  transition: 0.3s;
+}
+
+.delete-button:hover {
+  background-color: darkred;
+  transform: scale(1.05);
+}
+</style>
