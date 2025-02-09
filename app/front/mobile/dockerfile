@@ -1,14 +1,19 @@
 FROM node:20.17.0
 
+ARG EMAIL
+ARG USERNAME
+ARG EXPO_PASSWORD
+ARG EXPO_TOKEN
+
 # Set the default environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV CI=1
-ENV EMAIL=${EMAIL}
-ENV USERNAME=${USERNAME}
-ENV EXPO_PASSWORD=${EXPO_PASSWORD}
-ENV EXPO_TOKEN=${EXPO_TOKEN}
+ENV EMAIL=$EMAIL
+ENV USERNAME=$USERNAME
+ENV EXPO_PASSWORD=$EXPO_PASSWORD
+ENV EXPO_TOKEN=$EXPO_TOKEN
 
 # Set main working directory
 WORKDIR ${HOME}
@@ -38,18 +43,38 @@ COPY . .
 # Initialize a Git repository, config EXPO login for EAS build
 RUN mkdir -p ${HOME}/scripts && \
     echo '#!/bin/bash\n\
+    set -e\n\
+    \n\
     if [ -z "$EMAIL" ] || [ -z "$USERNAME" ]; then\n\
         echo "ERROR: EMAIL and USERNAME environment variables must be set"\n\
         exit 1\n\
     fi\n\
+    \n\
+    # Ensure we are in the correct directory\n\
+    cd ${HOME}\n\
+    \n\
+    # Clean up any existing git repository\n\
+    rm -rf .git\n\
+    \n\
+    # Initialize new git repository\n\
+    git init\n\
     git config --global user.email "${EMAIL}"\n\
     git config --global user.name "${USERNAME}"\n\
-    rm -rf .git\n\
-    git init\n\
+    git config --global init.defaultBranch main\n\
+    \n\
+    # Configure git to handle line endings correctly\n\
+    git config --global core.autocrlf input\n\
+    \n\
+    # Add and commit files\n\
     git add .\n\
     git commit -m "feat: initial commit"\n\
-    eas build -p android --profile preview --clear-cache --non-interactive\n\
+    \n\
+    # Run EAS build with error handling\n\
+    if ! eas build -p android --profile preview --clear-cache --non-interactive; then\n\
+        echo "EAS build failed. Check the error messages above."\n\
+        exit 1\n\
+    fi\n\
     ' > ${HOME}/scripts/build.sh && \
-    chmod +x ${HOME}/scripts/build.sh
+        chmod +x ${HOME}/scripts/build.sh
 
-ENTRYPOINT ["/mobile/scripts/build.sh"]
+    ENTRYPOINT ["/mobile/scripts/build.sh"]
