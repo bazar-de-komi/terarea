@@ -48,9 +48,21 @@ export default defineComponent({
     };
 
     const filteredTiles = computed(() =>
-      tiles.value.filter((tile) =>
-        tile.json.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
+      !searchQuery.value
+        ? tiles.value
+        : tiles.value.filter((tile) => {
+          const searchWords = searchQuery.value.toLowerCase().split(' ').filter(word => word.length > 0);
+          const matchesName = searchWords.some(word =>
+            tile.json.name.toLowerCase().includes(word)
+          );
+          const matchesDescription = searchWords.some(word =>
+              tile.json.description.toLowerCase().split(' ').some((description_word: string) => description_word.includes(word))
+          );
+          const matchesService = searchWords.some(word =>
+            tile.serviceInfo.name.toLowerCase().includes(word)
+          );
+          return matchesName || matchesService || matchesDescription;
+        })
     );
 
     const handleTileSelection = (tileData: any) => {
