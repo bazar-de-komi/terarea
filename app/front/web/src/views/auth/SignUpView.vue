@@ -73,7 +73,6 @@ export default defineComponent({
         alert('Passwords do not match');
         return;
       }
-      console.log('Sign up with', this.email, this.password);
 
       try {
         const response = await queries.post('/api/v1/register', {

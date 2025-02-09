@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "terarea",
+    "slug": "terarea",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -12,9 +12,14 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.terarea.terarea"
     },
     "android": {
+      "package": "com.terarea.terarea",
+      "permissions": [
+        "INTERNET"
+      ],
       "newArchEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
@@ -23,6 +28,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "description": "IFTTT for mobile",
+    "extra": {
+      "eas": {
+        "projectId": "a3bcfa35-ea4e-4562-8aa4-277dab14d741"
+      }
     }
   }
 }
