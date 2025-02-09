@@ -1,57 +1,55 @@
-FROM node:latest
+FROM node:20.17.0
 
-ENV LOCATION=docker-mobile
+# Set the default environment variables
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
-ENV LAUNCH_COMMAND="serve -s build"
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV CI=1
+ENV EMAIL=${EMAIL}
+ENV USERNAME=${USERNAME}
+ENV EXPO_PASSWORD=${EXPO_PASSWORD}
+ENV EXPO_TOKEN=${EXPO_TOKEN}
 
-# Update the system
-RUN apt update && apt upgrade -y
-
-# Install npm and nodejs
-RUN apt install -y \
-    npm \
-    nodejs \
-    xsel
-
-
-# Installing latest version of npm
-# RUN npm install -g npm@latest
-
-# Cleaning any potential cache npm could have
-RUN npm cache clean --force
-
-# Installing npm requirements
-RUN timeout 60s npm install -g \
-    serve \
-    react-icons \
-    recharts \
-    axios || timeout 60s npm install -g \
-    serve \
-    react-icons \
-    recharts \
-    axios
-
-
-# Create working folder
-RUN mkdir -p ${HOME}
-
-# Go to the working folder
+# Set main working directory
 WORKDIR ${HOME}
 
-# Copy the content of the backend into the container
-COPY . ${HOME}
+# Update the system and Install required packages
+RUN apt update && apt upgrade -y && \
+    apt install -y openjdk-17-jdk wget unzip zip xsel && \
+    npm install -g npm@latest && \
+    npm cache clean --force
 
-# Run the setup code
-# RUN timeout 60s npm install || timeout 60s npm install 
-# RUN npm run build
+# Copy package files and Install dependencies
+COPY package.json package-lock.json ./
 
-# Cleaning any potential cache npm could have
-RUN npm cache clean --force
+# Downloading EAS and dependencies
+RUN npm install -g expo-cli eas-cli \
+    npm install @react-native-masked-view/masked-view@0.3.2 \
+    npx expo install expo-status-bar@~2.0.1 \
+    react-native@0.76.6 \
+    react-native-gesture-handler@~2.20.2 \
+    react-native-safe-area-context@4.12.0 \
+    react-native-screens@~4.4.0 \
+    typescript@^5.3.3
 
-# Expose the ports that need to be used
-EXPOSE 1024-9000
+# Copy remaining project files
+COPY . .
 
-# Entry point
-# CMD ["/bin/bash","-c", "${LAUNCH_COMMAND}" ]
-CMD ["/bin/bash"]
+# Initialize a Git repository, config EXPO login for EAS build
+RUN mkdir -p ${HOME}/scripts && \
+    echo '#!/bin/bash\n\
+    if [ -z "$EMAIL" ] || [ -z "$USERNAME" ]; then\n\
+        echo "ERROR: EMAIL and USERNAME environment variables must be set"\n\
+        exit 1\n\
+    fi\n\
+    git config --global user.email "${EMAIL}"\n\
+    git config --global user.name "${USERNAME}"\n\
+    rm -rf .git\n\
+    git init\n\
+    git add .\n\
+    git commit -m "feat: initial commit"\n\
+    eas build -p android --profile preview --clear-cache --non-interactive\n\
+    ' > ${HOME}/scripts/build.sh && \
+    chmod +x ${HOME}/scripts/build.sh
+
+ENTRYPOINT ["/mobile/scripts/build.sh"]
