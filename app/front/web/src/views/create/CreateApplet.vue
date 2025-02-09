@@ -72,6 +72,7 @@ export default defineComponent({
     const goBack = () => {
       sessionStorage.removeItem('selectedTrigger');
       sessionStorage.removeItem('selectedAction');
+      sessionStorage.removeItem("triggerVars");
       router.push('/explore/applets');
     };
 
@@ -81,6 +82,8 @@ export default defineComponent({
 
     const goToAddAction = () => {
       if (ifCondition.value) {
+        const storedTrigger = JSON.parse(sessionStorage.getItem('selectedTrigger') || "");
+        sessionStorage.setItem("triggerVars", JSON.stringify(storedTrigger.json.service["ignore:vars"]));
         router.push('/create/add-action');
       }
     };
@@ -106,6 +109,7 @@ export default defineComponent({
           alert('Applet créé avec succès !');
           sessionStorage.removeItem('selectedTrigger');
           sessionStorage.removeItem('selectedAction');
+          sessionStorage.removeItem("triggerVars");
           router.push('/explore/applets');
         }
       } catch (error) {
@@ -229,7 +233,6 @@ h1 {
   right: 15px;
 }
 
-/* Inputs */
 label {
   font-size: 1rem;
   font-weight: 500;
@@ -256,7 +259,6 @@ input:focus {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
 }
 
-/* Input couleur */
 input[type="color"] {
   width: 60px;
   height: 40px;

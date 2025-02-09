@@ -74,7 +74,6 @@ import { useRoute } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
 import CancelButton from '@/components/CancelButton.vue';
 import CompTitle from '@/components/Details-Applet/CompTitle.vue';
-// import CompConnectButton from '@/components/Details-Applet/CompConnectButton.vue';
 import CompDescription from '@/components/Details-Applet/CompDescription.vue';
 import { queries } from '@/../lib/querier';
 import { parseJsonToForm, injectFormValuesIntoJson, FormField } from '@/ParseJson';
@@ -84,7 +83,6 @@ export default defineComponent({
     AppHeader,
     CancelButton,
     CompTitle,
-    // CompConnectButton,
     CompDescription,
   },
   setup() {
@@ -342,12 +340,8 @@ h2 {
   border-radius: 5px;
 }
 
-/* .applet-buttons-container {
-  gap: 30px;
-} */
-
 .edit-button {
-  background-color: #4ea8de; /* Bleu clair */
+  background-color: #4ea8de;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -360,7 +354,7 @@ h2 {
 }
 
 .edit-button:hover {
-  background-color: #0077b6; /* Bleu plus foncé pour le hover */
+  background-color: #0077b6;
   transform: scale(1.05);
 }
 

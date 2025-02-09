@@ -14,22 +14,54 @@
       <template v-if="formFields.length">
         <div v-for="(field, index) in formFields" :key="index" class="form-group">
           <label :for="field.name">{{ field.name }}</label>
-          <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.value">
-          <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.value" />
+
+          <!-- INPUT and TEXTAREA -->
+          <div v-if="field.type === 'input' || field.type === 'textarea'" class="input-container">
+            <input
+              v-if="field.type === 'input'"
+              :id="field.name"
+              type="text"
+              :placeholder="field.defaultValue"
+              v-model="field.value"
+              ref="inputRefs"
+            />
+            <textarea
+              v-else
+              :id="field.name"
+              :placeholder="field.defaultValue"
+              v-model="field.value"
+              ref="inputRefs"
+            />
+            <button class="variable-button" @click="toggleVariableMenu(index, $event)">🔽</button>
+          </div>
+
+          <!-- DROPDOWN  -->
           <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
             <option v-for="option in field.options" :key="option" :value="option">
               {{ option }}
             </option>
           </select>
+
+          <!-- Variables menu for INPUT and TEXTAREA -->
+          <div
+            v-if="showVariableMenu === index"
+            class="variable-menu"
+            :style="{ top: menuPosition.top + 'px', left: menuPosition.left + 'px' }"
+          >
+            <button v-for="(varName, i) in availableVariables" :key="i" @click="insertVariable(index, varName)">
+              ${{ varName }}
+            </button>
+          </div>
         </div>
       </template>
+
       <button class="connect-button" @click="useReaction">Use this Reaction</button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, nextTick, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
 import { parseJsonToForm, injectFormValuesIntoJson, FormField } from '@/ParseJson';
@@ -43,7 +75,10 @@ export default defineComponent({
     const route = useRoute();
     const tileData = ref<any>(null);
     const formFields = ref<FormField[]>([]);
-
+    const triggerVars = ref<Record<string, any>>({});
+    const showVariableMenu = ref<number | null>(null);
+    const inputRefs = ref<(HTMLInputElement | HTMLTextAreaElement)[]>([]);
+    const menuPosition = ref({ top: 0, left: 0 });
 
     const goBack = () => {
       router.back();
@@ -61,7 +96,47 @@ export default defineComponent({
       });
     };
 
+    const toggleVariableMenu = (index: number, event: MouseEvent) => {
+      if (showVariableMenu.value === index) {
+        showVariableMenu.value = null;
+      } else {
+        showVariableMenu.value = index;
+        updateMenuPosition(event);
+      }
+    };
+
+    const updateMenuPosition = (event: MouseEvent) => {
+      nextTick(() => {
+        menuPosition.value = {
+          top: event.clientY + window.scrollY + 5, // Positionne sous le bouton
+          left: event.clientX + window.scrollX, // Aligné au bouton
+        };
+      });
+    };
+
+    const insertVariable = (index: number, variable: string) => {
+      const inputElement = inputRefs.value[index];
+      if (inputElement) {
+        const start = inputElement.selectionStart || 0;
+        const end = inputElement.selectionEnd || 0;
+        const value = formFields.value[index].value || "";
+
+        const formattedVariable = `\${{${variable}}}`;
+
+        formFields.value[index].value =
+          value.substring(0, start) + formattedVariable + value.substring(end);
+
+        nextTick(() => {
+          inputElement.focus();
+          inputElement.setSelectionRange(start + formattedVariable.length, start + formattedVariable.length);
+        });
+      }
+
+      showVariableMenu.value = null;
+    };
+
     onMounted(() => {
+      triggerVars.value = JSON.parse(sessionStorage.getItem("triggerVars") || "");
       if (route.query.tile) {
         try {
           tileData.value = JSON.parse(route.query.tile as string);
@@ -77,6 +152,12 @@ export default defineComponent({
       useReaction,
       tileData,
       formFields,
+      showVariableMenu,
+      toggleVariableMenu,
+      insertVariable,
+      inputRefs,
+      menuPosition,
+      availableVariables: computed(() => Object.keys(triggerVars.value)),
     };
   },
 });
@@ -191,6 +272,11 @@ textarea {
   border-radius: 5px;
 }
 
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
 .connect-button {
   width: 100%;
   padding: 15px;
@@ -206,6 +292,47 @@ textarea {
 
 .connect-button:hover {
   background-color: #0056b3;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.variable-button {
+  margin-left: 5px;
+  padding: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.variable-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  top: 100%;
+  left: 60%;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.variable-menu button {
+  padding: 10px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.variable-menu button:hover {
+  background-color: #f0f0f0;
 }
 
 @media (max-width: 767px) {
