@@ -65,9 +65,18 @@ export default defineComponent({
     };
 
     const filteredAllItems = computed(() =>
-      applets.value.filter((applet) =>
-        applet.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
+      !searchQuery.value
+        ? applets.value
+        : applets.value.filter((applet) => {
+            const searchWords = searchQuery.value.toLowerCase().split(' ').filter(word => word.length > 0);
+            const matchesName = searchWords.some(word =>
+              applet.name.toLowerCase().includes(word)
+            );
+            const matchesTags = searchWords.some(word =>
+              applet.tags.toLowerCase().split(' ').some((tag: string) => tag.includes(word))
+            );
+            return matchesName || matchesTags;
+          })
     );
 
     onBeforeMount(async () => {
@@ -88,44 +97,6 @@ export default defineComponent({
       clearSearchQuery,
       filteredAllItems,
     };
-
-    // const store = useStore();
-
-    // const searchQuery = computed({
-    //   get: () => store.state.applets.searchQuery,
-    //   set: (value: string) => {
-    //     store.dispatch('applets/updateSearchQuery', value);
-    //     store.dispatch('applets/updateData', value)
-    //   },
-    // });
-
-    // const filteredAllItems = computed(() => store.getters['applets/filteredAllItems']);
-
-    // const updateSearchQuery = () => {
-    //   store.dispatch('applets/updateSearchQuery', searchQuery.value);
-    // };
-
-    // const updateData = () => {
-    //   store.dispatch('applets/updateData');
-    // };
-
-    // const clearSearchQuery = () => {
-    //   searchQuery.value = '';
-    //   store.dispatch('applets/updateSearchQuery', '');
-    // };
-
-    // watch(searchQuery, updateSearchQuery);
-
-    // onMounted(async () => {
-    //   updateData();
-    // });
-
-    // return {
-    //   searchQuery,
-    //   filteredAllItems,
-    //   updateSearchQuery,
-    //   clearSearchQuery,
-    // };
   },
 });
 </script>
