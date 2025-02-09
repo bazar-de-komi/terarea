@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import BackButton from "../../components/BackButton/backButton";
 
@@ -10,13 +10,16 @@ const ActionPage = () => {
     const [selectedMinute, setSelectedMinute] = useState("00");
 
     const navigation = useNavigation();
+    const route = useRoute();
+    const { service, trigger, action } = route.params || {};
 
     const AppletsHome = () => {
         navigation.navigate("Applets");
     };
 
-    const End = () => {
-        navigation.navigate("Create end");
+    const goToCreateEnd = () => {
+        navigation.navigate("Create end", { trigger, action, service });
+        console.log("Trigger avant navigation :", trigger);
     };
 
     const hours = ["12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM",
@@ -63,7 +66,8 @@ const ActionPage = () => {
 
             <TouchableOpacity
                 style={styles.triggerButton}
-                onPress={End} >
+                onPress={goToCreateEnd} >
+                
                 <Text style={styles.triggerButtonText}>Create action</Text>
             </TouchableOpacity>
         </View>

@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import CustomerButton from "../../../components/CustomerButton";
 import BackButton from "../../../components/BackButton/backButton";
 
-const Create = () => {
+const CreateHaveService = () => {
     const navigation = useNavigation();
+
+    const route = useRoute();
+    const { trigger } = route.params || {};
 
     const AppletsHome = () => {
         navigation.navigate("Applets");
     };
 
     const ChooseServices = () => {
-        navigation.navigate("Choose options service for action");
+        navigation.navigate("Choose options service for action", { trigger });
     };
 
     return (
@@ -38,7 +41,9 @@ const Create = () => {
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>Name of the service selected</Text>
+                    <Text style={styles.addButtonText}>
+                            {trigger?.json?.name || "Name of the service selected"}
+                        </Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.ThenThatContainer}>
@@ -120,4 +125,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Create;
+export default CreateHaveService;

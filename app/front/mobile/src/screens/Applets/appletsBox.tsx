@@ -72,13 +72,11 @@ const AppletsScreen = ({ route }) => {
                 />
                 <Text style={styles.homeTitle}>
                     {applet.name}
-                    {/* 5-Minute Crafts integrations */}
                 </Text>
                 <View style={styles.homeNavigation}>
                 </View>
                 <Text style={styles.description}>
                     {applet.description}
-                    {/* The 5-Minute Crafts Youtube channel is a */}
                 </Text>
             </View>
             <View style={styles.connectStyle}>
@@ -90,7 +88,6 @@ const AppletsScreen = ({ route }) => {
                     fgColor={""}
                 />
             </View>
-            {/* <Text style={styles.homeTitle}>Get appletsScreensed with any Applet</Text> */}
         </ScrollView>
     )
 }

@@ -14,31 +14,16 @@ const Applets = () => {
     const [applets, setApplets] = useState([]);
     const [tags, setTags] = useState("");
 
-    // const handleAllButton = () => {
-    //     navigation.navigate("All");
-    // };
-
-    // const handleAppletsButton = () => {
-    //     navigation.navigate("Applets");
-    // };
-
-    // const handleServicesButton = () => {
-    //     navigation.navigate("Services");
-    // };
 
     const handleAppletButton = async (applet: any) => {
         navigation.navigate("Applets information", { applet: applet });
     };
 
-    // const handleAppletButton = async (applet: any) => {
-    //     navigation.navigate("Applet screen", { applet: applet });
-    // };
-
     useEffect(() => {
         const getApplets = async () => {
             try {
                 const token = await getValue("token");
-                const getServicesResponse = await queries.get("/api/v1/applets", {}, token);
+                const getServicesResponse = await queries.get("/api/v1/my_applets", {}, token);
                 setApplets(getServicesResponse.msg);
             } catch (error) {
                 console.error(error);
@@ -52,12 +37,12 @@ const Applets = () => {
             try {
                 const token = await getValue("token");
                 if (tags === "") {
-                    const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+                    const getAppletsResponse = await queries.get("/api/v1/my_applets", {}, token);
                     setApplets(getAppletsResponse.msg);
                 } else {
                     const noSpaceTags = tags.replaceAll(" ", ":");
                     console.log("NoSpaceTags", noSpaceTags);
-                    let path = "/api/v1/applets/";
+                    let path = "/api/v1/my_applets/";
                     path += noSpaceTags;
                     const getAppletsResponse = await queries.get(path, {}, token);
                     setApplets(getAppletsResponse.msg);
@@ -69,24 +54,6 @@ const Applets = () => {
         }
         getAppletsByTags();
     }, [tags]);
-
-    // const appletsData = [
-    //     {
-    //         title: "Get the weather forecast every dat at 7:00 AM",
-    //         description: "Weather Underground",
-    //         bgColor: "orange",
-    //     },
-    //     {
-    //         title: "Quickly create events in Google Calendar",
-    //         description: "Google",
-    //         bgColor: "blue",
-    //     },
-    //     {
-    //         title: "Track your fitness goals daily",
-    //         description: "Fitbit",
-    //         bgColor: "green",
-    //     },
-    // ];
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
