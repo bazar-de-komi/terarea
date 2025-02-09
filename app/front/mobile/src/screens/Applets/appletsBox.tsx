@@ -8,9 +8,6 @@ import BackButton from "../../components/BackButton/backButton";
 import { queries } from "../../../back-endConnection/querier";
 import { getValue } from "../../components/StoreData/storeData";
 
-// import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
-// import ProfilLogo from '../../../assets/profilLogo.png';
-
 const AppletsScreen = ({ route }) => {
     const { applet } = route.params;
     const navigation = useNavigation();
@@ -69,36 +66,17 @@ const AppletsScreen = ({ route }) => {
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.backContainer}>
                 <Header />
-                {/* <Image
-                    source={AreaLogo}
-                    style={styles.areaLogo}
-                />
-                <Image
-                    source={ProfilLogo}
-                    style={styles.profilLogo}
-                />
-                <View style={styles.backStyle}>
-                    <CustomerButton
-                        text='<'
-                        onPress={callApplets}
-                        type="TERTIARY"
-                        bgColor={""}
-                        fgColor={""}
-                    />
-                </View> */}
                 <BackButton
                     text="<"
                     onPress={handleGoBackButton}
                 />
                 <Text style={styles.homeTitle}>
                     {applet.name}
-                    {/* 5-Minute Crafts integrations */}
                 </Text>
                 <View style={styles.homeNavigation}>
                 </View>
                 <Text style={styles.description}>
                     {applet.description}
-                    {/* The 5-Minute Crafts Youtube channel is a */}
                 </Text>
             </View>
             <View style={styles.connectStyle}>
@@ -110,7 +88,6 @@ const AppletsScreen = ({ route }) => {
                     fgColor={""}
                 />
             </View>
-            {/* <Text style={styles.homeTitle}>Get appletsScreensed with any Applet</Text> */}
         </ScrollView>
     )
 }

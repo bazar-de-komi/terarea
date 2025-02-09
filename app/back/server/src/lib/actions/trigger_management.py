@@ -4,7 +4,7 @@
 
 import os
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from requests import Response
 from display_tty import Disp, TOML_CONF, FILE_DESCRIPTOR, SAVE_TO_FILE, FILE_NAME
@@ -232,7 +232,15 @@ class TriggerManagement:
                     break
             elif self.api_querier_initialised.strip_descriptor(key) == "verification_value":
                 self.disp.log_debug(f"Values: {values}", title)
-                node = values
+                if isinstance(values, List):
+                    for i in values:
+                        if i.startswith("selected:"):
+                            node = self.api_querier_initialised.strip_descriptor(i)
+                            break
+                        if i.startswith("default:"):
+                            node = self.api_querier_initialised.strip_descriptor(i)
+                else:
+                    node = values
                 break
             else:
                 self.disp.log_debug(f"Skipping key: {key}", title)
@@ -445,6 +453,8 @@ class TriggerManagement:
         """
         title = "run"
         self.disp.log_debug("Running trigger management.", title)
+
+        # Setup variables
         data = self.variable.get_scope(self.scope)
         self.disp.log_debug(
             f"Scope: {self.scope}, scope_content = {data}", title
@@ -468,6 +478,8 @@ class TriggerManagement:
             )
         trigger_node = action_node["trigger"]
         self.disp.log_debug(f"Trigger node: {trigger_node}", title)
+
+        # Get the json of the trigger
         if isinstance(trigger_node, Dict) is False:
             try:
                 trigger = json.loads(trigger_node)
@@ -480,6 +492,8 @@ class TriggerManagement:
         else:
             trigger: Dict[str, Any] = trigger_node
         self.disp.log_debug(f"Trigger data: {trigger}", title)
+
+        # Get the service part in the json
         node_of_interest = "service"
         if node_of_interest not in trigger:
             self._log_fatal(
@@ -490,6 +504,8 @@ class TriggerManagement:
                 raise_func=ValueError
             )
         node: Dict[str, Any] = trigger.get(node_of_interest)
+
+        # Call the API
         self.api_querier_initialised = APIQuerier(
             service=node,
             variable=self.variable,
@@ -512,6 +528,8 @@ class TriggerManagement:
                 raise_func=ValueError
             )
         self.disp.log_debug(f"Response: {response}", title)
+
+        # Compile the API response
         data = self.query_endpoint.compile_response_data(response)
         self.disp.log_debug(f"Data: {data}, type = {type(data)}", title)
         self.variable.add_variable(
@@ -519,37 +537,51 @@ class TriggerManagement:
         )
         self.api_response = data
         self.disp.log_debug("Variable added.", title)
-        verification_operator = self.get_verification_operator(
-            node.get("drop:verification_operator")
-        )
-        response_data = self.get_response_verification(
-            node.get("response")
-        )
-        verification_value = self.get_verification_value(
-            node
-        )
-        self.disp.log_debug("raw Verification info gathered", title)
-        msg = f"Verification operator: {verification_operator}, "
-        msg += f"response_data = {response_data}, "
-        msg += f"verification_value = {verification_value}"
-        self.disp.log_debug(msg, title)
+
+        # Get the verification operator and verification value
         self.disp.log_info("Getting content for response_data", title)
-        response_data = self.get_variable_data_if_required(response_data)
+        expected_trigger_response = (node.get("response") or node.get("ignore:response"))
+        response_data: Dict = {}
+        response_data["response"] = self.get_response_verification(expected_trigger_response)
+        for response_key, value in response_data["response"].items():
+            response_data["response"][response_key] = self.get_variable_data_if_required(value)
+        msg = f"response_data = {response_data}, "
+        self.disp.log_debug(msg, title)
+
+        # Get the verifications data in verify it with the expected response
         self.disp.log_info("Getting content for verification_value", title)
-        verification_value = self.get_variable_data_if_required(
-            verification_value
-        )
-        self.disp.log_debug("Content gathered.", title)
-        self.disp.log_debug(f"response_data: {response_data}", title)
-        self.disp.log_debug(f"verification_value: {verification_value}", title)
-        response = self.check_data_comparison(
-            data=response_data,
-            operator=verification_operator,
-            verification_value=verification_value
-        )
-        if response is False:
-            return self.error
-        self.disp.log_debug("Data comparison successful.", title)
+        response_verification: Dict[str, Any] = (node.get("verification") or node.get("ignore:verification"))
+        for data_key, verification_details in response_verification.items():
+            verification_operator = (verification_details.get("drop:verification_operator") or verification_details.get("ignore:verification_operator"))
+            verification_operator = self.get_verification_operator(
+                verification_operator
+            )
+            verification_value = self.get_verification_value(
+                verification_details
+            )
+            self.disp.log_debug("raw Verification info gathered", title)
+            msg = f"Verification operator: {verification_operator}, "
+            msg += f"verification_value = {verification_value}"
+
+            # Apply variable from the API response if needed
+            verification_value = self.get_variable_data_if_required(
+                verification_value
+            )
+            self.disp.log_debug("Content gathered.", title)
+            self.disp.log_debug(f"response_data: {response_data}", title)
+            self.disp.log_debug(f"verification_value: {verification_value}", title)
+
+            # Check if the comparison work
+            response = self.check_data_comparison(
+                data=response_data["response"][data_key],
+                operator=verification_operator,
+                verification_value=verification_value
+            )
+            if response is False:
+                return self.error
+            self.disp.log_debug(f"Data comparison successful for {data_key} verification.", title)
+
+        # Set the runtime data
         var1 = node.get("variables")
         var2 = node.get("vars")
         if var1 is not None:

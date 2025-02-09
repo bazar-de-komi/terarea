@@ -9,125 +9,168 @@
       <h1>Create</h1>
 
       <div class="ifThenContainer">
-        <!-- Bloc If -->
-        <div class="ifThenBlock" @click="togglePhase('if')">
+        <div class="ifThenBlock" @click="goToAddTrigger">
           <span class="block-text">If</span>
-          <AddButton
-            v-if="!ifCondition && !isSecondPhase.if"
-            @click="showAddServiceModalForIf"
-            :route="'/create/add-action'"
-            class="add-button-right"
-          />
-          <span v-else class="selected-service">{{ ifCondition?.name || 'No service selected' }}</span>
+          <AddButton v-if="!ifCondition" class="add-button-right" />
+          <span v-else class="selected-service">{{ ifCondition.json.name }}</span>
         </div>
-        <BlockDetails
-        v-if="isSecondPhase.if"
-        :title="ifCondition?.title || 'Default Title'"
-        :description="ifCondition?.description || 'Default Description'"
-        :fieldsData="['Dropdown:ServiceType', 'Date:StartDate', 'Time:StartTime', 'Input:Username', 'int:Age']"
-        :blockWidth="800"
-        />
 
-        <!-- Bloc Then -->
-        <div class="ifThenBlock" @click="togglePhase('then')">
+        <div class="ifThenBlock" :class="{ disabled: !ifCondition }" @click="ifCondition && goToAddAction()">
           <span class="block-text">Then</span>
-          <AddButton
-            v-if="!thenAction && !isSecondPhase.then"
-            @click="showAddServiceModalForThen"
-            :route="'/create/add-reaction'"
-            class="add-button-right"
-          />
-          <span v-else class="selected-service">{{ thenAction?.name || 'No action selected' }}</span>
+          <AddButton v-if="ifCondition && !thenAction" class="add-button-right" />
+          <span v-else-if="thenAction" class="selected-service">{{ thenAction.json.name }}</span>
         </div>
-        <BlockDetails
-        v-if="isSecondPhase.then"
-          :title="ifCondition?.title || 'Default Title'"
-          :description="ifCondition?.description || 'Default Description'"
-          :fieldsData="['Dropdown:ServiceType', 'Date:StartDate', 'Time:StartTime', 'Input:Username', 'int:Age']"
-          :blockWidth="800"
-        />
-
       </div>
-    </div>
 
-    <AddServiceModal
-      v-if="isModalOpen"
-      @select-service="handleServiceSelection"
-      @close="closeModal"
-    />
+      <div v-if="ifCondition && thenAction">
+        <label>Your applet name</label>
+        <input v-model="applet_name" placeholder="Enter applet name" />
+
+        <label>Your applet description</label>
+        <input v-model="applet_description" placeholder="Enter applet description" />
+
+        <label>Your applet tags (Optional)</label>
+        <input v-model="applet_tags" placeholder="Enter tags" />
+
+        <label>Your applet colour</label>
+        <input type="color" v-model="applet_colour" />
+      </div>
+
+      <CreateButton v-if="ifCondition && thenAction && applet_name && applet_description && applet_colour"
+        @create="handleCreateApplet" />
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { defineComponent, ref, watchEffect, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
-import BlockDetails from '@/components/CreateApplet-Comp/BlockDetails.vue';
 import AddButton from '@/components/CreateApplet-Comp/AddDelButtonComp.vue';
 import CancelButton from '@/components/CancelButton.vue';
+import CreateButton from '@/components/CreateApplet-Comp/CreateButton.vue';
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   components: {
     AppHeader,
     CancelButton,
     AddButton,
-    BlockDetails,
+    CreateButton,
   },
   setup() {
     const router = useRouter();
-    const ifCondition = ref(null);
-    const thenAction = ref(null);
-    const isModalOpen = ref(false);
-    const currentBlock = ref('');
-    const isSecondPhase = ref({ if: false, then: false });
+    const route = useRoute();
+    const ifCondition = ref<any>(null);
+    const thenAction = ref<any>(null);
+
+    const applet_name = ref('');
+    const applet_description = ref('');
+    const applet_tags = ref('');
+    const applet_colour = ref('#ffffff');
 
     const goBack = () => {
-      router.back();
+      sessionStorage.removeItem('selectedTrigger');
+      sessionStorage.removeItem('selectedAction');
+      sessionStorage.removeItem("triggerVars");
+      router.push('/explore/applets');
     };
 
-    const showAddServiceModalForIf = () => {
-      currentBlock.value = 'if';
-      isModalOpen.value = true;
+    const goToAddTrigger = () => {
+      router.push('/create/add-trigger');
     };
 
-    const showAddServiceModalForThen = () => {
-      currentBlock.value = 'then';
-      isModalOpen.value = true;
-    };
-
-    const handleServiceSelection = (service: any) => {
-      if (currentBlock.value === 'if') {
-        ifCondition.value = service;
-      } else if (currentBlock.value === 'then') {
-        thenAction.value = service;
+    const goToAddAction = () => {
+      if (ifCondition.value) {
+        const storedTrigger = JSON.parse(sessionStorage.getItem('selectedTrigger') || "");
+        sessionStorage.setItem("triggerVars", JSON.stringify(storedTrigger.json.service["ignore:vars"]));
+        router.push('/create/add-action');
       }
-      closeModal();
     };
 
-    const closeModal = () => {
-      isModalOpen.value = false;
+    const handleCreateApplet = async () => {
+      const storedTrigger = JSON.parse(sessionStorage.getItem('selectedTrigger') || "");
+      const storedAction = JSON.parse(sessionStorage.getItem('selectedAction') || "");
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        const response = await queries.post(
+          "/api/v1/my_applet",
+          {
+            name: applet_name.value,
+            trigger: storedTrigger?.json,
+            consequences: storedAction?.json,
+            tags: applet_tags.value,
+            description: applet_description.value,
+            colour: applet_colour.value
+          },
+          token
+        );
+        if (response.resp === "success") {
+          alert('Applet créé avec succès !');
+          sessionStorage.removeItem('selectedTrigger');
+          sessionStorage.removeItem('selectedAction');
+          sessionStorage.removeItem("triggerVars");
+          router.push('/explore/applets');
+        }
+      } catch (error) {
+        alert('Failed to create the new applet.');
+        return;
+      }
     };
 
-    const togglePhase = (block: 'if' | 'then') => {
-      isSecondPhase.value[block] = !isSecondPhase.value[block];
-    };
+    watchEffect(() => {
+      const triggerData = route.query.trigger;
+      if (!ifCondition.value && typeof triggerData === 'string') {
+        try {
+          ifCondition.value = JSON.parse(triggerData);
+          sessionStorage.setItem('selectedTrigger', triggerData);
+        } catch (error) {
+          console.error('Erreur de parsing du déclencheur:', error);
+        }
+      } else if (!ifCondition.value) {
+        const storedTrigger = sessionStorage.getItem('selectedTrigger');
+        if (storedTrigger) {
+          ifCondition.value = JSON.parse(storedTrigger);
+        }
+      }
+
+      const actionData = route.query.action;
+      if (!thenAction.value && typeof actionData === 'string') {
+        try {
+          thenAction.value = JSON.parse(actionData);
+          sessionStorage.setItem('selectedAction', actionData);
+        } catch (error) {
+          console.error('Erreur de parsing de l\'action:', error);
+        }
+      } else if (!thenAction.value) {
+        const storedAction = sessionStorage.getItem('selectedAction');
+        if (storedAction) {
+          thenAction.value = JSON.parse(storedAction);
+        }
+      }
+    });
+
+    onMounted(() => {
+      ifCondition.value = JSON.parse(sessionStorage.getItem('selectedTrigger') || 'null');
+      thenAction.value = JSON.parse(sessionStorage.getItem('selectedAction') || 'null');
+    });
 
     return {
       ifCondition,
       thenAction,
-      isModalOpen,
-      currentBlock,
-      isSecondPhase,
       goBack,
-      showAddServiceModalForIf,
-      showAddServiceModalForThen,
-      handleServiceSelection,
-      closeModal,
-      togglePhase,
+      goToAddTrigger,
+      goToAddAction,
+      handleCreateApplet,
+      applet_name,
+      applet_description,
+      applet_tags,
+      applet_colour
     };
-  }
+  },
 });
 </script>
+
 
 <style scoped>
 .create-applet-page {
@@ -157,7 +200,7 @@ h1 {
 }
 
 .ifThenBlock {
-  background-color: black;
+  background-color: rgb(60, 59, 59);
   color: white;
   padding: 20px;
   border-radius: 40px;
@@ -171,11 +214,13 @@ h1 {
   cursor: pointer;
 }
 
-.ifThenBlock:nth-child(2) {
+.ifThenBlock.disabled {
   background-color: grey;
+  cursor: not-allowed;
 }
 
-.block-text, .selected-service {
+.block-text,
+.selected-service {
   font-weight: bold;
   font-size: 64px;
   white-space: nowrap;
@@ -186,5 +231,39 @@ h1 {
 .add-button-right {
   position: absolute;
   right: 15px;
+}
+
+label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+  display: block;
+  margin: 10px 0 5px;
+  text-align: left;
+  width: 100%;
+}
+
+input {
+  width: 100%;
+  max-width: 600px;
+  padding: 12px;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+input[type="color"] {
+  width: 60px;
+  height: 40px;
+  padding: 5px;
+  border: none;
+  cursor: pointer;
 }
 </style>

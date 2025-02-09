@@ -2,8 +2,8 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
-import BackButton from "../../components/BackButton/backButton";
+import CustomerButton from "../../../components/CustomerButton";
+import BackButton from "../../../components/BackButton/backButton";
 
 const Create = () => {
     const navigation = useNavigation();
@@ -13,7 +13,7 @@ const Create = () => {
     };
 
     const ChooseServices = () => {
-        navigation.navigate("Choose services");
+        navigation.navigate("Choose options service for trigger");
     };
 
     return (
@@ -28,7 +28,7 @@ const Create = () => {
             <View style={styles.section}>
                 <View style={styles.ifThisContainer}>
                     <CustomerButton
-                        text="If"
+                        text="If This"
                         type="PRIMARY"
                         bgColor={"black"}
                         fgColor={"white"}
@@ -43,18 +43,18 @@ const Create = () => {
                 </View>
                 <View style={styles.ThenThatContainer}>
                     <CustomerButton
-                        text="Then"
+                        text="Then That"
                         type="PRIMARY"
-                        bgColor={"grey"}
+                        bgColor={"transparent"}
                         fgColor={"white"}
                         style={styles.ifThenText}
                     />
-                    <TouchableOpacity
+                    {/* <TouchableOpacity
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
                     <Text style={styles.addButtonText}>add</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
             </View>
         </ScrollView>

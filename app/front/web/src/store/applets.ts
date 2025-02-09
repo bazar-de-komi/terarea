@@ -137,7 +137,7 @@ const appletsModule: Module<AppletsState, AppState> = {
           commit('APPEND_APPLETS', applets);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
       try {
         const servicesResponse = await queries.get(servicesPath, {}, token);

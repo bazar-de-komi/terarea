@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
+-- MariaDB dump 10.19  Distrib 10.11.2-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: 127.0.0.1    Database: terarea
 -- ------------------------------------------------------
--- Server version	11.5.2-MariaDB-ubu2404
+-- Server version	11.6.2-MariaDB-ubu2404
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -16,12 +16,20 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Current Database: `terarea`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `terarea` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_uca1400_ai_ci */;
+
+USE `terarea`;
+
+--
 -- Table structure for table `ActionLoging`
 --
 
 DROP TABLE IF EXISTS `ActionLoging`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ActionLoging` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `time` datetime NOT NULL DEFAULT current_timestamp() COMMENT 'This is the time at which the workflow occurred',
@@ -52,16 +60,16 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `ActionTemplate`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ActionTemplate` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `type` varchar(100) NOT NULL DEFAULT 'action' COMMENT 'The type of the template',
-  `json` longtext NOT NULL COMMENT 'The json content for the template.',
-  `action_id` bigint(20) unsigned DEFAULT NULL,
+  `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'action' COMMENT 'The type of the template',
+  `json` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'The json content for the template.',
+  `service_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `ActionTemplate_Actions_FK` (`action_id`),
-  CONSTRAINT `ActionTemplate_Services_FK` FOREIGN KEY (`action_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table containing the templates for the action that the website has to offer.';
+  KEY `ActionTemplate_Services_FK` (`service_id`),
+  CONSTRAINT `ActionTemplate_Services_FK` FOREIGN KEY (`service_id`) REFERENCES `Services` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci COMMENT='The table containing the templates for the action that the website has to offer.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -79,7 +87,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Actions`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Actions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(400) NOT NULL DEFAULT 'zero two, darling, darling... DARLING !!!',
@@ -90,13 +98,11 @@ CREATE TABLE `Actions` (
   `running` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'L''information sur si le l''action est en fonctionnement',
   `description` varchar(2000) NOT NULL DEFAULT 'Some description' COMMENT 'The description of the workflow.',
   `colour` varchar(100) NOT NULL DEFAULT '#f1f1f1' COMMENT 'The colour of the workflow.',
-  `favicon` mediumtext DEFAULT NULL COMMENT 'The link to the icon of the workflow.',
-  `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT 'The amount of times the action is used',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Actions_UNIQUE` (`name`),
   KEY `Actions_Users_FK` (`user_id`),
   CONSTRAINT `Actions_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='triggers and actions of ifttt\nexample: if bad_guy then nuts';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='triggers and actions of ifttt\nexample: if bad_guy then nuts';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,7 +120,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `ActiveOauths`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ActiveOauths` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` mediumtext DEFAULT NULL COMMENT 'The token temporarily provided by the sso',
@@ -128,7 +134,7 @@ CREATE TABLE `ActiveOauths` (
   KEY `ActiveOauths_Users_FK` (`user_id`),
   CONSTRAINT `ActiveOauths_Services_FK` FOREIGN KEY (`service_id`) REFERENCES `Services` (`id`) ON UPDATE CASCADE,
   CONSTRAINT `ActiveOauths_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The current OAuths that are still valid.';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The current OAuths that are still valid.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,7 +152,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Connections`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Connections` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `token` varchar(900) DEFAULT NULL COMMENT 'The token of the user.',
@@ -155,7 +161,7 @@ CREATE TABLE `Connections` (
   PRIMARY KEY (`id`),
   KEY `Connections_Users_FK` (`user_id`),
   CONSTRAINT `Connections_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The active connections of the server.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -173,24 +179,24 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Services`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Services` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) NOT NULL COMMENT 'The name of the service.',
   `url` varchar(2048) NOT NULL COMMENT 'The url that will be used to access the service.',
-  `api_key` varchar(1024) NULL COMMENT 'The api token.',
+  `api_key` varchar(1024) DEFAULT NULL COMMENT 'The api token.',
   `category` varchar(200) NOT NULL COMMENT 'This is the type of service offered by the api.',
   `frequency` bigint(20) unsigned NOT NULL DEFAULT 0 COMMENT 'The amount of times the service is used.',
   `type` varchar(200) NOT NULL DEFAULT 'service' COMMENT 'The type of the api.',
   `tags` longtext DEFAULT NULL COMMENT 'The keywords to search for the api',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `oauth` tinyint(1) DEFAULT NULL COMMENT 'Inform the code if the service is authenticated via OAuth.',
-  `colour` varchar(1024) NULL COMMENT 'The colour of the service.',
-  `description` mediumtext NULL COMMENT 'The description for the service.',
+  `colour` varchar(1024) DEFAULT '#FFFFFF' COMMENT 'This is the colour used for the services.',
+  `description` mediumtext DEFAULT NULL COMMENT 'The description for the service.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Services_UNIQUE_1` (`name`),
   UNIQUE KEY `Services_UNIQUE` (`url`) USING HASH
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Info about the api''s and what they have to offer.';
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='Info about the api''s and what they have to offer.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -208,7 +214,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `UserOauthConnection`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `UserOauthConnection` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `provider_name` mediumtext NOT NULL COMMENT 'The name of the service provider.',
@@ -224,7 +230,7 @@ CREATE TABLE `UserOauthConnection` (
   UNIQUE KEY `UserOauthConnection_UNIQUE` (`client_secret`) USING HASH,
   UNIQUE KEY `UserOauthConnection_UNIQUE_3` (`token_grabber_base_url`) USING HASH,
   UNIQUE KEY `UserOauthConnection_UNIQUE_4` (`user_info_base_url`) USING HASH
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table containing the information for the OAuths that will be used to allow users to log into their accounts.';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table containing the information for the OAuths that will be used to allow users to log into their accounts.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,40 +243,12 @@ LOCK TABLES `UserOauthConnection` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `UserServices`
---
-
-DROP TABLE IF EXISTS `UserServices`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `UserServices` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) unsigned NOT NULL,
-  `area_id` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `UserServices_Users_FK` (`user_id`),
-  KEY `UserServices_Actions_FK` (`area_id`),
-  CONSTRAINT `UserServices_Actions_FK` FOREIGN KEY (`area_id`) REFERENCES `Actions` (`id`) ON UPDATE CASCADE,
-  CONSTRAINT `UserServices_Users_FK` FOREIGN KEY (`user_id`) REFERENCES `Users` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='services user subscribed to';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `UserServices`
---
-
-LOCK TABLES `UserServices` WRITE;
-/*!40000 ALTER TABLE `UserServices` DISABLE KEYS */;
-/*!40000 ALTER TABLE `UserServices` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `Users`
 --
 
 DROP TABLE IF EXISTS `Users`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Users` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(200) NOT NULL COMMENT 'The user''s username.',
@@ -281,7 +259,7 @@ CREATE TABLE `Users` (
   `admin` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Informs the server if the user is an administrator or not.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Users_UNIQUE` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table in charge of tracking the user accounts.';
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='The table in charge of tracking the user accounts.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -299,7 +277,7 @@ UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `Verification`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Verification` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `term` mediumtext DEFAULT NULL COMMENT 'This is the identification for the code reference.',
@@ -307,7 +285,7 @@ CREATE TABLE `Verification` (
   `expiration` datetime DEFAULT NULL COMMENT 'The time left before the code expires.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Verification_UNIQUE` (`definition`) USING HASH
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='This is the table in charge of storing the verification codes for user side events.';
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='This is the table in charge of storing the verification codes for user side events.';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -318,10 +296,6 @@ LOCK TABLES `Verification` WRITE;
 /*!40000 ALTER TABLE `Verification` DISABLE KEYS */;
 /*!40000 ALTER TABLE `Verification` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Dumping routines for database 'terarea'
---
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -332,4 +306,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-1  0:00:00
+-- Dump completed on 2025-02-06 23:34:10

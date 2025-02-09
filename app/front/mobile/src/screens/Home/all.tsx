@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView,  } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -34,60 +34,62 @@ const All = () => {
         navigation.navigate("Service details", { service: service });
     }
 
-    useEffect(() => {
-        const getAppletsAndServices = async () => {
-            try {
-                const token = await getValue("token");
-                const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
-                setApplets(getAppletsResponse.msg);
-                const getServicesResponse = await queries.get("/api/v1/services", {}, token);
-                setServices(getServicesResponse.msg);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        getAppletsAndServices();
-    }, []);
+    // useEffect(() => {
+    //     const getAppletsAndServices = async () => {
+    //         try {
+    //             const token = await getValue("token");
+    //             const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+    //             setApplets(getAppletsResponse.msg);
+    //             const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+    //             setServices(getServicesResponse.msg);
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     }
+    //     getAppletsAndServices();
+    // }, []);
 
-    useEffect(() => {
-        const getAppletsAndServicesByTags = async () => {
-            try {
-                const token = await getValue("token");
-                if (tags === "") {
-                    const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
-                    setApplets(getAppletsResponse.msg);
-                    const getServicesResponse = await queries.get("/api/v1/services", {}, token);
-                    setServices(getServicesResponse);
-                } else {
-                    const noSpaceTags = tags.replaceAll(" ", ":");
-                    let path = "/api/v1/applets/";
-                    path += noSpaceTags;
-                    const getAppletsResponse = await queries.get(path, {}, token);
-                    setApplets(getAppletsResponse.msg);
-                    path = "/api/v1/services/tag/";
-                    path += noSpaceTags;
-                    const getServicesResponse = await queries.get(path, {}, token);
-                    setServices(getServicesResponse.msg);
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-        getAppletsAndServicesByTags();
-    }, [tags]);
+    // useEffect(() => {
+    //     const getAppletsAndServicesByTags = async () => {
+    //         try {
+    //             const token = await getValue("token");
+    //             if (tags === "") {
+    //                 const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+    //                 setApplets(getAppletsResponse.msg);
+    //                 const getServicesResponse = await queries.get("/api/v1/services", {}, token);
+    //                 setServices(getServicesResponse);
+    //             } else {
+    //                 const noSpaceTags = tags.replaceAll(" ", ":");
+    //                 let path = "/api/v1/applets/";
+    //                 path += noSpaceTags;
+    //                 const getAppletsResponse = await queries.get(path, {}, token);
+    //                 setApplets(getAppletsResponse.msg);
+    //                 path = "/api/v1/services/tag/";
+    //                 path += noSpaceTags;
+    //                 const getServicesResponse = await queries.get(path, {}, token);
+    //                 setServices(getServicesResponse.msg);
+    //             }
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     }
+    //     getAppletsAndServicesByTags();
+    // }, [tags]);
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Header />
-            <Text style={styles.homeTitle}>Explore</Text>
+            <Text style={styles.homeTitle}>My Applets</Text>
+
+
             <View style={styles.homeNavigation}>
-                <CustomerButton
+                {/* <CustomerButton
                     text="All"
                     onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
-                />
+                /> */}
                 <CustomerButton
                     text="Applets"
                     onPress={handleAppletsButton}
@@ -95,13 +97,13 @@ const All = () => {
                     bgColor={""}
                     fgColor={""}
                 />
-                <CustomerButton
+                {/* <CustomerButton
                     text="Services"
                     onPress={handleServicesButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
-                />
+                /> */}
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput
@@ -176,6 +178,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         marginBottom: 20,
+        fontWeight: 'bold',
     },
     searchBar: {
         alignItems: 'center',

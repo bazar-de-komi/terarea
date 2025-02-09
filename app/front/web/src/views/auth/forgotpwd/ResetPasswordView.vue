@@ -73,9 +73,6 @@ export default defineComponent({
         console.error(error);
         alert("Failed to reset the password.");
       }
-      // console.log('Resetting password for', this.email);
-      // console.log('Verification Code:', this.verificationCode);
-      // console.log('New Password:', this.newPassword);
     },
     async resendVerificationEmail() {
       await queries.post("/api/v1/send_email_verification", {
@@ -91,7 +88,6 @@ export default defineComponent({
   },
   mounted() {
     this.email = this.route.query.email as string;
-    console.log('Received email:', this.email);
   },
 });
 </script>

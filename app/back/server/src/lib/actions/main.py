@@ -168,7 +168,7 @@ class ActionsMain:
             table=CONST.TAB_ACTIONS,
             column=["running"],
             data=["0"],
-            where=f"id={node}"
+            where=f"id='{node}'"
         )
         if locked == self.error:
             msg = f"Failed to unlock action {node} by process {os.getpid()}"

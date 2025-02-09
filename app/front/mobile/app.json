@@ -17,7 +17,10 @@
     },
     "android": {
       "package": "com.terarea.terarea",
-      "permissions": ["INTERNET"],
+      "permissions": [
+        "INTERNET"
+      ],
+      "newArchEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,6 +30,10 @@
       "favicon": "./assets/favicon.png"
     },
     "description": "IFTTT for mobile",
-    "sdkVersion": "48.0.0"
+    "extra": {
+      "eas": {
+        "projectId": "a3bcfa35-ea4e-4562-8aa4-277dab14d741"
+      }
+    }
   }
 }

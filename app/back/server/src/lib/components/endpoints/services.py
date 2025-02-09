@@ -89,65 +89,7 @@ class Services:
             headers=self.runtime_data_initialised.json_header
         )
 
-    async def get_service_name(self, request: Request, name: str) -> Response:
-        """
-        The method to get a service by it's name
-        """
-        title = "Get service by name"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-            request
-        )
-        self.disp.log_debug(f"Token = {token}", title)
-        if not token:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(
-                title,
-                token
-            )
-        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
-            token
-        ) is False:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
-                title
-            )
-        service_data = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_SERVICES,
-            "*",
-            f"name='{name}'"
-        )
-        if not service_data or isinstance(service_data, int):
-            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-                title=title,
-                message="service not found.",
-                resp="not found",
-                token=token,
-                error=True
-            )
-            return HCI.not_found(
-                content=body,
-                content_type=CONST.CONTENT_TYPE,
-                headers=self.runtime_data_initialised.json_header
-            )
-        for i, service in enumerate(service_data):
-            if "api_key" in service:
-                service_data[i]["api_key"] = self.runtime_data_initialised.boilerplate_non_http_initialised.hide_api_key(
-                    service["api_key"]
-                )
-            service_data[i]["created_at"] = self.runtime_data_initialised.database_link.datetime_to_string(
-                service["created_at"])
-        self.disp.log_debug(f"Service found: {service_data}", title)
-        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-            title=title,
-            message=service_data,
-            resp="success",
-            token=token
-        )
-        return HCI.success(
-            content=body,
-            content_type=CONST.CONTENT_TYPE,
-            headers=self.runtime_data_initialised.json_header
-        )
-
-    async def get_service_id(self, request: Request, id: str) -> Response:
+    async def get_service_by_id(self, request: Request, service_id: str) -> Response:
         """
         The method to get a service by it's id
         """
@@ -170,7 +112,7 @@ class Services:
         service_data = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_SERVICES,
             "*",
-            f"id='{id}'",
+            f"id='{service_id}'",
             beautify=True
         )
         if isinstance(service_data, int):

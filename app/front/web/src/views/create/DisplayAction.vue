@@ -2,16 +2,11 @@
   <div class="choose-service-page">
     <header class="header">
       <CancelButton buttonText="Back" @click="goBack" class="cancel-button" />
-      <h1 class="page-title">Choose a Action</h1>
+      <h1 class="page-title">Choose a Reaction</h1>
     </header>
 
     <div class="search-section">
-      <input
-        type="text"
-        class="search-bar"
-        placeholder="Search Action"
-        v-model="searchQuery"
-      />
+      <input type="text" class="search-bar" placeholder="Search Reaction" v-model="searchQuery" />
       <button class="clear-search" @click="clearSearchQuery">✖</button>
     </div>
 
@@ -19,25 +14,20 @@
 
     <section class="tiles-section">
       <div class="tiles-grid">
-        <TileComponent
-          v-for="(tile, index) in filteredTiles"
-          :key="index"
-          :title="tile.title"
-          :description="tile.description"
-          :backgroundColor="tile.backgroundColor"
-          :name="tile.name"
-          @tile-selected="handleTileSelection"
-        />
+        <TileComponent v-for="(tile, index) in filteredTiles" :key="index" :title="tile.json.name"
+          :name="tile.serviceInfo?.name" :description="tile.json.description"
+          @tile-selected="handleTileSelection(tile)" />
       </div>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
 import TileComponent from '@/components/CreateApplet-Comp/TileAct-ReactComp.vue';
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   components: {
@@ -47,6 +37,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const searchQuery = ref('');
+    const tiles = ref<any[]>([]);
 
     const goBack = () => {
       router.back();
@@ -56,20 +47,60 @@ export default defineComponent({
       searchQuery.value = '';
     };
 
-    const tiles = ref([
-      { title: 'New status message on page', description: 'This Trigger fires every time you create a new status message on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-      { title: 'New status message with hashtag on page', description: 'This Trigger fires every time you create a new status message with a specific hashtag on your Facebook Page.', backgroundColor: '#3b5998', name: 'Facebook' },
-    ]);
+    // const filteredTiles = computed(() => {
+    //   return tiles.value.filter(tile =>
+    //     tile.json.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    //   );
+    // });
 
-    const filteredTiles = computed(() => {
-      return tiles.value.filter(tile =>
-        tile.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-      );
-    });
+    const filteredTiles = computed(() =>
+      !searchQuery.value
+        ? tiles.value
+        : tiles.value.filter((tile) => {
+          const searchWords = searchQuery.value.toLowerCase().split(' ').filter(word => word.length > 0);
+          const matchesName = searchWords.some(word =>
+            tile.json.name.toLowerCase().includes(word)
+          );
+          const matchesDescription = searchWords.some(word =>
+              tile.json.description.toLowerCase().split(' ').some((description_word: string) => description_word.includes(word))
+          );
+          const matchesService = searchWords.some(word =>
+            tile.serviceInfo.name.toLowerCase().includes(word)
+          );
+          return matchesName || matchesService || matchesDescription;
+        })
+    );
 
     const handleTileSelection = (tileData: any) => {
-      router.push({ name: 'CreateApplet', params: { selectedTile: tileData } });
+      router.push({ name: 'ReactionInformation', query: { tile: JSON.stringify(tileData) } });
     };
+
+    onBeforeMount(async () => {
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        const reactions_response = await queries.get("/api/v1/reactions", {}, token);
+        if (reactions_response.resp === "success") {
+          tiles.value = reactions_response.msg;
+          await Promise.all(
+            tiles.value.map(async (tile: any, index: number) => {
+              try {
+                const getServiceNameResponse = await queries.get(`/api/v1/service/${tile.service_id}`, {}, token);
+                if (getServiceNameResponse.resp === "success") {
+                  tiles.value[index] = {
+                    ...tile,
+                    serviceInfo: getServiceNameResponse.msg,
+                  };
+                }
+              } catch (error) {
+                console.error(`Erreur pour récupérer les données pour la tile ${tile.id}:`, error);
+              }
+            })
+          );
+        }
+      } catch (error) {
+        console.error("Error when charging reactions:", error);
+      }
+    });
 
     return {
       searchQuery,
@@ -83,6 +114,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.tile {
+  color: #333;
+  background-color: #ff61fc;
+}
+
 .choose-service-page {
   display: flex;
   flex-direction: column;

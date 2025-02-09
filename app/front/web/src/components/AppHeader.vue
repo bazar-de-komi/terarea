@@ -4,7 +4,7 @@
       <img src="@/assets/logo.png" alt="Logo" class="logo" />
     </router-link>
     <nav class="nav">
-      <router-link to="/explore/all" class="nav-item">Explore</router-link>
+      <router-link to="/explore/applets" class="nav-item">My Applet</router-link>
       <router-link to="/create" class="nav-item create-btn">Create</router-link>
       <!-- Icône de profil avec le menu déroulant -->
       <div class="profile-container" @click="toggleProfileMenu">
@@ -12,7 +12,7 @@
         <transition name="fade">
           <div v-if="isProfileMenuOpen" class="profile-menu">
             <router-link to="/account" class="menu-item">Account</router-link>
-            <router-link to="/services" class="menu-item">My services</router-link>
+            <!-- <router-link to="/services" class="menu-item">My services</router-link> -->
             <div class="separator"></div>
             <router-link to="/help" class="menu-item">Help</router-link>
             <router-link to="/" class="menu-item logout" @click="logUserOut">Log out</router-link>

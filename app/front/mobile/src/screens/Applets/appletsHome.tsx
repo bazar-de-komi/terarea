@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -14,27 +14,16 @@ const Applets = () => {
     const [applets, setApplets] = useState([]);
     const [tags, setTags] = useState("");
 
-    const handleAllButton = () => {
-        navigation.navigate("All");
-    };
-
-    const handleAppletsButton = () => {
-        navigation.navigate("Applets");
-    };
-
-    const handleServicesButton = () => {
-        navigation.navigate("Services");
-    };
 
     const handleAppletButton = async (applet: any) => {
-        navigation.navigate("Applet screen", { applet: applet });
+        navigation.navigate("Applets information", { applet: applet });
     };
 
     useEffect(() => {
         const getApplets = async () => {
             try {
                 const token = await getValue("token");
-                const getServicesResponse = await queries.get("/api/v1/applets", {}, token);
+                const getServicesResponse = await queries.get("/api/v1/my_applets", {}, token);
                 setApplets(getServicesResponse.msg);
             } catch (error) {
                 console.error(error);
@@ -48,12 +37,12 @@ const Applets = () => {
             try {
                 const token = await getValue("token");
                 if (tags === "") {
-                    const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+                    const getAppletsResponse = await queries.get("/api/v1/my_applets", {}, token);
                     setApplets(getAppletsResponse.msg);
                 } else {
                     const noSpaceTags = tags.replaceAll(" ", ":");
                     console.log("NoSpaceTags", noSpaceTags);
-                    let path = "/api/v1/applets/";
+                    let path = "/api/v1/my_applets/";
                     path += noSpaceTags;
                     const getAppletsResponse = await queries.get(path, {}, token);
                     setApplets(getAppletsResponse.msg);
@@ -66,50 +55,13 @@ const Applets = () => {
         getAppletsByTags();
     }, [tags]);
 
-    // const appletsData = [
-    //     {
-    //         title: "Get the weather forecast every dat at 7:00 AM",
-    //         description: "Weather Underground",
-    //         bgColor: "orange",
-    //     },
-    //     {
-    //         title: "Quickly create events in Google Calendar",
-    //         description: "Google",
-    //         bgColor: "blue",
-    //     },
-    //     {
-    //         title: "Track your fitness goals daily",
-    //         description: "Fitbit",
-    //         bgColor: "green",
-    //     },
-    // ];
-
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Header />
-            <Text style={styles.homeTitle}>Explore</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Applets')} >
+                <Text style={styles.homeTitle}>My Applets</Text>
+            </TouchableOpacity>
             <View style={styles.homeNavigation}>
-                <CustomerButton
-                    text="All"
-                    onPress={handleAllButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                />
-                <CustomerButton
-                    text="Applets"
-                    onPress={handleAppletsButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={"blue"}
-                />
-                <CustomerButton
-                    text="Services"
-                    onPress={handleServicesButton}
-                    type="TERTIARY"
-                    bgColor={""}
-                    fgColor={""}
-                />
             </View>
             <View style={styles.searchBar}>
                 <CustomerInput

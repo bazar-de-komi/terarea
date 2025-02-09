@@ -1,4 +1,3 @@
-
 const url = "https://ifttt-back.pingpal.news";
 const port = -1;
 
@@ -41,7 +40,6 @@ async function query(
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
-    console.log(response);
     const data = await response.json();
     return data;
   } catch (error) {

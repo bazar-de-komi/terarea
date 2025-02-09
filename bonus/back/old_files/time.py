@@ -4,7 +4,7 @@
 """
 
 from fastapi import FastAPI, Request
-from ..http_codes import HCI
+from ....app.back.server.src.lib.components.http_codes import HCI
 import json
 import time
 import winsound

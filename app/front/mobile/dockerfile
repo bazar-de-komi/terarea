@@ -1,97 +1,80 @@
-FROM ubuntu:latest
+FROM node:20.17.0
+
+ARG EMAIL
+ARG USERNAME
+ARG EXPO_PASSWORD
+ARG EXPO_TOKEN
 
 # Set the default environment variables
-ENV LOCATION=docker-mobile
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/mobile
-ENV docker_volume_path="/shared_folder"
-ARG APP_ID=com.terarea.terarea
-ENV ANDROID_HOME /usr/local/android-sdk-linux
-ENV PATH "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
-# ENV LAUNCH_COMMAND="serve -s build"
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV CI=1
+ENV EMAIL=$EMAIL
+ENV USERNAME=$USERNAME
+ENV EXPO_PASSWORD=$EXPO_PASSWORD
+ENV EXPO_TOKEN=$EXPO_TOKEN
 
-WORKDIR /home/setup
-
-RUN apt-get update && \
-    apt-get install -y \
-    build-essential \
-    curl \
-    wget \
-    git \
-    nano \
-    unzip \
-    software-properties-common \
-    sudo
-
-# Update the system and install required packages
-RUN apt update && apt upgrade -y && \
-    apt install -y npm xsel wget unzip zip && \
-    npm cache clean --force && \
-    apt clean
-
-# Install Amazon Corretto
-RUN file_name=amazon-corretto-11-x64-linux-jdk.deb && \
-    wget https://corretto.aws/downloads/latest/$file_name && \
-    apt install -y ./$file_name && \
-    rm $file_name
-
-# Install Android SDK Command-Line Tools
-RUN mkdir -p ${ANDROID_HOME} && \
-    cd ${ANDROID_HOME} && \
-    wget -q https://dl.google.com/android/repository/commandlinetools-linux-7302050_latest.zip && \
-    unzip commandlinetools-linux-7302050_latest.zip && \
-    rm commandlinetools-linux-7302050_latest.zip && \
-    mv cmdline-tools tools && \
-    mkdir cmdline-tools && \
-    mv tools cmdline-tools/latest
-
-# Set Gradle environment variables
-ENV GRADLE_VERSION=8.1.1
-ENV GRADLE_HOME=/opt/gradle/gradle-${GRADLE_VERSION}
-ENV PATH=${GRADLE_HOME}/bin:${PATH}
-
-# Downloading gradle
-RUN wget https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip -P /tmp && \
-    unzip -d /opt/gradle /tmp/gradle-*.zip
-
-# Set the working directory in the Docker container and install dependencies
+# Set main working directory
 WORKDIR ${HOME}
+
+# Update the system and Install required packages
+RUN apt update && apt upgrade -y && \
+    apt install -y openjdk-17-jdk wget unzip zip xsel && \
+    npm install -g npm@latest && \
+    npm cache clean --force
+
+# Copy package files and Install dependencies
 COPY package.json package-lock.json ./
 
-RUN timeout 60s npm install || timeout 60s npm install
+# Downloading EAS and dependencies
+RUN npm install -g expo-cli eas-cli \
+    npm install @react-native-masked-view/masked-view@0.3.2 \
+    npx expo install expo-status-bar@~2.0.1 \
+    react-native@0.76.6 \
+    react-native-gesture-handler@~2.20.2 \
+    react-native-safe-area-context@4.12.0 \
+    react-native-screens@~4.4.0 \
+    typescript@^5.3.3
 
 # Copy remaining project files
 COPY . .
 
-# Build android directory and modify build.gradle file
-RUN npx expo prebuild --clean --no-install && \
-    sed -i "/defaultConfig {/a \    manifestPlaceholders = [appAuthRedirectScheme: \"${APP_ID}\"]" android/app/build.gradle && \
-    sed -i "/^rootProject.name/c\rootProject.name = 'terarea'" android/settings.gradle && \
-    sed -i '/^org.gradle.jvmargs=/c\org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -Xss4m -Dfile.encoding=UTF-8' android/gradle.properties && \
-    sed -i '/^distributionUrl=/c\distributionUrl=https\://services.gradle.org/distributions/gradle-5.6.2-all.zip' android/gradle/wrapper/gradle-wrapper.properties
+# Initialize a Git repository, config EXPO login for EAS build
+RUN mkdir -p ${HOME}/scripts && \
+    echo '#!/bin/bash\n\
+    set -e\n\
+    \n\
+    if [ -z "$EMAIL" ] || [ -z "$USERNAME" ]; then\n\
+    echo "ERROR: EMAIL and USERNAME environment variables must be set"\n\
+    exit 1\n\
+    fi\n\
+    \n\
+    # Ensure we are in the correct directory\n\
+    cd ${HOME}\n\
+    \n\
+    # Clean up any existing git repository\n\
+    rm -rf .git\n\
+    \n\
+    # Initialize new git repository\n\
+    git init\n\
+    git config --global user.email "${EMAIL}"\n\
+    git config --global user.name "${USERNAME}"\n\
+    git config --global init.defaultBranch main\n\
+    \n\
+    # Configure git to handle line endings correctly\n\
+    git config --global core.autocrlf input\n\
+    \n\
+    # Add and commit files\n\
+    git add .\n\
+    git commit -m "feat: initial commit"\n\
+    \n\
+    # Run EAS build with error handling\n\
+    if ! eas build -p android --profile preview --clear-cache --non-interactive; then\n\
+    echo "EAS build failed. Check the error messages above."\n\
+    exit 1\n\
+    fi\n\
+    ' > ${HOME}/scripts/build.sh && \
+    chmod +x ${HOME}/scripts/build.sh
 
-# Accept licenses and install platform tools and the SDK
-RUN yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses && \
-    sdkmanager --sdk_root=${ANDROID_HOME} \
-    "platform-tools" \
-    "platforms;android-30" \
-    "platforms;android-31" \
-    "build-tools;30.0.3"
-
-# Change to the android directory
-WORKDIR ${HOME}/android
-
-# Build the release version - the command is commented because I do tests with docker exec
-# RUN ./gradlew assembleRelease
-
-# Build the project (optional, uncomment if you want to build here)
-# RUN npm run build
-
-RUN npm cache clean --force
-
-# Expose the ports that need to be used
-EXPOSE 1024-9000
-
-# Entry point
-# CMD ["/bin/bash","-c", "${LAUNCH_COMMAND}" ]
-CMD ["/bin/bash"]
+ENTRYPOINT ["/mobile/scripts/build.sh"]

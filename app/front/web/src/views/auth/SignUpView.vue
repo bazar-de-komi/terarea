@@ -73,7 +73,6 @@ export default defineComponent({
         alert('Passwords do not match');
         return;
       }
-      console.log('Sign up with', this.email, this.password);
 
       try {
         const response = await queries.post('/api/v1/register', {
@@ -82,7 +81,7 @@ export default defineComponent({
         });
         if (response.token) {
           localStorage.setItem('authToken', response.token);
-          this.$router.push('/explore/all');
+          this.$router.push('/explore/applets');
         } else {
           alert('The authentication have failed.');
         }
