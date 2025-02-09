@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/applet/${title.replace(/\s+/g, '-')}`" class="applet-tile-link">
+  <router-link :to="`/applet/${id}-${title?.replace(/\s+/g, '-')}`" class="applet-tile-link">
     <div class="applet-tile" :style="{ backgroundColor: backgroundColor }">
       <img v-if="icon" :src="icon" class="applet-icon" alt="icon" />
       <h3 class="applet-title">{{ title }}</h3>
@@ -10,7 +10,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useRouter } from 'vue-router';
 
 export default defineComponent({
   props: {
@@ -19,17 +18,6 @@ export default defineComponent({
     description: String,
     backgroundColor: String,
     icon: String,
-  },
-  setup(props) {
-    const router = useRouter();
-
-    const goToDetails = () => {
-      router.push({ name: 'AppletDetails', params: { id: props.id } });
-    };
-
-    return {
-      goToDetails,
-    };
   },
 });
 </script>
