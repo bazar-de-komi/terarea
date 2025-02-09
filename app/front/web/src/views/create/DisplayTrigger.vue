@@ -6,12 +6,7 @@
     </header>
 
     <div class="search-section">
-      <input
-        type="text"
-        class="search-bar"
-        placeholder="Search Trigger"
-        v-model="searchQuery"
-      />
+      <input type="text" class="search-bar" placeholder="Search Trigger" v-model="searchQuery" />
       <button class="clear-search" @click="clearSearchQuery">✖</button>
     </div>
 
@@ -19,23 +14,20 @@
 
     <section class="tiles-section">
       <div class="tiles-grid">
-        <TileComponent
-          v-for="(tile, index) in filteredTiles"
-          :key="index"
-          :title="tile.json.name"
-          :description="tile.json.description"
-          @tile-selected="handleTileSelection(tile)"
-        />
+        <TileComponent v-for="(tile, index) in filteredTiles" :key="index" :title="tile.json.name"
+          :description="tile.json.description" :name="tile.serviceInfo?.name"
+          @tile-selected="handleTileSelection(tile)" />
       </div>
     </section>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import CancelButton from '@/components/CancelButton.vue';
 import TileComponent from '@/components/CreateApplet-Comp/TileAct-ReactComp.vue';
+import { queries } from '@/../lib/querier';
 
 export default defineComponent({
   components: {
@@ -44,33 +36,68 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const searchQuery = ref('');
+    const searchQuery = ref("");
+    const tiles = ref<any[]>([]);
 
     const goBack = () => {
       router.back();
     };
 
     const clearSearchQuery = () => {
-      searchQuery.value = '';
+      searchQuery.value = "";
     };
 
-    const tiles = ref([
-      { id: 1, type: "trigger", json: {"ignore:id":1,"name":"Every day","description":"This action trigger every day at a specific time set by you.","service":{"ignore:id":5,"ignore:url_extra":"/api/time/current/zone","url_params":{"drop:timeZone":["opt:Africa/Addis_Ababa","opt:Africa/Cairo","opt:Africa/Casablanca","opt:Africa/Dakar","opt:Africa/Johannesburg","opt:Africa/Kinshasa","opt:Africa/Lagos","opt:Africa/Nairobi","opt:America/Bogota","opt:America/Buenos_Aires","opt:America/Chicago","opt:America/Lima","opt:America/Los_Angeles","opt:America/Mexico_City","opt:America/Montreal","opt:America/New_York","opt:America/Santiago","opt:America/Sao_Paulo","opt:America/Toronto","opt:Asia/Bangkok","opt:Asia/Jakarta","opt:Asia/Seoul","opt:Asia/Shanghai","opt:Asia/Tokyo","opt:Australia/Brisbane","opt:Australia/Melbourne","opt:Australia/Perth","opt:Australia/Sydney","opt:Europe/Berlin","opt:Europe/London","opt:Europe/Madrid","opt:Europe/Moscow","default:Europe/Paris","opt:Europe/Rome"]},"ignore:method":"GET","ignore:response":{"int:code":["default:200","min:100","max:500"],"response_content":{"hour":"$ref{body.hour}","minute":"$ref{body.minute}"}},"verification":{"hour":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:1","opt:2","opt:3","opt:4","opt:5","opt:6","opt:7","opt:8","opt:9","opt:10","opt:11","opt:12","opt:13","opt:14","opt:15","opt:16","opt:17","opt:18","opt:19","opt:20","opt:21","opt:22","opt:23"]},"minute":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:10","opt:20","opt:30","opt:40","opt:50"]}},"ignore:vars":{"date":"$ref{body.date}","location":"$ref{body.timeZone}","day":"$ref{body.dayOfWeek}","current_time":"$ref{body.time}"}}}, service_id: 5 },
-      { id: 2, type: "trigger", json: {"ignore:id":1,"name":"Every day","description":"This action trigger every day at a specific time set by you.","service":{"ignore:id":5,"ignore:url_extra":"/api/time/current/zone","url_params":{"drop:timeZone":["opt:Africa/Addis_Ababa","opt:Africa/Cairo","opt:Africa/Casablanca","opt:Africa/Dakar","opt:Africa/Johannesburg","opt:Africa/Kinshasa","opt:Africa/Lagos","opt:Africa/Nairobi","opt:America/Bogota","opt:America/Buenos_Aires","opt:America/Chicago","opt:America/Lima","opt:America/Los_Angeles","opt:America/Mexico_City","opt:America/Montreal","opt:America/New_York","opt:America/Santiago","opt:America/Sao_Paulo","opt:America/Toronto","opt:Asia/Bangkok","opt:Asia/Jakarta","opt:Asia/Seoul","opt:Asia/Shanghai","opt:Asia/Tokyo","opt:Australia/Brisbane","opt:Australia/Melbourne","opt:Australia/Perth","opt:Australia/Sydney","opt:Europe/Berlin","opt:Europe/London","opt:Europe/Madrid","opt:Europe/Moscow","default:Europe/Paris","opt:Europe/Rome"]},"ignore:method":"GET","ignore:response":{"int:code":["default:200","min:100","max:500"],"response_content":{"hour":"$ref{body.hour}","minute":"$ref{body.minute}"}},"verification":{"hour":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:1","opt:2","opt:3","opt:4","opt:5","opt:6","opt:7","opt:8","opt:9","opt:10","opt:11","opt:12","opt:13","opt:14","opt:15","opt:16","opt:17","opt:18","opt:19","opt:20","opt:21","opt:22","opt:23"]},"minute":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:10","opt:20","opt:30","opt:40","opt:50"]}},"ignore:vars":{"date":"$ref{body.date}","location":"$ref{body.timeZone}","day":"$ref{body.dayOfWeek}","current_time":"$ref{body.time}"}}}, service_id: 5 },
-      { id: 3, type: "trigger", json: {"ignore:id":1,"name":"Every day","description":"This action trigger every day at a specific time set by you.","service":{"ignore:id":5,"ignore:url_extra":"/api/time/current/zone","url_params":{"drop:timeZone":["opt:Africa/Addis_Ababa","opt:Africa/Cairo","opt:Africa/Casablanca","opt:Africa/Dakar","opt:Africa/Johannesburg","opt:Africa/Kinshasa","opt:Africa/Lagos","opt:Africa/Nairobi","opt:America/Bogota","opt:America/Buenos_Aires","opt:America/Chicago","opt:America/Lima","opt:America/Los_Angeles","opt:America/Mexico_City","opt:America/Montreal","opt:America/New_York","opt:America/Santiago","opt:America/Sao_Paulo","opt:America/Toronto","opt:Asia/Bangkok","opt:Asia/Jakarta","opt:Asia/Seoul","opt:Asia/Shanghai","opt:Asia/Tokyo","opt:Australia/Brisbane","opt:Australia/Melbourne","opt:Australia/Perth","opt:Australia/Sydney","opt:Europe/Berlin","opt:Europe/London","opt:Europe/Madrid","opt:Europe/Moscow","default:Europe/Paris","opt:Europe/Rome"]},"ignore:method":"GET","ignore:response":{"int:code":["default:200","min:100","max:500"],"response_content":{"hour":"$ref{body.hour}","minute":"$ref{body.minute}"}},"verification":{"hour":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:1","opt:2","opt:3","opt:4","opt:5","opt:6","opt:7","opt:8","opt:9","opt:10","opt:11","opt:12","opt:13","opt:14","opt:15","opt:16","opt:17","opt:18","opt:19","opt:20","opt:21","opt:22","opt:23"]},"minute":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:10","opt:20","opt:30","opt:40","opt:50"]}},"ignore:vars":{"date":"$ref{body.date}","location":"$ref{body.timeZone}","day":"$ref{body.dayOfWeek}","current_time":"$ref{body.time}"}}}, service_id: 5 },
-      { id: 4, type: "trigger", json: {"ignore:id":1,"name":"Every day","description":"This action trigger every day at a specific time set by you.","service":{"ignore:id":5,"ignore:url_extra":"/api/time/current/zone","url_params":{"drop:timeZone":["opt:Africa/Addis_Ababa","opt:Africa/Cairo","opt:Africa/Casablanca","opt:Africa/Dakar","opt:Africa/Johannesburg","opt:Africa/Kinshasa","opt:Africa/Lagos","opt:Africa/Nairobi","opt:America/Bogota","opt:America/Buenos_Aires","opt:America/Chicago","opt:America/Lima","opt:America/Los_Angeles","opt:America/Mexico_City","opt:America/Montreal","opt:America/New_York","opt:America/Santiago","opt:America/Sao_Paulo","opt:America/Toronto","opt:Asia/Bangkok","opt:Asia/Jakarta","opt:Asia/Seoul","opt:Asia/Shanghai","opt:Asia/Tokyo","opt:Australia/Brisbane","opt:Australia/Melbourne","opt:Australia/Perth","opt:Australia/Sydney","opt:Europe/Berlin","opt:Europe/London","opt:Europe/Madrid","opt:Europe/Moscow","default:Europe/Paris","opt:Europe/Rome"]},"ignore:method":"GET","ignore:response":{"int:code":["default:200","min:100","max:500"],"response_content":{"hour":"$ref{body.hour}","minute":"$ref{body.minute}"}},"verification":{"hour":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:1","opt:2","opt:3","opt:4","opt:5","opt:6","opt:7","opt:8","opt:9","opt:10","opt:11","opt:12","opt:13","opt:14","opt:15","opt:16","opt:17","opt:18","opt:19","opt:20","opt:21","opt:22","opt:23"]},"minute":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:10","opt:20","opt:30","opt:40","opt:50"]}},"ignore:vars":{"date":"$ref{body.date}","location":"$ref{body.timeZone}","day":"$ref{body.dayOfWeek}","current_time":"$ref{body.time}"}}}, service_id: 5 },
-      { id: 5, type: "trigger", json: {"ignore:id":1,"name":"Every day","description":"This action trigger every day at a specific time set by you.","service":{"ignore:id":5,"ignore:url_extra":"/api/time/current/zone","url_params":{"drop:timeZone":["opt:Africa/Addis_Ababa","opt:Africa/Cairo","opt:Africa/Casablanca","opt:Africa/Dakar","opt:Africa/Johannesburg","opt:Africa/Kinshasa","opt:Africa/Lagos","opt:Africa/Nairobi","opt:America/Bogota","opt:America/Buenos_Aires","opt:America/Chicago","opt:America/Lima","opt:America/Los_Angeles","opt:America/Mexico_City","opt:America/Montreal","opt:America/New_York","opt:America/Santiago","opt:America/Sao_Paulo","opt:America/Toronto","opt:Asia/Bangkok","opt:Asia/Jakarta","opt:Asia/Seoul","opt:Asia/Shanghai","opt:Asia/Tokyo","opt:Australia/Brisbane","opt:Australia/Melbourne","opt:Australia/Perth","opt:Australia/Sydney","opt:Europe/Berlin","opt:Europe/London","opt:Europe/Madrid","opt:Europe/Moscow","default:Europe/Paris","opt:Europe/Rome"]},"ignore:method":"GET","ignore:response":{"int:code":["default:200","min:100","max:500"],"response_content":{"hour":"$ref{body.hour}","minute":"$ref{body.minute}"}},"verification":{"hour":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:1","opt:2","opt:3","opt:4","opt:5","opt:6","opt:7","opt:8","opt:9","opt:10","opt:11","opt:12","opt:13","opt:14","opt:15","opt:16","opt:17","opt:18","opt:19","opt:20","opt:21","opt:22","opt:23"]},"minute":{"ignore:verification_operator":["default:==","opt:!=","opt:<>","opt:<","opt:>","opt:<=","opt:>=","opt:<=>"],"drop:verification_value":["default:0","opt:10","opt:20","opt:30","opt:40","opt:50"]}},"ignore:vars":{"date":"$ref{body.date}","location":"$ref{body.timeZone}","day":"$ref{body.dayOfWeek}","current_time":"$ref{body.time}"}}}, service_id: 5 },
-    ]);
-
-    const filteredTiles = computed(() => {
-      return tiles.value.filter(tile =>
-        tile.json.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      );
-    });
+    const filteredTiles = computed(() =>
+      !searchQuery.value
+        ? tiles.value
+        : tiles.value.filter((tile) => {
+          const searchWords = searchQuery.value.toLowerCase().split(' ').filter(word => word.length > 0);
+          const matchesName = searchWords.some(word =>
+            tile.json.name.toLowerCase().includes(word)
+          );
+          const matchesDescription = searchWords.some(word =>
+              tile.json.description.toLowerCase().split(' ').some((description_word: string) => description_word.includes(word))
+          );
+          const matchesService = searchWords.some(word =>
+            tile.serviceInfo.name.toLowerCase().includes(word)
+          );
+          return matchesName || matchesService || matchesDescription;
+        })
+    );
 
     const handleTileSelection = (tileData: any) => {
-      router.push({ name: 'TriggerInformation', query: { tile: JSON.stringify(tileData) } });
+      router.push({
+        name: "TriggerInformation",
+        query: { tile: JSON.stringify(tileData) },
+      });
     };
+
+    onBeforeMount(async () => {
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        const triggers_response = await queries.get("/api/v1/triggers", {}, token);
+        if (triggers_response.resp === "success") {
+          tiles.value = triggers_response.msg;
+          await Promise.all(
+            tiles.value.map(async (tile: any, index: number) => {
+              try {
+                const getServiceNameResponse = await queries.get(`/api/v1/service/${tile.service_id}`, {}, token);
+                if (getServiceNameResponse.resp === "success") {
+                  tiles.value[index] = {
+                    ...tile,
+                    serviceInfo: getServiceNameResponse.msg,
+                  };
+                }
+              } catch (error) {
+                console.error(`Erreur pour récupérer les données pour la tile ${tile.id}:`, error);
+              }
+            })
+          );
+        }
+      } catch (error) {
+        console.error("Error when charging triggers:", error);
+      }
+    });
 
     return {
       searchQuery,
@@ -78,6 +105,7 @@ export default defineComponent({
       clearSearchQuery,
       filteredTiles,
       handleTileSelection,
+      tiles,
     };
   },
 });

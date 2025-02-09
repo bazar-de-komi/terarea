@@ -16,7 +16,6 @@
         class="search-bar"
         placeholder="Search an applet"
         v-model="searchQuery"
-        @input="updateSearchQuery"
       />
       <button class="clear-search" @click="clearSearchQuery">✖</button>
     </div>
@@ -26,9 +25,10 @@
           <template v-for="(item, index) in filteredAllItems" :key="index">
             <!-- Vérification du type pour afficher le composant approprié -->
             <AppletTile
-              v-if="item.type === 'applet'"
-              :title="item.title"
-              :background-color="item.color"
+              :id="item.id"
+              :title="item.name"
+              :background-color="item.colour"
+              :description="item.description"
             />
             <!-- <ServiceTile
               v-else-if="item.type === 'service'"
@@ -43,10 +43,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, watch, onMounted } from 'vue';
-import { useStore } from 'vuex';
+import { defineComponent, ref, computed, onBeforeMount } from 'vue';
+// import { useStore } from 'vuex';
 import Header from '@/components/AppHeader.vue';
 import AppletTile from '@/components/AppletBoardTile.vue';
+import { queries } from '@/../lib/querier';
 // import ServiceTile from '@/components/ServiceBoardTile.vue';
 
 export default defineComponent({
@@ -56,42 +57,45 @@ export default defineComponent({
     // ServiceTile,
   },
   setup() {
-    const store = useStore();
-
-    const searchQuery = computed({
-      get: () => store.state.applets.searchQuery,
-      set: (value: string) => {
-        store.dispatch('applets/updateSearchQuery', value);
-        store.dispatch('applets/updateData', value)
-      },
-    });
-
-    const filteredAllItems = computed(() => store.getters['applets/filteredAllItems']);
-
-    const updateSearchQuery = () => {
-      store.dispatch('applets/updateSearchQuery', searchQuery.value);
-    };
-
-    const updateData = () => {
-      store.dispatch('applets/updateData');
-    };
+    const searchQuery = ref("");
+    const applets = ref<any[]>([]);
 
     const clearSearchQuery = () => {
-      searchQuery.value = '';
-      store.dispatch('applets/updateSearchQuery', '');
+      searchQuery.value = "";
     };
 
-    watch(searchQuery, updateSearchQuery);
+    const filteredAllItems = computed(() =>
+      !searchQuery.value
+        ? applets.value
+        : applets.value.filter((applet) => {
+            const searchWords = searchQuery.value.toLowerCase().split(' ').filter(word => word.length > 0);
+            const matchesName = searchWords.some(word =>
+              applet.name.toLowerCase().includes(word)
+            );
+            const matchesTags = searchWords.some(word =>
+              applet.tags.toLowerCase().split(' ').some((tag: string) => tag.includes(word))
+            );
+            return matchesName || matchesTags;
+          })
+    );
 
-    onMounted(async () => {
-      updateData();
+    onBeforeMount(async () => {
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        const response = await queries.get("/api/v1/my_applets", {}, token);
+        if (response.resp === "success") {
+          applets.value = response.msg;
+        }
+      } catch (error) {
+        console.error("Error when retrieving triggers:", error);
+      }
     });
 
     return {
       searchQuery,
-      filteredAllItems,
-      updateSearchQuery,
+      applets,
       clearSearchQuery,
+      filteredAllItems,
     };
   },
 });
