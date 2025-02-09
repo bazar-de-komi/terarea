@@ -21,13 +21,14 @@ const TriggerPage = () => {
     };
 
     const handleSubmit = () => {
-        const updatedTrigger = {
-            ...trigger,
-            json: injectFormValuesIntoJson(trigger.json, formFields.map(field => ({
-                ...field,
-                value: formValues[field.name] || field.defaultValue || ""
-            })))
-        };
+        // const updatedTrigger = {
+        //     ...trigger,
+        //     json: injectFormValuesIntoJson(trigger.json, formFields.map(field => ({
+        //         ...field,
+        //         value: formValues[field.name] || field.defaultValue || ""
+        //     })))
+        // };
+        const updatedTrigger = injectFormValuesIntoJson(trigger.json, formFields);
 
         console.log("Updated Trigger:", updatedTrigger);
 

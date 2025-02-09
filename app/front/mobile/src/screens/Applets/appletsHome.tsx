@@ -23,7 +23,7 @@ const Applets = () => {
         const getApplets = async () => {
             try {
                 const token = await getValue("token");
-                const getServicesResponse = await queries.get("/api/v1/applets", {}, token);
+                const getServicesResponse = await queries.get("/api/v1/my_applets", {}, token);
                 setApplets(getServicesResponse.msg);
             } catch (error) {
                 console.error(error);
@@ -37,12 +37,12 @@ const Applets = () => {
             try {
                 const token = await getValue("token");
                 if (tags === "") {
-                    const getAppletsResponse = await queries.get("/api/v1/applets", {}, token);
+                    const getAppletsResponse = await queries.get("/api/v1/my_applets", {}, token);
                     setApplets(getAppletsResponse.msg);
                 } else {
                     const noSpaceTags = tags.replaceAll(" ", ":");
                     console.log("NoSpaceTags", noSpaceTags);
-                    let path = "/api/v1/applets/";
+                    let path = "/api/v1/my_applets/";
                     path += noSpaceTags;
                     const getAppletsResponse = await queries.get(path, {}, token);
                     setApplets(getAppletsResponse.msg);

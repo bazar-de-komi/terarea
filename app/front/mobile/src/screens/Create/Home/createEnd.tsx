@@ -7,6 +7,8 @@ import Modal from 'react-native-modal';
 import CustomerInput from "../../../components/CustomersInput";
 import CustomerButton from "../../../components/CustomerButton";
 import BackButton from "../../../components/BackButton/backButton";
+import { queries } from "../../../../back-endConnection/querier";
+import { getValue } from "../../../components/StoreData/storeData";
 
 const Create = () => {
     const navigation = useNavigation();
@@ -56,13 +58,19 @@ const Create = () => {
         setIsLoading(true);
 
         try {
-            const response = await fetch("/api/v1/my_applet", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
+            const token = await getValue("token");
+            const response = await queries.post(
+                "/api/v1/my_applet",
+                {
+                    name: appletName,
+                    description: appletDescription,
+                    trigger: trigger,
+                    consequences: action,
+                    tags: appletTags,
+                    colour: appletColor,
                 },
-                body: JSON.stringify(appletData),
-            });
+                token
+            );
 
             if (!response.ok) {
                 throw new Error("Erreur lors de l'envoi des données");
@@ -188,7 +196,7 @@ const Create = () => {
                         bgColor={"transparent"}
                         fgColor={"white"}
                         style={styles.ifThenText}
-                        onPress={InfoCreate}
+                        onPress={handleCreate}
                     />
                 </View>
             </View>
