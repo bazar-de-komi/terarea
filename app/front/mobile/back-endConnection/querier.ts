@@ -1,17 +1,10 @@
 const url: string = "https://ifttt-back.pingpal.news";
 const port: number = -1;
 
-interface QueryOptions {
-  method?: string;
-  path?: string;
-  body?: object;
-  token?: string;
-}
-
 async function query(
-  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
-  path: string = "/", 
-  body: object = {}, 
+  method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE" = "GET",
+  path: string = "/",
+  body: object = {},
   token: string = ""
 ): Promise<any> {
   try {
@@ -31,17 +24,10 @@ async function query(
       payload.body = JSON.stringify(body);
     }
 
-    // if (port === -1) {
-    //   const final_url: string = `${url}${path}`;
-    // } else {
-    //   const final_url: string = `${url}:${port}${path}`;
-    // }
-    // const response: Response = await fetch(final_url, payload);
-
     let final_url: string;
 
     if (port === -1) {
-      final_url = `${url}${path}`;  
+      final_url = `${url}${path}`;
     } else {
       final_url = `${url}:${port}${path}`;
     }
@@ -73,6 +59,10 @@ async function post(path: string = "/", body: object = {}, token: string = ""): 
   return await query("POST", path, body, token);
 }
 
+async function patch(path: string = "/", body: object = {}, token: string = ""): Promise<any> {
+  return await query("PATCH", path, body, token);
+}
+
 async function delete_query(path: string = "/", body: object = {}, token: string = ""): Promise<any> {
   return await query("DELETE", path, body, token);
 }
@@ -82,6 +72,7 @@ const queries = {
   get,
   put,
   post,
+  patch,
   delete_query
 };
 

@@ -16,8 +16,11 @@
 
     <div class="separator">Or</div>
     <div class="social-login">
-      <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon" />
-      <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" />
+      <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon"
+        :provider="'google'" />
+      <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" :provider="'github'" />
+      <AuthButton text="Continue with Discord" :buttonColor="'#5865F2'" :icon="DiscordIcon" :provider="'discord'" />
+      <AuthButton text="Continue with Spotify" :buttonColor="'#1db954'" :icon="SpotifyIcon" :provider="'spotify'" />
     </div>
     <router-link to="/forgot-password" class="forgot-password">Forgot your password?</router-link>
   </AuthLayout>
@@ -27,11 +30,14 @@
 import { defineComponent } from 'vue';
 import AuthButton from '../../components/AuthButton.vue';
 import AuthLayout from '../../components/AuthLayout.vue';
+import { queries } from '@/../lib/querier';
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
 import GoogleIcon from '@/assets/googleicon.svg';
 import GithubIcon from '@/assets/githubicon.svg';
+import SpotifyIcon from '@/assets/spotifyicon.svg';
+import DiscordIcon from '@/assets/discordicon.svg';
 import logo from '@/assets/logo.png';
 
 export default defineComponent({
@@ -48,15 +54,27 @@ export default defineComponent({
       hideIcon,
       GoogleIcon,
       GithubIcon,
+      SpotifyIcon,
+      DiscordIcon,
       logo,
     };
   },
   methods: {
-    submitSignIn() {
-      if (this.email === 'user@example.com' && this.password === 'password123') {
-        this.$router.push('/explore/all');
-      } else {
-        alert('Invalid email or password');
+    async submitSignIn() {
+      try {
+        const response = await queries.post('/api/v1/login', {
+          email: this.email,
+          password: this.password,
+        });
+        if (response.token) {
+          localStorage.setItem('authToken', response.token);
+          this.$router.push('/explore/applets');
+        } else {
+          alert('The authentication have failed.');
+        }
+      } catch (error) {
+        console.error('Erreur lors de la connection:', error);
+        alert('Failed to log in your account.');
       }
     },
     togglePassword() {
@@ -113,7 +131,8 @@ export default defineComponent({
   position: relative;
 }
 
-.separator::before, .separator::after {
+.separator::before,
+.separator::after {
   content: '';
   position: absolute;
   top: 50%;

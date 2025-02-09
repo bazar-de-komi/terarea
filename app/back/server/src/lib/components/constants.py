@@ -5,13 +5,10 @@
 from typing import List, Any
 
 import toml
-import json
 import dotenv
 from display_tty import IDISP
 IDISP.logger.name = "Constants"
 
-# Enable debugging for the functions in the constants file.
-IDISP.debug = True
 
 # Environement initialisation
 dotenv.load_dotenv(".env")
@@ -89,6 +86,12 @@ def _get_toml_variable(toml_conf: dict, section: str, key: str, default=None) ->
         return default
 
 
+# Enable debugging for the functions in the constants file.
+IDISP.debug = _get_toml_variable(
+    TOML_CONF, "Server_configuration.debug_mode", "debug", False
+)
+
+
 # Mail management
 SENDER_ADDRESS = _get_environement_variable(ENV, "SENDER_ADDRESS")
 SENDER_KEY = _get_environement_variable(ENV, "SENDER_KEY")
@@ -97,16 +100,6 @@ SENDER_PORT = int(_get_environement_variable(ENV, "SENDER_PORT"))
 
 # Server oath variables
 REDIRECT_URI = _get_environement_variable(ENV, "REDIRECT_URI")
-
-# |- Github
-GITHUB_CLIENT_ID = _get_environement_variable(ENV, "GITHUB_CLIENT_ID")
-GITHUB_CLIENT_SECRET = _get_environement_variable(ENV, "GITHUB_CLIENT_SECRET")
-GITHUB_SCOPE = _get_environement_variable(ENV, "GITHUB_SCOPE")
-
-# |- Google
-GOOGLE_CLIENT_ID = _get_environement_variable(ENV, "GOOGLE_CLIENT_ID")
-GOOGLE_CLIENT_SECRET = _get_environement_variable(ENV, "GOOGLE_CLIENT_SECRET")
-GOOGLE_SCOPE = _get_environement_variable(ENV, "GOOGLE_SCOPE")
 
 # Database management
 DB_HOST = _get_environement_variable(ENV, "DB_HOST")
@@ -138,7 +131,7 @@ SUCCESS = int(_get_toml_variable(
     TOML_CONF, "Server_configuration.status_codes", "success", 0
 ))
 ERROR = int(_get_toml_variable(
-    TOML_CONF, "Server_configuration.status_codes", "error", 84
+    TOML_CONF, "Server_configuration.status_codes", "error", -84
 ))
 
 # |- Server configuration -> Debug
@@ -235,6 +228,12 @@ CLEAN_VERIFICATION = _get_toml_variable(
 CLEAN_VERIFICATION_INTERVAL = _get_toml_variable(
     TOML_CONF, "Crons", "clean_verification_interval", 900
 )
+RENEW_OATH_TOKENS = _get_toml_variable(
+    TOML_CONF, "Crons", "renew_oath_tokens", True
+)
+RENEW_OATH_TOKENS_INTERVAL = _get_toml_variable(
+    TOML_CONF, "Crons", "renew_oath_tokens_interval", 1800
+)
 
 # |- Verification
 EMAIL_VERIFICATION_DELAY = int(_get_toml_variable(
@@ -248,6 +247,11 @@ RANDOM_MIN = int(_get_toml_variable(
 ))
 RANDOM_MAX = int(_get_toml_variable(
     TOML_CONF,  "Verification", "random_max", 999999
+))
+
+# |- Services
+API_REQUEST_DELAY = int(_get_toml_variable(
+    TOML_CONF, "Services", "api_request_delay", 5
 ))
 
 # Json default keys
@@ -270,7 +274,10 @@ TAB_ACTIONS = "Actions"
 TAB_SERVICES = "Services"
 TAB_CONNECTIONS = "Connections"
 TAB_VERIFICATION = "Verification"
-TAB_USER_SERVICES = "User Services"
+TAB_ACTIVE_OAUTHS = "ActiveOauths"
+TAB_ACTION_LOGGING = "ActionLoging"
+TAB_ACTION_TEMPLATE = "ActionTemplate"
+TAB_USER_OAUTH_CONNECTION = "UserOauthConnection"
 
 # Character info config
 CHAR_NODE_KEY: str = "node"
@@ -320,3 +327,7 @@ THREAD_CACHE_REFRESH_DELAY = 10
 UA_TOKEN_LIFESPAN: int = 7200
 UA_EMAIL_KEY: str = "email"
 UA_LIFESPAN_KEY: str = "lifespan"
+
+# Get user info banned columns (filtered out columns)
+USER_INFO_BANNED: List[str] = ["password", "method", "favicon"]
+USER_INFO_ADMIN_NODE: str = "admin"

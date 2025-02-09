@@ -38,7 +38,7 @@ success = 0
 # type: integer
 # options: 0 (unix success code) -> 255 (abnormal termination)
 # The default code is 84 (unix: EILSEQ 84 Invalid or incomplete multibyte or wide character) (epitech: standard error code)
-error = 1
+error = -84
 
 # Debug mode, the mode that shows everything (almost) that is going on in the server
 # Be cautious, you may get a mind overflow with all the information.
@@ -186,7 +186,7 @@ clean_tokens = true
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 1800 seconds (30 minutes)
-clean_tokens_interval = 10 #1800 #seconds
+clean_tokens_interval = 1800 #seconds
 
 # Enable verification cleaning (removing epxired lines)
 # type: boolean
@@ -194,12 +194,24 @@ clean_tokens_interval = 10 #1800 #seconds
 # default: true
 clean_verification = true
 
-# The interval in which the loop for removing the expried tokens is run
+# The interval in which the loop for removing the expired tokens is run
 # The clean_tokens needs to be true for this setting to have an impact
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 900 seconds (15 minutes)
-clean_verification_interval = 10 #900 #seconds
+clean_verification_interval = 900 #seconds
+
+# Check if any oath token need renewing
+# type: boolean
+# options: true, false
+# default: true
+renew_oath_tokens = true
+
+# The interval in which the loop for renewing the oath tokens is run
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
+# default: 1800 seconds (30 minutes)
+renew_oath_tokens_interval = 1800 #seconds
 
 # Enable test cron functions
 # type: boolean
@@ -217,7 +229,7 @@ test_cron_interval = 200 #seconds
 # type: integer
 # options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
 # default: 300 seconds (5 minutes)
-check_actions_interval = 10 #300 #seconds
+check_actions_interval = 300 #seconds
 
 # The verification section
 [Verification]
@@ -246,6 +258,14 @@ random_min = 100000
 # default: 999999
 random_max = 999999
 
+# services
+[Services]
+
+# delay accorded to requests made to the api's
+# type: integer
+# options: 0 (instant, not recommended) -> 2147483647 (68.1 years)
+# default: 5 seconds
+api_request_delay = 20 #seconds
 
 # Arg, here comes the test territory
 [Test]

@@ -11,6 +11,7 @@ try:
     from src.lib.components.paths import ServerPaths
     from src.lib.components.runtime_data import RuntimeData
     from src.lib.components.endpoints_routes import Endpoints
+    from src.lib.components.oauth_authentication import OAuthAuthentication
     from src.lib.components.constants import PATH_KEY, ENDPOINT_KEY,  METHOD_KEY, ALLOWED_METHODS
 except ImportError as e:
     raise ImportError("Failed to import the src module") from e
@@ -29,6 +30,12 @@ DEBUG = TCONST.DEBUG
 RDI = RuntimeData(TCONST.SERVER_HOST, TCONST.PORT, "Area", ERROR, SUCCESS)
 RDI.app = FastAPI()
 RDI.endpoints_initialised = Endpoints(
+    runtime_data=RDI,
+    success=SUCCESS,
+    error=ERROR,
+    debug=DEBUG
+)
+RDI.oauth_authentication_initialised = OAuthAuthentication(
     runtime_data=RDI,
     success=SUCCESS,
     error=ERROR,

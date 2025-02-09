@@ -16,6 +16,9 @@ binarea_server
 # No modules allowed
 node_modules/**
 
+# No unwanted cache
+**/.cache/**
+
 # No unwanted environements
 **/.env/**
 **/env/**
@@ -23,4 +26,5 @@ node_modules/**
 **/menv/**
 **/wenv/**
 **/server_env/**
+**/wserver_env/**
 **/doc/**

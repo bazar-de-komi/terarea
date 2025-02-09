@@ -24,6 +24,7 @@ from display_tty import IDISP
 
 # Variable that will enable/disable the debug logging of the functions
 DEBUG = False
+DEBUG = True
 IDISP.debug = DEBUG
 
 IDISP.logger.name = "Constants_tests"
@@ -195,11 +196,6 @@ def are_json_responses_identical(json_response1: Dict[str, Any], json_response2:
     Returns:
         bool: _description_: Returns True if they are identical, False otherwise.
     """
-    msg = ""
-    msg += f"test_name = {test_name}\n"
-    msg += f"json_response1 = {json_response1}\n"
-    msg += f"json_response2 = {json_response2}"
-    print(msg)
     try:
         json_response1_str = json.dumps(json_response1)
     except TypeError:
@@ -269,11 +265,15 @@ PORT = int(_get_toml_variable(
 
 # Endpoints to test the server
 PATH_GET_HOME = "/"
+PATH_GET_API_HOME = "/api/v1/"
 PATH_PUT_REGISTER = "/api/v1/register"
 PATH_POST_LOGIN = "/api/v1/login"
 PATH_PATCH_USER = "/api/v1/user"
 PATH_PUT_USER = "/api/v1/user"
 PATH_DELETE_USER = "/api/v1/user"
+PATH_GET_USER = "/api/v1/user"
+PATH_GET_USER_ID = "/api/v1/user_id"
+PATH_POST_LOGOUT = "/api/v1/logout"
 
 # Token key references
 LAMBDA_USER_TOKEN_KEY: str = "lambda_user"
@@ -358,6 +358,12 @@ RESPONSE_GET_HOME_RESPONSE_NOT_LOGGED_IN = {
     'resp': '',
     'logged in': False
 }
+RESPONSE_GET_HOME_API_RESPONSE_NOT_LOGGED_IN = {
+    'title': 'Home',
+    'msg': 'Welcome to the control server.',
+    'resp': '',
+    'logged in': False
+}
 RESPONSE_POST_LOGIN = {
     'title': 'Login',
     'msg': 'Welcome {name}',
@@ -369,17 +375,41 @@ RESPONSE_POST_REGISTER = {
     'title': 'Register',
     "msg": "Account created successfully.",
     'resp': 'success',
-    'logged in': False
+    'logged in': True
 }
 RESPONSE_PUT_USER = {
-    "title": "put_user",
+    "title": "Put user",
     "msg": "The account information has been updated.",
     "resp": "success",
     "logged in": True
 }
 RESPONSE_PATCH_USER = {
-    "title": "patch_user",
+    "title": "Patch user",
     "msg": "The account information has been updated.",
     "resp": "success",
     "logged in": True
+}
+RESPONSE_GET_USER = {
+    "title": "Get user",
+    "msg": "The user information has been retrieved.",
+    "resp": "success",
+    "logged in": True
+}
+RESPONSE_GET_USER_ID = {
+    "title": "Get user id",
+    "msg": "The user information has been retrieved.",
+    "resp": 0,
+    "logged in": True
+}
+RESPONSE_POST_LOGOUT = {
+    "title": "Logout",
+    "msg": "You have successfully logged out...",
+    "resp": "success",
+    "logged in": False
+}
+RESPONSE_DELETE_USER = {
+    "title": "Delete user",
+    "msg": "The account has successfully been deleted.",
+    "resp": "success",
+    "logged in": False
 }

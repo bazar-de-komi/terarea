@@ -12,7 +12,8 @@
       </div>
 
       <div class="password-container">
-        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword" placeholder="Confirm Password" required />
+        <input :type="showConfirmPassword ? 'text' : 'password'" v-model="confirmPassword"
+          placeholder="Confirm Password" required />
         <button type="button" class="toggle-password" @click="toggleConfirmPassword">
           <img :src="showConfirmPassword ? showIcon : hideIcon" alt="toggle confirm password visibility" />
         </button>
@@ -23,21 +24,28 @@
 
     <div class="separator">Or</div>
     <div class="social-login">
-      <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon" />
-      <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" />
+      <AuthButton text="Continue with Google" :buttonColor="'#f4fefe'" :textColor="'fff'" :icon="GoogleIcon"
+        :provider="'google'" />
+      <AuthButton text="Continue with GitHub" :buttonColor="'#303030'" :icon="GithubIcon" :provider="'github'" />
+      <AuthButton text="Continue with Discord" :buttonColor="'#5865F2'" :icon="DiscordIcon" :provider="'discord'" />
+      <AuthButton text="Continue with Spotify" :buttonColor="'#1db954'" :icon="SpotifyIcon" :provider="'spotify'" />
     </div>
   </AuthLayout>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+// import { useRouter } from 'vue-router';
 import AuthButton from '../../components/AuthButton.vue';
 import AuthLayout from '../../components/AuthLayout.vue';
+import { queries } from '@/../lib/querier';
 
 import showIcon from '@/assets/show.svg';
 import hideIcon from '@/assets/hide.svg';
 import GoogleIcon from '@/assets/googleicon.svg';
 import GithubIcon from '@/assets/githubicon.svg';
+import SpotifyIcon from '@/assets/spotifyicon.svg';
+import DiscordIcon from '@/assets/discordicon.svg';
 
 export default defineComponent({
   components: {
@@ -55,15 +63,33 @@ export default defineComponent({
       hideIcon,
       GoogleIcon,
       GithubIcon,
+      SpotifyIcon,
+      DiscordIcon,
     };
   },
   methods: {
-    submitSignUp() {
+    async submitSignUp() {
       if (this.password !== this.confirmPassword) {
         alert('Passwords do not match');
         return;
       }
       console.log('Sign up with', this.email, this.password);
+
+      try {
+        const response = await queries.post('/api/v1/register', {
+          email: this.email,
+          password: this.password,
+        });
+        if (response.token) {
+          localStorage.setItem('authToken', response.token);
+          this.$router.push('/explore/applets');
+        } else {
+          alert('The authentication have failed.');
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'inscription:', error);
+        alert('Failed to create a new account.');
+      }
     },
     togglePassword() {
       this.showPassword = !this.showPassword;
@@ -74,6 +100,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 <style scoped>
 .ifttt-logo {
@@ -122,7 +149,8 @@ export default defineComponent({
   position: relative;
 }
 
-.separator::before, .separator::after {
+.separator::before,
+.separator::after {
   content: '';
   position: absolute;
   top: 50%;

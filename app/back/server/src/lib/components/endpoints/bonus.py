@@ -35,14 +35,6 @@ class Bonus:
             logger=self.__class__.__name__
         )
 
-    def my_test_component(self) -> Response:
-        """_summary_
-        This is a test component that will return a response with the message "Hello World".
-        Returns:
-            Response: _description_
-        """
-        return HCI.success({"msg": "Hello World"})
-
     def get_welcome(self, request: Request) -> Response:
         """_summary_
             The endpoint corresponding to '/'.
@@ -82,12 +74,19 @@ class Bonus:
             request)
         self.disp.log_debug(f"Token = {token}", title)
         if token is None:
-            return HCI.unauthorized({"error": "Authorisation required."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
         bucket_names = self.runtime_data_initialised.bucket_link.get_bucket_names()
         self.disp.log_debug(f"Bucket names: {bucket_names}", title)
         if isinstance(bucket_names, int):
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": bucket_names})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=bucket_names,
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     def get_table(self, request: Request) -> Response:
         """
@@ -98,10 +97,24 @@ class Bonus:
             request)
         self.disp.log_debug(f"Token = {token}", title)
         if token is None:
-            return HCI.unauthorized({"error": "Authorisation required."})
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="Authorisation required.",
+                resp="error",
+                token=token,
+                error=True
+            )
+            return HCI.unauthorized(body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         table = self.runtime_data_initialised.database_link.get_table_names()
         self.disp.log_debug(f"received in {title}", table)
-        return HCI.success({"msg": table})
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=table,
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def post_stop_server(self, request: Request) -> Response:
         """_summary_
@@ -156,3 +169,67 @@ class Bonus:
             self.runtime_data_initialised.background_tasks_initialised = None
             return HCI.internal_server_error(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
         return HCI.success(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+
+    async def trigger_endpoint(self, id: str, request: Request) -> Response:
+        """_summary_
+            The endpoint to trigger a specific action.
+
+        Args:
+            id (str): _description_
+            request (Request): _description_
+
+        Returns:
+            Response: _description_
+        """
+        title = "trigger_endpoint"
+        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        if token is None:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(title)
+        if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_admin(token) is False:
+            self.disp.log_error(
+                "Non-admin user tried to trigger an action.", title
+            )
+            return self.runtime_data_initialised.boilerplate_responses_initialised.insuffisant_rights(
+                title, token
+            )
+        node = self.runtime_data_initialised.database_link.get_data_from_table(
+            CONST.TAB_ACTIONS,
+            column="*",
+            where=f"id='{id}'",
+            beautify=True
+        )
+        if isinstance(node, int):
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message=f"The action {id} does not exist.",
+                resp="error",
+                token=token,
+                error=True
+            )
+            return HCI.not_found(body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+        data = self.runtime_data_initialised.actions_main_initialised.process_action_node(
+            id
+        )
+        run_data = self.runtime_data_initialised.actions_main_initialised.logger.get_logs(
+            id, beautify=True
+        )
+        self.disp.log_debug(f"run_data = {run_data}", title)
+        run_data = self.runtime_data_initialised.actions_main_initialised.variables.sanitize_for_json(
+            run_data, False
+        )
+        self.disp.log_debug(f"run_data_sanitised = {run_data}", title)
+        content = {
+            "action_data": node,
+            "run_status": data,
+            "run_data": run_data
+        }
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=content,
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)

@@ -107,6 +107,8 @@ class UserEndpoints:
             return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         email: str = request_body["email"]
         password = request_body["password"]
+        if not email or email == "" or not password or password == "":
+            return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(title)
         user_info = self.runtime_data_initialised.database_link.get_data_from_table(
             CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
         if isinstance(user_info, int) is False:
@@ -136,14 +138,31 @@ class UserEndpoints:
         self.disp.log_debug(f"Column after id pop = {column}", title)
         if self.runtime_data_initialised.database_link.insert_data_into_table(CONST.TAB_ACCOUNTS, data, column) == self.error:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
-        node = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+        data = self.runtime_data_initialised.boilerplate_incoming_initialised.log_user_in(
+            email
+        )
+        if data["status"] == self.error:
+            body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+                title=title,
+                message="Login failed.",
+                resp="error",
+                token=data["token"],
+                error=True
+            )
+            return HCI.forbidden(content=body, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
+        body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
             title=title,
-            message="Account created successfully.",
+            message=f"Welcome {username}",
             resp="success",
-            token=None,
+            token=data["token"],
             error=False
         )
-        return HCI.success(node)
+        body["token"] = data["token"]
+        return HCI.success(
+            content=body,
+            content_type=CONST.CONTENT_TYPE,
+            headers=self.runtime_data_initialised.json_header
+        )
 
     async def post_send_email_verification(self, request: Request) -> Response:
         """_summary_
@@ -181,6 +200,10 @@ class UserEndpoints:
         if tab_column == self.error or len(tab_column) == 0:
             return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
         tab_column.pop(0)
+        self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_VERIFICATION,
+            f"term='{email}'"
+        )
         status = self.runtime_data_initialised.database_link.insert_data_into_table(
             table=CONST.TAB_VERIFICATION,
             data=[
@@ -283,7 +306,7 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
-        title = "put_user"
+        title = "Put user"
         token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
@@ -345,7 +368,7 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
-        title = "patch_user"
+        title = "Patch user"
         token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
             request
         )
@@ -420,6 +443,46 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
+        title = "Get user"
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        self.disp.log_debug(f"user_id = {usr_id}", title)
+        if isinstance(usr_id, Response) is True:
+            return usr_id
+        user_profile: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{usr_id}'",
+        )
+        self.disp.log_debug(f"User profile = {user_profile}", title)
+        if user_profile == self.error or len(user_profile) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        new_profile = user_profile[0]
+        for i in CONST.USER_INFO_BANNED:
+            if i in new_profile:
+                new_profile.pop(i)
+        if CONST.USER_INFO_ADMIN_NODE in new_profile:
+            new_profile[CONST.USER_INFO_ADMIN_NODE] = bool(
+                new_profile[CONST.USER_INFO_ADMIN_NODE]
+            )
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=new_profile,
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def delete_user(self, request: Request) -> Response:
         """_summary_
@@ -432,24 +495,51 @@ class UserEndpoints:
             Response: _description_
         """
         title = "Delete user"
-        request_body = await self.runtime_data_initialised.boilerplate_incoming_initialised.get_body(request)
-        self.disp.log_debug(f"Request body: {request_body}", title)
-        if not request_body or not all(key in request_body for key in ("email", "password")):
-            return HCI.bad_request({"error": "Bad request."})
-        email: str = request_body["email"]
-        password: str = request_body["password"]
-        user_info = self.runtime_data_initialised.database_link.get_data_from_table(
-            CONST.TAB_ACCOUNTS, "*", f"email='{email}'")
-        self.disp.log_debug(f"Retrived data: {user_info}", title)
-        if isinstance(user_info, int):
-            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
-        if self.password_handling_initialised.check_password(password, user_info[0]["password"]) is False:
-            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title)
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        self.disp.log_debug(f"user_id = {usr_id}", title)
+        if isinstance(usr_id, Response) is True:
+            return usr_id
+        user_profile: List[Dict[str]] = self.runtime_data_initialised.database_link.get_data_from_table(
+            table=CONST.TAB_ACCOUNTS,
+            column="*",
+            where=f"id='{usr_id}'",
+        )
+        self.disp.log_debug(f"User profile = {user_profile}", title)
+        if user_profile == self.error or len(user_profile) == 0:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.user_not_found(title, token)
+        tables_of_interest = [
+            CONST.TAB_USER_SERVICES, CONST.TAB_ACTIONS,
+            CONST.TAB_CONNECTIONS, CONST.TAB_ACTIVE_OAUTHS
+        ]
+        removal_status = self.runtime_data_initialised.boilerplate_non_http_initialised.remove_user_from_tables(
+            f"user_id={usr_id}", tables_of_interest
+        )
+        if isinstance(removal_status, int) or self.error in list(removal_status.values()):
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
         status = self.runtime_data_initialised.database_link.remove_data_from_table(
-            CONST.TAB_ACCOUNTS, f"email='{email}'")
+            CONST.TAB_ACCOUNTS, f"id={usr_id}"
+        )
         if status == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "Account deleted successfully."})
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title, token)
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="The account has successfully been deleted.",
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def put_user_favicon(self, request: Request) -> Response:
         """_summary_
@@ -481,15 +571,29 @@ class UserEndpoints:
             Response: _description_: The data to send back to the user as a response.
         """
         title = "Logout"
-        token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-            request)
-        if token is None:
-            return HCI.unauthorized({"error": "Authorization required."})
-        status = self.runtime_data_initialised.database_link.remove_data_from_table(
-            CONST.TAB_CONNECTIONS, f"token='{token}'")
-        if status == self.error:
-            return HCI.internal_server_error({"error": "Internal server error."})
-        return HCI.success({"msg": "Logout successful."})
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        response = self.runtime_data_initialised.database_link.remove_data_from_table(
+            CONST.TAB_CONNECTIONS,
+            f"token='{token}'"
+        )
+        if response == self.error:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.internal_server_error(title)
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message="You have successfully logged out...",
+            resp="success",
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
 
     async def get_user_id(self, request: Request) -> Response:
         """_summary_
@@ -501,3 +605,27 @@ class UserEndpoints:
         Returns:
             Response: _description_
         """
+        title = "Get user id"
+        token: str = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
+            request
+        )
+        token_valid: bool = self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
+            token
+        )
+        self.disp.log_debug(f"token = {token}, valid = {token_valid}", title)
+        if token_valid is False:
+            return self.runtime_data_initialised.boilerplate_responses_initialised.unauthorized(title, token)
+        usr_id = self.runtime_data_initialised.boilerplate_non_http_initialised.get_user_id_from_token(
+            title, token
+        )
+        self.disp.log_debug(f"user_id = {usr_id}", title)
+        if isinstance(usr_id, Response) is True:
+            return usr_id
+        data = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
+            title=title,
+            message=f"Your id is {usr_id}",
+            resp=usr_id,
+            token=token,
+            error=False
+        )
+        return HCI.success(content=data, content_type=CONST.CONTENT_TYPE, headers=self.runtime_data_initialised.json_header)
