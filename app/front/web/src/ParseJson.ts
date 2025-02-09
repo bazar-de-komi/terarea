@@ -3,6 +3,7 @@ export interface FormField {
     name: string;
     path: string;
     value?: string;
+    placeholder?: string;
     defaultValue?: string;
     options?: string[];
 }
@@ -66,7 +67,8 @@ export const parseJsonToForm = (json: Record<string, any>): FormField[] => {
                     name: cleanName,
                     path: newPath,
                     defaultValue: typeof value === "string" ? value : "",
-                    value: ""
+                    value: "",
+                    placeholder: typeof value === "string" ? value : ""
                 });
             } else if (key.startsWith("textarea:")) {
                 fields.push({
@@ -74,7 +76,8 @@ export const parseJsonToForm = (json: Record<string, any>): FormField[] => {
                     name: cleanName,
                     path: newPath,
                     defaultValue: typeof value === "string" ? value : "",
-                    value: ""
+                    value: "",
+                    placeholder: typeof value === "string" ? value : ""
                 });
             }
         });

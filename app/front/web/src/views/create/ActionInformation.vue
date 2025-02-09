@@ -21,14 +21,14 @@
               v-if="field.type === 'input'"
               :id="field.name"
               type="text"
-              :placeholder="field.defaultValue"
+              :placeholder="field.placeholder"
               v-model="field.value"
               ref="inputRefs"
             />
             <textarea
               v-else
               :id="field.name"
-              :placeholder="field.defaultValue"
+              :placeholder="field.placeholder"
               v-model="field.value"
               ref="inputRefs"
             />
@@ -108,8 +108,8 @@ export default defineComponent({
     const updateMenuPosition = (event: MouseEvent) => {
       nextTick(() => {
         menuPosition.value = {
-          top: event.clientY + window.scrollY + 5, // Positionne sous le bouton
-          left: event.clientX + window.scrollX, // Aligné au bouton
+          top: event.clientY + window.scrollY + 20,
+          left: event.clientX + window.scrollX,
         };
       });
     };
@@ -175,6 +175,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+
 }
 
 .reaction-page {

@@ -34,8 +34,8 @@
         <template v-if="triggerFormFields.length">
           <div v-for="(field, index) in triggerFormFields" :key="index" class="form-group">
             <label :for="field.name">{{ field.name }}</label>
-            <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue">
-            <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue" />
+            <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.placeholder" v-model="field.defaultValue">
+            <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.placeholder" v-model="field.defaultValue" />
             <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
               <option v-for="option in field.options" :key="option" :value="option">
                 {{ option }}
@@ -49,13 +49,41 @@
         <template v-if="triggerFormFields.length">
           <div v-for="(field, index) in reactionFormFields" :key="index" class="form-group">
             <label :for="field.name">{{ field.name }}</label>
-            <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue">
-            <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue" />
+            <!-- <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue">
+            <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue" /> -->
+            <div v-if="field.type === 'input' || field.type === 'textarea'" class="input-container">
+              <input
+                v-if="field.type === 'input'"
+                :id="field.name"
+                type="text"
+                :placeholder="field.placeholder"
+                v-model="field.defaultValue"
+                ref="inputRefs"
+              />
+              <textarea
+                v-else
+                :id="field.name"
+                :placeholder="field.placeholder"
+                v-model="field.defaultValue"
+                ref="inputRefs"
+              />
+              <button class="variable-button" @click="toggleVariableMenu(index, $event)">🔽</button>
+            </div>
             <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
               <option v-for="option in field.options" :key="option" :value="option">
                 {{ option }}
               </option>
             </select>
+
+            <div
+              v-if="showVariableMenu === index"
+              class="variable-menu"
+              :style="{ top: menuPosition.top + 'px', left: menuPosition.left + 'px' }"
+            >
+              <button v-for="(varName, i) in availableVariables" :key="i" @click="insertVariable(index, varName)">
+                ${{ varName }}
+              </button>
+            </div>
           </div>
         </template>
         <div class="applet-buttons-container">
@@ -68,7 +96,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, ref, onBeforeMount } from 'vue';
+import { defineComponent, computed, ref, onBeforeMount, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRoute } from 'vue-router';
 import AppHeader from '@/components/AppHeader.vue';
@@ -96,6 +124,11 @@ export default defineComponent({
     const applet_tags = ref('');
     const applet_colour = ref('');
 
+    const triggerVars = ref<Record<string, any>>({});
+    const showVariableMenu = ref<number | null>(null);
+    const inputRefs = ref<(HTMLInputElement | HTMLTextAreaElement)[]>([]);
+    const menuPosition = ref({ top: 0, left: 0 });
+
     const appletId = computed(() => {
       const title = Array.isArray(route.params.title) ? route.params.title[0] : route.params.title;
       return title ? title.split('-')[0] : null;
@@ -106,26 +139,155 @@ export default defineComponent({
     };
 
     const deleteApplet = async () => {
-    if (!applet.value) return;
+      if (!applet.value) return;
 
-    const confirmDelete = confirm(`Do you really want to delete "${applet.value.name}" ?`);
-    if (!confirmDelete) return;
+      const confirmDelete = confirm(`Do you really want to delete "${applet.value.name}" ?`);
+      if (!confirmDelete) return;
 
-    try {
-      const token = localStorage.getItem("authToken") || "";
-      const response = await queries.delete_query(`/api/v1/my_applet/${applet.value.id}`, {}, token);
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        const response = await queries.delete_query(`/api/v1/my_applet/${applet.value.id}`, {}, token);
 
-      if (response.resp === "success") {
-        alert("Applet deleted successfully !");
-        router.back();
-      } else {
+        if (response.resp === "success") {
+          alert("Applet deleted successfully !");
+          router.back();
+        } else {
+          alert("Error encountered while deleting applet !");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression :", error);
         alert("Error encountered while deleting applet !");
       }
-    } catch (error) {
-      console.error("Erreur lors de la suppression :", error);
-      alert("Error encountered while deleting applet !");
-    }
-  };
+    };
+
+    const toggleVariableMenu = (index: number, event: MouseEvent) => {
+      if (showVariableMenu.value === index) {
+        showVariableMenu.value = null;
+      } else {
+        showVariableMenu.value = index;
+        updateMenuPosition(event);
+      }
+    };
+
+    // const updateMenuPosition = (event: MouseEvent) => {
+    //   nextTick(() => {
+    //     const button = event.target as HTMLElement;  // Récupérer le bouton cliqué
+    //     const rect = button.getBoundingClientRect();  // Obtenir la position du bouton
+    //     console.log(rect);
+    //     const menuHeight = 200; // Ajuste la hauteur du menu
+    //     const maxHeight = window.innerHeight;
+    //     const menuWidth = 200; // Ajuste la largeur du menu
+    //     const maxWidth = window.innerWidth;
+
+    //     let calculatedTop = rect.bottom + window.scrollY + 5;  // Positionner sous le bouton
+    //     let calculatedLeft = rect.left + window.scrollX;  // Positionner à gauche du bouton
+
+    //     // Si le menu dépasse le bas de l'écran, ajuster la position
+    //     if (calculatedTop + menuHeight > maxHeight) {
+    //       calculatedTop = maxHeight - menuHeight - 10;  // Laisser un peu d'espace
+    //     }
+
+    //     // Si le menu dépasse la droite de l'écran, ajuster la position
+    //     if (calculatedLeft + menuWidth > maxWidth) {
+    //       calculatedLeft = maxWidth - menuWidth - 10;  // Laisser un peu d'espace
+    //     }
+
+    //     menuPosition.value = {
+    //       top: calculatedTop,
+    //       left: calculatedLeft,
+    //     };
+    //   });
+    // };
+
+    const updateMenuPosition = (event: MouseEvent) => {
+      nextTick(() => {
+        const oldTopPos = (window.scrollY - window.innerHeight) + event.clientY
+        let topPos = 0;
+        console.log("ClientY:", event.clientY);
+        console.log("Window.scrollY:", window.scrollY);
+        console.log("Inner height:", window.innerHeight);
+        if (window.scrollY > window.innerHeight) {
+          console.log("After calcul:", window.scrollY - event.clientY - window.innerHeight);
+          topPos = (window.scrollY - window.innerHeight) + event.clientY;
+        } else {
+          console.log("After calcul:", window.scrollY - event.clientY + window.innerHeight);
+          topPos = (window.scrollY - window.innerHeight) + event.clientY + 410;
+        }
+        menuPosition.value = {
+          top: topPos,
+          left: window.innerWidth - event.clientX,
+        };
+      });
+    };
+
+    // const updateMenuPosition = (event: MouseEvent) => {
+    //   nextTick(() => {
+    //     const menuHeight = 200; // Ajuste la hauteur du menu si nécessaire
+    //     const maxHeight = window.innerHeight;
+
+    //     let calculatedTop = event.clientY + window.scrollY + 5;
+
+    //     // Si le menu dépasse le bas de l'écran, ajuster la position
+    //     if (calculatedTop + menuHeight > maxHeight) {
+    //       calculatedTop = maxHeight - menuHeight - 10; // Laisser un peu d'espace
+    //     }
+
+    //     menuPosition.value = {
+    //       top: calculatedTop,
+    //       left: event.clientX + window.scrollX,
+    //     };
+    //   });
+    // };
+
+    // const updateMenuPosition = (event: MouseEvent) => {
+    //   nextTick(() => {
+    //     menuPosition.value = {
+    //       top: event.clientY + 10,  // Ajustement
+    //       left: event.clientX,      // Ajustement
+    //     };
+    //   });
+    // };
+
+    // const updateMenuPosition = (event: MouseEvent) => {
+    //   nextTick(() => {
+    //     const menuWidth = 200; // Largeur du menu (à ajuster en fonction de ta taille)
+    //     const menuHeight = 150; // Hauteur du menu (ajustée aussi si nécessaire)
+
+    //     const pageWidth = window.innerWidth;
+    //     const pageHeight = window.innerHeight;
+
+    //     // Calcul de la position à gauche et en haut avec des ajustements pour éviter que le menu sorte de la fenêtre
+    //     const leftPosition = event.clientX + window.scrollX - 300;
+    //     const topPosition = event.clientY + window.scrollY + 5; // Position sous le bouton
+      
+    //     menuPosition.value = {
+    //       left: leftPosition + menuWidth > pageWidth ? pageWidth - menuWidth - 10 : leftPosition, // Ajuste si ça dépasse la droite
+    //       top: topPosition + menuHeight > pageHeight ? pageHeight - menuHeight - 10 : topPosition, // Ajuste si ça dépasse le bas
+    //     };
+    //   });
+    // };
+
+    const insertVariable = (index: number, variable: string) => {
+      const inputElement = inputRefs.value[index];
+      console.log(inputElement);
+      if (inputElement) {
+        const start = inputElement.selectionStart || 0;
+        const end = inputElement.selectionEnd || 0;
+        const value = reactionFormFields.value[index].defaultValue || "";
+
+        const formattedVariable = `\${{${variable}}}`;
+
+        reactionFormFields.value[index].defaultValue =
+          value.substring(0, start) + formattedVariable + value.substring(end);
+
+        nextTick(() => {
+          inputElement.focus();
+          inputElement.setSelectionRange(start + formattedVariable.length, start + formattedVariable.length);
+        });
+      }
+
+      showVariableMenu.value = null;
+    };
 
     onBeforeMount(async () => {
       if (appletId.value) {
@@ -140,6 +302,7 @@ export default defineComponent({
             applet_colour.value = applet.value.colour;
             triggerFormFields.value = parseJsonToForm(applet.value.trigger);
             reactionFormFields.value = parseJsonToForm(applet.value.consequences);
+            triggerVars.value = applet.value.trigger.service["ignore:vars"];
           }
         } catch (error) {
           console.error(error)
@@ -157,6 +320,12 @@ export default defineComponent({
       applet_description,
       applet_tags,
       applet_colour,
+      showVariableMenu,
+      toggleVariableMenu,
+      insertVariable,
+      inputRefs,
+      menuPosition,
+      availableVariables: computed(() => Object.keys(triggerVars.value)),
     };
   }
 });
@@ -291,7 +460,6 @@ h2 {
 
 .basic-form-group input {
   width: 100%;
-  /* max-width: 600px; */
   padding: 12px;
   font-size: 1rem;
   border: 2px solid #ccc;
@@ -338,6 +506,50 @@ h2 {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.input-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.variable-button {
+  margin-left: 5px;
+  padding: 5px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.variable-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.variable-menu button {
+  padding: 10px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.variable-menu button:hover {
+  background-color: #f0f0f0;
 }
 
 .edit-button {
