@@ -118,7 +118,11 @@ export const injectFormValuesIntoJson = (json: Record<string, any>, fields: Form
 
             current[originalKey] = newOptions;
         } else {
-            current[originalKey] = field.value;
+            if (field.value) {
+                current[originalKey] = field.value;
+            } else {
+                current[originalKey] = field.defaultValue;
+            }
         }
     });
 

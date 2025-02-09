@@ -87,7 +87,7 @@
           </div>
         </template>
         <div class="applet-buttons-container">
-          <button class="edit-button" @click="deleteApplet">✏️ Edit Applet</button>
+          <button class="edit-button" @click="modifyApplet">✏️ Edit Applet</button>
           <button class="delete-button" @click="deleteApplet">🗑️ Delete Applet</button>
         </div>
       </div>
@@ -137,6 +137,39 @@ export default defineComponent({
     const goBack = () => {
       router.back();
     };
+
+    const modifyApplet = async () => {
+      if (!applet.value) return;
+
+      try {
+        const token = localStorage.getItem("authToken") || "";
+        const newTriggerJson = injectFormValuesIntoJson(applet.value.trigger, triggerFormFields.value);
+        const newReactionJson = injectFormValuesIntoJson(applet.value.consequences, reactionFormFields.value);
+        console.log("New Reaction json", newReactionJson);
+        const response = await queries.put(
+          `/api/v1/my_applet/${applet.value.id}`,
+          {
+            name: applet_name.value,
+            trigger: newTriggerJson,
+            consequences: newReactionJson,
+            tags: applet_tags.value,
+            description: applet_description.value,
+            colour: applet_colour.value
+          },
+          token
+        );
+
+        if (response.resp === "success") {
+          alert("Applet modified successfully !");
+          router.back();
+        } else {
+          alert("Error encountered while modifying applet !");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression :", error);
+        alert("Error encountered while modifying applet !");
+      }
+    }
 
     const deleteApplet = async () => {
       if (!applet.value) return;
@@ -313,6 +346,7 @@ export default defineComponent({
     return {
       applet,
       goBack,
+      modifyApplet,
       deleteApplet,
       triggerFormFields,
       reactionFormFields,
