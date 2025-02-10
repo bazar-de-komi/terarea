@@ -1,14 +1,13 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson";
 
 import BackButton from "../../components/BackButton/backButton";
+import CustomerInput from "../../components/CustomersInput";
 
 const ActionPage = () => {
-    const [selectedHour, setSelectedHour] = useState("12 AM");
-    const [selectedMinute, setSelectedMinute] = useState("00");
-
     const navigation = useNavigation();
     const route = useRoute();
     const { service, trigger, action } = route.params || {};
@@ -18,56 +17,58 @@ const ActionPage = () => {
     };
 
     const goToCreateEnd = () => {
+        const updatedAction = injectFormValuesIntoJson(action.json, formValues);
         navigation.navigate("Create end", { trigger, action, service });
-        console.log("Trigger avant navigation :", trigger);
     };
 
-    const hours = ["12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM",
-                   "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
-    
-                   const minutes = Array.from({ length: 60 }, (_, i) => (i < 10 ? `0${i}` : `${i}`));
+    const formFields = parseJsonToForm(action.json);
+    const [formValues, setFormValues] = useState(formFields);
+
+    const handleChange = (name, keyToChange, value) => {
+        setFormValues((prev) =>
+            prev.map((item) =>
+                item.name === name ? { ...item, [keyToChange]: value } : item
+            )
+        );
+    };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Complete action fields</Text>
-            <Text style={styles.description}>Send an email</Text>
-            
-            <View style={styles.backButtonContainer}>
-                <BackButton
-                    text={"BACK"}
-                    onPress={AppletsHome}
-                />
-            </View>
-            <Text style={styles.label}>Time</Text>
-            
-            <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={selectedHour}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedHour(itemValue)}
-                >
-                    {hours.map((hour) => (
-                        <Picker.Item key={hour} label={hour} value={hour} />
-                    ))}
-                </Picker>
-            </View>
+            {formFields.map((field, index) => (
+                <View key={index} style={styles.fieldContainer}>
+                    <Text style={styles.label}>{field.name}</Text>
 
-            <View style={styles.pickerContainer}>
-                <Picker
-                    selectedValue={selectedMinute}
-                    style={styles.picker}
-                    onValueChange={(itemValue) => setSelectedMinute(itemValue)}
-                >
-                    {minutes.map((minute) => (
-                        <Picker.Item key={minute} label={minute} value={minute} />
-                    ))}
-                </Picker>
-            </View>
+                    {field.type === "text" ? (
+                        <Text style={styles.text}>{field.value}</Text>
+                    ) : field.type === "dropdown" ? (
+                        <Picker
+                            selectedValue={formValues.find(f => f.name === field.name)?.defaultValue ?? field.defaultValue}
+                            style={styles.picker}
+                            onValueChange={(itemValue) => handleChange(field.name, "defaultValue", itemValue)}
+                        >
+                            {field.options.map((option, idx) => (
+                                <Picker.Item key={idx} label={option} value={option} />
+                            ))}
+                        </Picker>
+                    ) : field.type === "textarea" ? (
+                        <TextInput
+                            style={styles.textarea}
+                            defaultValue={field.defaultValue}
+                            multiline={true}
+                            onChangeText={(text) => handleChange(field.name, "value", text)}
+                        />
+                    ) : (
+                        <TextInput
+                            style={styles.input}
+                            defaultValue={field.defaultValue}
+                            onChangeText={(text) => handleChange(field.name, "value", text)}
+                        />
+                    )}
+                </View>
+            ))}
 
-            <TouchableOpacity
-                style={styles.triggerButton}
-                onPress={goToCreateEnd} >
-                
+            <TouchableOpacity style={styles.triggerButton} onPress={goToCreateEnd} >
                 <Text style={styles.triggerButtonText}>Create action</Text>
             </TouchableOpacity>
         </View>
@@ -76,47 +77,48 @@ const ActionPage = () => {
 
 const styles = StyleSheet.create({
     container: {
-        top: 20,
         flex: 1,
         backgroundColor: "#333",
         paddingHorizontal: 20,
         paddingVertical: 40,
         alignItems: "center",
     },
-    backButtonContainer: {
-        left: 160,
-        marginTop: -60,
-        marginBottom: 100,
-    },
     title: {
-        fontSize: 30,
+        fontSize: 24,
         fontWeight: "bold",
         color: "white",
-        marginBottom: 10,
+        marginBottom: 20,
     },
-    description: {
-        fontSize: 16,
-        color: "#bbb",
-        textAlign: "center",
-        marginBottom: 30,
+    fieldContainer: {
+        width: "100%",
+        marginBottom: 15,
     },
     label: {
         fontSize: 18,
         fontWeight: "600",
         color: "white",
-        alignSelf: "flex-start",
-        marginBottom: 10,
+        marginBottom: 5,
     },
-    pickerContainer: {
-        width: "100%",
-        backgroundColor: "white",
-        borderRadius: 8,
-        marginBottom: 15,
-        overflow: "hidden",
+    text: {
+        fontSize: 16,
+        color: "white",
     },
     picker: {
-        height: 50,
-        color: "black",
+        backgroundColor: "white",
+        borderRadius: 8,
+    },
+    input: {
+        backgroundColor: "white",
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 16,
+    },
+    textarea: {
+        backgroundColor: "white",
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 16,
+        height: 100,
     },
     triggerButton: {
         marginTop: 30,

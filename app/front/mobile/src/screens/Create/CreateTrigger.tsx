@@ -14,31 +14,24 @@ const TriggerPage = () => {
     }
 
     const formFields = parseJsonToForm(trigger.json);
-    const [formValues, setFormValues] = useState({});
+    const [formValues, setFormValues] = useState(formFields);
 
-    const handleChange = (name, value) => {
-        setFormValues(prev => ({ ...prev, [name]: value }));
+    const handleChange = (name, keyToChange, value) => {
+        setFormValues((prev) =>
+            prev.map((item) =>
+                item.name === name ? { ...item, [keyToChange]: value } : item
+            )
+        );
     };
 
     const handleSubmit = () => {
-        // const updatedTrigger = {
-        //     ...trigger,
-        //     json: injectFormValuesIntoJson(trigger.json, formFields.map(field => ({
-        //         ...field,
-        //         value: formValues[field.name] || field.defaultValue || ""
-        //     })))
-        // };
-        const updatedTrigger = injectFormValuesIntoJson(trigger.json, formFields);
-
-        console.log("Updated Trigger:", updatedTrigger);
-
+        const updatedTrigger = injectFormValuesIntoJson(trigger.json, formValues);
         navigation.navigate("Create and have service", { trigger: updatedTrigger });
     };
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Complete trigger fields</Text>
-            
             {formFields.map((field, index) => (
                 <View key={index} style={styles.fieldContainer}>
                     <Text style={styles.label}>{field.name}</Text>
@@ -47,9 +40,9 @@ const TriggerPage = () => {
                         <Text style={styles.text}>{field.value}</Text>
                     ) : field.type === "dropdown" ? (
                         <Picker
-                            selectedValue={formValues[field.name] || field.defaultValue}
+                            selectedValue={formValues.find(f => f.name === field.name)?.defaultValue ?? field.defaultValue}
                             style={styles.picker}
-                            onValueChange={(itemValue) => handleChange(field.name, itemValue)}
+                            onValueChange={(itemValue) => handleChange(field.name, "defaultValue", itemValue)}
                         >
                             {field.options.map((option, idx) => (
                                 <Picker.Item key={idx} label={option} value={option} />
@@ -60,13 +53,13 @@ const TriggerPage = () => {
                             style={styles.textarea}
                             defaultValue={field.defaultValue}
                             multiline={true}
-                            onChangeText={(text) => handleChange(field.name, text)}
+                            onChangeText={(text) => handleChange(field.name, "value", text)}
                         />
                     ) : (
                         <TextInput
                             style={styles.input}
                             defaultValue={field.defaultValue}
-                            onChangeText={(text) => handleChange(field.name, text)}
+                            onChangeText={(text) => handleChange(field.name, "value", text)}
                         />
                     )}
                 </View>

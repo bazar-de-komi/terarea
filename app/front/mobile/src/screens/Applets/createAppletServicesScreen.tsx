@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView} from 'react-native'
+import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator} from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -10,6 +10,21 @@ import ProfilLogo from '../../../assets/profilLogo.png';
 
 const ServicesScreen = () => {
     const Navigation = useNavigation();
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetch('https://ton-backend.com/api/services')
+            .then(response => response.json())
+            .then(data => {
+                setServices(data);
+                setLoading(false);
+            })
+            .catch(error => {
+                console.error("Erreur lors de la récupération des services:", error);
+                setLoading(false);
+            });
+    }, []);
 
     const signUp = () => {
         Navigation.navigate('All');
@@ -34,7 +49,8 @@ const ServicesScreen = () => {
                 text="<"
                 onPress={serviceDetails}
                 />
-                <Text style={styles.homeTitle}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
+
+                {/* <Text style={styles.homeTitle}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
                 <View style={styles.homeNavigation}>
                 </View>
                 <Text style={styles.description}>5-Minute Crafts</Text>
@@ -48,7 +64,23 @@ const ServicesScreen = () => {
                     fgColor={""}
                     />
                 </View>
-            <Text style={styles.descriptionSericesAfterConnectButton}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
+            <Text style={styles.descriptionSericesAfterConnectButton}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text> */}
+            {loading ? (
+                    <ActivityIndicator size="large" color="#fff" />
+                ) : (
+                    services.map(service => (
+                        <View key={service.id} style={styles.serviceContainer}>
+                            <Text style={styles.serviceTitle}>{service.name}</Text>
+                            <Text style={styles.serviceDescription}>{service.description}</Text>
+                            <CustomerButton
+                                text="Voir plus"
+                                onPress={() => serviceDetails(service.id)}
+                                type="PRIMARY"
+                            />
+                        </View>
+                    ))
+                )}
+            </View>
         </ScrollView>
     )
 }

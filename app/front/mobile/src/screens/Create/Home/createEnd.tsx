@@ -38,9 +38,10 @@ const Create = () => {
         console.log("Applet Color:", appletColor);
     };
 
-    useEffect(() => {
-        console.log("Nouvelle couleur appliquée:", appletColor);
-    }, [appletColor]);
+    const replaceOptWithSelect = (data) => {
+        if (!data || typeof data !== 'object') return data;
+        return JSON.parse(JSON.stringify(data).replace(/"opt"/g, '"select"'));
+    };
 
     const handleCreate = async () => {
         if (!appletName || !appletDescription) {
@@ -48,12 +49,8 @@ const Create = () => {
             return;
         }
 
-        const appletData = {
-            name: appletName,
-            description: appletDescription,
-            tags: appletTags,
-            color: appletColor,
-        };
+        const processedTrigger = replaceOptWithSelect(trigger);
+        const processedAction = replaceOptWithSelect(action);
 
         setIsLoading(true);
 
@@ -72,12 +69,12 @@ const Create = () => {
                 token
             );
 
-            if (!response.ok) {
+            if (response.resp !== "success") {
                 throw new Error("Erreur lors de l'envoi des données");
             }
 
-            const data = await response.json();
-            console.log("Applet créé avec succès :", data);
+            // const data = await response.json();
+            console.log("Applet créé avec succès :", response);
             Alert.alert("Succès", "Applet créé avec succès !");
 
             setAppletName("");
