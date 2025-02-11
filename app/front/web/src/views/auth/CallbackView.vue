@@ -16,7 +16,7 @@ export default defineComponent({
       try {
         const response = await queries.post(path);
         localStorage.setItem('authToken', response.token);
-        this.$router.push('/explore/all');
+        this.$router.push('/explore/applets');
       } catch (error) {
         alert("The oauth connexion have failed.");
         this.$router.push('sign-up');
