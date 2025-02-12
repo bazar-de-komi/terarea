@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson";
@@ -18,7 +18,7 @@ const ActionPage = () => {
 
     const goToCreateEnd = () => {
         const updatedAction = injectFormValuesIntoJson(action.json, formValues);
-        navigation.navigate("Create end", { trigger, action, service });
+        navigation.navigate("Create end", { trigger: trigger, action: updatedAction, service: service });
     };
 
     const formFields = parseJsonToForm(action.json);
@@ -33,7 +33,7 @@ const ActionPage = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
             <Text style={styles.title}>Complete action fields</Text>
             {formFields.map((field, index) => (
                 <View key={index} style={styles.fieldContainer}>
@@ -71,7 +71,7 @@ const ActionPage = () => {
             <TouchableOpacity style={styles.triggerButton} onPress={goToCreateEnd} >
                 <Text style={styles.triggerButtonText}>Create action</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#333",
         paddingHorizontal: 20,
         paddingVertical: 40,
-        alignItems: "center",
     },
     title: {
         fontSize: 24,

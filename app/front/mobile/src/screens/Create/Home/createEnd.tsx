@@ -48,10 +48,6 @@ const Create = () => {
             Alert.alert("Erreur", "Veuillez remplir tous les champs obligatoires !");
             return;
         }
-
-        const processedTrigger = replaceOptWithSelect(trigger);
-        const processedAction = replaceOptWithSelect(action);
-
         setIsLoading(true);
 
         try {
@@ -113,9 +109,9 @@ const Create = () => {
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>
-                        {trigger?.json?.name || "Name of the trigger selected"}
-                    </Text>
+                        <Text style={styles.addButtonText}>
+                            {trigger.name || "Name of the trigger selected"}
+                        </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -131,9 +127,9 @@ const Create = () => {
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>
-                        {action?.json?.name || "Name of the action selected"}
-                    </Text>
+                        <Text style={styles.addButtonText}>
+                            {action.name || "Name of the action selected"}
+                        </Text>
                     </TouchableOpacity>
                 </View>
 
@@ -172,8 +168,8 @@ const Create = () => {
                             <ColorPicker
                                 color={appletColor}
                                 onColorChangeComplete={(color) => {
-                                setAppletColor(color);
-                                console.log("Couleur en cours de sélection:", color);
+                                    setAppletColor(color);
+                                    console.log("Couleur en cours de sélection:", color);
                                 }}
                                 onColorSelected={color => {
                                     setAppletColor(color);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson.js";
@@ -30,7 +30,7 @@ const TriggerPage = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
             <Text style={styles.title}>Complete trigger fields</Text>
             {formFields.map((field, index) => (
                 <View key={index} style={styles.fieldContainer}>
@@ -65,10 +65,10 @@ const TriggerPage = () => {
                 </View>
             ))}
 
-            <TouchableOpacity style={styles.triggerButton} onPress={handleSubmit} > 
+            <TouchableOpacity style={styles.triggerButton} onPress={handleSubmit} >
                 <Text style={styles.triggerButtonText}>Create trigger</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#333",
         paddingHorizontal: 20,
         paddingVertical: 40,
-        alignItems: "center",
     },
     title: {
         fontSize: 24,

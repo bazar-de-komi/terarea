@@ -41,8 +41,8 @@ const CreateHaveService = () => {
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>
-                            {trigger?.json?.name || "Name of the service selected"}
+                        <Text style={styles.addButtonText}>
+                            {trigger.name || "Name of the action selected"}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -58,7 +58,7 @@ const CreateHaveService = () => {
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>add</Text>
+                        <Text style={styles.addButtonText}>add</Text>
                     </TouchableOpacity>
                 </View>
             </View>

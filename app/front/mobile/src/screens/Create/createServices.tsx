@@ -24,7 +24,7 @@ const CreateServices = () => {
     };
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
             <Text style={styles.homeTitle}>Create</Text>
             <View style={styles.backButtonContainer}>
                 <BackButton
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white',
-        left:50,
+        left: 50,
     },
     addButtonContainerIf: {
         justifyContent: 'center',
