@@ -15,7 +15,7 @@ const Applets = () => {
     const [tags, setTags] = useState("");
 
     const handleAppletButton = async (applet: any) => {
-        navigation.navigate("Service screen", { applet: applet });
+        navigation.navigate("Service screen", { applet_id: applet.id });
     };
 
     useEffect(() => {

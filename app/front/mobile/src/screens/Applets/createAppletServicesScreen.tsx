@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator} from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator } from 'react-native'
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import CustomerButton from "../../components/CustomerButton";
@@ -7,13 +7,15 @@ import BackButton from "../../components/BackButton/backButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';
 import ProfilLogo from '../../../assets/profilLogo.png';
+import { queries } from "../../../back-endConnection/querier";
+import { getValue } from "../../components/StoreData/storeData";
 
 const ServicesScreen = () => {
     const Navigation = useNavigation();
     const route = useRoute();
     const { applet_id } = route.params || {};
 
-    const [services, setServices] = useState([]);
+    const [applet, setApplet] = useState({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -25,12 +27,11 @@ const ServicesScreen = () => {
             }
 
             try {
-                const response = await fetch(`https://ton-backend.com/api/v1/my_applet/${applet_id}`);
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP ! Statut : ${response.status}`);
+                const token = await getValue("token");
+                const response = await queries.get(`/api/v1/my_applet/${applet_id}`, {}, token);
+                if (response.resp === "success") {
+                    setApplet(response.msg);
                 }
-                const data = await response.json();
-                setServices(data);
             } catch (error) {
                 console.error("Erreur lors de la récupération des services:", error);
             } finally {
@@ -40,13 +41,9 @@ const ServicesScreen = () => {
 
         fetchServices();
     }, [applet_id]);
-    
-    const signUp = () => {
-        Navigation.navigate('All');
-    }
 
-    const serviceDetails = () => {
-        Navigation.navigate('Service details')
+    const goBack = () => {
+        Navigation.navigate('Applets');
     }
 
     return (
@@ -61,45 +58,19 @@ const ServicesScreen = () => {
                     style={styles.profilLogo}
                 />
                 <BackButton
-                text="<"
-                onPress={serviceDetails}
+                    text="<"
+                    onPress={goBack}
                 />
 
-                {/* <Text style={styles.homeTitle}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text>
-                <View style={styles.homeNavigation}>
-                </View>
-                <Text style={styles.description}>5-Minute Crafts</Text> */}
-            {loading ? (
+                {loading ? (
                     <ActivityIndicator size="large" color="#fff" />
                 ) : (
-                    services.length > 0 ? (
-                        services.map(service => (
-                            <View key={service.json.id} style={styles.serviceContainer}>
-                                <Text style={styles.serviceTitle}>{service.json.name}</Text>
-                                <Text style={styles.serviceDescription}>{service.json.description}</Text>
-                                <CustomerButton
-                                    text="Voir plus"
-                                    onPress={() => serviceDetails(service.json.id)}
-                                    type="PRIMARY"
-                                />
-                            </View>
-                        ))
-                    ) : (
-                        <Text style={styles.noServiceText}>Aucun service disponible.</Text>
-                    )
+                    <View>
+                        <Text style={styles.serviceTitle}>{applet.name}</Text>
+                        <Text style={styles.serviceDescription}>{applet.description}</Text>
+                    </View>
                 )}
             </View>
-
-            {/* <View style={styles.connectStyle}>
-                    <CustomerButton
-                    text="Connect"
-                    onPress={signUp}
-                    type="PRIMARY"
-                    bgColor={""}
-                    fgColor={""}
-                    />
-                </View> */}
-            {/* <Text style={styles.descriptionSericesAfterConnectButton}>Receive a weekly email digest of all new videos for the "5-Minyes Crafts" Youtube channel</Text> */}
         </ScrollView>
     )
 }
