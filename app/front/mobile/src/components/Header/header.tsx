@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { View, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, Text, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 4
+import { View, Image, StyleSheet, ScrollView, TouchableOpacity, Modal, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png'
 import ProfilLogo from '../../../assets/profilLogo.png';
@@ -15,6 +15,8 @@ const Header = () => {
     const closeSidebar = () => setSidebarVisible(false);
 
     const handleLogOut = async () => {
+        await deleteKey("trigger");
+        await deleteKey("action");
         try {
             const token = await getValue("token");
             await queries.post("/api/v1/logout", {}, token);
@@ -22,7 +24,6 @@ const Header = () => {
             navigation.navigate('Sign In');
             closeSidebar();
         } catch (error) {
-            console.error(error);
             await deleteKey("token");
             navigation.navigate('Sign In');
         }
@@ -31,7 +32,11 @@ const Header = () => {
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={() => navigation.navigate('Applets')}>
+                <TouchableOpacity onPress={async () => {
+                    navigation.navigate('Applets');
+                    await deleteKey("trigger");
+                    await deleteKey("action");
+                }}>
                     <Image
                         source={AreaLogo}
                         style={styles.areaLogo}
@@ -67,7 +72,9 @@ const Header = () => {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={() => {
+                            onPress={async () => {
+                                await deleteKey("trigger");
+                                await deleteKey("action");
                                 navigation.navigate('Create');
                                 closeSidebar();
                             }}
@@ -77,7 +84,9 @@ const Header = () => {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            onPress={() => {
+                            onPress={async () => {
+                                await deleteKey("trigger");
+                                await deleteKey("action");
                                 navigation.navigate('Profile');
                                 closeSidebar();
                             }}
@@ -87,7 +96,9 @@ const Header = () => {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            onPress={() => {
+                            onPress={async () => {
+                                await deleteKey("trigger");
+                                await deleteKey("action");
                                 navigation.navigate('Applets');
                                 closeSidebar();
                             }}
@@ -95,19 +106,10 @@ const Header = () => {
                         >
                             <Text style={styles.menuText}>My applets</Text>
                         </TouchableOpacity>
-                        
+
                         <TouchableOpacity
                             onPress={() => {
-                                navigation.navigate('Services');
-                                closeSidebar();
-                            }}
-                            style={styles.menuItem}
-                        >
-                            <Text style={styles.menuText}>My Services</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => {
-                                navigation.navigate('Start');
+                                handleLogOut();
                                 closeSidebar();
                             }}
                             style={styles.menuItem}

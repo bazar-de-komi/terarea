@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
+import CustomButton from "../../components/CustomButton/customButton";
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import BackButton from "../../components/BackButton/backButton";
 import Header from '../../components/Header/header';
@@ -58,12 +58,12 @@ const ServicesDetails = ({ route }) => {
                     {service.description}
                 </Text>
                 <View style={styles.createStyle}>
-                    <CustomerButton
+                    <CustomButton
                         text="Create"
                         onPress={handleCreateButton}
                         type="PRIMARY"
                         bgColor={""}
-                        Date time trigger  fgColor={""}
+                        Date time trigger fgColor={""}
                     />
                 </View>
             </View>

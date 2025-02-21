@@ -3,10 +3,10 @@ import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity } from 
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
+import CustomButton from "../../components/CustomButton/customButton";
 import BackButton from "../../components/BackButton/backButton";
 
-const AppletsInformation = () => {
+const CreateServices = () => {
     const navigation = useNavigation();
     const [serviceName, setServiceName] = useState("");
     const [serviceType, setServiceType] = useState("Option 1");
@@ -24,8 +24,8 @@ const AppletsInformation = () => {
     };
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-            <Text style={styles.homeTitle}>Name Applet</Text>
+        <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
+            <Text style={styles.homeTitle}>Create</Text>
             <View style={styles.backButtonContainer}>
                 <BackButton
                     text={"X"}
@@ -35,7 +35,7 @@ const AppletsInformation = () => {
 
             <View style={styles.section}>
                 <View style={styles.ifThisContainer}>
-                    <CustomerButton
+                    <CustomButton
                         text="If"
                         type="PRIMARY"
                         bgColor={"black"}
@@ -98,7 +98,7 @@ const AppletsInformation = () => {
                 </View>
 
                 <View style={styles.ThenThatContainer}>
-                    <CustomerButton
+                    <CustomButton
                         text="Then"
                         type="PRIMARY"
                         bgColor={"grey"}
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         fontWeight: 'bold',
         color: 'white',
-        left:50,
+        left: 50,
     },
     addButtonContainerIf: {
         justifyContent: 'center',
@@ -221,4 +221,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default AppletsInformation;
+export default CreateServices;
