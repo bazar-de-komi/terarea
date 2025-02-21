@@ -18,7 +18,7 @@ import AppletsInformation from '../screens/Applets/appletsInformation';
 import ChooseServicesOptionsForTrigger from '../screens/Create/chooseServicesOptionsForTrigger';
 import ChooseServicesOptionsForAction from '../screens/Create/chooseServicesOptionsForAction';
 import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
-import Profile from '../screens/UserSideBar/sideBarProfil';
+import Profile from '../screens/UserProfile/userProfile';
 import CreateTrigger from '../screens/Create/createTrigger';
 import CreateAction from '../screens/Create/createAction';
 
