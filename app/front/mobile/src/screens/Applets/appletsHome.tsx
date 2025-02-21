@@ -35,7 +35,7 @@ const Applets = () => {
         }, 500);
 
         return () => clearInterval(interval);
-    }, []);
+    });
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
