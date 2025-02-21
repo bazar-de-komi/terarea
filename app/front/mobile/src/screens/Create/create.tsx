@@ -180,11 +180,9 @@ const Create = () => {
                                     color={appletColor}
                                     onColorChangeComplete={(color) => {
                                         setAppletColor(color);
-                                        console.log("Couleur en cours de sélection:", color);
                                     }}
                                     onColorSelected={color => {
                                         setAppletColor(color);
-                                        console.log("Couleur sélectionnée:", color);
                                         setShowColorPicker(false);
                                     }}
                                     style={{ height: 200 }}

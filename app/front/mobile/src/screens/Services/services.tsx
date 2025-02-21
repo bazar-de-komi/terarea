@@ -52,7 +52,6 @@ const Services = () => {
                     setServices(getServicesResponse.msg);
                 } else {
                     const noSpaceTags = tags.replaceAll(" ", ":");
-                    console.log("NoSpaceTags", noSpaceTags);
                     let path = "/api/v1/services/";
                     path += noSpaceTags;
                     const getServicesResponse = await queries.get(path, {}, token);

@@ -26,7 +26,6 @@ const SocialAuthButton = () => {
             await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
-            console.error(error);
             Alert.alert("Failed to get the authorisation url.");
         };
     };
@@ -42,7 +41,6 @@ const SocialAuthButton = () => {
             await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
-            console.error(error);
             Alert.alert("Failed to get the authorisation url.");
         };
     };
@@ -53,13 +51,11 @@ const SocialAuthButton = () => {
                 provider: "discord"
             };
             const response = await queries.post("/api/v1/oauth/login", provider);
-            console.log("Response:", response);
             let url: string = response.authorization_url;
             url = decodeURIComponent(url);
             await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
-            console.error(error);
             Alert.alert("Failed to get the authorisation url.");
         };
     };
@@ -75,7 +71,6 @@ const SocialAuthButton = () => {
             await storeValue("authUrl", url);
             navigation.navigate("Oauth screen");
         } catch (error) {
-            console.error(error);
             Alert.alert("Failed to get the authorisation url.");
         };
     };

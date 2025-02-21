@@ -24,7 +24,6 @@ const Header = () => {
             navigation.navigate('Sign In');
             closeSidebar();
         } catch (error) {
-            console.error(error);
             await deleteKey("token");
             navigation.navigate('Sign In');
         }

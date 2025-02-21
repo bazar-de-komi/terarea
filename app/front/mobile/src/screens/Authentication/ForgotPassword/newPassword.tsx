@@ -28,15 +28,12 @@ const NewPassword = () => {
         };
 
         try {
-            console.log("NewPass:", newPass);
             const response = await queries.patch("/api/v1/reset_password", newPass);
-            console.log("Response:", response);
             if (response.resp === "success") {
                 deleteKey("email");
                 navigation.navigate("Sign In");
             }
         } catch (error) {
-            console.error("Error:", error);
             Alert.alert("One of the value is incorrect. Please try again.");
         }
     }

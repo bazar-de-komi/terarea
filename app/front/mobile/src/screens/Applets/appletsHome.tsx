@@ -24,7 +24,7 @@ const Applets = () => {
                 const getServicesResponse = await queries.get("/api/v1/my_applets", {}, token);
                 setApplets(getServicesResponse.msg);
             } catch (error) {
-                console.error(error);
+                return;
             }
         };
 
