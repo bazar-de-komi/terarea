@@ -73,7 +73,7 @@ const Profile = () => {
                         value={username}
                         setValue={setUsername}
                         placeholder="Your username"
-                        secureTextEntry={null}
+                    // secureTextEntry={false}
                     />
                 </View>
                 <Text style={styles.optionTitle}>Password</Text>
@@ -91,7 +91,7 @@ const Profile = () => {
                         value={email}
                         setValue={setEmail}
                         placeholder="Your email"
-                        secureTextEntry={null}
+                    // secureTextEntry={false}
                     />
                 </View>
                 <View style={styles.saveButtonContainer}>

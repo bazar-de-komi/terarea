@@ -83,7 +83,7 @@ const SignIn = () => {
                         placeholder="Email"
                         value={email}
                         setValue={setEmail}
-                        secureTextEntry={false}
+                    // secureTextEntry={false}
                     />
                     <CustomInput
                         placeholder="Password"

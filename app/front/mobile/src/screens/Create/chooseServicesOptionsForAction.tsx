@@ -56,7 +56,7 @@ const ChooseServicesAction = () => {
                     value={search}
                     setValue={setSearch}
                     placeholder="Search Services"
-                    secureTextEntry={null}
+                // secureTextEntry={false}
                 />
             </View>
 

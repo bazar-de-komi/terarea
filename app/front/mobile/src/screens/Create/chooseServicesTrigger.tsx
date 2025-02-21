@@ -79,7 +79,7 @@ const ChooseServicesTrigger = () => {
                     value={search}
                     setValue={setSearch}
                     placeholder="Search Triggers"
-                    secureTextEntry={null}
+                // secureTextEntry={false}
                 />
             </View>
 
