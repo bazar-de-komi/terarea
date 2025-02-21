@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerInput from "../../../components/CustomersInput/CustomerInput";
-import CustomerButton from '../../../components/CustomerButton/CustomerButton';
+import CustomInput from "../../../components/CustomInput/customInput";
+import CustomButton from '../../../components/CustomButton/customButton';
 import SocialButton from '../../../components/SocialAuthButton/socialAuthButton';
 import { storeValue } from '../../../components/StoreData/storeData';
 
-import OrLine from "../../../components/SocialAuthButton/OrLine";
+import OrLine from "../../../components/SocialAuthButton/orLine";
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
 import { queries } from "../../../../back-endConnection/querier";
@@ -83,25 +83,25 @@ const SignUp = () => {
                 />
                 <View style={styles.SignUpContainer}>
                     <Text style={styles.SignUpTitle}>Sign Up</Text>
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Email"
                         value={email}
                         setValue={setEmail}
                         secureTextEntry={false}
                     />
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Password"
                         value={password}
                         setValue={setPassword}
                         secureTextEntry={true}
                     />
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Confirmation Password"
                         value={repeatPassword}
                         setValue={setRepeatPassword}
                         secureTextEntry={true}
                     />
-                    <CustomerButton
+                    <CustomButton
                         text="Get started"
                         onPress={handleSignInButton}
                         bgColor={"#666"}
@@ -109,7 +109,7 @@ const SignUp = () => {
                     />
                     <OrLine />
                     <SocialButton />
-                    <CustomerButton
+                    <CustomButton
                         text="Already have an account ? Sign in here"
                         onPress={handleGoToSignInButton}
                         type="TERTIARY"

@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Image, Alert, TouchableOpacity } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import CustomInput from "../../components/CustomInput/customInput";
 import BackButton from "../../components/BackButton/backButton";
-import SocialAuthButton from "../../components/SocialAuthButton";
 
 import Header from "../../components/Header/header";
 
@@ -90,7 +89,7 @@ const Profile = () => {
                 <View style={styles.homeNavigation}>
                 </View>
                 <View style={styles.searchBar}>
-                    <CustomerInput
+                    <CustomInput
                         value={username}
                         setValue={setUsername}
                         placeholder="Your username"
@@ -98,7 +97,7 @@ const Profile = () => {
                 </View>
                 <Text style={styles.optionTitle}>Password</Text>
                 <View style={styles.searchBar}>
-                    <CustomerInput
+                    <CustomInput
                         value={password}
                         setValue={setPassword}
                         placeholder="Can't be retrieved due to security"
@@ -107,7 +106,7 @@ const Profile = () => {
                 </View>
                 <Text style={styles.optionTitle}>Email</Text>
                 <View style={styles.searchBar}>
-                    <CustomerInput
+                    <CustomInput
                         value={email}
                         setValue={setEmail}
                         placeholder="Your email"

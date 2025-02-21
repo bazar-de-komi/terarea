@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerInput from "../../../components/CustomersInput/CustomerInput";
-import CustomerButton from "../../../components/CustomerButton";
-import { getValue, storeValue } from "../../../components/StoreData/storeData";
+import CustomInput from "../../../components/CustomInput/customInput";
+import CustomButton from "../../../components/CustomButton/customButton";
+import { storeValue } from "../../../components/StoreData/storeData";
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 import { queries } from "../../../../back-endConnection/querier";
@@ -40,14 +40,14 @@ const ForgotPassword = () => {
                 />
                 <View style={styles.ForgotPasswordContainer}>
                     <Text style={styles.ForgotPasswordTitle}>Forgot your password ?</Text>
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Email"
                         value={email}
                         setValue={setEmail}
                         secureTextEntry={false}
                     />
                     <Text>We will send you a link to reset your password</Text>
-                    <CustomerButton
+                    <CustomButton
                         text="Reset password"
                         onPress={handleSendEmailButton}
                         bgColor={"black"}
@@ -55,7 +55,7 @@ const ForgotPassword = () => {
                         icon={""}
                         type={""}
                     />
-                    <CustomerButton
+                    <CustomButton
                         text="Remember your password ? Sign in here"
                         onPress={handleLoginButton}
                         type="TERTIARY"

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Image, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../CustomerButton";
+import CustomButton from "../CustomButton/customButton";
 
 import GoogleLogo from '../../../assets/authenticationLogo/google.png';
 import githubLogo from '../../../assets/authenticationLogo/githubLogo.png';
@@ -82,7 +82,7 @@ const SocialAuthButton = () => {
 
     return (
         <View style={styles.container}>
-            <CustomerButton
+            <CustomButton
                 text="Continue with Google"
                 onPress={SignInGoogle}
                 bgColor="white"
@@ -90,26 +90,29 @@ const SocialAuthButton = () => {
                 icon={<Image source={GoogleLogo} style={styles.logo} />}
                 type=""
             />
-            <CustomerButton
+            <CustomButton
                 text="Continue with GitHub"
                 onPress={SignInGithub}
                 bgColor="#181717"
                 fgColor="white"
                 icon={<Image source={githubLogo} style={styles.logo} />}
+                type=""
             />
-            <CustomerButton
+            <CustomButton
                 text="Continue with Discord"
                 onPress={SignInDiscord}
                 bgColor="#5865F2"
-                fgColor="white" 
+                fgColor="white"
                 icon={<Image source={DiscordLogo} style={styles.discordLogo} />}
+                type=""
             />
-            <CustomerButton
+            <CustomButton
                 text="Continue with Spotify"
                 onPress={SignInSpotify}
                 bgColor="#1DB954"
                 fgColor="white"
                 icon={<Image source={SpotifyLogo} style={styles.logo} />}
+                type=""
             />
         </View>
     );

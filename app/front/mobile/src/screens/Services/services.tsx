@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
-import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import CustomButton from "../../components/CustomButton/customButton";
+import CustomInput from "../../components/CustomInput/customInput";
 import Header from '../../components/Header/header';
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import { queries } from "../../../back-endConnection/querier";
@@ -71,21 +71,21 @@ const Services = () => {
             <Header />
             <Text style={styles.homeTitle}>Explore</Text>
             <View style={styles.homeNavigation}>
-                <CustomerButton
+                <CustomButton
                     text="All"
                     onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
-                <CustomerButton
+                <CustomButton
                     text="Applets"
                     onPress={handleAppletsButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
-                <CustomerButton
+                <CustomButton
                     text="Services"
                     onPress={handleServicesButton}
                     type="TERTIARY"
@@ -94,14 +94,14 @@ const Services = () => {
                 />
             </View>
             <View style={styles.searchBar}>
-                <CustomerInput
+                <CustomInput
                     value={tags}
                     setValue={setTags}
                     placeholder="Search Applets or Services"
                 />
             </View>
             {/* <View style={styles.searchServices}>
-                <CustomerInput
+                <CustomInput
                 placeholder="All services"
             />
             </View>*/}

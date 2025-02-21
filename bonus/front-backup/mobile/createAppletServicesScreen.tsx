@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator } from 'react-native'
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
+import CustomButton from "../../components/CustomButton";
 import BackButton from "../../components/BackButton/backButton";
 
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogo.png';

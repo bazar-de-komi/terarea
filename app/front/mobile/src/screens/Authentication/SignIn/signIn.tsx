@@ -4,10 +4,10 @@ import { useNavigation } from "@react-navigation/native";
 import { queries } from "../../../../back-endConnection/querier";
 import { storeValue } from "../../../components/StoreData/storeData";
 
-import CustomerInput from "../../../components/CustomersInput";
-import CustomerButton from '../../../components/CustomerButton';
+import CustomInput from "../../../components/CustomInput/customInput";
+import CustomButton from '../../../components/CustomButton/customButton';
 import SocialLogo from '../../../components/SocialAuthButton/socialAuthButton';
-import Or from '../../../components/SocialAuthButton/OrLine';
+import Or from '../../../components/SocialAuthButton/orLine';
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
 
@@ -79,20 +79,20 @@ const SignIn = () => {
                 />
                 <View style={styles.SignInContainer}>
                     <Text style={styles.headerText}>Sign In</Text>
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Email"
                         value={email}
                         setValue={setEmail}
                         secureTextEntry={false}
                     />
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Password"
                         value={password}
                         setValue={setPassword}
                         secureTextEntry={true}
                     />
 
-                    <CustomerButton
+                    <CustomButton
                         text="Get started"
                         onPress={handleSignInButton}
                         bgColor={"#666"}
@@ -102,7 +102,7 @@ const SignIn = () => {
                     />
                     <Or />
                     <SocialLogo />
-                    <CustomerButton
+                    <CustomButton
                         text="Forgot your password ?"
                         onPress={handleForgotPasswordButton}
                         type="TERTIARY"
@@ -110,7 +110,7 @@ const SignIn = () => {
                         fgColor="black"
                         icon=""
                     />
-                    <CustomerButton
+                    <CustomButton
                         text="Don't have an account ? Sign up here"
                         onPress={handleSignUpButton}
                         type="TERTIARY"

@@ -55,14 +55,16 @@ export const parseJsonToForm = (json) => {
                     type: "input",
                     name: cleanName,
                     path: newPath,
-                    defaultValue: typeof value === "string" ? value : ""
+                    defaultValue: typeof value === "string" ? value : "",
+                    placeholder: typeof value === "string" ? value : ""
                 });
             } else if (key.startsWith("textarea:")) {
                 fields.push({
                     type: "textarea",
                     name: cleanName,
                     path: newPath,
-                    defaultValue: typeof value === "string" ? value : ""
+                    defaultValue: typeof value === "string" ? value : "",
+                    placeholder: typeof value === "string" ? value : ""
                 });
             }
         });
@@ -103,7 +105,11 @@ export const injectFormValuesIntoJson = (json, fields) => {
 
             current[originalKey] = newOptions;
         } else {
-            current[originalKey] = field.value;
+            if (field.value) {
+                current[originalKey] = field.value;
+            } else {
+                current[originalKey] = field.defaultValue;
+            }
         }
     });
 

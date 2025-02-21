@@ -1,27 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { useNavigation, useRoute } from "@react-navigation/native";
 
-import CustomerInput from "../../components/CustomersInput";
-import BackButton from "../../components/BackButton/backButton";
-
+import CustomInput from "../../components/CustomInput/customInput";
+import Header from "../../components/Header/header";
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 
 import { queries } from "../../../back-endConnection/querier";
 import { getValue } from "../../components/StoreData/storeData";
 
 const ChooseServicesAction = () => {
-    const Navigation = useNavigation();
+    const navigation = useNavigation();
     const route = useRoute();
-
-    const AppletsHome = () => {
-        Navigation.navigate("Applets");
-    }
 
     const [actions, setActions] = useState([]);
     const [search, setSearch] = useState("");
 
     const { service, trigger } = route.params || {};
+
+    const goBack = () => {
+        navigation.goBack();
+    }
 
     useEffect(() => {
         const fetchActions = async () => {
@@ -34,49 +33,56 @@ const ChooseServicesAction = () => {
                 const token = await getValue("token");
                 const response = await queries.get(`/api/v1/reactions/service/${service.id}`, {}, token);
                 if (response.resp === "success") {
-                    console.log("Response: ", response.msg);
                     setActions(response.msg);
-                    console.log(response.msg[0].json);
-                } else {
-                    console.error("La réponse de l'API ne contient pas la bonne structure.");
-                    setActions([]);
                 }
             } catch (error) {
                 console.error("Error fetching actions:", error);
-                setActions([]);
             }
         };
-
         fetchActions();
     }, [service]);
 
-    const handleActionSelection = (service, action, trigger) => {
-        Navigation.navigate("Create action", { service, action, trigger });
+    const handleActionSelection = (service: any, action: any, trigger: any) => {
+        navigation.navigate("Create action", { service, action, trigger });
     };
 
-    const filteredActions = actions.filter(action =>
-        action.json.name && action.json.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredActions = actions.filter(action => {
+        if (!search.trim()) return true;
+
+        const searchWords = search.toLowerCase().split(/\s+/).filter(word => word.length > 0);
+
+        const matchesName = searchWords.some(word =>
+            action.json.name?.toLowerCase().split(/\s+/).some((nameWord: any) => nameWord.includes(word))
+        );
+
+        const matchesDescription = searchWords.some(word =>
+            action.json.description?.toLowerCase().split(/\s+/).some((descWord: any) => descWord.includes(word))
+        );
+        return matchesName || matchesDescription;
+    });
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
-            <BackButton 
-            text={"back"}
-            onPress={AppletsHome}
-            />
+            <Header />
+            <TouchableOpacity style={styles.backButtonContainer} onPress={goBack}>
+                <Text style={styles.backButtonText}>
+                    Back
+                </Text>
+            </TouchableOpacity>
             <Text style={styles.homeTitle}>
                 {service ? `Choose an action for ${service.name}` : "Choose an action"}
             </Text>
 
             <View style={styles.searchContainer}>
-                <CustomerInput
+                <CustomInput
+                    value={search}
+                    setValue={setSearch}
                     placeholder="Search Services"
-                    style={styles.searchInput}
-                    onChangeText={setSearch}
+                    secureTextEntry={null}
                 />
             </View>
 
-        {filteredActions.length > 0 ? (
+            {filteredActions.length > 0 ? (
                 filteredActions.map(action => (
                     <AppletAndServiceBox
                         key={action.id}
@@ -97,41 +103,32 @@ const styles = StyleSheet.create({
     homeTitle: {
         fontSize: 28,
         fontWeight: 'bold',
-        margin: 80,
-        marginLeft: 100,
-        width: 1000,
+        margin: 50,
+        textAlign: "center"
     },
     searchContainer: {
         alignItems: 'center',
-        marginVertical: 10,
-    },
-    searchInput: {
-        width: '80%',
-    },
-    section: {
-        alignItems: 'center',
-        marginVertical: 20,
-    },
-    ifThisContainer: {
-        flexDirection: 'row',
-        position: 'relative',
-        justifyContent: 'center',
-        alignItems: 'center',
         marginBottom: 20,
     },
-    ifThisButton: {
-        width: 250,
-        height: 50,
-    },
-    addButtonContainer: {
-        position: 'absolute',
-        right: 10,
-        width: 60,
-        borderRadius: 80,
-    },
-    addButton: {
+    backButtonContainer: {
+        marginTop: 10,
+        marginLeft: 20,
+        marginRight: 'auto',
+        textAlign: 'center',
         paddingHorizontal: 10,
-        paddingVertical: 5,
+        paddingVertical: 10,
+        borderRadius: 25,
+        borderColor: 'black',
+        borderWidth: 2,
+    },
+    backButtonText: {
+        fontWeight: 'bold'
+    },
+    noResults: {
+        textAlign: 'center',
+        fontSize: 18,
+        marginVertical: 20,
+        color: "gray",
     }
 })
 

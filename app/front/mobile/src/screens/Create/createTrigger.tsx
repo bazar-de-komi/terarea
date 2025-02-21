@@ -2,19 +2,19 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson.js";
+import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/parseJson.js";
 
 const TriggerPage = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { trigger } = route.params || {};
 
+    const formFields = parseJsonToForm(trigger.json);
+    const [formValues, setFormValues] = useState(formFields);
+
     if (!trigger || !trigger.json) {
         return <Text style={styles.error}>Aucune donnée disponible pour ce trigger.</Text>;
     }
-
-    const formFields = parseJsonToForm(trigger.json);
-    const [formValues, setFormValues] = useState(formFields);
 
     const handleChange = (name, keyToChange, value) => {
         setFormValues((prev) =>
@@ -26,7 +26,7 @@ const TriggerPage = () => {
 
     const handleSubmit = () => {
         const updatedTrigger = injectFormValuesIntoJson(trigger.json, formValues);
-        navigation.navigate("Create and have service", { trigger: updatedTrigger });
+        navigation.navigate("Create", { trigger: updatedTrigger });
     };
 
     return (
@@ -51,15 +51,17 @@ const TriggerPage = () => {
                     ) : field.type === "textarea" ? (
                         <TextInput
                             style={styles.textarea}
-                            defaultValue={field.defaultValue}
+                            value={field.value}
                             multiline={true}
                             onChangeText={(text) => handleChange(field.name, "value", text)}
+                            placeholder={field.placeholder}
                         />
                     ) : (
                         <TextInput
                             style={styles.input}
-                            defaultValue={field.defaultValue}
+                            value={field.value}
                             onChangeText={(text) => handleChange(field.name, "value", text)}
+                            placeholder={field.placeholder}
                         />
                     )}
                 </View>
@@ -77,44 +79,44 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#333",
         paddingHorizontal: 20,
-        paddingVertical: 40,
+        paddingVertical: 40
     },
     title: {
         fontSize: 24,
         fontWeight: "bold",
         color: "white",
-        marginBottom: 20,
+        marginBottom: 20
     },
     fieldContainer: {
         width: "100%",
-        marginBottom: 15,
+        marginBottom: 15
     },
     label: {
         fontSize: 18,
         fontWeight: "600",
         color: "white",
-        marginBottom: 5,
+        marginBottom: 5
     },
     text: {
         fontSize: 16,
-        color: "white",
+        color: "white"
     },
     picker: {
         backgroundColor: "white",
-        borderRadius: 8,
+        borderRadius: 8
     },
     input: {
         backgroundColor: "white",
         borderRadius: 8,
         padding: 10,
-        fontSize: 16,
+        fontSize: 16
     },
     textarea: {
         backgroundColor: "white",
         borderRadius: 8,
         padding: 10,
         fontSize: 16,
-        height: 100,
+        height: 100
     },
     triggerButton: {
         marginTop: 30,
@@ -123,13 +125,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         borderRadius: 25,
         width: "100%",
-        alignItems: "center",
+        alignItems: "center"
     },
     triggerButtonText: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#333",
-    },
+        color: "#333"
+    }
 });
 
 export default TriggerPage;

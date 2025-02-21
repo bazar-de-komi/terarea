@@ -2,27 +2,21 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson";
 
-import BackButton from "../../components/BackButton/backButton";
-import CustomerInput from "../../components/CustomersInput";
+import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/parseJson";
 
 const ActionPage = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { service, trigger, action } = route.params || {};
 
-    const AppletsHome = () => {
-        navigation.navigate("Applets");
-    };
+    const formFields = parseJsonToForm(action.json);
+    const [formValues, setFormValues] = useState(formFields);
 
     const goToCreateEnd = () => {
         const updatedAction = injectFormValuesIntoJson(action.json, formValues);
-        navigation.navigate("Create end", { trigger: trigger, action: updatedAction, service: service });
+        navigation.navigate("Create", { trigger: trigger, action: updatedAction, service: service });
     };
-
-    const formFields = parseJsonToForm(action.json);
-    const [formValues, setFormValues] = useState(formFields);
 
     const handleChange = (name, keyToChange, value) => {
         setFormValues((prev) =>
@@ -54,15 +48,17 @@ const ActionPage = () => {
                     ) : field.type === "textarea" ? (
                         <TextInput
                             style={styles.textarea}
-                            defaultValue={field.defaultValue}
+                            value={field.value}
                             multiline={true}
                             onChangeText={(text) => handleChange(field.name, "value", text)}
+                            placeholder={field.placeholder}
                         />
                     ) : (
                         <TextInput
                             style={styles.input}
-                            defaultValue={field.defaultValue}
+                            value={field.value}
                             onChangeText={(text) => handleChange(field.name, "value", text)}
+                            placeholder={field.placeholder}
                         />
                     )}
                 </View>

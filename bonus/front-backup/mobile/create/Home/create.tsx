@@ -1,58 +1,30 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../../components/CustomerButton";
-import BackButton from "../../../components/BackButton/backButton";
+import CustomButton from "../../../components/CustomButton/customButton";
+import Header from "../../../components/Header/header";
 
-const CreateHaveService = () => {
+const Create = () => {
     const navigation = useNavigation();
 
-    const route = useRoute();
-    const { trigger } = route.params || {};
-
-    const AppletsHome = () => {
-        navigation.navigate("Applets");
-    };
-
     const ChooseServices = () => {
-        navigation.navigate("Choose options service for action", { trigger });
+        navigation.navigate("Choose options service for trigger");
     };
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
+            <Header />
             <Text style={styles.homeTitle}>Create</Text>
-            <View style={styles.backButtonContainer}>
-                <BackButton
-                    text={"X"}
-                    onPress={AppletsHome}
-                />
-            </View>
             <View style={styles.section}>
                 <View style={styles.ifThisContainer}>
-                    <CustomerButton
+                    <CustomButton
                         text="If This"
                         type="PRIMARY"
                         bgColor={"black"}
                         fgColor={"white"}
-                        style={styles.ifThenText}
-                    />
-                    <TouchableOpacity
-                        style={styles.addButtonContainer}
-                        onPress={ChooseServices}
-                    >
-                        <Text style={styles.addButtonText}>
-                            {trigger.name || "Name of the action selected"}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.ThenThatContainer}>
-                    <CustomerButton
-                        text="Then That"
-                        type="PRIMARY"
-                        bgColor={"transparent"}
-                        fgColor={"white"}
-                        style={styles.ifThenText}
+                        onPress={null}
+                        icon={null}
                     />
                     <TouchableOpacity
                         style={styles.addButtonContainer}
@@ -60,6 +32,16 @@ const CreateHaveService = () => {
                     >
                         <Text style={styles.addButtonText}>add</Text>
                     </TouchableOpacity>
+                </View>
+                <View style={styles.ThenThatContainer}>
+                    <CustomButton
+                        text="Then That"
+                        type="PRIMARY"
+                        bgColor={"transparent"}
+                        fgColor={"white"}
+                        onPress={null}
+                        icon={null}
+                    />
                 </View>
             </View>
         </ScrollView>
@@ -70,10 +52,9 @@ const styles = StyleSheet.create({
     homeTitle: {
         fontSize: 40,
         fontWeight: 'bold',
-        margin: 80,
-        marginLeft: 140,
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginTop: 60,
+        marginBottom: 50,
+        textAlign: 'center',
     },
     section: {
         alignItems: 'center',
@@ -94,6 +75,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        marginBottom: 20,
         width: 300,
         height: 70,
         backgroundColor: 'grey',
@@ -105,13 +87,12 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     addButtonContainer: {
-        width: 120,
-        height: 50,
+        width: 60,
+        height: 30,
         borderRadius: 15,
         backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        right: 30,
     },
     addButtonText: {
         color: 'black',
@@ -125,4 +106,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CreateHaveService;
+export default Create;

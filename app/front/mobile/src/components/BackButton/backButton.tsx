@@ -1,7 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-
-import CustomerButton from '../CustomerButton';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 const BackButton = ({ text, onPress }) => {
     return (
@@ -14,8 +12,8 @@ const BackButton = ({ text, onPress }) => {
 }
 const styles = StyleSheet.create({
     backStyle: {
-        right: 150,
-        bottom: 70,
+        right: 0,
+        top: 10,
         paddingHorizontal: 20,
         paddingVertical: 10
     },
