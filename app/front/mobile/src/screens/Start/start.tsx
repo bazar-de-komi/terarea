@@ -44,6 +44,7 @@ const Start = () => {
                         type="PRIMARY"
                         bgColor={"white"}
                         fgColor={"black"}
+                        icon={null}
                     />
                 </View>
             </ImageBackground>
