@@ -14,7 +14,7 @@ const Applets = () => {
     const [search, setSearch] = useState("");
 
     const handleAppletButton = async (applet: any) => {
-        navigation.navigate("Service screen", { applet_id: applet.id });
+        navigation.navigate("Applet information", { applet_id: applet.id });
     };
 
     useEffect(() => {

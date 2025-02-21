@@ -2,25 +2,25 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
+import Start from '../screens/Start/start';
 import SignIn from '../screens/Authentication/SignIn/signIn';
 import SignUp from '../screens/Authentication/SignUp/signUp';
 import ForgotPassword from '../screens/Authentication/ForgotPassword/forgotPassword';
 import NewPassword from '../screens/Authentication/ForgotPassword/newPassword';
+import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
+
 import Applets from '../screens/Applets/appletsHome';
-import Services from '../screens/Services/services';
-import Start from '../screens/Start/start';
-import AppletsScreen from '../screens/Applets/appletsBox';
-import ServicesDetails from '../screens/Services/servicesDetails';
+import AppletInformation from '../screens/Applets/appletInformation';
+
 import Create from '../screens/Create/create';
 import ChooseServicesTrigger from '../screens/Create/chooseServicesTrigger';
 import ChooseServicesAction from '../screens/Create/chooseServicesAction';
-import AppletsInformation from '../screens/Applets/appletsInformation';
 import ChooseServicesOptionsForTrigger from '../screens/Create/chooseServicesOptionsForTrigger';
 import ChooseServicesOptionsForAction from '../screens/Create/chooseServicesOptionsForAction';
-import { OAuthScreen } from '../screens/Authentication/OAuth/oauth';
-import Profile from '../screens/UserProfile/userProfile';
 import CreateTrigger from '../screens/Create/createTrigger';
 import CreateAction from '../screens/Create/createAction';
+
+import Profile from '../screens/UserProfile/userProfile';
 
 const Stack = createStackNavigator();
 
@@ -36,11 +36,7 @@ const Navigation = () => {
                 <Stack.Screen name="Oauth screen" component={OAuthScreen} />
 
                 <Stack.Screen name="Applets" component={Applets} />
-                <Stack.Screen name="Services" component={Services} />
-
-                <Stack.Screen name="Applet screen" component={AppletsScreen} />
-                <Stack.Screen name="Service details" component={ServicesDetails} />
-                <Stack.Screen name="Applets information" component={AppletsInformation} />
+                <Stack.Screen name="Applet information" component={AppletInformation} />
 
                 <Stack.Screen name="Create" component={Create} />
                 <Stack.Screen name="Choose services trigger" component={ChooseServicesTrigger} />
