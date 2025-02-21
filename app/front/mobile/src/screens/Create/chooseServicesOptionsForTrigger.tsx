@@ -1,11 +1,14 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native'
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
 import CustomerInput from "../../components/CustomersInput";
 import BackButton from "../../components/BackButton/backButton";
 
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
+
+import { queries } from "../../../back-endConnection/querier";
+import { getValue } from "../../components/StoreData/storeData";
 
 const ChooseServices = () => {
     const Navigation = useNavigation();
@@ -14,18 +17,33 @@ const ChooseServices = () => {
         Navigation.navigate("Applets");
     }
 
-    const createTwo = () => {
-        Navigation.navigate("Create two");
-    }
+    const [services, setServices] = useState([]);
+    const [search, setSearch] = useState("");
 
-    const chooseOption = () => {
-        Navigation.navigate("Choose services trigger");
-    }
-
-    const dateTimeTrigger = () => {
-        Navigation.navigate("Date time trigger");
-    }
-
+    useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const token = await getValue("token");
+                const response = await queries.get("/api/v1/triggers_services", {}, token);
+                
+                if (Array.isArray(response.msg)) {
+                    setServices(response.msg);
+                } else {
+                    console.error("La réponse de l'API ne contient pas la bonne structure.");
+                    setServices([]);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération des services :", error);
+                setServices([]);
+            }
+        };
+        fetchServices();
+    }, []);
+    
+    const handleServiceClick = (service: any) => {
+        Navigation.navigate("Choose services trigger", { service });
+    };
+    
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <BackButton 
@@ -41,12 +59,17 @@ const ChooseServices = () => {
                 />
             </View>
 
-            <AppletAndServiceBox
-                title={'title'}
-                description={"description"}
-                bgColor={"red"}
-                onPress={chooseOption}
-            />
+        {services
+            .filter(service => service && service.name && service.name.toLowerCase().includes(search.toLowerCase()))
+            .map((service) => (
+                <AppletAndServiceBox
+                    key={service.id}
+                    title={service.name || "Unknown Service"}
+                    description={service.description || "No description available"}
+                    bgColor={service.colour || "gray"}
+                    onPress={() => handleServiceClick(service)}
+                />
+            ))}
 
         </ScrollView>
     )

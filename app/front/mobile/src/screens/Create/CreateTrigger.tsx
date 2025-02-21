@@ -1,49 +1,38 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from "@react-navigation/native";
-import ParseJson from "../../ParseJson.js";
-
-const jsonData = {
-    "": "Ceci est un texte affiché",
-    "ignore:ceChamp": "Ne pas afficher",
-    "drop:choixPays": [
-        "default:France",
-        "opt:USA",
-        "opt:Canada",
-    ],
-    "input:nom": "Jean Dupont",
-    "textarea:description": "Texte long ici...",
-    "service": {
-        "drop:timeZone": [
-            "opt:Africa/Cairo",
-            "opt:America/New_York",
-            "default:Europe/Paris"
-        ],
-        "verification": {
-            "drop:hour": [
-                "default:0",
-                "opt:1",
-                "opt:2",
-                "opt:3"
-            ],
-            "drop:minute": [
-                "default:0",
-                "opt:10",
-                "opt:20",
-                "opt:30"
-            ]
-        }
-    }
-};
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson.js";
 
 const TriggerPage = () => {
-    const Navigation = useNavigation();
-    const formFields = ParseJson(jsonData);
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { trigger } = route.params || {};
+
+    if (!trigger || !trigger.json) {
+        return <Text style={styles.error}>Aucune donnée disponible pour ce trigger.</Text>;
+    }
+
+    const formFields = parseJsonToForm(trigger.json);
     const [formValues, setFormValues] = useState({});
 
     const handleChange = (name, value) => {
         setFormValues(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = () => {
+        // const updatedTrigger = {
+        //     ...trigger,
+        //     json: injectFormValuesIntoJson(trigger.json, formFields.map(field => ({
+        //         ...field,
+        //         value: formValues[field.name] || field.defaultValue || ""
+        //     })))
+        // };
+        const updatedTrigger = injectFormValuesIntoJson(trigger.json, formFields);
+
+        console.log("Updated Trigger:", updatedTrigger);
+
+        navigation.navigate("Create and have service", { trigger: updatedTrigger });
     };
 
     return (
@@ -83,10 +72,7 @@ const TriggerPage = () => {
                 </View>
             ))}
 
-            <TouchableOpacity
-                style={styles.triggerButton}
-                onPress={() => console.log("Form Values:", formValues)}
-            >
+            <TouchableOpacity style={styles.triggerButton} onPress={handleSubmit} > 
                 <Text style={styles.triggerButtonText}>Create trigger</Text>
             </TouchableOpacity>
         </View>
