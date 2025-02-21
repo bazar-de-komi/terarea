@@ -32,7 +32,14 @@
     "description": "IFTTT for mobile",
     "extra": {
       "eas": {
-        "projectId": "a3bcfa35-ea4e-4562-8aa4-277dab14d741"
+        "projectId": "18ec3c97-ad60-4695-950a-5c870ca8252d"
+      }
+    },
+    "expo": {
+      "doctor": {
+        "reactNativeDirectoryCheck": {
+          "listUnknownPackages": false
+        }
       }
     }
   }
