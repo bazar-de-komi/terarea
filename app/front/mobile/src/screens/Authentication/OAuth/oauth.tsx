@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Button, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
-import { WebView } from 'react-native-webview';
+import WebView from 'react-native-webview';
 import { deleteKey, storeValue, getValue } from '../../../components/StoreData/storeData';
 import { queries } from '../../../../back-endConnection/querier';
 

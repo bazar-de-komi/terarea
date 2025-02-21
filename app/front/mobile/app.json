@@ -34,13 +34,6 @@
       "eas": {
         "projectId": "18ec3c97-ad60-4695-950a-5c870ca8252d"
       }
-    },
-    "expo": {
-      "doctor": {
-        "reactNativeDirectoryCheck": {
-          "listUnknownPackages": false
-        }
-      }
     }
   }
 }
