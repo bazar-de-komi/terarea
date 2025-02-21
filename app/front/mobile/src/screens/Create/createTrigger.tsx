@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
+
 import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/parseJson.js";
 
 const TriggerPage = () => {
@@ -14,6 +15,10 @@ const TriggerPage = () => {
 
     if (!trigger || !trigger.json) {
         return <Text style={styles.error}>Aucune donnée disponible pour ce trigger.</Text>;
+    }
+
+    const goBack = () => {
+        navigation.goBack();
     }
 
     const handleChange = (name, keyToChange, value) => {
@@ -31,6 +36,11 @@ const TriggerPage = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
+            <TouchableOpacity style={styles.backButtonContainer} onPress={goBack}>
+                <Text style={styles.backButtonText}>
+                    Back
+                </Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Complete trigger fields</Text>
             {formFields.map((field, index) => (
                 <View key={index} style={styles.fieldContainer}>
@@ -80,6 +90,22 @@ const styles = StyleSheet.create({
         backgroundColor: "#333",
         paddingHorizontal: 20,
         paddingVertical: 40
+    },
+    backButtonContainer: {
+        marginTop: 10,
+        marginLeft: 20,
+        marginBottom: 20,
+        marginRight: 'auto',
+        textAlign: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 25,
+        borderColor: 'white',
+        borderWidth: 2,
+    },
+    backButtonText: {
+        fontWeight: 'bold',
+        color: 'white'
     },
     title: {
         fontSize: 24,
