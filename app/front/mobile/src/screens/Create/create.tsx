@@ -150,7 +150,7 @@ const Create = () => {
                             placeholder="Enter applet name"
                             value={appletName}
                             setValue={setAppletName}
-                        // secureTextEntry={false}
+                            secureTextEntry={false}
                         />
 
                         <Text style={styles.label}>Your applet description</Text>
@@ -158,7 +158,7 @@ const Create = () => {
                             placeholder="Enter applet description"
                             value={appletDescription}
                             setValue={setAppletDescription}
-                        // secureTextEntry={false}
+                            secureTextEntry={false}
                         />
 
                         <Text style={styles.label}>Your applet tags (Optional)</Text>
@@ -166,7 +166,7 @@ const Create = () => {
                             placeholder="Enter applet tags"
                             value={appletTags}
                             setValue={setAppletTags}
-                        // secureTextEntry={false}
+                            secureTextEntry={false}
                         />
 
                         <Text style={styles.label}>Your applet colour</Text>

@@ -58,19 +58,19 @@ const NewPassword = () => {
                         placeholder="Verification code"
                         value={code}
                         setValue={setCode}
-                    // secureTextEntry={false}
+                        secureTextEntry={false}
                     />
                     <CustomInput
                         placeholder="New password"
                         value={newPassword}
                         setValue={setNewPassword}
-                    // secureTextEntry={false}
+                        secureTextEntry={false}
                     />
                     <CustomInput
                         placeholder="Confirmation password"
                         value={confirm}
                         setValue={setConfirm}
-                    // secureTextEntry={false}
+                        secureTextEntry={false}
                     />
                     <CustomButton
                         text="Set password"

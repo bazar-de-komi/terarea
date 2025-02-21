@@ -18,12 +18,14 @@ const styles = StyleSheet.create({
     customInputContainer: {
         backgroundColor: 'white',
         width: '70%',
+        height: 30,
 
         borderColor: '#e8e8e8',
         borderWidth: 1,
-        borderRadius: 5,
+        borderRadius: 10,
 
         paddingHorizontal: 10,
+        paddingTop: 5,
         marginVertical: 5,
     }
 })

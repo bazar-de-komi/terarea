@@ -44,7 +44,7 @@ const ForgotPassword = () => {
                         placeholder="Email"
                         value={email}
                         setValue={setEmail}
-                    // secureTextEntry={false}
+                        secureTextEntry={false}
                     />
                     <Text>We will send you a link to reset your password</Text>
                     <CustomButton

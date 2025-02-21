@@ -53,7 +53,7 @@ const ChooseServices = () => {
                     value={search}
                     setValue={setSearch}
                     placeholder="Search Services"
-                // secureTextEntry={false}
+                    secureTextEntry={false}
                 />
             </View>
 

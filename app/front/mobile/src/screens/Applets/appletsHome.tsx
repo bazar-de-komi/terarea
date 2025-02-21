@@ -48,7 +48,7 @@ const Applets = () => {
                     value={search}
                     setValue={setSearch}
                     placeholder="Search applets"
-                // secureTextEntry={false}
+                    secureTextEntry={false}
                 />
             </View>
             {applets
