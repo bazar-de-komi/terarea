@@ -13,6 +13,10 @@ const ActionPage = () => {
     const formFields = parseJsonToForm(action.json);
     const [formValues, setFormValues] = useState(formFields);
 
+    const goBack = () => {
+        navigation.goBack();
+    }
+
     const goToCreateEnd = () => {
         const updatedAction = injectFormValuesIntoJson(action.json, formValues);
         navigation.navigate("Create", { trigger: trigger, action: updatedAction, service: service });
@@ -28,6 +32,11 @@ const ActionPage = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
+            <TouchableOpacity style={styles.backButtonContainer} onPress={goBack}>
+                <Text style={styles.backButtonText}>
+                    Back
+                </Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Complete action fields</Text>
             {formFields.map((field, index) => (
                 <View key={index} style={styles.fieldContainer}>
@@ -77,6 +86,22 @@ const styles = StyleSheet.create({
         backgroundColor: "#333",
         paddingHorizontal: 20,
         paddingVertical: 40,
+    },
+    backButtonContainer: {
+        marginTop: 10,
+        marginLeft: 20,
+        marginBottom: 20,
+        marginRight: 'auto',
+        textAlign: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 25,
+        borderColor: 'white',
+        borderWidth: 2,
+    },
+    backButtonText: {
+        fontWeight: 'bold',
+        color: 'white'
     },
     title: {
         fontSize: 24,
