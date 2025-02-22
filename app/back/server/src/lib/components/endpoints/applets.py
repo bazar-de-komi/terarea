@@ -642,8 +642,7 @@ class Applets:
             title=title,
             message=services,
             resp="success",
-            token=None,
-            error= True
+            token=token,
         )
         return HCI.success(
             content=body,
@@ -682,135 +681,13 @@ class Applets:
             title=title,
             message=services,
             resp="success",
-            token=None,
-            error= True
+            token=token,
         )
         return HCI.success(
             content=body,
             content_type=CONST.CONTENT_TYPE,
             headers=self.runtime_data_initialised.json_header
         )
-
-    # def _search_templates_by_query(self, type_to_search: str, query_list: List[str], title: str, token: str) -> Union[List[Dict[str, Any]], Response]:
-    #     """
-    #     Search the actions templates by a query set by the user and depending on the template type
-    #     """
-    #     templates_data: Union[List[Dict[str, Any]], int] = self.runtime_data_initialised.database_link.get_data_from_table(
-    #         CONST.TAB_ACTION_TEMPLATE,
-    #         "*",
-    #         f"type='{type_to_search}'"
-    #     )
-    #     if not templates_data or isinstance(templates_data, int):
-    #         body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-    #             title=title,
-    #             message="The templates were not found.",
-    #             resp="not found",
-    #             token=token,
-    #             error=True
-    #         )
-    #         return HCI.not_found(
-    #             content=body,
-    #             content_type=CONST.CONTENT_TYPE,
-    #             headers=self.runtime_data_initialised.json_header
-    #         )
-    #     self.disp.log_debug(f"Triggers found: {templates_data}", title)
-    #     filtered_templates: List[Dict[str, Any]] = []
-    #     for _, template in enumerate(templates_data):
-    #         action_info: Dict[str, Any] = json.load(template["json"])
-    #         self.disp.log_debug(f"Action info: {action_info}", title)
-    #         for _, query in enumerate(query_list):
-    #             if query in action_info["name"]:
-    #                 filtered_templates.append(template)
-    #                 break
-    #             if query in action_info["description"]:
-    #                 filtered_templates.append(template)
-    #                 break
-    #     self.disp.log_debug(f"Template found with query: {filtered_templates}", title)
-    #     return filtered_templates
-
-    # async def get_triggers_by_research(self, request: Request, query: str) -> Response:
-    #     """
-    #     Get triggers by research
-    #     """
-    #     title = "Get triggers by research"
-
-    #     # Token getter
-    #     token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-    #         request
-    #     )
-    #     if not token:
-    #         return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
-    #             title
-    #         )
-    #     if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
-    #         token
-    #     ) is False:
-    #         return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
-    #             title
-    #         )
-    #     self.disp.log_debug(f"Token = {token}", title)
-
-    #     # Get the triggers by the research query
-    #     query_list: List[str] = query.split("+")
-    #     triggers_data: Union[List[Dict[str, Any]], Response] = self._search_templates_by_query("trigger", query_list, title, token)
-    #     if isinstance(triggers_data, Response):
-    #         return triggers_data
-
-    #     for _, trigger in enumerate(triggers_data):
-    #         trigger["json"] = json.load(trigger["json"])
-    #     body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-    #         title=title,
-    #         message=triggers_data,
-    #         resp="success",
-    #         token=token
-    #     )
-    #     return HCI.success(
-    #         content=body,
-    #         content_type=CONST.CONTENT_TYPE,
-    #         headers=self.runtime_data_initialised.json_header
-    #     )
-
-    # async def get_reactions_by_research(self, request: Request, query: str) -> Response:
-    #     """
-    #     Get reactions by research
-    #     """
-    #     title = "Get reactions by research"
-
-    #     # Token getter
-    #     token = self.runtime_data_initialised.boilerplate_incoming_initialised.get_token_if_present(
-    #         request
-    #     )
-    #     if not token:
-    #         return self.runtime_data_initialised.boilerplate_responses_initialised.bad_request(
-    #             title
-    #         )
-    #     if self.runtime_data_initialised.boilerplate_non_http_initialised.is_token_correct(
-    #         token
-    #     ) is False:
-    #         return self.runtime_data_initialised.boilerplate_responses_initialised.invalid_token(
-    #             title
-    #         )
-    #     self.disp.log_debug(f"Token = {token}", title)
-
-    #     # Get the reactions by the research query
-    #     query_list: List[str] = query.split("+")
-    #     reactions_data: Union[List[Dict[str, Any]], Response] = self._search_templates_by_query("action", query_list, title, token)
-    #     if isinstance(reactions_data, Response):
-    #         return reactions_data
-
-    #     for _, reaction in enumerate(reactions_data):
-    #         reaction["json"] = json.load(reaction["json"])
-    #     body = self.runtime_data_initialised.boilerplate_responses_initialised.build_response_body(
-    #         title=title,
-    #         message=reactions_data,
-    #         resp="success",
-    #         token=token
-    #     )
-    #     return HCI.success(
-    #         content=body,
-    #         content_type=CONST.CONTENT_TYPE,
-    #         headers=self.runtime_data_initialised.json_header
-    #     )
 
     async def get_triggers(self, request: Request) -> Response:
         """

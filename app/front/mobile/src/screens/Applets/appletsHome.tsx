@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
-import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import CustomInput from "../../components/CustomInput/customInput";
 import Header from '../../components/Header/header';
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import { queries } from "../../../back-endConnection/querier";
@@ -12,11 +11,10 @@ import { getValue } from "../../components/StoreData/storeData";
 const Applets = () => {
     const navigation = useNavigation();
     const [applets, setApplets] = useState([]);
-    const [tags, setTags] = useState("");
-
+    const [search, setSearch] = useState("");
 
     const handleAppletButton = async (applet: any) => {
-        navigation.navigate("Applets information", { applet: applet });
+        navigation.navigate("Applet information", { applet_id: applet.id });
     };
 
     useEffect(() => {
@@ -26,52 +24,54 @@ const Applets = () => {
                 const getServicesResponse = await queries.get("/api/v1/my_applets", {}, token);
                 setApplets(getServicesResponse.msg);
             } catch (error) {
-                console.error(error);
+                return;
             }
         };
-        getApplets();
-    }, []);
 
-    useEffect(() => {
-        const getAppletsByTags = async () => {
-            try {
-                const token = await getValue("token");
-                if (tags === "") {
-                    const getAppletsResponse = await queries.get("/api/v1/my_applets", {}, token);
-                    setApplets(getAppletsResponse.msg);
-                } else {
-                    const noSpaceTags = tags.replaceAll(" ", ":");
-                    console.log("NoSpaceTags", noSpaceTags);
-                    let path = "/api/v1/my_applets/";
-                    path += noSpaceTags;
-                    const getAppletsResponse = await queries.get(path, {}, token);
-                    setApplets(getAppletsResponse.msg);
-                }
-            } catch (error) {
-                console.error(error);
-                setApplets([]);
-            }
-        }
-        getAppletsByTags();
-    }, [tags]);
+        getApplets();
+
+        const interval = setInterval(() => {
+            getApplets();
+        }, 500);
+
+        return () => clearInterval(interval);
+    });
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
             <Header />
-            <TouchableOpacity onPress={() => navigation.navigate('Applets')} >
-                <Text style={styles.homeTitle}>My Applets</Text>
-            </TouchableOpacity>
+            <Text style={styles.homeTitle}>My Applets</Text>
             <View style={styles.homeNavigation}>
             </View>
             <View style={styles.searchBar}>
-                <CustomerInput
-                    value={tags}
-                    setValue={setTags}
+                <CustomInput
+                    value={search}
+                    setValue={setSearch}
                     placeholder="Search applets"
+                    secureTextEntry={false}
                 />
             </View>
-            {
-                applets.map((applet) => (
+            {applets
+                .filter(applet => {
+                    if (!search.trim()) return true;
+
+                    const searchWords = search.toLowerCase().split(/\s+/).filter(word => word.length > 0);
+
+                    const matchesName = searchWords.some(word =>
+                        applet.name?.toLowerCase().split(/\s+/).some((nameWord: any) => nameWord.includes(word))
+                    );
+
+                    const matchesDescription = searchWords.some(word =>
+                        applet.description?.toLowerCase().split(/\s+/).some((descWord: any) => descWord.includes(word))
+                    );
+
+                    const matchesTags = searchWords.some(word =>
+                        applet.tags?.toLowerCase().split(/\s+/).some((descWord: any) => descWord.includes(word))
+                    );
+
+                    return matchesName || matchesDescription || matchesTags;
+                })
+                .map((applet) => (
                     <AppletAndServiceBox
                         key={applet.id}
                         title={applet.name}
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
         fontSize: 28,
         fontWeight: 'bold',
         margin: 30,
-        marginLeft: 150,
+        textAlign: 'center'
     },
     homeNavigation: {
         flexDirection: 'row',

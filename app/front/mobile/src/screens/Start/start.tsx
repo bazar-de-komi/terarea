@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, StyleSheet, Image, ScrollView, ImageBackground } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
+import CustomButton from "../../components/CustomButton/customButton";
 
 import MenuIcon from '../../../assets/menuIconWhite.png';
 import AreaLogo from '../../../assets/authenticationLogo/AreaLogoWhite.png';
@@ -23,7 +23,7 @@ const Start = () => {
                 imageStyle={{ borderRadius: 5 }}
             >
                 <View style={styles.overlay} />
-                
+
                 <Image
                     source={AreaLogo}
                     style={styles.areaLogo}
@@ -32,18 +32,19 @@ const Start = () => {
                     source={MenuIcon}
                     style={styles.profilLogo}
                 />
-                
+
                 <Text style={styles.homeTitle}>Automation for business and home</Text>
                 <View style={styles.homeNavigation}>
                 </View>
                 <Text style={styles.title}>Save time and get more done</Text>
                 <View style={styles.back}>
-                    <CustomerButton
+                    <CustomButton
                         text="Start Today"
                         onPress={handleStartButton}
                         type="PRIMARY"
                         bgColor={"white"}
                         fgColor={"black"}
+                        icon={null}
                     />
                 </View>
             </ImageBackground>

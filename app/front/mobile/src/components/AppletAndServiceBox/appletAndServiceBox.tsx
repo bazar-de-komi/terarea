@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 
-const AppletAndServiceBox = ({ title, description, author, user_nb, bgColor, onPress }) => {
+const AppletAndServiceBox = ({ title, description, bgColor, onPress }) => {
     if (description) {
         return (
             <TouchableOpacity onPress={onPress} style={[styles.boxContainer, { backgroundColor: bgColor }]}>
@@ -11,19 +11,6 @@ const AppletAndServiceBox = ({ title, description, author, user_nb, bgColor, onP
                 <Text style={styles.description}>
                     {description}
                 </Text>
-                <View style={styles.boxFooter}>
-                    <Text style={styles.textFooter}>
-                        by {author}
-                    </Text>
-                    <View style={styles.userNumberContainer}>
-                        <Text style={styles.userImage}>
-                            I
-                        </Text>
-                        <Text style={styles.textFooter}>
-                            {user_nb}
-                        </Text>
-                    </View>
-                </View>
             </TouchableOpacity>
         );
     }
@@ -78,44 +65,10 @@ const styles = StyleSheet.create({
     description: {
         bottom: 60,
         fontSize: 20,
-        color: 'black',
         marginBottom: 10,
         textAlign: 'center',
         color: 'white',
         padding: 10
-    },
-    tagsContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    tag: {
-        backgroundColor: '#ddd',
-        borderRadius: 15,
-        padding: 5,
-        marginRight: 10,
-        marginBottom: 10,
-    },
-    tagText: {
-        fontSize: 12,
-        color: '#333',
-    },
-    boxFooter: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginHorizontal: 10,
-        padding: 10
-    },
-    textFooter: {
-        textAlign: "center",
-        color: "white"
-    },
-    userNumberContainer: {
-        flexDirection: "row",
-        padding: 10,
-    },
-    userImage: {
-        paddingHorizontal: 10
     }
 });
 

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { View, Text, Image, StyleSheet, ScrollView, useWindowDimensions, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerInput from "../../../components/CustomersInput/CustomerInput";
-import CustomerButton from "../../../components/CustomerButton";
+import CustomInput from "../../../components/CustomInput/customInput";
+import CustomButton from "../../../components/CustomButton/customButton";
 import { getValue, deleteKey } from "../../../components/StoreData/storeData";
 
 import AreaLogo from '../../../../assets/authenticationLogo/AreaLogo.png';
@@ -28,15 +28,12 @@ const NewPassword = () => {
         };
 
         try {
-            console.log("NewPass:", newPass);
             const response = await queries.patch("/api/v1/reset_password", newPass);
-            console.log("Response:", response);
             if (response.resp === "success") {
                 deleteKey("email");
                 navigation.navigate("Sign In");
             }
         } catch (error) {
-            console.error("Error:", error);
             Alert.alert("One of the value is incorrect. Please try again.");
         }
     }
@@ -57,31 +54,31 @@ const NewPassword = () => {
                 />
                 <View style={styles.NewPasswordContainer}>
                     <Text style={styles.NewPasswordTitle}>Reset your password</Text>
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Verification code"
                         value={code}
                         setValue={setCode}
                         secureTextEntry={false}
                     />
-                    <CustomerInput
+                    <CustomInput
                         placeholder="New password"
                         value={newPassword}
                         setValue={setNewPassword}
                         secureTextEntry={false}
                     />
-                    <CustomerInput
+                    <CustomInput
                         placeholder="Confirmation password"
                         value={confirm}
                         setValue={setConfirm}
                         secureTextEntry={false}
                     />
-                    <CustomerButton
+                    <CustomButton
                         text="Set password"
                         onPress={handleSignSubmitButton}
                         bgColor={"black"}
                         fgColor={""}
                     />
-                    <CustomerButton
+                    <CustomButton
                         text="Resend verification email"
                         onPress={handleSendEmail}
                         bgColor={'#6c63ff'}

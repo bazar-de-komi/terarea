@@ -1,44 +1,47 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/ParseJson.js";
+
+import { parseJsonToForm, injectFormValuesIntoJson } from "../../Parsing/parseJson.js";
 
 const TriggerPage = () => {
     const navigation = useNavigation();
     const route = useRoute();
     const { trigger } = route.params || {};
 
+    const formFields = parseJsonToForm(trigger.json);
+    const [formValues, setFormValues] = useState(formFields);
+
     if (!trigger || !trigger.json) {
         return <Text style={styles.error}>Aucune donnée disponible pour ce trigger.</Text>;
     }
 
-    const formFields = parseJsonToForm(trigger.json);
-    const [formValues, setFormValues] = useState({});
+    const goBack = () => {
+        navigation.goBack();
+    }
 
-    const handleChange = (name, value) => {
-        setFormValues(prev => ({ ...prev, [name]: value }));
+    const handleChange = (name, keyToChange, value) => {
+        setFormValues((prev) =>
+            prev.map((item) =>
+                item.name === name ? { ...item, [keyToChange]: value } : item
+            )
+        );
     };
 
     const handleSubmit = () => {
-        // const updatedTrigger = {
-        //     ...trigger,
-        //     json: injectFormValuesIntoJson(trigger.json, formFields.map(field => ({
-        //         ...field,
-        //         value: formValues[field.name] || field.defaultValue || ""
-        //     })))
-        // };
-        const updatedTrigger = injectFormValuesIntoJson(trigger.json, formFields);
-
-        console.log("Updated Trigger:", updatedTrigger);
-
-        navigation.navigate("Create and have service", { trigger: updatedTrigger });
+        const updatedTrigger = injectFormValuesIntoJson(trigger.json, formValues);
+        navigation.navigate("Create", { trigger: updatedTrigger });
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView showsVerticalScrollIndicator={true} style={styles.container}>
+            <TouchableOpacity style={styles.backButtonContainer} onPress={goBack}>
+                <Text style={styles.backButtonText}>
+                    Back
+                </Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Complete trigger fields</Text>
-            
             {formFields.map((field, index) => (
                 <View key={index} style={styles.fieldContainer}>
                     <Text style={styles.label}>{field.name}</Text>
@@ -47,9 +50,9 @@ const TriggerPage = () => {
                         <Text style={styles.text}>{field.value}</Text>
                     ) : field.type === "dropdown" ? (
                         <Picker
-                            selectedValue={formValues[field.name] || field.defaultValue}
+                            selectedValue={formValues.find(f => f.name === field.name)?.defaultValue ?? field.defaultValue}
                             style={styles.picker}
-                            onValueChange={(itemValue) => handleChange(field.name, itemValue)}
+                            onValueChange={(itemValue) => handleChange(field.name, "defaultValue", itemValue)}
                         >
                             {field.options.map((option, idx) => (
                                 <Picker.Item key={idx} label={option} value={option} />
@@ -58,24 +61,26 @@ const TriggerPage = () => {
                     ) : field.type === "textarea" ? (
                         <TextInput
                             style={styles.textarea}
-                            defaultValue={field.defaultValue}
+                            value={field.value}
                             multiline={true}
-                            onChangeText={(text) => handleChange(field.name, text)}
+                            onChangeText={(text) => handleChange(field.name, "value", text)}
+                            placeholder={field.placeholder}
                         />
                     ) : (
                         <TextInput
                             style={styles.input}
-                            defaultValue={field.defaultValue}
-                            onChangeText={(text) => handleChange(field.name, text)}
+                            value={field.value}
+                            onChangeText={(text) => handleChange(field.name, "value", text)}
+                            placeholder={field.placeholder}
                         />
                     )}
                 </View>
             ))}
 
-            <TouchableOpacity style={styles.triggerButton} onPress={handleSubmit} > 
+            <TouchableOpacity style={styles.triggerButton} onPress={handleSubmit} >
                 <Text style={styles.triggerButtonText}>Create trigger</Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -84,45 +89,60 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#333",
         paddingHorizontal: 20,
-        paddingVertical: 40,
-        alignItems: "center",
+        paddingVertical: 40
+    },
+    backButtonContainer: {
+        marginTop: 10,
+        marginLeft: 20,
+        marginBottom: 20,
+        marginRight: 'auto',
+        textAlign: 'center',
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 25,
+        borderColor: 'white',
+        borderWidth: 2,
+    },
+    backButtonText: {
+        fontWeight: 'bold',
+        color: 'white'
     },
     title: {
         fontSize: 24,
         fontWeight: "bold",
         color: "white",
-        marginBottom: 20,
+        marginBottom: 20
     },
     fieldContainer: {
         width: "100%",
-        marginBottom: 15,
+        marginBottom: 15
     },
     label: {
         fontSize: 18,
         fontWeight: "600",
         color: "white",
-        marginBottom: 5,
+        marginBottom: 5
     },
     text: {
         fontSize: 16,
-        color: "white",
+        color: "white"
     },
     picker: {
         backgroundColor: "white",
-        borderRadius: 8,
+        borderRadius: 8
     },
     input: {
         backgroundColor: "white",
         borderRadius: 8,
         padding: 10,
-        fontSize: 16,
+        fontSize: 16
     },
     textarea: {
         backgroundColor: "white",
         borderRadius: 8,
         padding: 10,
         fontSize: 16,
-        height: 100,
+        height: 100
     },
     triggerButton: {
         marginTop: 30,
@@ -131,13 +151,13 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         borderRadius: 25,
         width: "100%",
-        alignItems: "center",
+        alignItems: "center"
     },
     triggerButtonText: {
         fontSize: 18,
         fontWeight: "bold",
-        color: "#333",
-    },
+        color: "#333"
+    }
 });
 
 export default TriggerPage;

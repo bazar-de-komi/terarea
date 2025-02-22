@@ -55,14 +55,16 @@ export const parseJsonToForm = (json) => {
                     type: "input",
                     name: cleanName,
                     path: newPath,
-                    defaultValue: typeof value === "string" ? value : ""
+                    defaultValue: typeof value === "string" ? value : "",
+                    placeholder: typeof value === "string" ? value : ""
                 });
             } else if (key.startsWith("textarea:")) {
                 fields.push({
                     type: "textarea",
                     name: cleanName,
                     path: newPath,
-                    defaultValue: typeof value === "string" ? value : ""
+                    defaultValue: typeof value === "string" ? value : "",
+                    placeholder: typeof value === "string" ? value : ""
                 });
             }
         });
@@ -92,18 +94,17 @@ export const injectFormValuesIntoJson = (json, fields) => {
         if (!originalKey) return;
 
         if (field.type === "dropdown") {
-            const newOptions = current[originalKey].map((option) => {
-                if (option.startsWith("default:") && option.replace("default:", "") === field.defaultValue) {
-                    return option;
-                } else if (option.startsWith("opt:") && option.replace("opt:", "") === field.defaultValue) {
-                    return `selected:${field.defaultValue}`;
-                }
-                return option;
-            });
+            const newOptions = current[originalKey]
+                .map(option => option.startsWith("selected:") ? option.replace("selected:", "opt:") : option)
+                .map(option => option === `opt:${field.defaultValue}` ? `selected:${field.defaultValue}` : option);
 
             current[originalKey] = newOptions;
         } else {
-            current[originalKey] = field.value;
+            if (field.value) {
+                current[originalKey] = field.value;
+            } else {
+                current[originalKey] = field.defaultValue;
+            }
         }
     });
 

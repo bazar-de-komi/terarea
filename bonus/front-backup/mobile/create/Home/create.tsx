@@ -2,15 +2,11 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../../components/CustomerButton";
-import BackButton from "../../../components/BackButton/backButton";
+import CustomButton from "../../../components/CustomButton/customButton";
+import Header from "../../../components/Header/header";
 
 const Create = () => {
     const navigation = useNavigation();
-
-    const AppletsHome = () => {
-        navigation.navigate("Applets");
-    };
 
     const ChooseServices = () => {
         navigation.navigate("Choose options service for trigger");
@@ -18,43 +14,34 @@ const Create = () => {
 
     return (
         <ScrollView showsVerticalScrollIndicator={false}>
+            <Header />
             <Text style={styles.homeTitle}>Create</Text>
-            <View style={styles.backButtonContainer}>
-                <BackButton
-                    text={"X"}
-                    onPress={AppletsHome}
-                />
-            </View>
             <View style={styles.section}>
                 <View style={styles.ifThisContainer}>
-                    <CustomerButton
+                    <CustomButton
                         text="If This"
                         type="PRIMARY"
                         bgColor={"black"}
                         fgColor={"white"}
-                        style={styles.ifThenText}
+                        onPress={null}
+                        icon={null}
                     />
                     <TouchableOpacity
                         style={styles.addButtonContainer}
                         onPress={ChooseServices}
                     >
-                    <Text style={styles.addButtonText}>add</Text>
+                        <Text style={styles.addButtonText}>add</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.ThenThatContainer}>
-                    <CustomerButton
+                    <CustomButton
                         text="Then That"
                         type="PRIMARY"
                         bgColor={"transparent"}
                         fgColor={"white"}
-                        style={styles.ifThenText}
+                        onPress={null}
+                        icon={null}
                     />
-                    {/* <TouchableOpacity
-                        style={styles.addButtonContainer}
-                        onPress={ChooseServices}
-                    >
-                    <Text style={styles.addButtonText}>add</Text>
-                    </TouchableOpacity> */}
                 </View>
             </View>
         </ScrollView>
@@ -65,10 +52,9 @@ const styles = StyleSheet.create({
     homeTitle: {
         fontSize: 40,
         fontWeight: 'bold',
-        margin: 80,
-        marginLeft: 140,
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginTop: 60,
+        marginBottom: 50,
+        textAlign: 'center',
     },
     section: {
         alignItems: 'center',
