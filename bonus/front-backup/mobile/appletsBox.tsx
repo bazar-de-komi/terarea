@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
+import CustomButton from "../../components/CustomButton/customButton";
 import Header from '../../components/Header/header';
 import BackButton from "../../components/BackButton/backButton";
 import { queries } from "../../../back-endConnection/querier";
@@ -80,7 +80,7 @@ const AppletsScreen = ({ route }) => {
                 </Text>
             </View>
             <View style={styles.connectStyle}>
-                <CustomerButton
+                <CustomButton
                     text={connectText}
                     onPress={handleConnectOrDisconnectButton}
                     type="PRIMARY"

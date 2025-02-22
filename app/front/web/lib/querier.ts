@@ -33,10 +33,7 @@ async function query(
     } else {
       final_url = `${url}:${port}${path}`;
     }
-    console.log("Final URL:", final_url);
-    console.log("Payload:", payload);
     const response: Response = await fetch(final_url, payload);
-    console.log(response);
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }

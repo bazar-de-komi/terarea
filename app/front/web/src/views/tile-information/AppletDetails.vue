@@ -16,26 +16,28 @@
 
       <div class="applet-body" :style="{ backgroundColor: applet.colour }">
         <h2>Basic applet informations</h2>
-          <div class="basic-form-group">
-            <label>Your applet name</label>
-            <input v-model="applet_name" placeholder="Enter applet name" />
+        <div class="basic-form-group">
+          <label>Your applet name</label>
+          <input v-model="applet_name" placeholder="Enter applet name" />
 
-            <label>Your applet description</label>
-            <input v-model="applet_description" placeholder="Enter applet description" />
+          <label>Your applet description</label>
+          <input v-model="applet_description" placeholder="Enter applet description" />
 
-            <label>Your applet tags (Optional)</label>
-            <input v-model="applet_tags" placeholder="Enter tags" />
+          <label>Your applet tags (Optional)</label>
+          <input v-model="applet_tags" placeholder="Enter tags" />
 
-            <label>Your applet colour</label>
-            <input type="color" v-model="applet_colour" />
-          </div>
+          <label>Your applet colour</label>
+          <input type="color" v-model="applet_colour" />
+        </div>
 
-        <h2>Trigger: {{applet.trigger.name}}</h2>
+        <h2>Trigger: {{ applet.trigger.name }}</h2>
         <template v-if="triggerFormFields.length">
           <div v-for="(field, index) in triggerFormFields" :key="index" class="form-group">
             <label :for="field.name">{{ field.name }}</label>
-            <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.placeholder" v-model="field.defaultValue">
-            <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.placeholder" v-model="field.defaultValue" />
+            <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.placeholder"
+              v-model="field.defaultValue">
+            <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text"
+              :placeholder="field.placeholder" v-model="field.defaultValue" />
             <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
               <option v-for="option in field.options" :key="option" :value="option">
                 {{ option }}
@@ -45,28 +47,15 @@
         </template>
         <div class="separate-form-group"></div>
 
-        <h2>Reaction: {{applet.consequences.name}}</h2>
+        <h2>Reaction: {{ applet.consequences.name }}</h2>
         <template v-if="triggerFormFields.length">
           <div v-for="(field, index) in reactionFormFields" :key="index" class="form-group">
             <label :for="field.name">{{ field.name }}</label>
-            <!-- <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue">
-            <textarea v-else-if="field.type === 'textarea'" :id="field.name" type="text" :placeholder="field.defaultValue" v-model="field.defaultValue" /> -->
             <div v-if="field.type === 'input' || field.type === 'textarea'" class="input-container">
-              <input
-                v-if="field.type === 'input'"
-                :id="field.name"
-                type="text"
-                :placeholder="field.placeholder"
-                v-model="field.defaultValue"
-                ref="inputRefs"
-              />
-              <textarea
-                v-else
-                :id="field.name"
-                :placeholder="field.placeholder"
-                v-model="field.defaultValue"
-                ref="inputRefs"
-              />
+              <input v-if="field.type === 'input'" :id="field.name" type="text" :placeholder="field.placeholder"
+                v-model="field.defaultValue" ref="inputRefs" />
+              <textarea v-else :id="field.name" :placeholder="field.placeholder" v-model="field.defaultValue"
+                ref="inputRefs" />
               <button class="variable-button" @click="toggleVariableMenu(index, $event)">🔽</button>
             </div>
             <select v-else-if="field.type === 'dropdown'" :id="field.name" v-model="field.defaultValue">
@@ -75,11 +64,8 @@
               </option>
             </select>
 
-            <div
-              v-if="showVariableMenu === index"
-              class="variable-menu"
-              :style="{ top: menuPosition.top + 'px', left: menuPosition.left + 'px' }"
-            >
+            <div v-if="showVariableMenu === index" class="variable-menu"
+              :style="{ top: menuPosition.top + 'px', left: menuPosition.left + 'px' }">
               <button v-for="(varName, i) in availableVariables" :key="i" @click="insertVariable(index, varName)">
                 ${{ varName }}
               </button>
@@ -145,7 +131,6 @@ export default defineComponent({
         const token = localStorage.getItem("authToken") || "";
         const newTriggerJson = injectFormValuesIntoJson(applet.value.trigger, triggerFormFields.value);
         const newReactionJson = injectFormValuesIntoJson(applet.value.consequences, reactionFormFields.value);
-        console.log("New Reaction json", newReactionJson);
         const response = await queries.put(
           `/api/v1/my_applet/${applet.value.id}`,
           {
@@ -292,7 +277,7 @@ export default defineComponent({
     //     // Calcul de la position à gauche et en haut avec des ajustements pour éviter que le menu sorte de la fenêtre
     //     const leftPosition = event.clientX + window.scrollX - 300;
     //     const topPosition = event.clientY + window.scrollY + 5; // Position sous le bouton
-      
+
     //     menuPosition.value = {
     //       left: leftPosition + menuWidth > pageWidth ? pageWidth - menuWidth - 10 : leftPosition, // Ajuste si ça dépasse la droite
     //       top: topPosition + menuHeight > pageHeight ? pageHeight - menuHeight - 10 : topPosition, // Ajuste si ça dépasse le bas
@@ -302,7 +287,7 @@ export default defineComponent({
 
     const insertVariable = (index: number, variable: string) => {
       const inputElement = inputRefs.value[index];
-      console.log(inputElement);
+
       if (inputElement) {
         const start = inputElement.selectionStart || 0;
         const end = inputElement.selectionEnd || 0;
@@ -372,7 +357,8 @@ export default defineComponent({
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;

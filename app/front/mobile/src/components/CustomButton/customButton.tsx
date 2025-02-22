@@ -1,23 +1,23 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 
-const CustomerButton = ({ onPress, text, type, bgColor, fgColor, icon}) => {
+const CustomButton = ({ onPress, text, type, bgColor, fgColor, icon }) => {
     return (
         <Pressable
-        onPress={onPress}
-        style={[
-            styles.buttonContainer,
-            styles[`buttonContainer_${type}`],
-            bgColor ? {backgroundColor: bgColor} : {}
+            onPress={onPress}
+            style={[
+                styles.buttonContainer,
+                styles[`buttonContainer_${type}`],
+                bgColor ? { backgroundColor: bgColor } : {}
             ]}>
-            
+
             <View style={styles.contentContainer}>
                 {icon && <View style={styles.iconContainer}>{icon}</View>}
                 <Text
-                style={[
-                    styles.text,
-                    styles[`text_${type}`],
-                    fgColor ? {color: fgColor} : {}
+                    style={[
+                        styles.text,
+                        styles[`text_${type}`],
+                        fgColor ? { color: fgColor } : {}
                     ]}
                 >
                     {text}
@@ -66,4 +66,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default CustomerButton
+export default CustomButton

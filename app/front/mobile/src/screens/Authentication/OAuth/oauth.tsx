@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ActivityIndicator, Button, Alert } from 'react-native';
+import { View, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { WebView } from 'react-native-webview';
 import { deleteKey, storeValue, getValue } from '../../../components/StoreData/storeData';
@@ -33,7 +33,7 @@ export const OAuthScreen = () => {
                     storeValue('token', response.token);
                     await deleteKey("authUrl");
                     setAuthUrl(null);
-                    navigation.navigate("All");
+                    navigation.navigate("Applets");
                 } catch (error) {
                     setLoading(true);
                     console.error(error);

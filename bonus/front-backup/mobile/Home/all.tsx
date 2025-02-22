@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, ScrollView,  } from 'react-native'
+import { View, Text, StyleSheet, Image, ScrollView, } from 'react-native'
 import { useNavigation } from "@react-navigation/native";
 
-import CustomerButton from "../../components/CustomerButton";
-import CustomerInput from "../../components/CustomersInput/CustomerInput";
+import CustomButton from "../../components/CustomButton/customButton";
+import CustomInput from "../../components/CustomInput/customInput";
 import Header from "../../components/Header/header";
 import AppletAndServiceBox from "../../components/AppletAndServiceBox/appletAndServiceBox";
 import { queries } from "../../../back-endConnection/querier";
@@ -83,21 +83,21 @@ const All = () => {
 
 
             <View style={styles.homeNavigation}>
-                {/* <CustomerButton
+                {/* <CustomButton
                     text="All"
                     onPress={handleAllButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={"blue"}
                 /> */}
-                <CustomerButton
+                <CustomButton
                     text="Applets"
                     onPress={handleAppletsButton}
                     type="TERTIARY"
                     bgColor={""}
                     fgColor={""}
                 />
-                {/* <CustomerButton
+                {/* <CustomButton
                     text="Services"
                     onPress={handleServicesButton}
                     type="TERTIARY"
@@ -106,7 +106,7 @@ const All = () => {
                 /> */}
             </View>
             <View style={styles.searchBar}>
-                <CustomerInput
+                <CustomInput
                     value={tags}
                     setValue={setTags}
                     placeholder="Search Applets or Services"
