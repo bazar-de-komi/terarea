@@ -94,14 +94,9 @@ export const injectFormValuesIntoJson = (json, fields) => {
         if (!originalKey) return;
 
         if (field.type === "dropdown") {
-            const newOptions = current[originalKey].map((option) => {
-                if (option.startsWith("default:") && option.replace("default:", "") === field.defaultValue) {
-                    return option;
-                } else if (option.startsWith("opt:") && option.replace("opt:", "") === field.defaultValue) {
-                    return `selected:${field.defaultValue}`;
-                }
-                return option;
-            });
+            const newOptions = current[originalKey]
+                .map(option => option.startsWith("selected:") ? option.replace("selected:", "opt:") : option)
+                .map(option => option === `opt:${field.defaultValue}` ? `selected:${field.defaultValue}` : option);
 
             current[originalKey] = newOptions;
         } else {
