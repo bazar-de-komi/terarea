@@ -1,0 +1,138 @@
+{
+	"info": {
+		"_postman_id": "c3f02d12-a703-463c-a6b0-b4c96d291fd5",
+		"name": "internal",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21099459",
+		"_collection_link": "https://the-desktop-pets-devs.postman.co/workspace/terarea~3339e24c-e309-452b-8989-a085b9735fe3/collection/21099459-c3f02d12-a703-463c-a6b0-b4c96d291fd5?action=share&source=collection_link&creator=21099459"
+	},
+	"item": [
+		{
+			"name": "trigger_endpoint",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "72ed4794-f39a-4902-bfd0-bbfd157c8fb1",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server_url}}/api/v1/trigger_action/{{action_id}}",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"trigger_action",
+						"{{action_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login (success)",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "{{account_email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{account_password}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "a",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{server_url}}/api/v1/login",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "4afcec7b-fef7-49b2-9d3d-b660a7db6808",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "server_url",
+			"value": "http://127.0.0.1:8081",
+			"type": "string"
+		},
+		{
+			"key": "account_email",
+			"value": "darling@zero.two",
+			"type": "string"
+		},
+		{
+			"key": "account_password",
+			"value": "darling@zero.two",
+			"type": "string"
+		},
+		{
+			"key": "action_id",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

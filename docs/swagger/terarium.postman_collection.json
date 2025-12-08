@@ -1,0 +1,2997 @@
+{
+	"info": {
+		"_postman_id": "caa2a184-7f55-47cf-bf29-b2c9be7c6584",
+		"name": "terarium",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21099459",
+		"_collection_link": "https://the-desktop-pets-devs.postman.co/workspace/terarea~3339e24c-e309-452b-8989-a085b9735fe3/collection/21099459-caa2a184-7f55-47cf-bf29-b2c9be7c6584?action=share&source=collection_link&creator=21099459"
+	},
+	"item": [
+		{
+			"name": "bonus",
+			"item": [
+				{
+					"name": "as_admin",
+					"item": [
+						{
+							"name": "stop",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"url": {
+									"raw": "{{server_url}}/api/v1/stop",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"stop"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "trigger_endpoint",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server_url_local}}/api/v1/trigger_action/{{action_id}}",
+									"host": [
+										"{{server_url_local}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"trigger_action",
+										"{{action_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "This is a folder containing bonus endpoints."
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "register",
+					"item": [
+						{
+							"name": "register (success)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password",
+											"value": "MyVerySecurePassword1234.",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "darling@zero.two",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "password",
+											"value": "darling",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url_local}}/api/v1/register",
+									"host": [
+										"{{server_url_local}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "login",
+					"item": [
+						{
+							"name": "login (success)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{account_email}}",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "password",
+											"value": "{{account_password}}",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "password",
+											"value": "darling",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "darling@zero.two",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/login",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "send_email_verification",
+					"item": [
+						{
+							"name": "send_email_verification (success)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{account_email}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/send_email_verification",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"send_email_verification"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "reset_password",
+					"item": [
+						{
+							"name": "reset_password (success)",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{account_email}}",
+											"type": "text"
+										},
+										{
+											"key": "code",
+											"value": "873406-717590-380243-311968-794555",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{account_password_new}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/reset_password",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"reset_password"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "user_favicon",
+							"item": [
+								{
+									"name": "user_favicon (success)",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "file",
+											"file": {
+												"src": "postman-cloud:///1ef85aef-525b-4eb0-8239-f18400f361c7"
+											}
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/user_favicon/png",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"user_favicon",
+												"png"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "user_favicon",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{server_url}}/api/v1/user_favicon",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"user_favicon"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "user (username)",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{account_name_new}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/user",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user (email)",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{account_email_new}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/user",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user (password)",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "password",
+											"value": "{{account_password_new}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/user",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user (all)",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{account_name_new2}}",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "{{account_email_new2}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{account_password_new2}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/user",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{server_url}}/api/v1/user",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "user",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server_url}}/api/v1/user",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "logout",
+					"item": [
+						{
+							"name": "logout",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{server_url}}/api/v1/logout",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "user_id",
+					"item": [
+						{
+							"name": "user_id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server_url}}/api/v1/user_id",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user_id"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "This is a folder containing the endpoints for interacting with the user."
+		},
+		{
+			"name": "services",
+			"item": [
+				{
+					"name": "services",
+					"item": [
+						{
+							"name": "services",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/services",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"services"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "service",
+					"item": [
+						{
+							"name": "service (success)",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/service/google",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"service",
+										"google"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "service/name/{name}",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server_url}}/api/v1/service/name/google",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"service",
+										"name",
+										"google"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "service/{id}",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server_url_local}}/api/v1/service/1",
+									"host": [
+										"{{server_url_local}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"service",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "service_id/url",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "url",
+											"value": "https://www.googleapis.com",
+											"description": "google",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "url",
+											"value": "https://api.github.com",
+											"description": "github",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "url",
+											"value": "oof",
+											"description": "don't exist",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/service_id/url/",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"service_id",
+										"url",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "services_by_tag",
+					"item": [
+						{
+							"name": "services_by_tag",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{server_url}}/api/v1/services/github:google",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"services",
+										"github:google"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "recent_services",
+					"item": [
+						{
+							"name": "recent_services",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{server_url}}/api/v1/recent_services",
+									"host": [
+										"{{server_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"recent_services"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "admin",
+					"item": [
+						{
+							"name": "service",
+							"item": [
+								{
+									"name": "service (google)",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "https://www.googleapis.com",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "{{google_api_key}}",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "multi-service",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "google service",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/google",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"google"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (github)",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "https://api.github.com",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "{{github_api_key}}",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "developer tools",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "github service",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/github",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"github"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (discord)",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "https://discord.com/api",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "{{discord_api_key}}",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "social media",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "discord service",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/discord",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"discord"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (twitter)",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "https://api.twitter.com/2",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "{{twitter_api_key}}",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "social media",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "twitter service",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/twitter",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"twitter"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (test)",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "test",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "test",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "test",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "test",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "test",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/test",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"test"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (google)",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "google",
+													"description": "google",
+													"type": "text"
+												},
+												{
+													"key": "url",
+													"value": "https://www.googleapis.com",
+													"description": "https://www.googleapis.com",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "{{google_api_key}}",
+													"description": "{{google_api_key}}",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "multi-service",
+													"description": "multi-service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "google service",
+													"description": "google service",
+													"type": "text"
+												},
+												{
+													"key": "colour",
+													"value": "#f4fefe",
+													"description": "f4fefe",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "Discover Google, the essential search engine that organizes the world's information. Whether you're looking for news, tutorials, scientific articles, or videos, Google helps you find answers in seconds. Explore the Google universe to discover innovative products like YouTube, Gmail, and much more.",
+													"description": "Discover Google, the essential search engine that organizes the world's information. Whether you're looking for news, tutorials, scientific articles, or videos, Google helps you find answers in seconds. Explore the Google universe to discover innovative products like YouTube, Gmail, and much more.",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/1",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (github)",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "https://api.github.com",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "{{github_api_key}",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "developer tools",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "github service",
+													"type": "text"
+												},
+												{
+													"key": "colour",
+													"value": "#303030",
+													"description": "#303030",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "GitHub is the largest collaborative platform for developers, enabling teamwork on coding projects. Share code, manage projects, and discover solutions built by the community. GitHub provides powerful features for version control and open-source contributions, making software development accessible and collaborative for all.",
+													"description": "GitHub is the largest collaborative platform for developers, enabling teamwork on coding projects. Share code, manage projects, and discover solutions built by the community. GitHub provides powerful features for version control and open-source contributions, making software development accessible and collaborative for all.",
+													"type": "text"
+												},
+												{
+													"key": "name",
+													"value": "github",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/2",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"2"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (discord)",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "https://discord.com/api",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "{{discord_api_key}}",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "social media",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "discord service",
+													"type": "text"
+												},
+												{
+													"key": "colour",
+													"value": "#5865F2",
+													"description": "#5865F2",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "Discord is a dynamic communication platform, perfect for communities and friends. Join themed servers where you can chat via text, voice, or video. Whether you're into gaming, tech, or just staying connected with friends, Discord makes communication easy and fun. Download Discord to explore its many features and create your own community space.",
+													"description": "Discord is a dynamic communication platform, perfect for communities and friends. Join themed servers where you can chat via text, voice, or video. Whether you're into gaming, tech, or just staying connected with friends, Discord makes communication easy and fun. Download Discord to explore its many features and create your own community space.",
+													"type": "text"
+												},
+												{
+													"key": "name",
+													"value": "discord",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/3",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (spotify)",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "https://api.spotify.com/v1",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "NULL",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "music",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "service",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "spotify service",
+													"type": "text"
+												},
+												{
+													"key": "colour",
+													"value": "#1db954",
+													"description": "#1db954",
+													"type": "text"
+												},
+												{
+													"key": "description",
+													"value": "Spotify is a world-renowned music streaming service, offering access to millions of songs, podcasts, and personalized playlists. Discover new artists, listen to your favorite tracks, and enjoy a seamless listening experience on all your devices. Download Spotify to dive into the world of music and find the soundtrack to your life.",
+													"description": "Spotify is a world-renowned music streaming service, offering access to millions of songs, podcasts, and personalized playlists. Discover new artists, listen to your favorite tracks, and enjoy a seamless listening experience on all your devices. Download Spotify to dive into the world of music and find the soundtrack to your life.",
+													"type": "text"
+												},
+												{
+													"key": "name",
+													"value": "spotify",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/4",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"4"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (url)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "url",
+													"value": "{{service_url_new2}}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/{{service_id}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"{{service_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (token)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "token",
+													"value": "{{service_token_new2}}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/{{service_id}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"{{service_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (category)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "category",
+													"value": "{{service_category_new2}}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/{{service_id}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"{{service_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (tag)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "tag",
+													"value": "{{service_tag_new2}}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/{{service_id}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"{{service_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (name)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "{{service_name_new2}}",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/{{service_id}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"{{service_id}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (test)",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": [
+												{
+													"key": "name",
+													"value": "tata",
+													"type": "text"
+												},
+												{
+													"key": "url",
+													"value": "tata",
+													"type": "text"
+												},
+												{
+													"key": "api_key",
+													"value": "tata",
+													"type": "text"
+												},
+												{
+													"key": "category",
+													"value": "tata",
+													"type": "text"
+												},
+												{
+													"key": "type",
+													"value": "tata",
+													"type": "text"
+												},
+												{
+													"key": "tags",
+													"value": "tata",
+													"type": "text"
+												}
+											]
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/3",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"3"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service (id)",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "formdata",
+											"formdata": []
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service/2",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service",
+												"2"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "service_id",
+							"item": [
+								{
+									"name": "service_id (service_name)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{server_url}}/api/v1/service_id/{{service_name}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service_id",
+												"{{service_name}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service_id (service_url)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{server_url}}/api/v1/service_id/{{service_url}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service_id",
+												"{{service_url}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "service_favicon",
+							"item": [
+								{
+									"name": "service_favicon",
+									"request": {
+										"method": "PATCH",
+										"header": [],
+										"body": {
+											"mode": "file",
+											"file": {
+												"src": "postman-cloud:///1ef85b88-658d-44e0-918b-fced2de3f702"
+											}
+										},
+										"url": {
+											"raw": "{{server_url}}/api/v1/service_favicon/{{service_id}}/png",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service_favicon",
+												"{{service_id}}",
+												"png"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "service_favicon",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{server_url}}/api/v1/service_favicon/{{service_id}}",
+											"host": [
+												"{{server_url}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"service_favicon",
+												"{{service_id}}"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					],
+					"description": "The endpoints for services that only admin accounts can manage."
+				}
+			],
+			"description": "This is the folder containing the endpoints for the services."
+		},
+		{
+			"name": "applets",
+			"item": [
+				{
+					"name": "My applet (id)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/my_applet/{{applet_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"my_applet",
+								"{{applet_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My applets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/my_applets",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"my_applets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My applet",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "trigger",
+									"value": "{\n    \"name\": \"Every day\",\n    \"description\": \"This action trigger every day at a specific time set by you.\",\n    \"service\": {\n        \"ignore:id\": 5,\n        \"ignore:url_extra\": \"/api/time/current/zone\",\n        \"url_params\": {\n            \"drop:timeZone\": [\n                \"opt:Africa/Addis_Ababa\",\n                \"opt:Africa/Cairo\",\n                \"opt:Africa/Casablanca\",\n                \"opt:Africa/Dakar\",\n                \"opt:Africa/Johannesburg\",\n                \"opt:Africa/Kinshasa\",\n                \"opt:Africa/Lagos\",\n                \"opt:Africa/Nairobi\",\n                \"opt:America/Bogota\",\n                \"opt:America/Buenos_Aires\",\n                \"opt:America/Chicago\",\n                \"opt:America/Lima\",\n                \"opt:America/Los_Angeles\",\n                \"opt:America/Mexico_City\",\n                \"opt:America/Montreal\",\n                \"opt:America/New_York\",\n                \"opt:America/Santiago\",\n                \"opt:America/Sao_Paulo\",\n                \"opt:America/Toronto\",\n                \"opt:Asia/Bangkok\",\n                \"opt:Asia/Jakarta\",\n                \"opt:Asia/Seoul\",\n                \"opt:Asia/Shanghai\",\n                \"opt:Asia/Tokyo\",\n                \"opt:Australia/Brisbane\",\n                \"opt:Australia/Melbourne\",\n                \"opt:Australia/Perth\",\n                \"opt:Australia/Sydney\",\n                \"opt:Europe/Berlin\",\n                \"opt:Europe/London\",\n                \"opt:Europe/Madrid\",\n                \"opt:Europe/Moscow\",\n                \"default:Europe/Paris\",\n                \"opt:Europe/Rome\"\n            ]\n        },\n        \"ignore:method\": \"GET\",\n        \"ignore:response\": {\n            \"int:code\": [\n                \"default:200\",\n                \"min:100\",\n                \"max:500\"\n            ],\n            \"response_content\": {\n                \"hour\": \"$ref{body.hour}\",\n                \"minute\": \"$ref{body.minute}\"\n            }\n        },\n        \"verification\": {\n            \"hour\": {\n                \"ignore:verification_operator\": [\n                    \"default:==\",\n                    \"opt:!=\",\n                    \"opt:<>\",\n                    \"opt:<\",\n                    \"opt:>\",\n                    \"opt:<=\",\n                    \"opt:>=\",\n                    \"opt:<=>\"\n                ],\n                \"drop:verification_value\": [\n                    \"default:0\",\n                    \"opt:1\",\n                    \"opt:2\",\n                    \"opt:3\",\n                    \"opt:4\",\n                    \"opt:5\",\n                    \"opt:6\",\n                    \"opt:7\",\n                    \"opt:8\",\n                    \"opt:9\",\n                    \"opt:10\",\n                    \"opt:11\",\n                    \"opt:12\",\n                    \"opt:13\",\n                    \"opt:14\",\n                    \"opt:15\",\n                    \"opt:16\",\n                    \"opt:17\",\n                    \"opt:18\",\n                    \"opt:19\",\n                    \"opt:20\",\n                    \"opt:21\",\n                    \"opt:22\",\n                    \"opt:23\"\n                ]\n            },\n            \"minute\": {\n                \"ignore:verification_operator\": [\n                    \"default:==\",\n                    \"opt:!=\",\n                    \"opt:<>\",\n                    \"opt:<\",\n                    \"opt:>\",\n                    \"opt:<=\",\n                    \"opt:>=\",\n                    \"opt:<=>\"\n                ],\n                \"drop:verification_value\": [\n                    \"default:0\",\n                    \"opt:10\",\n                    \"opt:20\",\n                    \"opt:30\",\n                    \"opt:40\",\n                    \"opt:50\"\n                ]\n            }\n        },\n        \"ignore:vars\": {\n            \"date\": \"$ref{body.date}\",\n            \"location\": \"$ref{body.timeZone}\",\n            \"day\": \"$ref{body.dayOfWeek}\",\n            \"current_time\": \"$ref{body.time}\"\n        }\n    }\n}",
+									"description": "The trigger that is in charge of starting the flow.",
+									"type": "text"
+								},
+								{
+									"key": "consequences",
+									"value": "{\n    \"name\": \"Ntfy notifications\",\n    \"description\": \"Notify the user on a specific channel on ntfy.\",\n    \"service\": {\n        \"ignore:id\": 7,\n        \"ignore:url_extra\": \"/{channel_name}\",\n        \"url_body_params\": {\n        \t\"input:channel_name\": \"Terarea\"\n        },\n        \"body\": {\n        \t\"input:body\": \"test\"\n        },\n        \"ignore:method\": \"POST\",\n        \"header\": {\n            \"input:title\": \"test\"\n        },\n        \"response\": {\n            \"int:code\": [\n                \"default:200\",\n                \"min:100\",\n                \"max:500\"\n            ]\n        }\n    }\n}",
+									"type": "text"
+								},
+								{
+									"key": "tags",
+									"value": "hello",
+									"description": "The tags for the current applet.",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "colour",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/my_applet",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"my_applet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My applet",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "test2",
+									"type": "text"
+								},
+								{
+									"key": "trigger",
+									"value": "{\n    \"name\": \"Every day\",\n    \"description\": \"This action trigger every day at a specific time set by you.\",\n    \"service\": {\n        \"ignore:id\": 5,\n        \"ignore:url_extra\": \"/api/time/current/zone\",\n        \"url_params\": {\n            \"drop:timeZone\": [\n                \"opt:Africa/Addis_Ababa\",\n                \"opt:Africa/Cairo\",\n                \"opt:Africa/Casablanca\",\n                \"opt:Africa/Dakar\",\n                \"opt:Africa/Johannesburg\",\n                \"opt:Africa/Kinshasa\",\n                \"opt:Africa/Lagos\",\n                \"opt:Africa/Nairobi\",\n                \"opt:America/Bogota\",\n                \"opt:America/Buenos_Aires\",\n                \"opt:America/Chicago\",\n                \"opt:America/Lima\",\n                \"opt:America/Los_Angeles\",\n                \"opt:America/Mexico_City\",\n                \"opt:America/Montreal\",\n                \"opt:America/New_York\",\n                \"opt:America/Santiago\",\n                \"opt:America/Sao_Paulo\",\n                \"opt:America/Toronto\",\n                \"opt:Asia/Bangkok\",\n                \"opt:Asia/Jakarta\",\n                \"opt:Asia/Seoul\",\n                \"opt:Asia/Shanghai\",\n                \"opt:Asia/Tokyo\",\n                \"opt:Australia/Brisbane\",\n                \"opt:Australia/Melbourne\",\n                \"opt:Australia/Perth\",\n                \"opt:Australia/Sydney\",\n                \"opt:Europe/Berlin\",\n                \"opt:Europe/London\",\n                \"opt:Europe/Madrid\",\n                \"opt:Europe/Moscow\",\n                \"default:Europe/Paris\",\n                \"opt:Europe/Rome\"\n            ]\n        },\n        \"ignore:method\": \"GET\",\n        \"ignore:response\": {\n            \"int:code\": [\n                \"default:200\",\n                \"min:100\",\n                \"max:500\"\n            ],\n            \"response_content\": {\n                \"hour\": \"$ref{body.hour}\",\n                \"minute\": \"$ref{body.minute}\"\n            }\n        },\n        \"verification\": {\n            \"hour\": {\n                \"ignore:verification_operator\": [\n                    \"default:==\",\n                    \"opt:!=\",\n                    \"opt:<>\",\n                    \"opt:<\",\n                    \"opt:>\",\n                    \"opt:<=\",\n                    \"opt:>=\",\n                    \"opt:<=>\"\n                ],\n                \"drop:verification_value\": [\n                    \"default:0\",\n                    \"opt:1\",\n                    \"opt:2\",\n                    \"opt:3\",\n                    \"opt:4\",\n                    \"opt:5\",\n                    \"opt:6\",\n                    \"opt:7\",\n                    \"opt:8\",\n                    \"opt:9\",\n                    \"opt:10\",\n                    \"opt:11\",\n                    \"opt:12\",\n                    \"opt:13\",\n                    \"opt:14\",\n                    \"opt:15\",\n                    \"opt:16\",\n                    \"opt:17\",\n                    \"opt:18\",\n                    \"opt:19\",\n                    \"opt:20\",\n                    \"opt:21\",\n                    \"opt:22\",\n                    \"opt:23\"\n                ]\n            },\n            \"minute\": {\n                \"ignore:verification_operator\": [\n                    \"default:==\",\n                    \"opt:!=\",\n                    \"opt:<>\",\n                    \"opt:<\",\n                    \"opt:>\",\n                    \"opt:<=\",\n                    \"opt:>=\",\n                    \"opt:<=>\"\n                ],\n                \"drop:verification_value\": [\n                    \"default:0\",\n                    \"opt:10\",\n                    \"opt:20\",\n                    \"opt:30\",\n                    \"opt:40\",\n                    \"opt:50\"\n                ]\n            }\n        },\n        \"ignore:vars\": {\n            \"date\": \"$ref{body.date}\",\n            \"location\": \"$ref{body.timeZone}\",\n            \"day\": \"$ref{body.dayOfWeek}\",\n            \"current_time\": \"$ref{body.time}\"\n        }\n    }\n}",
+									"type": "text"
+								},
+								{
+									"key": "consequences",
+									"value": "{\n    \"name\": \"Ntfy notifications\",\n    \"description\": \"Notify the user on a specific channel on ntfy.\",\n    \"service\": {\n        \"ignore:id\": 7,\n        \"ignore:url_extra\": \"/{channel_name}\",\n        \"url_body_params\": {\n        \t\"input:channel_name\": \"Terarea\"\n        },\n        \"body\": {\n        \t\"input:body\": \"test\"\n        },\n        \"ignore:method\": \"POST\",\n        \"header\": {\n            \"input:title\": \"test\"\n        },\n        \"response\": {\n            \"int:code\": [\n                \"default:200\",\n                \"min:100\",\n                \"max:500\"\n            ]\n        }\n    }\n}",
+									"type": "text"
+								},
+								{
+									"key": "tags",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "test2",
+									"type": "text"
+								},
+								{
+									"key": "colour",
+									"value": "test2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/my_applet/13",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"my_applet",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My applet",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/my_applet/3",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"my_applet",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My applet",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/my_applet/{{applet_id}}",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"my_applet",
+								"{{applet_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "triggers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/triggers",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"triggers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "triggers services",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/triggers_services",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"triggers_services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "triggers by services id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/triggers/service/5",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"triggers",
+								"service",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reactions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/reactions",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reactions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reactions services",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/reactions_services",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reactions_services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reactions by services id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/reactions/service/7",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reactions",
+								"service",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "webhook",
+			"item": [
+				{
+					"name": "webhook",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "HEAD",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "OPTIONS",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook Copy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/api/v1/new_webhook/{{applet_id}}/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"new_webhook",
+								"{{applet_id}}",
+								"github"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "oauth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "provider",
+									"value": "google",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider",
+									"value": "github",
+									"type": "text"
+								},
+								{
+									"key": "provider",
+									"value": "twitter",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider",
+									"value": "discord",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider",
+									"value": "spotify",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/login",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_oauth_provider (google)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "{{client_id}}.apps.googleusercontent.com",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "email",
+									"type": "text"
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "https://accounts.google.com/o/oauth2/v2/auth",
+									"type": "text"
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "https://oauth2.googleapis.com/token",
+									"type": "text"
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "https://www.googleapis.com/oauth2/v1/userinfo",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/google",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_oauth_provider (github)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "{{github_client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{github_api_key}}",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "user:email",
+									"type": "text"
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "https://github.com/login/oauth/authorize",
+									"type": "text"
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "https://github.com/login/oauth/access_token",
+									"type": "text"
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "https://api.github.com/user/emails",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/github",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"github"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_oauth_provider (discord)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "{{discord_api_key}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{discord_client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "identify+email",
+									"type": "text"
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "https://discord.com/oauth2/authorize",
+									"type": "text"
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "https://discord.com/api/oauth2/token",
+									"type": "text"
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "https://discord.com/api/users/@me",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/discord",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"discord"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_oauth_provider (twitter)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "{{twitter_cli}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{twitter_api_key}}",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "tweet.read%20users.read%20email",
+									"type": "text"
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "https://twitter.com/i/oauth2/authorize",
+									"type": "text"
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "https://api.twitter.com/2/oauth2/token",
+									"type": "text"
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "https://api.twitter.com/2/users/me",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/twitter",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"twitter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_oauth_provider (spotify)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "{{spotify_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{spotify_api_key}}",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "user-read-email",
+									"type": "text"
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "https://accounts.spotify.com/authorize",
+									"type": "text"
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "https://accounts.spotify.com/api/token",
+									"type": "text"
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "https://api.spotify.com/v1/me",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/spotify",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"spotify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add_oauth_provider (test)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "test",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/test",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update_oauth_provider",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "client_id",
+									"value": "{{client_id}}.apps.googleusercontent.com",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "email",
+									"type": "text"
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "https://accounts.google.com/o/oauth2/v2/auth",
+									"type": "text"
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "https://oauth2.googleapis.com/token",
+									"type": "text"
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "https://www.googleapis.com/oauth2/v1/userinfo",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/google",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "patch_oauth_provider (google)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "provider_name",
+									"value": "google",
+									"description": "google",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "client_id",
+									"value": "{{google_client_id}}",
+									"description": "{{google_client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{google_api_key}}",
+									"description": "{{google_api_key}}",
+									"type": "text"
+								},
+								{
+									"key": "provider_scope",
+									"value": "ai",
+									"description": "email",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "ai",
+									"description": "https://accounts.google.com/o/oauth2/v2/auth",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "ai",
+									"description": "https://oauth2.googleapis.com/token",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "ai",
+									"description": "https://www.googleapis.com/oauth2/v1/userinfo",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/google",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "patch_oauth_provider (test)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "provider_name",
+									"value": "test",
+									"description": "google",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "client_id",
+									"value": "ai",
+									"description": "{{client_id}}.apps.googleusercontent.com",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "client_secret",
+									"value": "ai",
+									"description": "{{client_secret}}",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider_scope",
+									"value": "ai",
+									"description": "email",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "authorisation_base_url",
+									"value": "ai",
+									"description": "https://accounts.google.com/o/oauth2/v2/auth",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "token_grabber_base_url",
+									"value": "ai",
+									"description": "https://oauth2.googleapis.com/token",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "user_info_base_url",
+									"value": "ai",
+									"description": "https://www.googleapis.com/oauth2/v1/userinfo",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/test",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"test"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete_oauth",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "provider",
+									"value": "google",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider",
+									"value": "github",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider",
+									"value": "twitter",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "provider",
+									"value": "discord",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server_url}}/api/v1/oauth/test",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"oauth",
+								"test"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "mandatory",
+			"item": [
+				{
+					"name": "about.json",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server_url}}/about.json",
+							"host": [
+								"{{server_url}}"
+							],
+							"path": [
+								"about.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "4b1aec60-8d6f-4854-aee2-67de1359f7d7",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "account_name",
+			"value": "a",
+			"type": "string"
+		},
+		{
+			"key": "account_name_new",
+			"value": "b",
+			"type": "string"
+		},
+		{
+			"key": "account_name_new2",
+			"value": "c",
+			"type": "string"
+		},
+		{
+			"key": "account_email",
+			"value": "a@a.a",
+			"type": "string"
+		},
+		{
+			"key": "account_email_new",
+			"value": "b@b.b",
+			"type": "string"
+		},
+		{
+			"key": "account_email_new2",
+			"value": "c@c.c",
+			"type": "string"
+		},
+		{
+			"key": "account_password",
+			"value": "123",
+			"type": "string"
+		},
+		{
+			"key": "account_password_new",
+			"value": "456",
+			"type": "string"
+		},
+		{
+			"key": "account_password_new2",
+			"value": "789",
+			"type": "string"
+		},
+		{
+			"key": "server_url_local",
+			"value": "http://127.0.0.1:8081",
+			"type": "string"
+		},
+		{
+			"key": "server_url_prod",
+			"value": "https://ifttt-back.pingpal.news",
+			"type": "string"
+		},
+		{
+			"key": "server_url",
+			"value": "http://127.0.0.1:8081",
+			"type": "string"
+		},
+		{
+			"key": "service_name",
+			"value": "give_me_the_time",
+			"type": "string"
+		},
+		{
+			"key": "service_name_new",
+			"value": "give_me_the_time_new",
+			"type": "string"
+		},
+		{
+			"key": "service_name_new2",
+			"value": "give_me_the_time_new2",
+			"type": "string"
+		},
+		{
+			"key": "service_tag",
+			"value": "clock",
+			"type": "default"
+		},
+		{
+			"key": "service_tag_new",
+			"value": "clock_new",
+			"type": "string"
+		},
+		{
+			"key": "service_tag_new2",
+			"value": "clock_new2",
+			"type": "string"
+		},
+		{
+			"key": "service_url",
+			"value": "https://timeapi.io",
+			"type": "default"
+		},
+		{
+			"key": "service_url_new",
+			"value": "https://timeapi.io",
+			"type": "string"
+		},
+		{
+			"key": "service_url_new2",
+			"value": "https://timeapi.io",
+			"type": "string"
+		},
+		{
+			"key": "service_token",
+			"value": "None",
+			"type": "default"
+		},
+		{
+			"key": "service_token_new",
+			"value": "None",
+			"type": "string"
+		},
+		{
+			"key": "service_token_new2",
+			"value": "None",
+			"type": "string"
+		},
+		{
+			"key": "service_category",
+			"value": "alarm",
+			"type": "default"
+		},
+		{
+			"key": "service_category_new",
+			"value": "alarm_new",
+			"type": "string"
+		},
+		{
+			"key": "service_category_new2",
+			"value": "alarm_new2",
+			"type": "string"
+		},
+		{
+			"key": "service_id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "applet_name",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "applet_id",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "applet_trigger_name",
+			"value": "get_the_time",
+			"type": "default"
+		},
+		{
+			"key": "applet_node_name",
+			"value": "email-me",
+			"type": "default"
+		},
+		{
+			"key": "applet_name_new",
+			"value": "wake_up_sleepy_head",
+			"type": "default"
+		},
+		{
+			"key": "applet_node_id",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "applet_tag1",
+			"value": "clock"
+		},
+		{
+			"key": "applet_tag2",
+			"value": "wakey wakey"
+		},
+		{
+			"key": "admin_token",
+			"value": "7ff4d9c0-9bc4-4e08-9fd9-dac380508d5f",
+			"type": "string"
+		},
+		{
+			"key": "action_id",
+			"value": "400"
+		}
+	]
+}

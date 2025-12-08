@@ -1,0 +1,3105 @@
+{
+	"info": {
+		"_postman_id": "01a340aa-3c83-431b-b206-e1174a7f2cb2",
+		"name": "api_testing",
+		"description": "This is a collection of api's and endpoints that can be implemented in an ifttt like website.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21099459",
+		"_collection_link": "https://the-desktop-pets-devs.postman.co/workspace/terarea~3339e24c-e309-452b-8989-a085b9735fe3/collection/21099459-01a340aa-3c83-431b-b206-e1174a7f2cb2?action=share&source=collection_link&creator=21099459"
+	},
+	"item": [
+		{
+			"name": "time",
+			"item": [
+				{
+					"name": "timeapi.io",
+					"item": [
+						{
+							"name": "current_time_paris",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{timeapi}}/api/time/current/zone?timeZone=Europe/Berlin",
+									"host": [
+										"{{timeapi}}"
+									],
+									"path": [
+										"api",
+										"time",
+										"current",
+										"zone"
+									],
+									"query": [
+										{
+											"key": "timeZone",
+											"value": "Europe/Paris",
+											"disabled": true
+										},
+										{
+											"key": "timeZone",
+											"value": "Europe/Berlin"
+										}
+									]
+								},
+								"description": "Get the current time for paris."
+							},
+							"response": []
+						},
+						{
+							"name": "timezones",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{timeapi}}/api/timezone/availabletimezones",
+									"host": [
+										"{{timeapi}}"
+									],
+									"path": [
+										"api",
+										"timezone",
+										"availabletimezones"
+									]
+								},
+								"description": "Get a list of the timezones that the website has to offer."
+							},
+							"response": []
+						}
+					],
+					"description": "This is an Api that will provide you with the time and other cool features.\n\nHere is the swagger api for timeapi.io: [https://timeapi.io/swagger/index.html](https://timeapi.io/swagger/index.html)"
+				}
+			],
+			"description": "This is a folder containing different api endpoints that will return the time and/or other information about time based data."
+		},
+		{
+			"name": "weather",
+			"item": [
+				{
+					"name": "visualcrossing.com",
+					"item": [
+						{
+							"name": "weather",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{weather.visualcrossing}}/VisualCrossingWebServices/rest/services/timeline/Berlin?key={{visualcrossing_key}}",
+									"host": [
+										"{{weather.visualcrossing}}"
+									],
+									"path": [
+										"VisualCrossingWebServices",
+										"rest",
+										"services",
+										"timeline",
+										"Berlin"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{visualcrossing_key}}"
+										}
+									]
+								},
+								"description": "This is the endpoint that will allow one to get the current data of the location."
+							},
+							"response": []
+						},
+						{
+							"name": "weather_range",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{weather.visualcrossing}}/VisualCrossingWebServices/rest/services/timeline/Kremelin-Bicêtre,France/2020-12-01/2020-12-31?key={{visualcrossing_key}}",
+									"host": [
+										"{{weather.visualcrossing}}"
+									],
+									"path": [
+										"VisualCrossingWebServices",
+										"rest",
+										"services",
+										"timeline",
+										"Kremelin-Bicêtre,France",
+										"2020-12-01",
+										"2020-12-31"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{visualcrossing_key}}"
+										}
+									]
+								},
+								"description": "This is the endpoint that will allow one to get a range of history about the weather on a specific location."
+							},
+							"response": []
+						}
+					],
+					"description": "This is the documentation for the weather api: [https://www.visualcrossing.com/resources/documentation/weather-api/timeline-weather-api/](https://www.visualcrossing.com/resources/documentation/weather-api/timeline-weather-api/)\n\nYou can make 1000 queries per day (this is at least enought for demos)"
+				},
+				{
+					"name": "weatherapi.com",
+					"item": [
+						{
+							"name": "weather_current (no air quality)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{weatherapi_url}}/current.json?key={{weatherapi_key}}&q=Paris",
+									"host": [
+										"{{weatherapi_url}}"
+									],
+									"path": [
+										"current.json"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{weatherapi_key}}"
+										},
+										{
+											"key": "q",
+											"value": "Paris"
+										}
+									]
+								},
+								"description": "Get the generic response for the current weather in \\[location\\] (here: paris)\n\nThe endpoint documentation: [https://www.weatherapi.com/docs/#apis-realtime](https://www.weatherapi.com/docs/#apis-realtime)"
+							},
+							"response": []
+						},
+						{
+							"name": "weather_current (air quality)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{weatherapi_url}}/current.json?key={{weatherapi_key}}&q=Paris&aqi=yes",
+									"host": [
+										"{{weatherapi_url}}"
+									],
+									"path": [
+										"current.json"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{weatherapi_key}}"
+										},
+										{
+											"key": "q",
+											"value": "Paris"
+										},
+										{
+											"key": "aqi",
+											"value": "yes"
+										}
+									]
+								},
+								"description": "Get the genric resposne for the current weather in \\[location\\] (here paris) as well as the air quality:\n\nAn up to date table for the air quality can be found here: [https://www.weatherapi.com/docs/#intro-aqi](https://www.weatherapi.com/docs/#intro-aqi)\n\n| **Field** | **Data type** | **Description** |\n| --- | --- | --- |\n| co | float | Carbon Monoxide (µg/m3) |\n| o3 | float | Ozone (µg/m3) |\n| no2 | float | Nitrogen dioxide (µg/m3) |\n| so2 | float | Sulphur dioxide (µg/m3) |\n| pm2_5 | float | PM2.5 (µg/m3) |\n| pm10 | float | PM10 (µg/m3) |\n| us-epa-index | integer | US - EPA standard  <br>1 means Good  <br>2 means Moderate  <br>3 means Unhealthy for sensitive group  <br>4 means Unhealthy  <br>5 means Very Unhealthy  <br>6 means Hazardous |\n| gb-defra-index | integer | UK defra index (see table below) |\n\nUk defra index table\n\n| **index** | **1** | **2** | **3** | **4** | **5** | **6** | **7** | **8** | **9** | **10** |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| Band | Low | Low | Low | Moderate | Moderate | Moderate | High | High | High | Very High |\n| µg/m3 | 0-11 | 12-23 | 24-35 | 36-41 | 42-47 | 48-53 | 54-58 | 59-64 | 65\\*70 | 71 or more |"
+							},
+							"response": []
+						},
+						{
+							"name": "weather_forecast",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{weatherapi_url}}/forecast.json?key={{weatherapi_key}}&q=Paris",
+									"host": [
+										"{{weatherapi_url}}"
+									],
+									"path": [
+										"forecast.json"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{weatherapi_key}}"
+										},
+										{
+											"key": "q",
+											"value": "Paris"
+										}
+									]
+								},
+								"description": "If the key authorises it, get the forecast for the following days.\n\nThe endpoint documentation: [https://www.weatherapi.com/docs/#apis-forecast](https://www.weatherapi.com/docs/#apis-forecast)"
+							},
+							"response": []
+						},
+						{
+							"name": "weather_alerts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{weatherapi_url}}/alerts.json?key={{weatherapi_key}}&q=Paris",
+									"host": [
+										"{{weatherapi_url}}"
+									],
+									"path": [
+										"alerts.json"
+									],
+									"query": [
+										{
+											"key": "key",
+											"value": "{{weatherapi_key}}"
+										},
+										{
+											"key": "q",
+											"value": "Paris"
+										}
+									]
+								},
+								"description": "Get the weather alerts if there are any.\n\nThe doc for the alerts: [https://www.weatherapi.com/docs/#intro-alerts](https://www.weatherapi.com/docs/#intro-alerts)"
+							},
+							"response": []
+						}
+					],
+					"description": "Get the weather info from a more advanced api.\n\nDocumentation: [https://www.weatherapi.com/docs/](https://www.weatherapi.com/docs/)\n\nCurrent plan: trial plan, ends on the 13/October/2024 (5 million calls per month)\n\nDefault plan: free plan (1 million calls per month)\n\nSee [https://www.weatherapi.com/pricing.aspx](https://www.weatherapi.com/pricing.aspx) for more details about the access provided."
+				},
+				{
+					"name": "api.waqi.info",
+					"item": [
+						{
+							"name": "get_the_air_quality",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.waqi.info/map/bounds/?latlng=39.379436,116.091230,40.235643,116.784382&token=demo",
+									"protocol": "https",
+									"host": [
+										"api",
+										"waqi",
+										"info"
+									],
+									"path": [
+										"map",
+										"bounds",
+										""
+									],
+									"query": [
+										{
+											"key": "latlng",
+											"value": "39.379436,116.091230,40.235643,116.784382"
+										},
+										{
+											"key": "token",
+											"value": "demo"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "This is a folder containing api endpoints that will return data about the weather in different parts of the world."
+		},
+		{
+			"name": "sms",
+			"item": [
+				{
+					"name": "textbelt",
+					"item": [
+						{
+							"name": "hello_world (1 free)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "key",
+											"value": "textbelt",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "{{phone_number}}",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "message",
+											"value": "Bonjour!",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "{{destination_number}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://textbelt.com/text",
+									"protocol": "https",
+									"host": [
+										"textbelt",
+										"com"
+									],
+									"path": [
+										"text"
+									]
+								},
+								"description": "This is your 1 free sms you can send. As of writing this sentence, this functionality is disabled."
+							},
+							"response": []
+						},
+						{
+							"name": "hello_world (paid token) (non-test)",
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "key",
+											"value": "{{textbelt_token}}",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "{{phone_number}}",
+											"description": "If the number is +33780763733, this is a temporary number. You can see your message at https://quackr.io/temporary-numbers/france/33780763733",
+											"type": "text"
+										},
+										{
+											"key": "message",
+											"value": "Hello world",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://textbelt.com/text",
+									"protocol": "https",
+									"host": [
+										"textbelt",
+										"com"
+									],
+									"path": [
+										"text"
+									]
+								},
+								"description": "This is the endpoint that will allow you to send text a number specified in the phone field.\n\nBeware, each call consumes a prepaid sms.\n\nYou can reload by:\n\n1. Copying the token value\n    \n2. Going to [https://textbelt.com/purchase/](https://textbelt.com/purchase/)\n    \n3. Pasting the token in the API key section\n    \n4. Chose the Worldwide plan (as of writing this section, the worldwide is the same price as the europe for prices 5, 8 and 15)\n    \n5. Chose how much you are willing to pay\n    \n6. And paying\n    \n\nUpon successfull payment, the token's limit will be automatically updated, you can check the current limit by calling the `quota` endpoint (or the `check_remaining_sms's` postman request)."
+							},
+							"response": []
+						},
+						{
+							"name": "hello_world (paid token) (test)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "key",
+											"value": "{{textbelt_token}}_test",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "{{phone_number}}",
+											"description": "If the number is +33780763733, this is a temporary number. You can see your message at https://quackr.io/temporary-numbers/france/33780763733",
+											"type": "text"
+										},
+										{
+											"key": "message",
+											"value": "Hello world",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://textbelt.com/text",
+									"protocol": "https",
+									"host": [
+										"textbelt",
+										"com"
+									],
+									"path": [
+										"text"
+									]
+								},
+								"description": "This endpoint will not consume any tokens because it will not send any texts.\n\nWhy?\n\nBecause we have added a _test to the end of the token, thus we are now asking if the current token will allow us to send that message instead of actually sending it."
+							},
+							"response": []
+						},
+						{
+							"name": "check_remaining_sms's",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://textbelt.com/quota/{{textbelt_token}}",
+									"protocol": "https",
+									"host": [
+										"textbelt",
+										"com"
+									],
+									"path": [
+										"quota",
+										"{{textbelt_token}}"
+									]
+								},
+								"description": "This endpooint will allow us to get the number of sms's we can still send."
+							},
+							"response": []
+						},
+						{
+							"name": "check_delivery_status",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://textbelt.com/status/89041727966213667",
+									"protocol": "https",
+									"host": [
+										"textbelt",
+										"com"
+									],
+									"path": [
+										"status",
+										"89041727966213667"
+									]
+								},
+								"description": "This endpoint will allow us to check if the message we sent has been successfully sent/delivered (via the message id)."
+							},
+							"response": []
+						}
+					],
+					"description": "This is the textbelt api, the token stored in the secret has been loaded with about 50 pre-paid sms messages ready to be sent.\n\nHere is the official documentation: [https://docs.textbelt.com/](https://docs.textbelt.com/)\n\nIf the token runs out of avilable sms's, you can reload by:\n\n1. Copying the token value\n    \n2. Going to [https://textbelt.com/purchase/](https://textbelt.com/purchase/)\n    \n3. Pasting the token in the API key section\n    \n4. Chose the Worldwide plan (as of writing this section, the worldwide is the same price as the europe for prices 5, 8 and 15)\n    \n5. Chose how much you are willing to pay\n    \n6. And paying\n    \n\nUpon successfull payment, the token's limit will be automatically updated, you can check the current limit by calling the `quota` endpoint (or the `check_remaining_sms's` postman request)."
+				}
+			],
+			"description": "This folder contains the endpoints regarding api's that can be used to send text messages."
+		},
+		{
+			"name": "picsum.photos",
+			"item": [
+				{
+					"name": "radom_picture(square)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{picsum_photos}}/{{picture_square}}",
+							"host": [
+								"{{picsum_photos}}"
+							],
+							"path": [
+								"{{picture_square}}"
+							]
+						},
+						"description": "This will return a random picture that will sized (square) based on the size passed as argument."
+					},
+					"response": []
+				},
+				{
+					"name": "radom_picture(widthXheight)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{picsum_photos}}/{{picture_width}}/{{picture_height}}",
+							"host": [
+								"{{picsum_photos}}"
+							],
+							"path": [
+								"{{picture_width}}",
+								"{{picture_height}}"
+							]
+						},
+						"description": "This will return a random picture that will sized (widthXheight) based on the size passed as argument."
+					},
+					"response": []
+				},
+				{
+					"name": "precise_picture(widthXheight)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{picsum_photos}}/id/{{picture_id}}/{{picture_width}}/{{picture_height}}",
+							"host": [
+								"{{picsum_photos}}"
+							],
+							"path": [
+								"id",
+								"{{picture_id}}",
+								"{{picture_width}}",
+								"{{picture_height}}"
+							]
+						},
+						"description": "This will return a specific picture (picture id is passed as arg 1) that will sized (widthXheight) based on the size passed as argument."
+					},
+					"response": []
+				},
+				{
+					"name": "precise_picture(square)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{picsum_photos}}/id/{{picture_id}}/{{picture_square}}",
+							"host": [
+								"{{picsum_photos}}"
+							],
+							"path": [
+								"id",
+								"{{picture_id}}",
+								"{{picture_square}}"
+							]
+						},
+						"description": "This will return a specific picture (picture id is passed as arg 1) that will sized (square) based on the size passed as argument."
+					},
+					"response": []
+				},
+				{
+					"name": "picture_list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{picsum_photos}}/v2/list",
+							"host": [
+								"{{picsum_photos}}"
+							],
+							"path": [
+								"v2",
+								"list"
+							]
+						},
+						"description": "Return a list of the available picture that can be called."
+					},
+					"response": []
+				}
+			],
+			"description": "Home page: [https://picsum.photos](https://picsum.photos)"
+		},
+		{
+			"name": "food",
+			"item": [
+				{
+					"name": "spoonacular.com",
+					"item": [
+						{
+							"name": "random_recipe",
+							"item": [
+								{
+									"name": "get_random_recipe",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												}
+											]
+										},
+										"description": "This will return a recipe at random."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegetarian)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegetarian",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegetarian"
+												}
+											]
+										},
+										"description": "Get a recipe at random as long as it is a vegetarian one."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegetarian 3 at a time)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegetarian&number=3",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegetarian"
+												},
+												{
+													"key": "number",
+													"value": "3"
+												}
+											]
+										},
+										"description": "Get a list of 3 recipes at random as long as they are vegetarian."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegan)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegan",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegan"
+												}
+											]
+										},
+										"description": "Get a random recipe as long as it is vegan."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegan 3 at a time)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegan&number=3",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegan"
+												},
+												{
+													"key": "number",
+													"value": "3"
+												}
+											]
+										},
+										"description": "Get a list of 3 recipes at random as long as they are vegan."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (3 at a time)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&number=3",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "number",
+													"value": "3"
+												}
+											]
+										},
+										"description": "Get 3 recipes at random."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe pudding",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=dessert",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "dessert"
+												}
+											]
+										},
+										"description": "Get a random recipe as long as it is a pudding."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegetarian pudding)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegetarian,dessert",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegetarian,dessert"
+												}
+											]
+										},
+										"description": "Get a random recipe as long as it is a pudding and is vegetarian."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegetarian 3 at a time pudding)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegetarian,dessert&number=3",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegetarian,dessert"
+												},
+												{
+													"key": "number",
+													"value": "3"
+												}
+											]
+										},
+										"description": "Get 3 random recipes as long as they are vegetarian puddings."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegan, pudding)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegan,dessert",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegan,dessert"
+												}
+											]
+										},
+										"description": "Get 3 random recipes as long as they are vegan puddings."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (vegan 3 at a time pudding)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=vegan,dessert&number=3",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "vegan,dessert"
+												},
+												{
+													"key": "number",
+													"value": "3"
+												}
+											]
+										},
+										"description": "Get 3 random vegan pudding recipes."
+									},
+									"response": []
+								},
+								{
+									"name": "get_random_recipe (3 at a time pudding)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/recipes/random?apiKey={{spoonacular_key}}&include-tags=dessert&number=3",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"recipes",
+												"random"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "include-tags",
+													"value": "dessert"
+												},
+												{
+													"key": "number",
+													"value": "3"
+												}
+											]
+										},
+										"description": "Get 3 random recipes."
+									},
+									"response": []
+								}
+							],
+							"description": "This is a folder containing a set of parameters that can be used to allow the user to query a recipe at random from the database."
+						},
+						{
+							"name": "product_name",
+							"item": [
+								{
+									"name": "get_product_name (pizza)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/food/products/search?apiKey={{spoonacular_key}}&query=pizza",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"food",
+												"products",
+												"search"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "query",
+													"value": "pizza"
+												}
+											]
+										},
+										"description": "Get a product by name."
+									},
+									"response": []
+								},
+								{
+									"name": "get_product_name (2 pizzas)",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{spoonacular_url}}/food/products/search?apiKey={{spoonacular_key}}&query=pizza&number=2",
+											"host": [
+												"{{spoonacular_url}}"
+											],
+											"path": [
+												"food",
+												"products",
+												"search"
+											],
+											"query": [
+												{
+													"key": "apiKey",
+													"value": "{{spoonacular_key}}"
+												},
+												{
+													"key": "query",
+													"value": "pizza"
+												},
+												{
+													"key": "number",
+													"value": "2"
+												}
+											]
+										},
+										"description": "Get 2 items from product name."
+									},
+									"response": []
+								}
+							],
+							"description": "This is the endpoint that will allow you to search for for products in the database."
+						},
+						{
+							"name": "get_the_first_10_recipes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{spoonacular_url}}/recipes/complexSearch?apiKey={{spoonacular_key}}",
+									"host": [
+										"{{spoonacular_url}}"
+									],
+									"path": [
+										"recipes",
+										"complexSearch"
+									],
+									"query": [
+										{
+											"key": "apiKey",
+											"value": "{{spoonacular_key}}"
+										}
+									]
+								},
+								"description": "This is a way of getting the first 10 available recipes for the api:  \n[https://spoonacular.com/food-api/docs#Search-Recipes-Complex](https://spoonacular.com/food-api/docs#Search-Recipes-Complex)"
+							},
+							"response": []
+						}
+					],
+					"description": "Each call and parameter cost a certain amount of points, please check the bottom of each endpoint call in the official documentation to be aware of the impact of that cost."
+				}
+			],
+			"description": "This is the section where you can query endpoints about food."
+		},
+		{
+			"name": "catfact.ninja",
+			"item": [
+				{
+					"name": "fact",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://cat-fact.herokuapp.com/facts/random",
+							"protocol": "https",
+							"host": [
+								"cat-fact",
+								"herokuapp",
+								"com"
+							],
+							"path": [
+								"facts",
+								"random"
+							]
+						},
+						"description": "Another cat fact endpoint"
+					},
+					"response": []
+				}
+			],
+			"description": "This is an api that will allow one to get a fact."
+		},
+		{
+			"name": "bitcoin",
+			"item": [
+				{
+					"name": "api.coindesk.com",
+					"item": [
+						{
+							"name": "rate",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://api.coindesk.com/v1/bpi/currentprice.json",
+									"protocol": "https",
+									"host": [
+										"api",
+										"coindesk",
+										"com"
+									],
+									"path": [
+										"v1",
+										"bpi",
+										"currentprice.json"
+									]
+								},
+								"description": "Get the current rate of the crypto currencies."
+							},
+							"response": []
+						}
+					],
+					"description": "An api from the coindesk website."
+				}
+			],
+			"description": "Bitcoin info tracking."
+		},
+		{
+			"name": "remove_boredom",
+			"item": [
+				{
+					"name": "boredapi.com",
+					"item": [
+						{
+							"name": "activity",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://www.boredapi.com/api/activity",
+									"protocol": "https",
+									"host": [
+										"www",
+										"boredapi",
+										"com"
+									],
+									"path": [
+										"api",
+										"activity"
+									]
+								},
+								"description": "This endpoint will return an activity to help you remove your boredom."
+							},
+							"response": []
+						}
+					],
+					"description": "An api to remove boredom."
+				}
+			],
+			"description": "Bored, don't be anymore."
+		},
+		{
+			"name": "nasa",
+			"item": [
+				{
+					"name": "mars",
+					"item": [
+						{
+							"name": "Mars Rover Photos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{nasa_url}}/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key={{nasa_api_key}}",
+									"host": [
+										"{{nasa_url}}"
+									],
+									"path": [
+										"mars-photos",
+										"api",
+										"v1",
+										"rovers",
+										"curiosity",
+										"photos"
+									],
+									"query": [
+										{
+											"key": "sol",
+											"value": "1000"
+										},
+										{
+											"key": "api_key",
+											"value": "{{nasa_api_key}}"
+										}
+									]
+								},
+								"description": "Get a photo form the mars rover."
+							},
+							"response": []
+						},
+						{
+							"name": "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01000/opgs/edr/fcam/FRB_486265257EDR_F0481570FHAZ00323M_.JPG",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://mars.jpl.nasa.gov/msl-raw-images/proj/msl/redops/ods/surface/sol/01000/opgs/edr/fcam/FRB_486265257EDR_F0481570FHAZ00323M_.JPG",
+									"protocol": "http",
+									"host": [
+										"mars",
+										"jpl",
+										"nasa",
+										"gov"
+									],
+									"path": [
+										"msl-raw-images",
+										"proj",
+										"msl",
+										"redops",
+										"ods",
+										"surface",
+										"sol",
+										"01000",
+										"opgs",
+										"edr",
+										"fcam",
+										"FRB_486265257EDR_F0481570FHAZ00323M_.JPG"
+									]
+								},
+								"description": "A pre-queried picture of the rover."
+							},
+							"response": []
+						},
+						{
+							"name": "Mars Rover Photos Camera Phaz",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{nasa_url}}/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&camera=fhaz&api_key={{nasa_api_key}}",
+									"host": [
+										"{{nasa_url}}"
+									],
+									"path": [
+										"mars-photos",
+										"api",
+										"v1",
+										"rovers",
+										"curiosity",
+										"photos"
+									],
+									"query": [
+										{
+											"key": "sol",
+											"value": "1000"
+										},
+										{
+											"key": "camera",
+											"value": "fhaz"
+										},
+										{
+											"key": "api_key",
+											"value": "{{nasa_api_key}}"
+										}
+									]
+								},
+								"description": "Get the picture of a camera from the mars rover."
+							},
+							"response": []
+						}
+					],
+					"description": "The mars api of the nasa api in order to query data from the rovers."
+				},
+				{
+					"name": "Astronomy Picture of the Day",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{nasa_url}}/planetary/apod?api_key={{nasa_api_key}}",
+							"host": [
+								"{{nasa_url}}"
+							],
+							"path": [
+								"planetary",
+								"apod"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{nasa_api_key}}"
+								}
+							]
+						},
+						"description": "Get the nasa selected picture of the day."
+					},
+					"response": []
+				},
+				{
+					"name": "apod",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{nasa_url}}/planetary/apod?api_key={{nasa_api_key}}",
+							"host": [
+								"{{nasa_url}}"
+							],
+							"path": [
+								"planetary",
+								"apod"
+							],
+							"query": [
+								{
+									"key": "api_key",
+									"value": "{{nasa_api_key}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "A fantastic api provided by Nasa."
+		},
+		{
+			"name": "quotes",
+			"item": [
+				{
+					"name": "favqs.com",
+					"item": [
+						{
+							"name": "quote_of_the_day",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{favqs_url}}/qotd",
+									"host": [
+										"{{favqs_url}}"
+									],
+									"path": [
+										"qotd"
+									]
+								},
+								"description": "Get the quote of the day. (spoiler, they randomly send you one)"
+							},
+							"response": []
+						}
+					],
+					"description": "A quote api."
+				}
+			],
+			"description": "Api's for getting quotes"
+		},
+		{
+			"name": "random_json",
+			"item": [
+				{
+					"name": "jsonplaceholder.org",
+					"item": [
+						{
+							"name": "random todo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{jsonplaceholder_url}}/todos/",
+									"host": [
+										"{{jsonplaceholder_url}}"
+									],
+									"path": [
+										"todos",
+										""
+									]
+								},
+								"description": "Get all the todos of a the site has to offer."
+							},
+							"response": []
+						}
+					],
+					"description": "A website to get meaningless json data\n\napi doc: [https://jsonplaceholder.typicode.com/](https://jsonplaceholder.typicode.com/)"
+				}
+			],
+			"description": "Get random json data."
+		},
+		{
+			"name": "art",
+			"item": [
+				{
+					"name": "get_public_collections",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://collectionapi.metmuseum.org/public/collection/v1/search?q=sunflowers",
+							"protocol": "https",
+							"host": [
+								"collectionapi",
+								"metmuseum",
+								"org"
+							],
+							"path": [
+								"public",
+								"collection",
+								"v1",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "sunflowers"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "find_iss",
+			"item": [
+				{
+					"name": "locate_iss",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://api.open-notify.org/iss-now.json",
+							"protocol": "http",
+							"host": [
+								"api",
+								"open-notify",
+								"org"
+							],
+							"path": [
+								"iss-now.json"
+							]
+						},
+						"description": "Get the current position of the iss."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "map",
+			"item": [
+				{
+					"name": "heatmap",
+					"item": [
+						{
+							"name": "monthly-global-land-surface-temperature",
+							"item": [
+								{
+									"name": "monthly_land_surface",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/global-temperature.json",
+											"protocol": "https",
+											"host": [
+												"raw",
+												"githubusercontent",
+												"com"
+											],
+											"path": [
+												"FreeCodeCamp",
+												"ProjectReferenceData",
+												"master",
+												"global-temperature.json"
+											]
+										},
+										"description": "Get the monthly land surface."
+									},
+									"response": []
+								}
+							],
+							"description": "Get the monthly global land surface temprature."
+						}
+					]
+				},
+				{
+					"name": "earthquakes",
+					"item": [
+						{
+							"name": "earthquakes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime={{earthquake_start_time}}&endtime={{earthquake_end_time}}",
+									"protocol": "https",
+									"host": [
+										"earthquake",
+										"usgs",
+										"gov"
+									],
+									"path": [
+										"fdsnws",
+										"event",
+										"1",
+										"query"
+									],
+									"query": [
+										{
+											"key": "format",
+											"value": "geojson"
+										},
+										{
+											"key": "starttime",
+											"value": "{{earthquake_start_time}}"
+										},
+										{
+											"key": "endtime",
+											"value": "{{earthquake_end_time}}"
+										}
+									]
+								},
+								"description": "Get the data about earthquakes in usgs.gov"
+							},
+							"response": []
+						}
+					],
+					"description": "A folder containing a call to get the earthquakes from the American government."
+				}
+			],
+			"description": "A folder containing data that concern maps."
+		},
+		{
+			"name": "american_government_data",
+			"item": [
+				{
+					"name": "unemployment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://www.bls.gov/lau/laucnty18.txt",
+							"protocol": "https",
+							"host": [
+								"www",
+								"bls",
+								"gov"
+							],
+							"path": [
+								"lau",
+								"laucnty18.txt"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Take the time to read the documentation for this free document api:\n\n[https://www.bls.gov/developers/api_signature_v2.htm#latest](https://www.bls.gov/developers/api_signature_v2.htm#latest)"
+		},
+		{
+			"name": "ip",
+			"item": [
+				{
+					"name": "get_ipv4",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.ipify.org?format=json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"ipify",
+								"org"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_ipv6",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api64.ipify.org?format=json",
+							"protocol": "https",
+							"host": [
+								"api64",
+								"ipify",
+								"org"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "json"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "robots",
+			"item": [
+				{
+					"name": "robohash.org",
+					"item": [
+						{
+							"name": "set1",
+							"item": [
+								{
+									"name": "set1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set1 size",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set1&size={{robohash_size}}",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set1"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set1 bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set1&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set1"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set1 size bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set1&size={{robohash_size}}&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set1"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set1 bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set1&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set1"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set1 size bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set1&size={{robohash_size}}&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set1"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"description": "These are some goofy robots."
+						},
+						{
+							"name": "set2",
+							"item": [
+								{
+									"name": "set1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set2 size",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set2&size={{robohash_size}}",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set2"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set2 bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set2&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set2"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set2 size bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set2&size={{robohash_size}}&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set2"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set2 bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set2&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set2"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set2 size bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set2&size={{robohash_size}}&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set2"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"description": "These are some weird robots."
+						},
+						{
+							"name": "set3",
+							"item": [
+								{
+									"name": "set3",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set3",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set3"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set3 size",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set3&size={{robohash_size}}",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set3"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set3 bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set3&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set3"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set3 size bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set3&size={{robohash_size}}&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set3"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set3 bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set3&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set3"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set3 size bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set3&size={{robohash_size}}&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set3"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"description": "These are some robot heads."
+						},
+						{
+							"name": "set4",
+							"item": [
+								{
+									"name": "set4",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set4",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set4"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set4 size",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set4&size={{robohash_size}}",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set4"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set4 bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set4&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set4"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set4 size bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set4&size={{robohash_size}}&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set4"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set4 bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set4&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set4"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set4 size bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set4&size={{robohash_size}}&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set4"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"description": "All hail the cats."
+						},
+						{
+							"name": "set5",
+							"item": [
+								{
+									"name": "set5",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set5",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set5"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set5 size",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set5&size={{robohash_size}}",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set5"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set5 bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set5&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set5"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set5 size bgset1",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set5&size={{robohash_size}}&bgset=bg1",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set5"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg1"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set5 bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set5&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set5"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "set5 size bgset2",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{robohash_url}}/{{robohash_prompt}}.png?set=set5&size={{robohash_size}}&bgset=bg2",
+											"host": [
+												"{{robohash_url}}"
+											],
+											"path": [
+												"{{robohash_prompt}}.png"
+											],
+											"query": [
+												{
+													"key": "set",
+													"value": "set5"
+												},
+												{
+													"key": "size",
+													"value": "{{robohash_size}}"
+												},
+												{
+													"key": "bgset",
+													"value": "bg2"
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							],
+							"description": "The technicians are here to save the day."
+						}
+					],
+					"description": "A robo image generator (but not only)"
+				}
+			],
+			"description": "Who want's robots?"
+		},
+		{
+			"name": "lord of the rings",
+			"item": [
+				{
+					"name": "lotrapi.co",
+					"item": [
+						{
+							"name": "characters",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{lotr_url}}/api/v1/characters/5",
+									"host": [
+										"{{lotr_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"characters",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "realms",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{lotr_url}}/api/v1/realms/3",
+									"host": [
+										"{{lotr_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"realms",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "books",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{lotr_url}}/api/v1/books/1",
+									"host": [
+										"{{lotr_url}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"books",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "jokes",
+			"item": [
+				{
+					"name": "official-joke-api.appspot.com",
+					"item": [
+						{
+							"name": "random",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://official-joke-api.appspot.com/random_joke",
+									"protocol": "https",
+									"host": [
+										"official-joke-api",
+										"appspot",
+										"com"
+									],
+									"path": [
+										"random_joke"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "slack",
+			"item": [
+				{
+					"name": "send_message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "payload",
+									"value": "{\"channel\": \"#terarea-messaging\", \"username\": \"terarea-webhook\", \"text\": \"This is posted to #terarea-messaging and comes from a bot named terarea-webhook.\", \"icon_emoji\": \":ghost:\"}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://hooks.slack.com/services/{{slack_service_path}}",
+							"protocol": "https",
+							"host": [
+								"hooks",
+								"slack",
+								"com"
+							],
+							"path": [
+								"services",
+								"T0271QL763T",
+								"B07V08PRUF4",
+								"B7VoRxLlbfDulftRenyJ477d"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "telegram",
+			"item": [
+				{
+					"name": "get_updates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{telegram_url}}bot{{telegram_token}}/getUpdates",
+							"host": [
+								"{{telegram_url}}bot{{telegram_token}}"
+							],
+							"path": [
+								"getUpdates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get_updates eric",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{telegram_url}}bot{{telegram_token}}:{{telegram_bot_port}}/getUpdates",
+							"host": [
+								"{{telegram_url}}bot{{telegram_token}}"
+							],
+							"port": "{{telegram_bot_port}}",
+							"path": [
+								"getUpdates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send_message",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"chat_id\": \"8107130540\", \"text\": \"Hello, this is a test message from my bot!\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{telegram_url}}bot{{telegram_token}}/sendMessage",
+							"host": [
+								"{{telegram_url}}bot{{telegram_token}}"
+							],
+							"path": [
+								"sendMessage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send_message eric",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"chat_id\": \"8107130540\", \"text\": \"Hello, this is a test message from my bot!\"}"
+						},
+						"url": {
+							"raw": "{{telegram_url}}bot{{telegram_token}}:{{telegram_bot_port}}/sendMessage",
+							"host": [
+								"{{telegram_url}}bot{{telegram_token}}"
+							],
+							"port": "{{telegram_bot_port}}",
+							"path": [
+								"sendMessage"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "send_message (on group)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"chat_id\": \"-4523942835\", \"text\": \"Hello, this is a test message from my bot!\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{telegram_url}}/bot{{telegram_token}}/sendMessage",
+							"host": [
+								"{{telegram_url}}"
+							],
+							"path": [
+								"bot{{telegram_token}}",
+								"sendMessage"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "twilio",
+			"item": [
+				{
+					"name": "send_sms",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "{{twilio_username}}",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "{{twilio_password}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "To",
+									"value": "{{destination_phone_number}}",
+									"type": "text"
+								},
+								{
+									"key": "From",
+									"value": "{{emitter_phone_number}}",
+									"type": "text"
+								},
+								{
+									"key": "Body",
+									"value": "Bonjour! Comment ça va ?",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.twilio.com/2010-04-01/Accounts/{{twilio_account_id}}/Messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"twilio",
+								"com"
+							],
+							"path": [
+								"2010-04-01",
+								"Accounts",
+								"{{twilio_account_id}}",
+								"Messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ntfy",
+			"item": [
+				{
+					"name": "notifications",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "text/plain",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://ntfy.sh/terarea",
+							"protocol": "https",
+							"host": [
+								"ntfy",
+								"sh"
+							],
+							"path": [
+								"terarea"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PushOver",
+			"item": [
+				{
+					"name": "SendMessage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "user",
+									"value": "{{user_token}}",
+									"type": "text"
+								},
+								{
+									"key": "token",
+									"value": "{{app_token}}",
+									"type": "text"
+								},
+								{
+									"key": "message",
+									"value": "A notification test",
+									"type": "text"
+								},
+								{
+									"key": "title",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "priority",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "sound",
+									"value": "nothing",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.pushover.net/1/messages.json",
+							"protocol": "https",
+							"host": [
+								"api",
+								"pushover",
+								"net"
+							],
+							"path": [
+								"1",
+								"messages.json"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Mail testing",
+			"item": [
+				{
+					"name": "Elastic Email",
+					"item": [
+						{
+							"name": "New Request",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "apiKey",
+											"value": "{{elastic_email_api_key}}",
+											"type": "text"
+										},
+										{
+											"key": "from",
+											"value": "{{e-mail_sender}}",
+											"type": "text"
+										},
+										{
+											"key": "fromName",
+											"value": "{{sender_name}}",
+											"type": "text"
+										},
+										{
+											"key": "to",
+											"value": "{{destination_email}}",
+											"type": "text"
+										},
+										{
+											"key": "subject",
+											"value": "Test Elastic Email",
+											"type": "text"
+										},
+										{
+											"key": "bodyText",
+											"value": "Hello ! Test Email",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://api.elasticemail.com/v2/email/send",
+									"protocol": "https",
+									"host": [
+										"api",
+										"elasticemail",
+										"com"
+									],
+									"path": [
+										"v2",
+										"email",
+										"send"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "gmail stmp",
+					"item": [
+						{
+							"name": "gmail",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{gmail_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"raw\": \"{{gmail_token}}\"\n}"
+								},
+								"url": {
+									"raw": "https://www.googleapis.com/gmail/v1/users/me/messages/send",
+									"protocol": "https",
+									"host": [
+										"www",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"gmail",
+										"v1",
+										"users",
+										"me",
+										"messages",
+										"send"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "gmail Copy",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{gmail_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "raw",
+											"value": "{{gmail_token}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "https://mail.google.com",
+									"protocol": "https",
+									"host": [
+										"mail",
+										"google",
+										"com"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "SparkPost",
+					"item": [
+						{
+							"name": "mail",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{spark_post_token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"options\": {\n    \"sandbox\": false\n  },\n  \"content\": {\n    \"from\": {\n      \"email\": \"noreply.terarea@gmail.com\"\n    },\n    \"subject\": \"Test Email from SparkPost\",\n    \"text\": \"Hello, this is a test email sent via SparkPost API!\"\n  },\n  \"recipients\": [\n    {\n      \"address\": \"ericxu7525@gmail.com\"\n    }\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://api.sparkpost.com/api/v1/transmissions",
+									"protocol": "https",
+									"host": [
+										"api",
+										"sparkpost",
+										"com"
+									],
+									"path": [
+										"api",
+										"v1",
+										"transmissions"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
